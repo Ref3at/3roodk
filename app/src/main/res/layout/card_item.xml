@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (C) 2015 The Android Open Source Project
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/card_view"
+    style="?attr/cardStyle"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/card_height"
+    android:layout_gravity="center"
+    android:layout_marginBottom="@dimen/md_keylines"
+    android:layout_marginLeft="@dimen/md_keylines"
+    android:layout_marginRight="@dimen/md_keylines"
+    android:foreground="?attr/selectableItemBackground">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+        <ImageView
+            android:id="@+id/card_image"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/card_image_height"
+            android:scaleType="centerCrop"
+            android:src="@drawable/offo" />
+
+
+        <TextView
+            android:id="@+id/card_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/card_image"
+            android:layout_marginBottom="@dimen/md_keylines"
+            android:layout_marginLeft="@dimen/md_keylines"
+            android:layout_marginRight="6dp"
+            android:layout_marginTop="6dp"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:text="تشكيله من الملابس المستورده"
+            android:textColor="@color/dark_grey"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="63dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:orientation="horizontal"
+            android:padding="5dp">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <ImageButton
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#00ffffff"
+                    android:src="@drawable/ic_location_on_black_24dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="5dp"
+                    android:text="0.6 km"
+                    android:textColor="#000"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+
+                android:background="#00ffffff"
+                android:src="@android:drawable/btn_star_big_on" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginRight="8dp"
+                android:gravity="center_vertical"
+                android:padding="5dp"
+                android:text="4.6"
+                android:textColor="#000" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginRight="3dp"
+                android:text="الغرباوى"
+                android:textColor="#000"
+                android:textSize="18sp" />
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:background="#00ffffff"
+                android:src="@drawable/ic_account_balance_black_24dp" />
+
+
+        </LinearLayout>
+
+
+        <ImageView
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:layout_above="@+id/clock"
+            android:src="@drawable/discount" />
+
+
+        <ImageButton
+            android:id="@+id/share_button2"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="@dimen/cards_button_width"
+            android:layout_height="@dimen/cards_button_height"
+            android:layout_marginRight="@dimen/md_keylines"
+            android:src="@drawable/abc_ic_menu_share_mtrl_alpha"
+            android:tint="@color/button_grey" />
+
+
+        <ImageButton
+            android:id="@+id/favorite_button"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="@dimen/cards_button_width"
+            android:layout_height="@dimen/cards_button_height"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="8dp"
+            android:src="@drawable/ic_favorite_black_24dp"
+            android:tint="@color/button_grey" />
+
+        <LinearLayout
+            android:id="@+id/clock"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:orientation="horizontal"
+            android:padding="10dp">
+
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="ثانيه"
+                    android:textColor="#fd6363"
+
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="35"
+                    android:textColor="#fd6363"
+                    android:textSize="26sp"
+                    android:textStyle="bold" />
+
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text=":"
+                android:textColor="#000"
+
+                android:textSize="25sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="دقيقه"
+                    android:textColor="#55dc5e"
+                    android:textSize="16sp"
+
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="03"
+                    android:textColor="#55dc5e"
+                    android:textSize="26sp"
+
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text=":"
+                android:textColor="#000"
+
+                android:textSize="25sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="ساعه"
+                    android:textColor="#2035f7"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="18"
+                    android:textColor="#2035f7"
+                    android:textSize="26sp"
+
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+    </RelativeLayout>
+</android.support.v7.widget.CardView>

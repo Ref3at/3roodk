@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="cat_array">
+
+        <item>Restaurants</item>
+        <item>Super market</item>
+        <item>cafes</item>
+        <item>Mobiles</item>
+        <item>Computers</item>
+        <item>Electrical Tools</item>
+        <item>Accessories</item>
+        <item>Clothes</item>
+        <item>Shoes</item>
+    </string-array>
+
+    <string-array name="governates">
+
+        <item>الدقهليه</item>
+        <item>طنطا</item>
+    </string-array>
+
+    <string-array name="cities">
+
+        <item>المنصوره</item>
+        <item>السنبلاوين</item>
+    </string-array>
+
+    <string-array name="days_array">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+        <item>13</item>
+        <item>14</item>
+    </string-array>
+</resources>
