@@ -55,11 +55,18 @@ public class UtilityRestApi {
         map.put("email", email);
         CallRestApi.GET(context, "User", map, handler);
     }
+
+    static public void loginUser(Context context, String email, String password, TextHttpResponseHandler handler) {
+        HashMap map = new HashMap();
+        map.put("email", email);
+        map.put("password", password);
+        CallRestApi.GET(context, "User", map, handler);
+    }
 //Anonymous user session
 
     // getOffersWithin was written
 
-    static public void getActiveCategoryOffersByGovAndCity(Context context,String categoryName,String gov,String city,TextHttpResponseHandler handler) {
+    static public void getActiveCategoryOffersByGovAndCity(Context context, String categoryName, String gov, String city, TextHttpResponseHandler handler) {
         HashMap mapShopPlace = new HashMap();
         mapShopPlace.put("city", city);
         mapShopPlace.put("governate", gov);
@@ -81,7 +88,7 @@ public class UtilityRestApi {
     }
 
     static public void getActiveCategoryOffersByLonAndLat(Context context, double latitude, double longitude, double distanceInKM, String categoryName, TextHttpResponseHandler handler) {
-        getOffersWithin(context,latitude,longitude,distanceInKM,categoryName,handler);
+        getOffersWithin(context, latitude, longitude, distanceInKM, categoryName, handler);
     }
 
     static public void getShopsByCityName(Context context, String cityName, TextHttpResponseHandler handler) {
@@ -90,7 +97,7 @@ public class UtilityRestApi {
         CallRestApi.GET(context, "Shop", map, handler);
     }
 
-    static public void sortActiveCategoryOfferByNewest(Context context,String categoryName,TextHttpResponseHandler handler) {
+    static public void sortActiveCategoryOfferByNewest(Context context, String categoryName, TextHttpResponseHandler handler) {
         HashMap mapTime = new HashMap();
         mapTime.put("$gte", getCurrentDate());
 
@@ -102,7 +109,7 @@ public class UtilityRestApi {
             mapCategory.put("category", categoryName);
             mapFinal.putAll(getNestedQuery("categoryId", "Category", "objectId", mapCategory));
         }
-        CallRestApi.GET(context, "Offer", mapFinal,"-createdAt" ,handler);
+        CallRestApi.GET(context, "Offer", mapFinal, "-createdAt", handler);
     }
 
     static public void sortActiveCategoryOfferByNearest() {
@@ -114,7 +121,7 @@ public class UtilityRestApi {
     static public void sortActiveCategoryOfferByDiscount() {
     } //later
 
-    static public void sortActiveCategoryOfferByEndingFirst(Context context,String categoryName,TextHttpResponseHandler handler) {
+    static public void sortActiveCategoryOfferByEndingFirst(Context context, String categoryName, TextHttpResponseHandler handler) {
         HashMap mapTime = new HashMap();
         mapTime.put("$gte", getCurrentDate());
 
@@ -126,15 +133,15 @@ public class UtilityRestApi {
             mapCategory.put("category", categoryName);
             mapFinal.putAll(getNestedQuery("categoryId", "Category", "objectId", mapCategory));
         }
-        CallRestApi.GET(context, "Offer", mapFinal,"endTime" ,handler);
+        CallRestApi.GET(context, "Offer", mapFinal, "endTime", handler);
     } //later
 
-    static public void raiseOfferViewsByOne(Context context,String offerId,TextHttpResponseHandler handler) {
-        CallRestApi.INCREMENT(context,"Offer",offerId,"viewNum",1,handler);
+    static public void raiseOfferViewsByOne(Context context, String offerId, TextHttpResponseHandler handler) {
+        CallRestApi.INCREMENT(context, "Offer", offerId, "viewNum", 1, handler);
     }
 
-    static public void raiseOfferFavoritesByOne(Context context,String offerId,TextHttpResponseHandler handler) {
-        CallRestApi.INCREMENT(context,"Offer",offerId,"favoriteNum",1,handler);
+    static public void raiseOfferFavoritesByOne(Context context, String offerId, TextHttpResponseHandler handler) {
+        CallRestApi.INCREMENT(context, "Offer", offerId, "favoriteNum", 1, handler);
     }
 
     static public void loadOfferComments(Context context, String offerId, TextHttpResponseHandler handler) {
@@ -143,11 +150,11 @@ public class UtilityRestApi {
         CallRestApi.GET(context, "Comment", map, handler);
     } // when user scrolling
 
-    static public void getThisOfferShopData(Context context,String shopId,TextHttpResponseHandler handler) {
-        CallRestApi.GET(context,"Shop",shopId,handler);
+    static public void getThisOfferShopData(Context context, String shopId, TextHttpResponseHandler handler) {
+        CallRestApi.GET(context, "Shop", shopId, handler);
     } // when user clicked on shop name
 
-    static public void getActiveOffersByShopName(Context context, String shopName,TextHttpResponseHandler handler) {
+    static public void getActiveOffersByShopName(Context context, String shopName, TextHttpResponseHandler handler) {
         HashMap mapShop = new HashMap();
         mapShop.put("name", shopName);
 
@@ -161,7 +168,7 @@ public class UtilityRestApi {
         CallRestApi.GET(context, "Offer", mapFinal, handler);
     }
 
-    static public void getExpiredOffersByShopName(Context context, String shopName,TextHttpResponseHandler handler) {
+    static public void getExpiredOffersByShopName(Context context, String shopName, TextHttpResponseHandler handler) {
         HashMap mapShop = new HashMap();
         mapShop.put("name", shopName);
 
@@ -180,25 +187,25 @@ public class UtilityRestApi {
 
     // Regular User
 
-    static public void registerNewUser(Context context,HashMap values,TextHttpResponseHandler handler) {
-        CallRestApi.POST(context,"User",values,handler);
+    static public void registerNewUser(Context context, HashMap values, TextHttpResponseHandler handler) {
+        CallRestApi.POST(context, "User", values, handler);
     }
 
     static public void changeUserName(Context context, String userId, String newUserName, TextHttpResponseHandler handler) {
         HashMap map = new HashMap();
-        map.put("name",newUserName);
+        map.put("name", newUserName);
         CallRestApi.PUT(context, "User", map, userId, handler);
     }
 
     static public void changePassword(Context context, String userId, String newPassword, TextHttpResponseHandler handler) {
         HashMap map = new HashMap();
-        map.put("password",newPassword);
+        map.put("password", newPassword);
         CallRestApi.PUT(context, "User", map, userId, handler);
     }
 
     static public void changeUserProfileImg(Context context, String userId, String profileImageId, TextHttpResponseHandler handler) {
         HashMap map = new HashMap();
-        map.put("profileImageId",profileImageId);
+        map.put("profileImageId", profileImageId);
         CallRestApi.PUT(context, "User", map, userId, handler);
     }
 
@@ -208,18 +215,18 @@ public class UtilityRestApi {
     static public void changeRatedOffer() {
     }
 
-    static public void addNewComment(Context context,HashMap map,TextHttpResponseHandler handler) {
-        CallRestApi.POST(context,"Comment",map,handler);
+    static public void addNewComment(Context context, HashMap map, TextHttpResponseHandler handler) {
+        CallRestApi.POST(context, "Comment", map, handler);
     }
 
-    static public void editHisExistingComment(Context context,String commentId ,String newComment,TextHttpResponseHandler handler) {
+    static public void editHisExistingComment(Context context, String commentId, String newComment, TextHttpResponseHandler handler) {
         HashMap map = new HashMap();
-        map.put("comment",newComment);
+        map.put("comment", newComment);
         CallRestApi.PUT(context, "Comment", map, commentId, handler);
     }
 
-    static public void deleteHisExistingComment(Context context , String commentId, TextHttpResponseHandler handler) {
-        CallRestApi.DELETE(context,"Comment",commentId,handler);
+    static public void deleteHisExistingComment(Context context, String commentId, TextHttpResponseHandler handler) {
+        CallRestApi.DELETE(context, "Comment", commentId, handler);
     }
 
     static public void rateExistingComment() {
@@ -249,8 +256,8 @@ public class UtilityRestApi {
         CallRestApi.PUT(context, "Offer", values, offerId, handler);
     }
 
-    static public void deleteExistingOffer(Context context , String offerId, TextHttpResponseHandler handler) {
-        CallRestApi.DELETE(context,"Offer",offerId,handler);
+    static public void deleteExistingOffer(Context context, String offerId, TextHttpResponseHandler handler) {
+        CallRestApi.DELETE(context, "Offer", offerId, handler);
     }
 
     //region Helping Methods
