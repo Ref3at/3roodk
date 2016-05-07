@@ -50,6 +50,11 @@ public class UtilityRestApi {
         CallRestApi.GET(context, "Offer", mapFinal, textHttpResponseHandler);
     }
 
+    static public void getUserByEmail(Context context, String email, TextHttpResponseHandler handler) {
+        HashMap map = new HashMap();
+        map.put("email", email);
+        CallRestApi.GET(context, "User", map, handler);
+    }
 //Anonymous user session
 
     // getOffersWithin was written

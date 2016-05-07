@@ -10,12 +10,14 @@ public class User {
     private String objectId;
     private String name;
     private String email;
+    private String password;
     private String createdAt;
     private String profileImgId;
     private String lat;
     private String lon;
     private String city;
     private String governate;
+    private String gender;
     private String type;
     private String favOfferIds;
     private String favShopIds;
@@ -199,5 +201,21 @@ public class User {
     }
     public void addOffersRate(String key, String Value) {
         this.offersRate.put(key,Value);
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
     }
 }
