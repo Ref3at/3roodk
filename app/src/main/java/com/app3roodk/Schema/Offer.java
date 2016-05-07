@@ -12,8 +12,8 @@ public class Offer {
     private String priceBefore;
     private String priceAfter;
     private String period;
-    private String viewNum;
-    private String favoriteNum;
+    private int viewNum;
+    private int favoriteNum;
     private String categoryId;
     private String shopId;
 
@@ -22,6 +22,8 @@ public class Offer {
     private String imgId; // later will be <img>
 
     // rate
+    private int numberUsersRated;
+    private int totalRate; // later will be <img>
 
 
     public String getObjectId() {
@@ -88,19 +90,17 @@ public class Offer {
         this.period = period;
     }
 
-    public String getViewNum() {
-        return viewNum;
-    }
+    public int getViewNum() { return viewNum;}
 
-    public void setViewNum(String viewNum) {
+    public void setViewNum(int viewNum) {
         this.viewNum = viewNum;
     }
 
-    public String getFavoriteNum() {
+    public int getFavoriteNum() {
         return favoriteNum;
     }
 
-    public void setFavoriteNum(String favoriteNum) {
+    public void setFavoriteNum(int favoriteNum) {
         this.favoriteNum = favoriteNum;
     }
 
@@ -134,5 +134,21 @@ public class Offer {
 
     public void setImgId(String imgId) {
         this.imgId = imgId;
+    }
+
+    public int getNumberUsersRated() {
+        return numberUsersRated;
+    }
+
+    public void setNumberUsersRated(int numberUsersRated) {
+        this.numberUsersRated = numberUsersRated;
+    }
+
+    public int getTotalRate() {
+        return totalRate;
+    }
+
+    public void setTotalRate(int totalRate) {
+        this.totalRate = totalRate;
     }
 }

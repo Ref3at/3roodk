@@ -14,6 +14,8 @@ public class Comments {
 
     private String commentRateId;
 
+    private int like;
+    private int dislike;
 
 
     public Comments() {
@@ -74,5 +76,21 @@ public class Comments {
 
     public void setCommentRate(String commentRate) {
         this.commentRateId = commentRate;
+    }
+
+    public int getDislike() {
+        return dislike;
+    }
+
+    public void setDislike(int dislike) {
+        this.dislike = dislike;
+    }
+
+    public int getLike() {
+        return like;
+    }
+
+    public void setLike(int like) {
+        this.like = like;
     }
 }
