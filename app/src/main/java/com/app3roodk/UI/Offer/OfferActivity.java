@@ -11,5 +11,9 @@ public class OfferActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_offer);
+
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.add_offer_container, new AddNewOfferFragment())
+                .commit();
     }
 }

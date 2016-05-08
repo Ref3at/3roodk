@@ -53,6 +53,8 @@ public class CategoriesActivity extends AppCompatActivity {
                         // Set item in checked state
                         menuItem.setChecked(true);
 
+                        Toast.makeText(getApplicationContext(), "item clicked", Toast.LENGTH_SHORT).show();
+
                         // TODO: handle navigation
 
                         // Closing drawer on item click

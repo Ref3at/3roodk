@@ -41,10 +41,16 @@
                 app:layout_scrollFlags="scroll|enterAlways"
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
-
         </android.support.design.widget.AppBarLayout>
 
-        <include layout="@layout/layout_categories"></include>
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <include layout="@layout/layout_categories" />
+
+        </FrameLayout>
 
 
     </android.support.design.widget.CoordinatorLayout>
