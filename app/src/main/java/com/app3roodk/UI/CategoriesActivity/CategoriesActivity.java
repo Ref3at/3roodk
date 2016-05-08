@@ -15,7 +15,10 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.app3roodk.R;
+import com.app3roodk.UI.Offer.OfferActivity;
 import com.app3roodk.UI.OffersCards.CardsActivity;
+import com.app3roodk.UI.Shop.ShopActivity;
+import com.app3roodk.UI.Signing.SignUpActivity;
 
 public class CategoriesActivity extends AppCompatActivity {
 
@@ -53,13 +56,33 @@ public class CategoriesActivity extends AppCompatActivity {
                         // Set item in checked state
                         menuItem.setChecked(true);
 
-                        Toast.makeText(getApplicationContext(), "item clicked", Toast.LENGTH_SHORT).show();
 
                         // TODO: handle navigation
 
-                        // Closing drawer on item click
-                        mDrawerLayout.closeDrawers();
-                        return true;
+                        //Check to see which item was clicked and perform the appropriate action.
+                        switch (menuItem.getItemId()) {
+
+                            case R.id.action_add_offers:
+                                startActivity(new Intent(CategoriesActivity.this, OfferActivity.class));
+                                return true;
+
+                            case R.id.action_signup:
+                                startActivity(new Intent(CategoriesActivity.this, SignUpActivity.class));
+                                return true;
+
+                            case R.id.action_createshop:
+                                startActivity(new Intent(CategoriesActivity.this, ShopActivity.class));
+                                return true;
+
+                            default:
+                                Toast.makeText(getApplicationContext(), "item clicked", Toast.LENGTH_SHORT).show();
+                                mDrawerLayout.closeDrawers();
+                                return true;
+
+                        }
+
+
+
                     }
                 });
 

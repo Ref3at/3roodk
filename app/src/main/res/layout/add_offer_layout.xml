@@ -128,51 +128,6 @@
             </LinearLayout>
 
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1.5" />
-
-                <com.weiwangcn.betterspinner.library.BetterSpinner
-                    android:id="@+id/gov_7spinner"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:layout_marginBottom="@dimen/activity_vertical_margin"
-                    android:layout_weight="6"
-                    android:hint="محافظه"
-                    android:paddingLeft="6dp"
-                    android:paddingRight="6dp" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1.5" />
-
-                <com.weiwangcn.betterspinner.library.BetterSpinner
-                    android:id="@+id/gov_spinner"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:layout_marginBottom="@dimen/activity_vertical_margin"
-                    android:layout_weight="6"
-                    android:hint="محافظه"
-                    android:paddingLeft="6dp"
-                    android:paddingRight="6dp" />
-
-            </LinearLayout>
 
 
         </LinearLayout>

@@ -18,8 +18,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.app3roodk.R;
+import com.app3roodk.UI.Offer.OfferActivity;
+import com.app3roodk.UI.Shop.ShopActivity;
+import com.app3roodk.UI.Signing.SignUpActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,6 +72,7 @@ public class CardsActivity extends AppCompatActivity {
             supportActionBar.setDisplayHomeAsUpEnabled(true);
         }
         // Set behavior of Navigation drawer
+        assert navigationView != null;
         navigationView.setNavigationItemSelectedListener(
                 new NavigationView.OnNavigationItemSelectedListener() {
                     // This method will trigger on item Click of navigation menu
@@ -77,14 +82,39 @@ public class CardsActivity extends AppCompatActivity {
                         menuItem.setChecked(true);
 
                         // TODO: handle navigation
+                        //Check to see which item was clicked and perform the appropriate action.
+                        switch (menuItem.getItemId()) {
 
-                        // Closing drawer on item click
-                        mDrawerLayout.closeDrawers();
-                        return true;
+                            case R.id.action_add_offers:
+                                startActivity(new Intent(CardsActivity.this, OfferActivity.class));
+                                return true;
+
+                            case R.id.action_signup:
+                                startActivity(new Intent(CardsActivity.this, SignUpActivity.class));
+                                return true;
+
+                            case R.id.action_createshop:
+                                startActivity(new Intent(CardsActivity.this, ShopActivity.class));
+                                return true;
+
+                            case R.id.action_go_to_home:
+                                startActivity(new Intent(CardsActivity.this, CardsActivity.class));
+                                return true;
+
+                            default:
+                                Toast.makeText(getApplicationContext(), "item clicked", Toast.LENGTH_SHORT).show();
+                                mDrawerLayout.closeDrawers();
+                                return true;
+
+                        }
+
+
+
                     }
                 });
         // Adding Floating Action Button to bottom right of main view
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        assert fab != null;
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
