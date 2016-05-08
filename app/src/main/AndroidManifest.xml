@@ -39,6 +39,7 @@
 
         </activity>
         <activity android:name=".UI.Signing.SignUpActivity"/>
+        <activity android:name=".UI.Signing.SignInActivity"/>
         <activity android:name=".MapsPathsActivity"/>
         <activity android:name=".MapsShopsActivity"/>
     </application>
