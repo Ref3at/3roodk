@@ -1,6 +1,7 @@
 package com.app3roodk.Back4App;
 
 import android.content.Context;
+import android.telecom.Call;
 
 import com.loopj.android.http.TextHttpResponseHandler;
 
@@ -115,7 +116,19 @@ public class UtilityRestApi {
     static public void sortActiveCategoryOfferByNearest() {
     }
 
-    static public void sortActiveCategoryOfferByRating() {
+    static public void sortActiveCategoryOfferByRating(Context context, String categoryName, TextHttpResponseHandler handler) {
+        HashMap mapTime = new HashMap();
+        mapTime.put("$gte", getCurrentDate());
+
+        HashMap mapFinal = new HashMap();
+        mapFinal.put("endTime", mapTime);
+
+        if (categoryName != null) {
+            HashMap mapCategory = new HashMap();
+            mapCategory.put("category", categoryName);
+            mapFinal.putAll(getNestedQuery("categoryId", "Category", "objectId", mapCategory));
+        }
+        CallRestApi.GET(context, "Offer", mapFinal, "-averageRate", handler);
     }
 
     static public void sortActiveCategoryOfferByDiscount() {
@@ -209,10 +222,12 @@ public class UtilityRestApi {
         CallRestApi.PUT(context, "User", map, userId, handler);
     }
 
-    static public void rateOffer() {
+    static public void rateOffer(Context context, String offerId, int rate, int newAverage, TextHttpResponseHandler handler) {
+        CallRestApi.INCREMENT_TWO_AND_UPDATE(context, "Offer", offerId, "totalRate", rate, "numberUsersRated", 1, newAverage, handler);
     } // int value from 1 to 5 stars *****
 
-    static public void changeRatedOffer() {
+    static public void changeRatedOffer(Context context, String offerId, int differenceRate, int newAverage, TextHttpResponseHandler handler) {
+        CallRestApi.INCREMENT_AND_UPDATE(context, "Offer", offerId, "totalRate", differenceRate, newAverage, handler);
     }
 
     static public void addNewComment(Context context, HashMap map, TextHttpResponseHandler handler) {
@@ -229,7 +244,8 @@ public class UtilityRestApi {
         CallRestApi.DELETE(context, "Comment", commentId, handler);
     }
 
-    static public void rateExistingComment() {
+    static public void rateExistingComment(Context context, String commentId, int like, int dislike, TextHttpResponseHandler handler) {
+        CallRestApi.INCREMENT_TWO(context, "Comment", commentId, "like", like, "dislike", dislike, handler);
     } // boolean value (like or dislike)
 
 

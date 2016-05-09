@@ -101,6 +101,105 @@ public class CallRestApi {
         client.put(context, context.getString(R.string.URI) + className + "/" + objectId, entity, "application/json", handler);
     }
 
+    static public void INCREMENT_TWO(Context context, String className, String objectId, String columnName1, int amount1, String columnName2, int amount2, TextHttpResponseHandler handler) {
+        AsyncHttpClient client = new AsyncHttpClient();
+        client.addHeader("X-Parse-Application-Id", context.getString(R.string.PARSE_APPLICATION_ID));
+        client.addHeader("X-Parse-REST-API-Key", context.getString(R.string.PARSE_REST_API_KEY));
+        if (objectId.isEmpty()) {
+            Log.e(TAG, "No objectId exits");
+            return;
+        }
+        if (columnName1.isEmpty()) {
+            Log.e(TAG, "Column name1 is empty");
+            return;
+        }
+        if (columnName2.isEmpty()) {
+            Log.e(TAG, "Column name2 is empty");
+            return;
+        }
+        HashMap map1 = new HashMap();
+        map1.put("__op", "Increment");
+        map1.put("amount", amount1);
+        HashMap map2 = new HashMap();
+        map2.put("__op", "Increment");
+        map2.put("amount", amount2);
+        HashMap mapFinal = new HashMap();
+        mapFinal.put(columnName1, map1);
+        mapFinal.put(columnName2, map2);
+        StringEntity entity;
+        try {
+            entity = new StringEntity(new Gson().toJson(mapFinal));
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+            return;
+        }
+        client.put(context, context.getString(R.string.URI) + className + "/" + objectId, entity, "application/json", handler);
+    }
+
+    static public void INCREMENT_AND_UPDATE(Context context, String className, String objectId, String columnName1, int amount1,  int averageRate, TextHttpResponseHandler handler) {
+        AsyncHttpClient client = new AsyncHttpClient();
+        client.addHeader("X-Parse-Application-Id", context.getString(R.string.PARSE_APPLICATION_ID));
+        client.addHeader("X-Parse-REST-API-Key", context.getString(R.string.PARSE_REST_API_KEY));
+        if (objectId.isEmpty()) {
+            Log.e(TAG, "No objectId exits");
+            return;
+        }
+        if (columnName1.isEmpty()) {
+            Log.e(TAG, "Column name1 is empty");
+            return;
+        }
+        HashMap map1 = new HashMap();
+        map1.put("__op", "Increment");
+        map1.put("amount", amount1);
+        HashMap mapFinal = new HashMap();
+        mapFinal.put(columnName1, map1);
+        mapFinal.put("averageRate", averageRate);
+        StringEntity entity;
+        try {
+            entity = new StringEntity(new Gson().toJson(mapFinal));
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+            return;
+        }
+        client.put(context, context.getString(R.string.URI) + className + "/" + objectId, entity, "application/json", handler);
+    }
+
+    static public void INCREMENT_TWO_AND_UPDATE(Context context, String className, String objectId, String columnName1, int amount1, String columnName2, int amount2, int averageRate, TextHttpResponseHandler handler) {
+        AsyncHttpClient client = new AsyncHttpClient();
+        client.addHeader("X-Parse-Application-Id", context.getString(R.string.PARSE_APPLICATION_ID));
+        client.addHeader("X-Parse-REST-API-Key", context.getString(R.string.PARSE_REST_API_KEY));
+        if (objectId.isEmpty()) {
+            Log.e(TAG, "No objectId exits");
+            return;
+        }
+        if (columnName1.isEmpty()) {
+            Log.e(TAG, "Column name1 is empty");
+            return;
+        }
+        if (columnName2.isEmpty()) {
+            Log.e(TAG, "Column name2 is empty");
+            return;
+        }
+        HashMap map1 = new HashMap();
+        map1.put("__op", "Increment");
+        map1.put("amount", amount1);
+        HashMap map2 = new HashMap();
+        map2.put("__op", "Increment");
+        map2.put("amount", amount2);
+        HashMap mapFinal = new HashMap();
+        mapFinal.put(columnName1, map1);
+        mapFinal.put(columnName2, map2);
+        mapFinal.put("averageRate", averageRate);
+        StringEntity entity;
+        try {
+            entity = new StringEntity(new Gson().toJson(mapFinal));
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+            return;
+        }
+        client.put(context, context.getString(R.string.URI) + className + "/" + objectId, entity, "application/json", handler);
+    }
+
     static public void DELETE(Context context, String ClassName, String objectId, TextHttpResponseHandler handler) {
         AsyncHttpClient client = new AsyncHttpClient();
         client.addHeader("X-Parse-Application-Id", context.getString(R.string.PARSE_APPLICATION_ID));
