@@ -19,4 +19,20 @@
     <string name="male">ذكر</string>
     <string name="female">أنثى</string>
     <string name="user_register">تسجيل</string>
+    <string name="left_time">الوقت المتبقى</string>
+    <string name="price">السعر</string>
+    <string name="day">يوم</string>
+    <string name="hour">ساعة</string>
+    <string name="minute">دقيقة</string>
+    <string name="before">قبل</string>
+    <string name="after">بعد</string>
+    <string name="sale">الخصم</string>
+    <string name="desc">وصف</string>
+    <string name="shop_name">اسم المحل</string>
+    <string name="work_time">مواعيد العمل</string>
+    <string name="address">العنوان</string>
+    <string name="rate">التقييم</string>
+    <string name="shop_way">طريق المحل</string>
+    <string name="see_way">شوف الطريق</string>
+    <string name="mobile">الموبايل</string>
 </resources>
