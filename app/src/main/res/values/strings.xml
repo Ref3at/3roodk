@@ -35,4 +35,6 @@
     <string name="shop_way">طريق المحل</string>
     <string name="see_way">شوف الطريق</string>
     <string name="mobile">الموبايل</string>
+    <string name="title_activity_full_screen_image_slider">FullScreenImageSlider</string>
+    <string name="section_format">Hello World from section: %1$d</string>
 </resources>

@@ -1,14 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.app3roodk">
-    <permission android:name="com.app3roodk.permission.MAPS_RECEIVE"
+
+    <permission
+        android:name="com.app3roodk.permission.MAPS_RECEIVE"
         android:protectionLevel="signature" />
+
     <uses-permission android:name="com.app3roodk.permission.MAPS_RECEIVE" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -17,7 +21,8 @@
         android:theme="@style/AppTheme">
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="@string/key_map"/>
+            android:value="@string/key_map" />
+
         <activity android:name=".UI.OffersCards.CardsActivity" />
         <activity
             android:name=".SplashActivity"
@@ -27,21 +32,25 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
         <activity android:name=".UI.PositioningActivity.PositioningActivity" />
         <activity android:name=".UI.CategoriesActivity.CategoriesActivity" />
         <activity android:name=".UI.DetailActivity.DetailActivity" />
-        <activity android:name=".UI.Shop.ShopActivity">
-
+        <activity android:name=".UI.Shop.ShopActivity"></activity>
+        <activity android:name=".UI.Offer.OfferActivity"></activity>
+        <activity android:name=".UI.Signing.SignUpActivity" />
+        <activity android:name=".UI.Signing.SignInActivity" />
+        <activity android:name=".MapsPathsActivity" />
+        <activity android:name=".MapsShopsActivity" />
+        <activity
+            android:name=".UI.FullScreenImage.FullScreenImageSlider"
+            android:label="@string/title_activity_full_screen_image_slider"
+            android:parentActivityName=".UI.DetailActivity.DetailActivity"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.app3roodk.UI.DetailActivity.DetailActivity" />
         </activity>
-        <activity android:name=".UI.Offer.OfferActivity">
-
-        </activity>
-        <activity android:name=".UI.Signing.SignUpActivity"/>
-        <activity android:name=".UI.Signing.SignInActivity"/>
-        <activity android:name=".MapsPathsActivity"/>
-        <activity android:name=".MapsShopsActivity"/>
     </application>
 
 </manifest>
