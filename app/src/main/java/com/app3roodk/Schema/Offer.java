@@ -1,6 +1,5 @@
 package com.app3roodk.Schema;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
@@ -8,21 +7,21 @@ import java.util.ArrayList;
  */
 public class Offer {
     private String objectId;
-    private String title;
+    private String title; //*
     private String updatedAt;
     private String createdAt;
-    private String desc;
-    private String priceBefore;
-    private String priceAfter;
-    private String period;
+    private String desc; //*
+    private String priceBefore; //*
+    private String priceAfter; //*
+    private String period; //*
     private int viewNum;
     private int favoriteNum;
-    private String categoryId;
-    private String shopId;
-    private String shopName;
+    private String categoryId; //*
+    private String shopId; //*
+    private String shopName; //*
 
     // ref3t add
-    private ArrayList<String> imagePaths; // later will be <img>
+    private ArrayList<String> imagePaths; // later will be <img> //*
 
     // rate
     private int numberUsersRated;

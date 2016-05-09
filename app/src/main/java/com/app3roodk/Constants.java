@@ -13,5 +13,27 @@ public class Constants {
     public static final String KEY_CURRENT_LATITUDE = "LATITUDE";
     public static final String KEY_CURRENT_LONGITUDE = "LONGITUDE";
 
+    // imgur
+
+    public static final String MY_IMGUR_CLIENT_ID = "62f6fca2c114a98";
+    public static final String MY_IMGUR_CLIENT_SECRET = "d44e58a64a7b38b2f2e70a5c4c9d2bea021ff42f";
+    //The arbitrary redirect url (Authorization callback URL), ex. awesome://imgur or http://android,
+    // declared when registering your app with Imgur API
+    public static final String MY_IMGUR_REDIRECT_URL = "";
+
+
+    // categories IDs form server
+
+    public static final String CATEGORY_SHOES = "CHaeB5FK59";
+    public static final String CATEGORY_CLOTHES = "MceqjIY4Jn";
+    public static final String CATEGORY_ACCESSORIES = "f8MBwOMUZZ";
+    public static final String CATEGORY_ELECTRICAl_TOOLS = "ICXT6WBpnU";
+    public static final String CATEGORY_COMPUTERS = "Wc7B88oc37";
+    public static final String CATEGORY_MOBILES = "YQU2zlAjN5";
+    public static final String CATEGORY_CAFES = "rA2RtUvkWQ";
+    public static final String CATEGORY_SUPER_MARKET = "CImwmoS4YT";
+    public static final String CATEGORY_RESTAURANTS = "vnvH1EoyBb";
+
+
 
 }

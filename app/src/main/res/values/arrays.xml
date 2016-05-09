@@ -2,15 +2,15 @@
 <resources>
     <string-array name="cat_array">
 
-        <item>Restaurants</item>
-        <item>Super market</item>
-        <item>cafes</item>
-        <item>Mobiles</item>
-        <item>Computers</item>
-        <item>Electrical Tools</item>
-        <item>Accessories</item>
-        <item>Clothes</item>
-        <item>Shoes</item>
+        <item>مطاعم</item>
+        <item>سوبر ماركت</item>
+        <item>كافيه</item>
+        <item>موبايل</item>
+        <item>كمبيوتر</item>
+        <item>أدوات كهربائيه</item>
+        <item>إكسسوار</item>
+        <item>ملابس</item>
+        <item>أحذيه</item>
     </string-array>
 
     <string-array name="governates">
@@ -26,19 +26,19 @@
     </string-array>
 
     <string-array name="days_array">
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-        <item>4</item>
-        <item>5</item>
-        <item>6</item>
-        <item>7</item>
-        <item>8</item>
-        <item>9</item>
-        <item>10</item>
-        <item>11</item>
-        <item>12</item>
-        <item>13</item>
-        <item>14</item>
+        <item>يوم</item>
+        <item>يومين</item>
+        <item>3 أيام</item>
+        <item>4 أيام</item>
+        <item>5 أيام</item>
+        <item>6 أيام</item>
+        <item>أسبوع</item>
+        <item>8 أيام</item>
+        <item>9 أيام</item>
+        <item>10 أيام</item>
+        <item>11 يوم</item>
+        <item>12 يوم</item>
+        <item>يوم</item>
+        <item>أسبوعين</item>
     </string-array>
 </resources>

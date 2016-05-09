@@ -18,7 +18,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="150dp">
 
-
                 <LinearLayout
                     android:id="@+id/imgscontainer"
                     android:layout_width="wrap_content"
@@ -33,47 +32,45 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:background="#00ffffff"
-                        android:src="@drawable/discount" />
+                        android:src="@drawable/icon" />
 
 
                 </LinearLayout>
-
-
             </HorizontalScrollView>
 
 
             <android.support.design.widget.TextInputLayout
-                android:id="@+id/input_laylout_shopname"
+                android:id="@+id/input_layout_offername"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
 
                 <EditText
-                    android:id="@+id/inpiyut_shopname"
+                    android:id="@+id/input_offername"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
                     android:gravity="center"
-                    android:hint="اسم المحل"
+                    android:hint="اسم العرض"
                     android:inputType="textCapWords"
+                    android:lines="1"
                     android:singleLine="true" />
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
-                android:id="@+id/input_layout_7shopname"
+                android:id="@+id/input_layout_desc"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
 
                 <EditText
-                    android:id="@+id/input_shopnam4e"
+                    android:id="@+id/input_desc"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
                     android:gravity="center"
-                    android:hint="اسم المحل"
-                    android:inputType="textCapWords"
-                    android:singleLine="true" />
+                    android:hint="وصف العرض"
+                    android:inputType="textCapWords" />
             </android.support.design.widget.TextInputLayout>
 
             <LinearLayout
@@ -83,43 +80,44 @@
 
 
                 <TextView
+                    android:id="@+id/discount_percentage"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1.5"
                     android:background="@color/colorPrimaryDark" />
 
                 <android.support.design.widget.TextInputLayout
-                    android:id="@+id/input_layout_shopname5"
+                    android:id="@+id/input_layout_priceafter"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="3">
 
 
                     <EditText
-                        android:id="@+id/input_shopname4"
+                        android:id="@+id/input_priceafter"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_margin="10dp"
                         android:gravity="center"
-                        android:hint="اسم المحل"
+                        android:hint="السعر بعد الخصم"
                         android:inputType="textCapWords"
                         android:singleLine="true" />
                 </android.support.design.widget.TextInputLayout>
 
                 <android.support.design.widget.TextInputLayout
-                    android:id="@+id/input_layout_shopname"
+                    android:id="@+id/input_layout_pricebefore"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="3">
 
 
                     <EditText
-                        android:id="@+id/input_shopname"
+                        android:id="@+id/input_pricebefore"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_margin="10dp"
                         android:gravity="center"
-                        android:hint="اسم المحل"
+                        android:hint="السعر قبل الخصم"
                         android:inputType="textCapWords"
                         android:singleLine="true" />
                 </android.support.design.widget.TextInputLayout>
@@ -127,34 +125,90 @@
 
             </LinearLayout>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1" />
 
 
+                <com.weiwangcn.betterspinner.library.BetterSpinner
+                    android:id="@+id/duration_spinner"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/activity_vertical_margin"
+                    android:layout_weight="2"
+                    android:gravity="center_horizontal"
+                    android:hint="مده العرض" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="مده العرض" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1" />
+
+
+                <com.weiwangcn.betterspinner.library.BetterSpinner
+                    android:id="@+id/cat_spinner"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/activity_vertical_margin"
+                    android:layout_weight="2"
+                    android:gravity="center_horizontal"
+                    android:hint="اختار القسم" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="اختار القسم" />
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_alignParentBottom="true"
+                android:layout_margin="5dp"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btn_previewadd"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="مراجعه" />
+
+                <Button
+                    android:id="@+id/btn_publishadd"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="ضيف إعلان" />
+
+            </LinearLayout>
 
         </LinearLayout>
 
 
     </ScrollView>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_alignParentBottom="true"
-        android:layout_margin="5dp"
-        android:orientation="horizontal">
-
-        <Button
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:text="مراجعه" />
-
-        <Button
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:text="تسجيل" />
-
-    </LinearLayout>
 
 
 </RelativeLayout>

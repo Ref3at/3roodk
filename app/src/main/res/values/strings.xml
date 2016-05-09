@@ -37,4 +37,15 @@
     <string name="mobile">الموبايل</string>
     <string name="title_activity_full_screen_image_slider">FullScreenImageSlider</string>
     <string name="section_format">Hello World from section: %1$d</string>
+
+    <!-- add offer -->
+    <string name="hint_name">اسم العرض</string>
+    <string name="hint_desc">وصف العرض</string>
+    <string name="hint_priceBefore">السعر قبل الخصم</string>
+    <string name="hint_prceAfter">السعر بعد الخصم</string>
+    <string name="err_msg_name">ادخل اسم صحيح</string>
+    <string name="err_msg_desc">ادخل وصف مناسب</string>
+    <string name="err_msg_priceBefore">ادخل سعر حقيقى</string>
+    <string name="err_msg_priceAfter">ادخل سعر مناسب</string>
+
 </resources>
