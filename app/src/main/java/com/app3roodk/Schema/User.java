@@ -12,7 +12,7 @@ public class User {
     private String email;
     private String password;
     private String createdAt;
-    private String profileImgId;
+    private String profileImg;
     private String lat;
     private String lon;
     private String city;
@@ -34,12 +34,12 @@ public class User {
     public User() {
     }
 
-    public User(String objectId, String name, String email, String createdAt, String profileImgId, String lat, String lon, String city, String governate, String type, String favOfferIds, String favShopIds, String planId, String subsCategoryIds,HashMap<String,String> commentsRate,HashMap<String,String> offersRate) {
+    public User(String objectId, String name, String email, String createdAt, String profileImg, String lat, String lon, String city, String governate, String type, String favOfferIds, String favShopIds, String planId, String subsCategoryIds, HashMap<String,String> commentsRate, HashMap<String,String> offersRate) {
         this.objectId = objectId;
         this.name = name;
         this.email = email;
         this.createdAt = createdAt;
-        this.profileImgId = profileImgId;
+        this.profileImg = profileImg;
         this.lat = lat;
         this.lon = lon;
         this.city = city;
@@ -81,12 +81,12 @@ public class User {
         this.createdAt = createdAt;
     }
 
-    public String getProfileImgId() {
-        return profileImgId;
+    public String getProfileImg() {
+        return profileImg;
     }
 
-    public void setProfileImgId(String profileImgId) {
-        this.profileImgId = profileImgId;
+    public void setProfileImg(String profileImg) {
+        this.profileImg = profileImg;
     }
 
     public String getLat() {

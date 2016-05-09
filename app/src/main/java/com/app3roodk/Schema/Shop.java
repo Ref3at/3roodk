@@ -1,5 +1,7 @@
 package com.app3roodk.Schema;
 
+import java.util.HashMap;
+
 /**
  * Created by ZooM- on 4/24/2016.
  */
@@ -14,6 +16,7 @@ public class Shop {
     private String governate;
     private String address;
     private String userId;
+    private HashMap<String, String> contacts;
 
     //ref3t add
     private String logoId;
@@ -122,5 +125,27 @@ public class Shop {
 
     public void setWorkingTime(String workingTime) {
         this.workingTime = workingTime;
+    }
+
+    public HashMap<String, String> getContacts() {
+        if (contacts == null)
+            contacts = new HashMap<>();
+        return contacts;
+    }
+
+    public void setContacts(HashMap<String, String> contacts) {
+        this.contacts = contacts;
+    }
+
+    public void addContacts(HashMap<String, String> contacts) {
+        if (contacts == null)
+            contacts = new HashMap<>();
+        this.contacts.putAll(contacts);
+    }
+
+    public void addContact(String key, String value) {
+        if (contacts == null)
+            contacts = new HashMap<>();
+        this.contacts.put(key, value);
     }
 }

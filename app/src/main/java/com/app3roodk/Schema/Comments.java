@@ -10,10 +10,6 @@ public class Comments {
     private String commentText;
     private String userId;
     private String offerId;
-
-
-    private String commentRateId;
-
     private int like;
     private int dislike;
 
@@ -21,13 +17,14 @@ public class Comments {
     public Comments() {
     }
 
-    public Comments(String objectId, String time, String commentText, String userId, String offerId, String commentRate) {
+    public Comments(String objectId, String time, String commentText, String userId, String offerId,int like, int dislike) {
         this.objectId = objectId;
         this.time = time;
         this.commentText = commentText;
         this.userId = userId;
         this.offerId = offerId;
-        this.commentRateId = commentRate;
+        this.like = like;
+        this.dislike = dislike;
     }
 
     public String getObjectId() {
@@ -68,14 +65,6 @@ public class Comments {
 
     public void setOfferId(String offerId) {
         this.offerId = offerId;
-    }
-
-    public String getCommentRate() {
-        return commentRateId;
-    }
-
-    public void setCommentRate(String commentRate) {
-        this.commentRateId = commentRate;
     }
 
     public int getDislike() {

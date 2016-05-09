@@ -1,5 +1,8 @@
 package com.app3roodk.Schema;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+
 /**
  * Created by ZooM- on 4/24/2016.
  */
@@ -16,15 +19,15 @@ public class Offer {
     private int favoriteNum;
     private String categoryId;
     private String shopId;
+    private String shopName;
 
     // ref3t add
-    private String offerRateId;
-    private String imgId; // later will be <img>
+    private ArrayList<String> imagePaths; // later will be <img>
 
     // rate
     private int numberUsersRated;
     private int totalRate; // later will be <img>
-
+    private int averageRate;
 
     public String getObjectId() {
         return objectId;
@@ -90,7 +93,9 @@ public class Offer {
         this.period = period;
     }
 
-    public int getViewNum() { return viewNum;}
+    public int getViewNum() {
+        return viewNum;
+    }
 
     public void setViewNum(int viewNum) {
         this.viewNum = viewNum;
@@ -120,22 +125,6 @@ public class Offer {
         this.shopId = shopId;
     }
 
-    public String getOfferRateId() {
-        return offerRateId;
-    }
-
-    public void setOfferRateId(String offerRateId) {
-        this.offerRateId = offerRateId;
-    }
-
-    public String getImgId() {
-        return imgId;
-    }
-
-    public void setImgId(String imgId) {
-        this.imgId = imgId;
-    }
-
     public int getNumberUsersRated() {
         return numberUsersRated;
     }
@@ -150,5 +139,43 @@ public class Offer {
 
     public void setTotalRate(int totalRate) {
         this.totalRate = totalRate;
+    }
+
+    public ArrayList<String> getImagePaths() {
+        if(imagePaths == null)
+            imagePaths = new ArrayList<>();
+        return imagePaths;
+    }
+
+    public void setImagePaths(ArrayList<String> imagePaths) {
+        this.imagePaths = imagePaths;
+    }
+
+    public void addImagePath(String imagePath) {
+        if (imagePaths == null)
+            imagePaths = new ArrayList<>();
+        imagePaths.add(imagePath);
+    }
+
+    public void addImagePaths(ArrayList<String> imagePaths) {
+        if (imagePaths == null)
+            imagePaths = new ArrayList<>();
+        imagePaths.addAll(imagePaths);
+    }
+
+    public int getAverageRate() {
+        return averageRate;
+    }
+
+    public void setAverageRate(int averageRate) {
+        this.averageRate = averageRate;
+    }
+
+    public String getShopName() {
+        return shopName;
+    }
+
+    public void setShopName(String shopName) {
+        this.shopName = shopName;
     }
 }
