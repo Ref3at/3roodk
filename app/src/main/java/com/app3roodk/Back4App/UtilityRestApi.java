@@ -45,7 +45,7 @@ public class UtilityRestApi {
         if (CategoryName != null) {
             HashMap mapCategory = new HashMap();
             mapCategory.put("category", CategoryName);
-            mapFinal.putAll(getNestedQuery("categoryId", "Category", "objectId", mapCategory));
+            mapFinal.putAll(getNestedQuery("CategoryId", "Category", "objectId", mapCategory));
         }
 
         CallRestApi.GET(context, "Offer", mapFinal, textHttpResponseHandler);
@@ -76,13 +76,13 @@ public class UtilityRestApi {
         mapTime.put("$gte", getCurrentDate());
 
         HashMap mapFinal = new HashMap();
-        mapFinal.putAll(getNestedQuery("shopId", "Shop", "objectId", mapShopPlace));
+        mapFinal.putAll(getNestedQuery("ShopId", "Shop", "objectId", mapShopPlace));
         mapFinal.put("endTime", mapTime);
 
         if (categoryName != null) {
             HashMap mapCategory = new HashMap();
             mapCategory.put("category", categoryName);
-            mapFinal.putAll(getNestedQuery("categoryId", "Category", "objectId", mapCategory));
+            mapFinal.putAll(getNestedQuery("CategoryId", "Category", "objectId", mapCategory));
         }
 
         CallRestApi.GET(context, "Offer", mapFinal, handler);
@@ -108,7 +108,7 @@ public class UtilityRestApi {
         if (categoryName != null) {
             HashMap mapCategory = new HashMap();
             mapCategory.put("category", categoryName);
-            mapFinal.putAll(getNestedQuery("categoryId", "Category", "objectId", mapCategory));
+            mapFinal.putAll(getNestedQuery("CategoryId", "Category", "objectId", mapCategory));
         }
         CallRestApi.GET(context, "Offer", mapFinal, "-createdAt", handler);
     }
@@ -126,7 +126,7 @@ public class UtilityRestApi {
         if (categoryName != null) {
             HashMap mapCategory = new HashMap();
             mapCategory.put("category", categoryName);
-            mapFinal.putAll(getNestedQuery("categoryId", "Category", "objectId", mapCategory));
+            mapFinal.putAll(getNestedQuery("CategoryId", "Category", "objectId", mapCategory));
         }
         CallRestApi.GET(context, "Offer", mapFinal, "-averageRate", handler);
     }
@@ -144,7 +144,7 @@ public class UtilityRestApi {
         if (categoryName != null) {
             HashMap mapCategory = new HashMap();
             mapCategory.put("category", categoryName);
-            mapFinal.putAll(getNestedQuery("categoryId", "Category", "objectId", mapCategory));
+            mapFinal.putAll(getNestedQuery("CategoryId", "Category", "objectId", mapCategory));
         }
         CallRestApi.GET(context, "Offer", mapFinal, "endTime", handler);
     } //later
@@ -175,7 +175,7 @@ public class UtilityRestApi {
         mapTime.put("$gte", getCurrentDate());
 
         HashMap mapFinal = new HashMap();
-        mapFinal.putAll(getNestedQuery("shopId", "Shop", "objectId", mapShop));
+        mapFinal.putAll(getNestedQuery("ShopId", "Shop", "objectId", mapShop));
         mapFinal.put("endTime", mapTime);
 
         CallRestApi.GET(context, "Offer", mapFinal, handler);
@@ -189,7 +189,7 @@ public class UtilityRestApi {
         mapTime.put("$lte", getCurrentDate());
 
         HashMap mapFinal = new HashMap();
-        mapFinal.putAll(getNestedQuery("shopId", "Shop", "objectId", mapShop));
+        mapFinal.putAll(getNestedQuery("ShopId", "Shop", "objectId", mapShop));
         mapFinal.put("endTime", mapTime);
 
         CallRestApi.GET(context, "Offer", mapFinal, handler);

@@ -108,6 +108,8 @@ public class ObjectConverter {
                 shop.setLogoId(jsonObject.getString("logoId"));
             if (jsonObject.has("userId") && !jsonObject.isNull("userId"))
                 shop.setUserId(jsonObject.getString("userId"));
+            if (jsonObject.has("workingTime") && !jsonObject.isNull("workingTime"))
+                shop.setWorkingTime(jsonObject.getString("workingTime"));
         } catch (Exception ex) {
             Log.e(TAG, ex.getMessage());
         } finally {

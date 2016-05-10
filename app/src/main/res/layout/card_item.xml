@@ -14,6 +14,7 @@
   ~ limitations under the License.
   -->
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/card_view"
     style="?attr/cardStyle"
     android:layout_width="match_parent"
@@ -34,8 +35,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/card_image_height"
             android:scaleType="centerCrop"
-            android:src="@drawable/offo" />
-
+            tools:src="@drawable/offo" />
 
         <TextView
             android:id="@+id/card_text"
@@ -48,7 +48,7 @@
             android:layout_marginTop="6dp"
             android:ellipsize="end"
             android:singleLine="true"
-            android:text="تشكيله من الملابس المستورده"
+            tools:text="تشكيله من الملابس المستورده"
             android:textColor="@color/dark_grey"
             android:textSize="22sp"
             android:textStyle="bold" />
@@ -71,13 +71,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="#00ffffff"
-                    android:src="@drawable/ic_location_on_black_24dp" />
+                    tools:src="@drawable/ic_location_on_black_24dp" />
 
                 <TextView
+                    android:id="@+id/card_distance"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="5dp"
-                    android:text="0.6 km"
+                    tools:text="0.6 km"
                     android:textColor="#000"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -91,20 +92,22 @@
                 android:src="@android:drawable/btn_star_big_on" />
 
             <TextView
+                android:id="@+id/card_rate"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_marginRight="8dp"
                 android:gravity="center_vertical"
                 android:padding="5dp"
-                android:text="4.6"
+                tools:text="4.6"
                 android:textColor="#000" />
 
             <TextView
+                android:id="@+id/card_shop_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_marginRight="3dp"
-                android:text="الغرباوى"
+                tools:text="الغرباوى"
                 android:textColor="#000"
                 android:textSize="18sp" />
 
@@ -164,17 +167,17 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="ثانيه"
+                    android:text="@string/minute"
                     android:textColor="#fd6363"
-
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
                 <TextView
+                    android:id="@+id/card_txt_minute"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="35"
+                    tools:text="35"
                     android:textColor="#fd6363"
                     android:textSize="26sp"
                     android:textStyle="bold" />
@@ -201,17 +204,17 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="دقيقه"
+                    android:text="@string/hour"
                     android:textColor="#55dc5e"
                     android:textSize="16sp"
-
                     android:textStyle="bold" />
 
                 <TextView
+                    android:id="@+id/card_txt_hour"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="03"
+                    tools:text="03"
                     android:textColor="#55dc5e"
                     android:textSize="26sp"
 
@@ -237,16 +240,17 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="ساعه"
+                    android:text="@string/day"
                     android:textColor="#2035f7"
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
                 <TextView
+                    android:id="@+id/card_txt_day"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="18"
+                    tools:text="18"
                     android:textColor="#2035f7"
                     android:textSize="26sp"
 

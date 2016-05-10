@@ -119,7 +119,7 @@ public class CategoriesActivity extends AppCompatActivity {
             case R.id.imageButton1:
 
                 i.putExtra("ref", "https://ads-app.firebaseio.com/cat/resturant");
-                i.putExtra("titl", "مطاعم");
+                i.putExtra("titl", "Restaurants");
 
 
                 break;
@@ -134,35 +134,35 @@ public class CategoriesActivity extends AppCompatActivity {
             case R.id.imageButton3:
 
                 i.putExtra("ref", "https://ads-app.firebaseio.com/cat/resturant");
-                i.putExtra("titl", "أدوات كهربائيه");
+                i.putExtra("titl", "Electrical Tools");
 
 
                 break;
             case R.id.imageButton4:
 
                 i.putExtra("ref", "https://ads-app.firebaseio.com/cat/resturant");
-                i.putExtra("titl", "موبايل");
+                i.putExtra("titl", "Mobiles");
 
 
                 break;
             case R.id.imageButton5:
 
                 i.putExtra("ref", "https://ads-app.firebaseio.com/cat/resturant");
-                i.putExtra("titl", "كمبيوتر");
+                i.putExtra("titl", "Computers");
 
 
                 break;
             case R.id.imageButton6:
 
                 i.putExtra("ref", "https://ads-app.firebaseio.com/cat/resturant");
-                i.putExtra("titl", "أحذيه");
+                i.putExtra("titl", "Shoes");
 
 
                 break;
             case R.id.imageButton7:
 
                 i.putExtra("ref", "https://ads-app.firebaseio.com/cat/resturant");
-                i.putExtra("titl", "ملابس");
+                i.putExtra("titl", "Clothes");
 
 
                 break;
@@ -170,7 +170,7 @@ public class CategoriesActivity extends AppCompatActivity {
 
 
                 i.putExtra("ref", "https://ads-app.firebaseio.com/cat/resturant");
-                i.putExtra("titl", "سوبر ماركت");
+                i.putExtra("titl", "Super market");
 
 
                 break;

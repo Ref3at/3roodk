@@ -186,9 +186,9 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
                         public void run() {
                             txtDay.setText(String.valueOf((int) (timeInMilliseconds / daysInMilli)));
                             timeInMilliseconds = timeInMilliseconds % daysInMilli;
-                            txtMinute.setText(String.valueOf((int) (timeInMilliseconds / hoursInMilli)));
+                            txtHour.setText(String.valueOf((int) (timeInMilliseconds / hoursInMilli)));
                             timeInMilliseconds = timeInMilliseconds % hoursInMilli;
-                            txtHour.setText(String.valueOf((int) (timeInMilliseconds / minutesInMilli)));
+                            txtMinute.setText(String.valueOf((int) (timeInMilliseconds / minutesInMilli)));
                         }
                     });
                     Thread.sleep(30000);
