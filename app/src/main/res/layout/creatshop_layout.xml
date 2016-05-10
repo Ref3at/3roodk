@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+
+    android:layoutDirection="rtl">
 
 
     <LinearLayout
@@ -36,105 +37,22 @@
                 android:singleLine="true" />
         </android.support.design.widget.TextInputLayout>
 
-        <com.rengwuxian.materialedittext.MaterialEditText
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/input_layout_workingtime"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Floating Label"
-            app:met_floatingLabel="normal" />
+            android:layout_height="wrap_content">
 
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_margin="5dp"
-            android:text="مواعيد العمل جميع ايام الاسبوع" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:gravity="center"
-            android:orientation="horizontal">
-
-            <Spinner
-                android:layout_width="50dp"
-                android:layout_height="match_parent" />
 
             <EditText
-                android:layout_width="50dp"
-                android:layout_height="match_parent" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                android:text="إلى" />
-
-            <Spinner
-                android:layout_width="50dp"
-                android:layout_height="match_parent" />
-
-            <EditText
-                android:layout_width="50dp"
-                android:layout_height="match_parent" />
-
-            <TextView
-                android:layout_width="wrap_content"
+                android:id="@+id/input_workingtime"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="من" />
-
-
-        </LinearLayout>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_margin="5dp"
-            android:text="مواعيد العمل يوم الجمعه" />
-
-        <CheckBox
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:text="مغلق" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:gravity="center"
-            android:orientation="horizontal">
-
-            <Spinner
-                android:layout_width="50dp"
-                android:layout_height="match_parent" />
-
-            <EditText
-                android:layout_width="50dp"
-                android:layout_height="match_parent" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                android:text="إلى" />
-
-            <Spinner
-                android:layout_width="50dp"
-                android:layout_height="match_parent" />
-
-            <EditText
-                android:layout_width="50dp"
-                android:layout_height="match_parent" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="من" />
-
-        </LinearLayout>
+                android:layout_margin="10dp"
+                android:gravity="center"
+                android:hint="واعيد عمل المحل"
+                android:inputType="textCapWords"
+                android:singleLine="true" />
+        </android.support.design.widget.TextInputLayout>
 
 
         <LinearLayout
@@ -144,17 +62,26 @@
             android:layout_margin="10dp"
             android:orientation="horizontal">
 
-            <ImageButton
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:src="@android:drawable/ic_dialog_dialer" />
-
-            <CheckBox
+            <Switch
+                android:id="@+id/hava_alogo_switch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:layout_margin="5dp"
                 android:gravity="center"
+                android:layoutDirection="ltr"
                 android:text="لديك لوجو" />
+
+            <ImageButton
+
+                android:id="@+id/imgbtn_addlogo"
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+
+                android:alpha="0.4"
+                android:clickable="false"
+                android:scaleType="centerCrop"
+                android:src="@android:drawable/ic_dialog_dialer" />
 
 
         </LinearLayout>
@@ -172,6 +99,15 @@
             android:layout_margin="5dp"
             android:orientation="horizontal">
 
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="الدقهليه - السنبلاوين شارع الاستقلال" />
+
             <Button
                 android:layout_width="wrap_content"
 
@@ -179,38 +115,36 @@
                 android:layout_gravity="center"
                 android:text="تغيير العنوان" />
 
-            <EditText
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:hint="اول الشارع جنب محطه البنزين" />
-
-
         </LinearLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/input_layout_addressinfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+
+            <EditText
+                android:id="@+id/input_addressinfo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:gravity="center"
+                android:hint="تفاصيل إضافيه للعنوان"
+                android:inputType="textCapWords"
+                android:singleLine="true" />
+        </android.support.design.widget.TextInputLayout>
 
 
     </LinearLayout>
 
-    <LinearLayout
+
+    <Button
+        android:id="@+id/btn_create_shop"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_margin="5dp"
-        android:orientation="horizontal">
+        android:text="تسجيل" />
 
-        <Button
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="مراجعه" />
 
-        <Button
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="تسجيل" />
-
-    </LinearLayout>
 </RelativeLayout>

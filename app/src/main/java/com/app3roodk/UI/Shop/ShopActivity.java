@@ -12,9 +12,10 @@ public class ShopActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shop);
 
-
-        getSupportFragmentManager().beginTransaction()
-                .add(R.id.create_shop_container, new CreateShopFragment())
-                .commit();
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.create_shop_container, new CreateShopFragment())
+                    .commit();
+        }
     }
 }

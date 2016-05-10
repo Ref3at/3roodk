@@ -391,7 +391,13 @@ public class AddNewOfferFragment extends Fragment {
         del_image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                images_id.remove(imgsContainer.indexOfChild(imageView));
+
+                //**************************************************************************
+                /// error here   the id come from asyns after we delete the image
+
+                if (images_id.size() > 0 && !images_id.get(imgsContainer.indexOfChild(rootview)).isEmpty()) {
+                    images_id.remove(imgsContainer.indexOfChild(rootview));
+                }
                 imgsContainer.removeView(rootview);
 
             }
@@ -551,7 +557,7 @@ public class AddNewOfferFragment extends Fragment {
             super.onPostExecute(imageId);
             mImgurUploadTask = null;
             if (imageId != null) {
-                mImgurUrl = "http://imgur.com/" + imageId;
+                mImgurUrl = "http://i.imgur.com/" + imageId;
 
                 imageView.setAlpha(1.0f);
 

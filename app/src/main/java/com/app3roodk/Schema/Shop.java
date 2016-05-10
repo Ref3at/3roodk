@@ -9,19 +9,19 @@ public class Shop {
     private String objectId;
     private String updatedAt;
     private String createdAt;
-    private String name;
-    private String lat;
-    private String lon;
-    private String city;
-    private String governate;
-    private String address;
-    private String userId;
+    private String name; //*
+    private String lat; //*
+    private String lon; //*
+    private String city;  //*
+    private String governate; //*
+    private String address; //*
+    private String userId; //*
     private HashMap<String, String> contacts;
 
     //ref3t add
-    private String logoId;
+    private String logoId; //*
     private String subscribedNum;
-    private String workingTime;
+    private String workingTime; //*
 
     public String getObjectId() {
         return objectId;
