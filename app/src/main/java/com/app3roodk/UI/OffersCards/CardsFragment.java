@@ -10,14 +10,30 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import com.app3roodk.Back4App.UtilityRestApi;
+import com.app3roodk.ObjectConverter;
 import com.app3roodk.R;
+import com.app3roodk.Schema.Offer;
 import com.app3roodk.UI.DetailActivity.DetailActivity;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.loopj.android.http.TextHttpResponseHandler;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+
+import cz.msebera.android.httpclient.Header;
 
 /**
  * Provides UI for the view with Cards.
  */
 public class CardsFragment extends Fragment {
+    static public ArrayList<Offer> lstOffers = new ArrayList<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -28,6 +44,24 @@ public class CardsFragment extends Fragment {
         recyclerView.setAdapter(adapter);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        UtilityRestApi.getActiveOffersByShopName(getContext(), "ShopHazem", new TextHttpResponseHandler() {
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                Toast.makeText(getContext(), responseString, Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String responseString) {
+                try {
+                    JSONArray result = new JSONObject(responseString).getJSONArray("results");
+                    for (int i = 0; i < result.length(); i++) {
+                        lstOffers.add(ObjectConverter.convertJsonToOffer(result.getJSONObject(i)));
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
         return recyclerView;
     }
 
@@ -40,6 +74,7 @@ public class CardsFragment extends Fragment {
                 public void onClick(View v) {
                     Context context = v.getContext();
                     Intent intent = new Intent(context, DetailActivity.class);
+                    intent.putExtra("objectId", "6aYUG2Borl");
                     context.startActivity(intent);
                 }
             });

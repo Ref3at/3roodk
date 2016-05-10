@@ -47,8 +47,14 @@ public class UtilityGeneral {
 
     static public Intent DrawPathToCertainShop(Context context, LatLng from, LatLng to) {
         Intent mapsPathsIntent = new Intent(context, MapsPathsActivity.class);
-        mapsPathsIntent.putExtra("fromLat", from.latitude);
-        mapsPathsIntent.putExtra("fromLng", from.longitude);
+        try {
+            mapsPathsIntent.putExtra("fromLat", from.latitude);
+            mapsPathsIntent.putExtra("fromLng", from.longitude);
+        }
+        catch (Exception ex)
+        {
+            Log.e(TAG,ex.getMessage());
+        }
         mapsPathsIntent.putExtra("toLat", to.latitude);
         mapsPathsIntent.putExtra("toLng", to.longitude);
         return mapsPathsIntent;

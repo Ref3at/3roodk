@@ -1,5 +1,8 @@
 package com.app3roodk.Schema;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import java.util.ArrayList;
 
 /**
@@ -10,22 +13,23 @@ public class Offer {
     private String title; //*
     private String updatedAt;
     private String createdAt;
-    private String desc; //*
-    private String priceBefore; //*
-    private String priceAfter; //*
-    private String period; //*
+    private String Desc; //*
+    private String PriceBefore; //*
+    private String PriceAfter; //*
+    private String Period; //*
+    private String endTime;
     private int viewNum;
     private int favoriteNum;
-    private String categoryId; //*
-    private String shopId; //*
-    private String shopName; //*
+    private String CategoryId; //*
+    private String ShopId; //*
+    private String ShopName; //*
 
     // ref3t add
-    private ArrayList<String> imagePaths; // later will be <img> //*
+    private ArrayList<String> ImagePaths; // later will be <img> //*
 
     // rate
     private int numberUsersRated;
-    private int totalRate; // later will be <img>
+    private int totalRate;
     private int averageRate;
 
     public String getObjectId() {
@@ -61,35 +65,35 @@ public class Offer {
     }
 
     public String getDesc() {
-        return desc;
+        return Desc;
     }
 
     public void setDesc(String desc) {
-        this.desc = desc;
+        this.Desc = desc;
     }
 
     public String getPriceBefore() {
-        return priceBefore;
+        return PriceBefore;
     }
 
     public void setPriceBefore(String priceBefore) {
-        this.priceBefore = priceBefore;
+        this.PriceBefore = priceBefore;
     }
 
     public String getPriceAfter() {
-        return priceAfter;
+        return PriceAfter;
     }
 
     public void setPriceAfter(String priceAfter) {
-        this.priceAfter = priceAfter;
+        this.PriceAfter = priceAfter;
     }
 
     public String getPeriod() {
-        return period;
+        return Period;
     }
 
     public void setPeriod(String period) {
-        this.period = period;
+        this.Period = period;
     }
 
     public int getViewNum() {
@@ -109,19 +113,19 @@ public class Offer {
     }
 
     public String getCategoryId() {
-        return categoryId;
+        return CategoryId;
     }
 
     public void setCategoryId(String categoryId) {
-        this.categoryId = categoryId;
+        this.CategoryId = categoryId;
     }
 
     public String getShopId() {
-        return shopId;
+        return ShopId;
     }
 
     public void setShopId(String shopId) {
-        this.shopId = shopId;
+        this.ShopId = shopId;
     }
 
     public int getNumberUsersRated() {
@@ -141,19 +145,31 @@ public class Offer {
     }
 
     public ArrayList<String> getImagePaths() {
-        if(imagePaths == null)
-            imagePaths = new ArrayList<>();
-        return imagePaths;
+        if (ImagePaths == null)
+            ImagePaths = new ArrayList<>();
+        return ImagePaths;
+    }
+
+    public void setImagePaths(String imagePaths) {
+        try {
+            this.ImagePaths = new ArrayList<>();
+            imagePaths = imagePaths.substring(1, imagePaths.length() - 1);
+            String[] images = imagePaths.split(",");
+            for (int i = 0; i < images.length; i++) {
+                ImagePaths.add(images[i]);
+            }
+        } catch (Exception ex) {
+        }
     }
 
     public void setImagePaths(ArrayList<String> imagePaths) {
-        this.imagePaths = imagePaths;
+        this.ImagePaths = imagePaths;
     }
 
     public void addImagePath(String imagePath) {
-        if (imagePaths == null)
-            imagePaths = new ArrayList<>();
-        imagePaths.add(imagePath);
+        if (ImagePaths == null)
+            ImagePaths = new ArrayList<>();
+        ImagePaths.add(imagePath);
     }
 
     public void addImagePaths(ArrayList<String> imagePaths) {
@@ -171,10 +187,18 @@ public class Offer {
     }
 
     public String getShopName() {
-        return shopName;
+        return ShopName;
     }
 
     public void setShopName(String shopName) {
-        this.shopName = shopName;
+        this.ShopName = shopName;
+    }
+
+    public String getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(String endTime) {
+        this.endTime = endTime;
     }
 }

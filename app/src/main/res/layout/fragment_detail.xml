@@ -3,6 +3,7 @@
     xmlns:custom="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical">
 
     <RelativeLayout
@@ -19,7 +20,6 @@
             custom:indicator_visibility="visible"
             custom:pager_animation="Stack"
             custom:pager_animation_span="1100" />
-
 
         <Button
             android:id="@+id/btnFavorite"
@@ -337,7 +337,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="3"
-            android:text="تتتتتتتتتتتت" />
+            android:textAlignment="center"
+            tools:text="تتتتتتتتتتتت" />
 
         <TextView
             android:layout_width="0dp"
@@ -360,7 +361,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="3"
-            android:text="تتتتتتتتتتتت" />
+            android:textAlignment="center"
+            tools:text="تتتتتتتتتتتت" />
 
         <TextView
             android:layout_width="0dp"
@@ -383,7 +385,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="3"
-            android:text="تتتتتتتتتتتت" />
+            android:textAlignment="center"
+            tools:text="تتتتتتتتتتتت" />
 
         <TextView
             android:layout_width="0dp"
@@ -406,7 +409,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="3"
-            android:text="تتتتتتتتتتتت" />
+            android:textAlignment="center"
+            tools:text="تتتتتتتتتتتت" />
 
         <TextView
             android:layout_width="0dp"
@@ -429,7 +433,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="3"
-            android:text="تتتتتتتتتتتت" />
+            android:textAlignment="center"
+            tools:text="تتتتتتتتتتتت" />
 
         <TextView
             android:layout_width="0dp"
@@ -455,7 +460,8 @@
             android:layout_marginRight="10dp"
             android:layout_weight="2"
             android:gravity="end"
-            android:text="3.5" />
+            android:textAlignment="center"
+            tools:text="تتتتتتتتتتتت" />
 
         <RatingBar
             android:id="@+id/ratingbar"

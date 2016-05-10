@@ -12,16 +12,30 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.app3roodk.Back4App.CallRestApi;
+import com.app3roodk.Back4App.UtilityRestApi;
+import com.app3roodk.ObjectConverter;
 import com.app3roodk.R;
+import com.app3roodk.Schema.Offer;
+import com.app3roodk.Schema.Shop;
 import com.app3roodk.UI.FullScreenImage.FullScreenImageSlider;
+import com.app3roodk.UI.OffersCards.CardsFragment;
+import com.app3roodk.UtilityGeneral;
 import com.daimajia.slider.library.Animations.DescriptionAnimation;
 import com.daimajia.slider.library.SliderLayout;
 import com.daimajia.slider.library.SliderTypes.BaseSliderView;
 import com.daimajia.slider.library.SliderTypes.TextSliderView;
 import com.daimajia.slider.library.Tricks.ViewPagerEx;
+import com.google.android.gms.maps.model.LatLng;
+import com.loopj.android.http.TextHttpResponseHandler;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Calendar;
+
+import cz.msebera.android.httpclient.Header;
 
 /**
  * Created by ZooM- on 5/9/2016.
@@ -33,19 +47,102 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
             txtShopName, txtWorkTime, txtAddress, txtMobile, txtRate;
     RatingBar ratebar;
     private SliderLayout mDemoSlider;
+    Calendar cal;
+    final static long minutesInMilli = 1000 * 60;
+    final static long hoursInMilli = minutesInMilli * 60;
+    final static long daysInMilli = hoursInMilli * 24;
+
+    private Offer offer;
+    private Shop shop;
+    long timeInMilliseconds;
+    Thread timer;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
         init(rootView);
-        initSlider();
+        fillViews();
+        initCallApi();
         return rootView;
+    }
+
+    private void fillViews() {
+        try {
+            txtDescription.setText(offer.getDesc());
+            txtShopName.setText(offer.getShopName());
+            txtPriceAfter.setText(offer.getPriceAfter());
+            txtPriceBefore.setText(offer.getPriceBefore());
+            txtViews.setText(String.valueOf(offer.getViewNum()));
+            txtRate.setText(String.valueOf(String.valueOf(offer.getAverageRate())));
+            initSlider(offer.getImagePaths());
+            txtSale.setText(
+                    String.format("%.0f", (1 - (Double.parseDouble(offer.getPriceAfter()) / Double.parseDouble(offer.getPriceBefore()))) * 100));
+        } catch (Exception ex) {
+        }
+    }
+
+    private void initShopViews() {
+        try {
+            txtAddress.setText(shop.getAddress());
+            txtWorkTime.setText(shop.getWorkingTime());
+            txtMobile.setText(shop.getContacts().get("Mobile"));
+        } catch (Exception ex) {
+        }
+        btnShopWay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(UtilityGeneral.DrawPathToCertainShop(
+                        getContext(), UtilityGeneral.getCurrentLonAndLat(getContext()),
+                        new LatLng(Double.parseDouble(shop.getLat()), Double.parseDouble(shop.getLon()))));
+            }
+        });
+    }
+
+    private void initCallApi() {
+        UtilityRestApi.raiseOfferViewsByOne(getContext(), offer.getObjectId(), new TextHttpResponseHandler() {
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+
+            }
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String responseString) {
+                try {
+                    offer.setViewNum(Integer.parseInt(new JSONObject(responseString).getString("viewNum")));
+                    for (int i = 0; i < CardsFragment.lstOffers.size(); i++)
+                        if (CardsFragment.lstOffers.get(i).getObjectId().equals(offer.getObjectId())) {
+                            CardsFragment.lstOffers.get(i).setViewNum(offer.getViewNum());
+                            txtViews.setText(String.valueOf(offer.getViewNum()));
+                        }
+                } catch (Exception ex) {
+                }
+            }
+        });
+        CallRestApi.GET(getContext(), "Shop", offer.getShopId(), new TextHttpResponseHandler() {
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+
+            }
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String responseString) {
+                try {
+                    if (responseString.equals("{}")) {
+                        Toast.makeText(getContext(), "No valid shop for this offer", Toast.LENGTH_LONG).show();
+                        return;
+                    }
+                    shop = ObjectConverter.convertJsonToShop(new JSONObject(responseString));
+                    initShopViews();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     private void init(View rootView) {
 
         mDemoSlider = (SliderLayout) rootView.findViewById(R.id.imgOffer);
-
 
         btnFavorite = (Button) rootView.findViewById(R.id.btnFavorite);
         btnShare = (Button) rootView.findViewById(R.id.btnShare);
@@ -64,34 +161,54 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
         txtMobile = (TextView) rootView.findViewById(R.id.txtMobile);
         txtRate = (TextView) rootView.findViewById(R.id.txtRateNumber);
         ratebar = (RatingBar) rootView.findViewById(R.id.ratingbar);
+
+        String id = getActivity().getIntent().getStringExtra("objectId");
+        for (Offer o : CardsFragment.lstOffers)
+            if (o.getObjectId().equals(id))
+                offer = o;
+        cal = Calendar.getInstance();
+        cal.set(Calendar.YEAR, Integer.parseInt(offer.getEndTime().substring(0, 4)));
+        cal.set(Calendar.MONTH, Integer.parseInt(offer.getEndTime().substring(4, 6)) - 1);
+        cal.set(Calendar.DAY_OF_MONTH, Integer.parseInt(offer.getEndTime().substring(6, 8)));
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
     }
 
-    private void initSlider() {
-        HashMap<String, String> url_maps = new HashMap<String, String>();
-        url_maps.put("زيت عافيه", "http://i.imgur.com/ZBD2l9g.jpg");
-        url_maps.put("برسيل", "http://i.imgur.com/dSGdt6y.jpg");
-        url_maps.put("صن شاين", "http://i.imgur.com/MwSD40z.jpg");
-        url_maps.put("الرشيدى الميزان", "http://i.imgur.com/8tRO2Gi.jpg");
+    private Runnable updateTimerThread = new Runnable() {
+        public void run() {
+            while (true) {
+                timeInMilliseconds = cal.getTime().getTime() - System.currentTimeMillis();
+                try {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            txtDay.setText(String.valueOf((int) (timeInMilliseconds / daysInMilli)));
+                            timeInMilliseconds = timeInMilliseconds % daysInMilli;
+                            txtMinute.setText(String.valueOf((int) (timeInMilliseconds / hoursInMilli)));
+                            timeInMilliseconds = timeInMilliseconds % hoursInMilli;
+                            txtHour.setText(String.valueOf((int) (timeInMilliseconds / minutesInMilli)));
+                        }
+                    });
+                    Thread.sleep(30000);
+                } catch (Exception ex) {
+                    break;
+                }
+            }
+        }
+    };
 
+    private void initSlider(ArrayList<String> lstImages) {
 
-        for (String name : url_maps.keySet()) {
+        for (String image : lstImages) {
             TextSliderView textSliderView = new TextSliderView(getActivity());
-            // initialize a SliderLayout
             textSliderView
-                    .description(name)
-                    .image(url_maps.get(name))
+                    .image(image)
                     .setScaleType(BaseSliderView.ScaleType.Fit)
                     .setOnSliderClickListener(this);
-
-            //add your extra information
-            textSliderView.bundle(new Bundle());
-            textSliderView.getBundle()
-                    .putString("extra", name);
-
             mDemoSlider.addSlider(textSliderView);
         }
-
-
         mDemoSlider.setPresetTransformer(SliderLayout.Transformer.Stack);
         mDemoSlider.setPresetIndicator(SliderLayout.PresetIndicators.Center_Bottom);
         mDemoSlider.setCustomAnimation(new DescriptionAnimation());
@@ -102,14 +219,17 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
     @Override
     public void onStop() {
         mDemoSlider.stopAutoCycle();
+        if (timer.isAlive())
+            timer.interrupt();
         super.onStop();
     }
 
     @Override
     public void onResume() {
         mDemoSlider.startAutoCycle();
+        timer = new Thread(updateTimerThread);
+        timer.start();
         super.onResume();
-
     }
 
     @Override
@@ -127,22 +247,8 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
 
     @Override
     public void onSliderClick(BaseSliderView slider) {
-        ArrayList<String> imgs_ids = new ArrayList<>();
-
-        imgs_ids.add("http://i.imgur.com/8tRO2Gi.jpg");
-        imgs_ids.add("http://i.imgur.com/MwSD40z.jpg");
-        imgs_ids.add("http://i.imgur.com/dSGdt6y.jpg");
-        imgs_ids.add("http://i.imgur.com/ZBD2l9g.jpg");
-
-
-        Toast.makeText(getActivity(), "" + slider.getUrl(), Toast.LENGTH_LONG).show();
-
         Intent i = new Intent(getActivity(), FullScreenImageSlider.class);
-        // we need to open this image in image viewer
-        i.putStringArrayListExtra("IMAGES", imgs_ids);
-
+        i.putStringArrayListExtra("IMAGES", offer.getImagePaths());
         startActivity(i);
-
-
     }
 }

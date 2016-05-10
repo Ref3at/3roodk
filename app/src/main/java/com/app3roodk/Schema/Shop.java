@@ -16,7 +16,7 @@ public class Shop {
     private String governate; //*
     private String address; //*
     private String userId; //*
-    private HashMap<String, String> contacts;
+    private HashMap<String, String> contacts = new HashMap<>();
 
     //ref3t add
     private String logoId; //*
