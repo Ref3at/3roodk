@@ -12,6 +12,7 @@ public class User {
     private String email;
     private String password;
     private String createdAt;
+    private String updatedAt;
     private String profileImg;
     private String lat;
     private String lon;
@@ -217,5 +218,13 @@ public class User {
 
     public void setGender(String gender) {
         this.gender = gender;
+    }
+
+    public String getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(String updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }

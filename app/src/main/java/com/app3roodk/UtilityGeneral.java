@@ -14,7 +14,9 @@ import com.app3roodk.Schema.Shop;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -84,6 +86,9 @@ public class UtilityGeneral {
             }
         }
         return bestLocation;
+    }
+    static public String getCurrentDate(Date date) {
+        return new SimpleDateFormat("yyyyMMdd").format(date);
     }
     //endregion
 }

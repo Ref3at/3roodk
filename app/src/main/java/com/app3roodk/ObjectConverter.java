@@ -4,8 +4,11 @@ import android.util.Log;
 
 import com.app3roodk.Schema.Offer;
 import com.app3roodk.Schema.Shop;
+import com.app3roodk.Schema.User;
 
 import org.json.JSONObject;
+
+import java.util.HashMap;
 
 /**
  * Created by ZooM- on 5/10/2016.
@@ -56,6 +59,31 @@ public class ObjectConverter {
         }
     }
 
+    static public HashMap convertOfferToHashMap(Offer offer) {
+        HashMap map = new HashMap<>();
+        try {
+            map.put("title", offer.getTitle());
+            map.put("CategoryId", offer.getCategoryId());
+            map.put("Desc", offer.getDesc());
+            map.put("PriceBefore", offer.getPriceBefore());
+            map.put("PriceAfter", offer.getPriceAfter());
+            map.put("Period", offer.getPeriod());
+            map.put("ImagePaths", offer.getImagePaths().toString());
+            map.put("ShopId", offer.getShopId());
+            map.put("ShopName", offer.getShopName());
+            map.put("endTime", offer.getEndTime());
+            map.put("averageRate", offer.getAverageRate());
+            map.put("viewNum", offer.getViewNum());
+            map.put("totalRate", offer.getTotalRate());
+            map.put("favoriteNum", offer.getFavoriteNum());
+            map.put("numberUsersRated", offer.getNumberUsersRated());
+        } catch (Exception ex) {
+            Log.e(TAG,ex.getMessage());
+        } finally {
+            return map;
+        }
+    }
+
     static public Shop convertJsonToShop(JSONObject jsonObject) {
         Shop shop = new Shop();
         try {
@@ -84,6 +112,98 @@ public class ObjectConverter {
             Log.e(TAG, ex.getMessage());
         } finally {
             return shop;
+        }
+    }
+
+    static public HashMap convertShopToHashMap(Shop shop) {
+        HashMap map = new HashMap<>();
+        try {
+            map.put("name", shop.getName());
+            map.put("lat", shop.getLat());
+            map.put("lon", shop.getLon());
+            map.put("city", shop.getCity());
+            map.put("governate", shop.getGovernate());
+            map.put("address", shop.getAddress());
+            map.put("favoriteNum", "0");
+            map.put("workingTime", shop.getWorkingTime());
+            map.put("userId", shop.getUserId());
+            map.put("contacts", shop.getContacts().toString());
+            map.put("logoId", shop.getLogoId());
+        } catch (Exception ex) {
+            Log.e(TAG,ex.getMessage());
+        } finally {
+            return map;
+        }
+    }
+
+    static public User convertJsonToUser(JSONObject jsonObject) {
+        User user = new User();
+        try {
+            user.setObjectId(jsonObject.getString("objectId"));
+            user.setCreatedAt(jsonObject.getString("createdAt"));
+            user.setUpdatedAt(jsonObject.getString("updatedAt"));
+            if (jsonObject.has("name") && !jsonObject.isNull("name"))
+                user.setName(jsonObject.getString("name"));
+            if (jsonObject.has("lat") && !jsonObject.isNull("lat"))
+                user.setLat(jsonObject.getString("lat"));
+            if (jsonObject.has("lon") && !jsonObject.isNull("lon"))
+                user.setLon(jsonObject.getString("lon"));
+            if (jsonObject.has("city") && !jsonObject.isNull("city"))
+                user.setCity(jsonObject.getString("city"));
+            if (jsonObject.has("governate") && !jsonObject.isNull("governate"))
+                user.setGovernate(jsonObject.getString("governate"));
+            if (jsonObject.has("gender") && !jsonObject.isNull("gender"))
+                user.setGender(jsonObject.getString("gender"));
+            if (jsonObject.has("type") && !jsonObject.isNull("type"))
+                user.setType(jsonObject.getString("type"));
+            if (jsonObject.has("favOfferIds") && !jsonObject.isNull("favOfferIds"))
+                user.setFavOfferIds(jsonObject.getString("favOfferIds"));
+            if (jsonObject.has("favShopIds") && !jsonObject.isNull("favShopIds"))
+                user.setFavShopIds(jsonObject.getString("favShopIds"));
+            if (jsonObject.has("planId") && !jsonObject.isNull("planId"))
+                user.setPlanId(jsonObject.getString("planId"));
+            if (jsonObject.has("subsCategoryIds") && !jsonObject.isNull("subsCategoryIds"))
+                user.setSubsCategoryIds(jsonObject.getString("subsCategoryIds"));
+            if (jsonObject.has("password") && !jsonObject.isNull("password"))
+                user.setPassword(jsonObject.getString("password"));
+//            if (jsonObject.has("commentsRate") && !jsonObject.isNull("commentsRate"))
+//                user.setCommentsRate(jsonObject.getString("commentsRate"));
+//            if (jsonObject.has("offersRate") && !jsonObject.isNull("offersRate"))
+//                user.setOffersRate(jsonObject.getString("offersRate"));
+            if (jsonObject.has("gender") && !jsonObject.isNull("gender"))
+                user.setGender(jsonObject.getString("gender"));
+            if (jsonObject.has("profileImg") && !jsonObject.isNull("profileImg"))
+                user.setProfileImg(jsonObject.getString("profileImg"));
+        } catch (Exception ex) {
+            Log.e(TAG, ex.getMessage());
+        } finally {
+            return user;
+        }
+    }
+
+    static public HashMap convertUserToHashMap(User user) {
+        HashMap map = new HashMap<>();
+        try {
+            map.put("name", user.getName());
+            map.put("email", user.getEmail());
+            map.put("lat", user.getLat());
+            map.put("lon", user.getLon());
+            map.put("city", user.getCity());
+            map.put("governate", user.getGovernate());
+            map.put("type", user.getType());
+            map.put("favOfferIds", user.getFavOfferIds());
+            map.put("favShopIds", user.getFavShopIds());
+            map.put("planId", user.getPlanId());
+            map.put("subsCategoryIds", user.getSubsCategoryIds());
+            map.put("password", user.getPassword());
+            map.put("commentsRate", user.getCommentsRate().toString());
+            map.put("offersRate", user.getOffersRate().toString());
+            map.put("gender", user.getGender());
+            map.put("profileImg", user.getProfileImg());
+        } catch (Exception ex) {
+            Log.e(TAG,ex.getMessage());
+        } finally {
+            return map;
         }
     }
 }

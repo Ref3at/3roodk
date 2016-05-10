@@ -17,6 +17,7 @@ import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,8 +33,10 @@ import android.widget.Toast;
 import com.app3roodk.Back4App.UtilityRestApi;
 import com.app3roodk.Constants;
 import com.app3roodk.Imgur.ImgurUploadTask;
+import com.app3roodk.ObjectConverter;
 import com.app3roodk.R;
 import com.app3roodk.Schema.Offer;
+import com.app3roodk.UtilityGeneral;
 import com.loopj.android.http.TextHttpResponseHandler;
 import com.weiwangcn.betterspinner.library.BetterSpinner;
 
@@ -43,6 +46,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 
 import cz.msebera.android.httpclient.Header;
@@ -407,7 +412,7 @@ public class AddNewOfferFragment extends Fragment {
     }
 
     private void Publish() {
-/*
+
         mOffer.setCategoryId(getCategoryId(category_spinner));
 
         mOffer.setTitle(inputName.getText().toString());
@@ -424,22 +429,40 @@ public class AddNewOfferFragment extends Fragment {
 
         mOffer.setShopId("qEmoVmW9Ep");
 
-        mOffer.setShopName("ShopHazem"); */
+        mOffer.setShopName("ShopHazem");
 
-        HashMap<String, String> map = new HashMap<String, String>();
-        map.put("title", inputName.getText().toString());
-        map.put("CategoryId", getCategoryId(category_spinner));
-        map.put("Desc", inputDesc.getText().toString());
-        map.put("PriceBefore", inputPriceBefore.getText().toString());
-        map.put("PriceAfter", inputPriceAfter.getText().toString());
-        map.put("Period", duration_spinner.getText().toString());
-        map.put("ImagePaths", images_id.toString());
-        map.put("ShopId", "qEmoVmW9Ep");
-        map.put("ShopName", "ShopHazem");
+        Calendar cal= Calendar.getInstance();
 
-        UtilityRestApi.addNewOffer(getActivity(), map, new TextHttpResponseHandler() {
+        for (int i =0 ;i<durtation_list.length;i++)
+        {
+            if (mOffer.getPeriod().equals(durtation_list[i]))
+            {
+                if(i == 12)
+                    cal.add(Calendar.DAY_OF_MONTH,14);
+                else
+                    cal.add(Calendar.DAY_OF_MONTH,i+1);
+            }
+        }
+        mOffer.setEndTime(UtilityGeneral.getCurrentDate(cal.getTime()));
+
+//        HashMap<String, String> map = new HashMap<String, String>();
+//        map.put("title", inputName.getText().toString());
+//        map.put("CategoryId", getCategoryId(category_spinner));
+//        map.put("Desc", inputDesc.getText().toString());
+//        map.put("PriceBefore", inputPriceBefore.getText().toString());
+//        map.put("PriceAfter", inputPriceAfter.getText().toString());
+//        map.put("Period", duration_spinner.getText().toString());
+//        map.put("ImagePaths", images_id.toString());
+//        map.put("ShopId", "qEmoVmW9Ep");
+//        map.put("ShopName", "ShopHazem");
+
+//        UtilityRestApi.addNewOffer(getActivity(), map, new TextHttpResponseHandler() {
+        HashMap map = ObjectConverter.convertOfferToHashMap(mOffer);
+        Log.v("11111111111",map.toString());
+        UtilityRestApi.addNewOffer(getActivity(), ObjectConverter.convertOfferToHashMap(mOffer), new TextHttpResponseHandler() {
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                Log.v("11111111111", responseString);
                 Toast.makeText(getActivity(), "حصل مشكله شوف النت ", Toast.LENGTH_SHORT).show();
             }
 

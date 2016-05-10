@@ -9,6 +9,7 @@ import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.TextHttpResponseHandler;
 
+import java.nio.charset.Charset;
 import java.util.HashMap;
 
 import cz.msebera.android.httpclient.entity.StringEntity;
@@ -49,13 +50,19 @@ public class CallRestApi {
         AsyncHttpClient client = new AsyncHttpClient();
         client.addHeader("X-Parse-Application-Id", context.getString(R.string.PARSE_APPLICATION_ID));
         client.addHeader("X-Parse-REST-API-Key", context.getString(R.string.PARSE_REST_API_KEY));
-        RequestParams requestParams;
+        StringEntity entity;
         if (Properties == null) {
             Log.e(TAG, "Properties is null");
             return;
-        } else requestParams = new RequestParams(Properties);
-
-        client.post(context.getString(R.string.URI) + ClassName, requestParams, handler);
+        } else {
+            try {
+                entity = new StringEntity(new Gson().toJson(Properties), Charset.defaultCharset());
+            } catch (Exception e) {
+                Log.e(TAG, e.getMessage());
+                return;
+            }
+        }
+        client.post(context, context.getString(R.string.URI) + ClassName, entity, "application/json", handler);
     }
 
     static public void PUT(Context context, String ClassName, HashMap UpdateValues, String objectId, TextHttpResponseHandler handler) {
@@ -70,8 +77,14 @@ public class CallRestApi {
             Log.e(TAG, "UpdateValues is null");
             return;
         }
-        RequestParams requestParams = new RequestParams(UpdateValues);
-        client.put(context.getString(R.string.URI) + ClassName + "/" + objectId, requestParams, handler);
+        StringEntity entity;
+        try {
+            entity = new StringEntity(new Gson().toJson(UpdateValues), Charset.defaultCharset());
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+            return;
+        }
+        client.put(context, context.getString(R.string.URI) + ClassName + "/" + objectId, entity, "application/json", handler);
     }
 
     static public void INCREMENT(Context context, String className, String objectId, String columnName, int amount, TextHttpResponseHandler handler) {
@@ -93,7 +106,7 @@ public class CallRestApi {
         mapFinal.put(columnName, map);
         StringEntity entity;
         try {
-            entity = new StringEntity(new Gson().toJson(mapFinal));
+            entity = new StringEntity(new Gson().toJson(mapFinal), Charset.defaultCharset());
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
             return;
@@ -128,7 +141,7 @@ public class CallRestApi {
         mapFinal.put(columnName2, map2);
         StringEntity entity;
         try {
-            entity = new StringEntity(new Gson().toJson(mapFinal));
+            entity = new StringEntity(new Gson().toJson(mapFinal), Charset.defaultCharset());
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
             return;
@@ -136,7 +149,7 @@ public class CallRestApi {
         client.put(context, context.getString(R.string.URI) + className + "/" + objectId, entity, "application/json", handler);
     }
 
-    static public void INCREMENT_AND_UPDATE(Context context, String className, String objectId, String columnName1, int amount1,  int averageRate, TextHttpResponseHandler handler) {
+    static public void INCREMENT_AND_UPDATE(Context context, String className, String objectId, String columnName1, int amount1, int averageRate, TextHttpResponseHandler handler) {
         AsyncHttpClient client = new AsyncHttpClient();
         client.addHeader("X-Parse-Application-Id", context.getString(R.string.PARSE_APPLICATION_ID));
         client.addHeader("X-Parse-REST-API-Key", context.getString(R.string.PARSE_REST_API_KEY));
@@ -156,7 +169,7 @@ public class CallRestApi {
         mapFinal.put("averageRate", averageRate);
         StringEntity entity;
         try {
-            entity = new StringEntity(new Gson().toJson(mapFinal));
+            entity = new StringEntity(new Gson().toJson(mapFinal), Charset.defaultCharset());
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
             return;
@@ -192,7 +205,7 @@ public class CallRestApi {
         mapFinal.put("averageRate", averageRate);
         StringEntity entity;
         try {
-            entity = new StringEntity(new Gson().toJson(mapFinal));
+            entity = new StringEntity(new Gson().toJson(mapFinal), Charset.defaultCharset());
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
             return;
