@@ -52,7 +52,7 @@ public class CardsFragment extends Fragment {
         UtilityRestApi.getActiveCategoryOffersByGovAndCity(getContext(), getActivity().getIntent().getStringExtra("titl"), "gharbiyah", "tanta", new TextHttpResponseHandler() {
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                Toast.makeText(getContext(), responseString, Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), responseString, Toast.LENGTH_LONG).show();
             }
 
             @Override

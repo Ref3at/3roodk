@@ -47,7 +47,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 
 import cz.msebera.android.httpclient.Header;
@@ -580,7 +579,7 @@ public class AddNewOfferFragment extends Fragment {
             super.onPostExecute(imageId);
             mImgurUploadTask = null;
             if (imageId != null) {
-                mImgurUrl = "http://i.imgur.com/" + imageId;
+                mImgurUrl = "http://i.imgur.com/" + imageId + ".jpg";
 
                 imageView.setAlpha(1.0f);
 
