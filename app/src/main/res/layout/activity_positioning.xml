@@ -14,7 +14,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:text="شوف العروض اللى حواليك"
+        android:text="@string/look_offers_around_you"
         android:textColor="#f29728"
         android:textSize="25sp" />
 
@@ -22,24 +22,22 @@
         android:layout_width="150dp"
         android:layout_height="150dp"
         android:layout_gravity="center_horizontal"
-
         android:src="@drawable/maps" />
 
     <Button
+        android:id="@+id/btnPosition"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:backgroundTint="#f29728"
         android:onClick="getlocation"
-        android:text="حدد مكانك" />
+        android:text="@string/choose_location" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_margin="6dp"
-
-        android:text="ـــــــــ أو ـــــــــ"
+        android:text="@string/or"
         android:textSize="30sp" />
 
     <LinearLayout
@@ -50,58 +48,78 @@
         android:orientation="horizontal">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginRight="6dp"
-            android:text="إختار مدينتك"
+            android:drawableEnd="@android:drawable/ic_menu_agenda"
+            android:drawableRight="@android:drawable/ic_menu_agenda"
+            android:text="@string/ability_to_sign"
             android:textSize="22sp" />
-
-        <ImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@android:drawable/presence_video_busy" />
 
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
+        android:gravity="center"
+        android:orientation="horizontal">
 
-        android:minWidth="150dp"
-        android:orientation="vertical">
-
-
-        <com.weiwangcn.betterspinner.library.BetterSpinner
-            android:id="@+id/gov_spinner"
-            android:layout_width="match_parent"
+        <Button
+            android:id="@+id/btnSignUp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/activity_vertical_margin"
-            android:hint="محافظه" />
+            android:layout_gravity="center_horizontal"
+            android:backgroundTint="#f29728"
+            android:text="@string/user_register" />
 
-        <com.weiwangcn.betterspinner.library.BetterSpinner
-            android:id="@+id/city_spinner"
-            android:layout_width="match_parent"
+        <Button
+            android:id="@+id/btnSignIn"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/activity_vertical_margin"
-            android:hint="مدينه"
-            android:visibility="gone"
-
-            />
-
+            android:layout_gravity="center_horizontal"
+            android:backgroundTint="#f29728"
+            android:text="@string/sign_in" />
 
     </LinearLayout>
 
+    <!--<LinearLayout-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_gravity="center_horizontal"-->
 
-    <Button
-        android:id="@+id/go_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:backgroundTint="#f29728"
+    <!--android:minWidth="150dp"-->
+    <!--android:orientation="vertical">-->
 
-        android:onClick="go"
-        android:text="Go"
-        android:visibility="gone" />
+
+    <!--<com.weiwangcn.betterspinner.library.BetterSpinner-->
+    <!--android:id="@+id/gov_spinner"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginBottom="@dimen/activity_vertical_margin"-->
+    <!--android:hint="محافظه" />-->
+
+    <!--<com.weiwangcn.betterspinner.library.BetterSpinner-->
+    <!--android:id="@+id/city_spinner"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginBottom="@dimen/activity_vertical_margin"-->
+    <!--android:hint="مدينه"-->
+    <!--android:visibility="gone"-->
+
+    <!--/>-->
+
+
+    <!--</LinearLayout>-->
+
+
+    <!--<Button-->
+    <!--android:id="@+id/go_btn"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_gravity="center_horizontal"-->
+    <!--android:backgroundTint="#f29728"-->
+
+    <!--android:onClick="go"-->
+    <!--android:text="Go"-->
+    <!--android:visibility="gone" />-->
 </LinearLayout>

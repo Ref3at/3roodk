@@ -12,6 +12,7 @@ public class Constants {
     public static final String KEY_CURRENT_CITY = "CITY";
     public static final String KEY_CURRENT_LATITUDE = "LATITUDE";
     public static final String KEY_CURRENT_LONGITUDE = "LONGITUDE";
+    public static final String KEY_USER = "keyuser";
 
     // imgur
 

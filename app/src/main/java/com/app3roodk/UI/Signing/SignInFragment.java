@@ -2,6 +2,7 @@ package com.app3roodk.UI.Signing;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,9 +11,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.app3roodk.Back4App.UtilityRestApi;
+import com.app3roodk.ObjectConverter;
 import com.app3roodk.R;
-import com.app3roodk.Schema.User;
-import com.google.gson.Gson;
+import com.app3roodk.UtilityGeneral;
 import com.loopj.android.http.TextHttpResponseHandler;
 
 import org.json.JSONArray;
@@ -60,13 +61,14 @@ public class SignInFragment extends Fragment {
                     public void onSuccess(int statusCode, Header[] headers, String responseString) {
                         try {
                             JSONArray result = new JSONObject(responseString).getJSONArray("results");
-                            if (result.length() == 0) {
+                            if (result.isNull(0)) {
                                 showErrorMessage("البريد الإلكتروني او كلمة السر غير صحيحة");
-                            } else {
-                                User user = new Gson().fromJson(result.getString(0), User.class);
+                                return;
                             }
+                            UtilityGeneral.saveUser(getActivity(), ObjectConverter.convertJsonToUser(result.getJSONObject(0)));
+                            getActivity().onBackPressed();
                         } catch (Exception ex) {
-                            showErrorMessage(ex.getMessage());
+                            Log.e("SignInFragment", ex.getMessage());
                         }
                     }
                 });

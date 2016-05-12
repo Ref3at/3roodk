@@ -1,117 +1,98 @@
 package com.app3roodk.UI.PositioningActivity;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Editable;
-import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.app3roodk.Constants;
 import com.app3roodk.R;
+import com.app3roodk.Schema.User;
 import com.app3roodk.UI.CategoriesActivity.CategoriesActivity;
-import com.weiwangcn.betterspinner.library.BetterSpinner;
-
-import butterknife.Bind;
-import butterknife.ButterKnife;
+import com.app3roodk.UI.Signing.SignInActivity;
+import com.app3roodk.UI.Signing.SignUpActivity;
+import com.app3roodk.UtilityGeneral;
+import com.google.android.gms.maps.model.LatLng;
 
 public class PositioningActivity extends AppCompatActivity {
 
-    @Bind(R.id.gov_spinner)
-    BetterSpinner gov_spinner;
-
-    @Bind(R.id.city_spinner)
-    BetterSpinner city_spinner;
-    Button go;
-    private SharedPreferences mSharedPref;
-    private SharedPreferences.Editor mSharedPrefEditor;
+    Button btnSignIn, btnSignUp, btnChooseLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_positioning);
-        ButterKnife.bind(this);
+        btnSignIn = (Button) findViewById(R.id.btnSignIn);
+        btnSignUp = (Button) findViewById(R.id.btnSignUp);
+        btnChooseLocation = (Button) findViewById(R.id.btnPosition);
+        configClicks();
+    }
 
-        mSharedPref = getBaseContext().getSharedPreferences(
-                getString(R.string.preference_file_key), Context.MODE_PRIVATE);
-        mSharedPrefEditor = mSharedPref.edit();
-        go = (Button) findViewById(R.id.go_btn);
+    private void configClicks() {
 
-
-        String[] list = getResources().getStringArray(R.array.governates);
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_dropdown_item_1line, list);
-
-        gov_spinner.setAdapter(adapter);
-
-
-        gov_spinner.addTextChangedListener(new TextWatcher() {
+        btnSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                city_spinner.setVisibility(View.VISIBLE);
-
+            public void onClick(View v) {
+                startActivity(new Intent(getBaseContext(), SignUpActivity.class));
             }
         });
 
-
-        //mSharedPrefEditor.putString(Constants.KEY_CURRENT_LATITUDE, "currentlat").apply();
-        //  mSharedPrefEditor.putString(Constants.KEY_CURRENT_LONGITUDE, "currentlon").apply();
-
-
-        String[] list2 = getResources().getStringArray(R.array.cities);
-
-        ArrayAdapter<String> adapter2 = new ArrayAdapter<String>(this,
-                android.R.layout.simple_dropdown_item_1line, list2);
-
-        city_spinner.setAdapter(adapter2);
-
-        city_spinner.addTextChangedListener(new TextWatcher() {
+        btnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                go.setVisibility(View.VISIBLE);
+            public void onClick(View v) {
+                startActivity(new Intent(getBaseContext(), SignInActivity.class));
             }
         });
 
-
+        btnChooseLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+                if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getBaseContext());
+                    builder.setMessage("Your GPS seems to be disabled, do you want to enable it?")
+                            .setCancelable(false)
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                public void onClick(final DialogInterface dialog, final int id) {
+                                    startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                                }
+                            })
+                            .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                public void onClick(final DialogInterface dialog, final int id) {
+                                    dialog.cancel();
+                                }
+                            });
+                    builder.show();
+                } else {
+                    try {
+                        User user = new User();
+                        LatLng latLng = UtilityGeneral.getCurrentLonAndLat(getBaseContext());
+                        user.setLat(String.valueOf(latLng.latitude));
+                        user.setLon(String.valueOf(latLng.longitude));
+                        UtilityGeneral.saveUser(getBaseContext(), user);
+                        startActivity(new Intent(PositioningActivity.this, CategoriesActivity.class));
+                        finish();
+                    } catch (Exception ex) {
+                        Toast.makeText(getBaseContext(), "Make sure that Location Permission is allowed on your device!", Toast.LENGTH_LONG).show();
+                        Log.e("PositioningActivity", ex.getMessage());
+                    }
+                }
+            }
+        });
     }
 
-    public void go(View view) {
-        mSharedPrefEditor.putString(Constants.KEY_CURRENT_GOVERNATE, gov_spinner.getText().toString()).apply();
-        mSharedPrefEditor.putString(Constants.KEY_CURRENT_CITY, city_spinner.getText().toString()).apply();
-
-
-        startActivity(new Intent(PositioningActivity.this, CategoriesActivity.class));
-        finish();
-
-    }
-
-    public void getlocation(View view) {
-
-        Toast.makeText(this, "get from maps", Toast.LENGTH_SHORT).show();
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (UtilityGeneral.isUserExist(getBaseContext())) {
+            startActivity(new Intent(PositioningActivity.this, CategoriesActivity.class));
+            finish();
+        }
     }
 }

@@ -1,36 +1,33 @@
 package com.app3roodk.Schema;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-
 import java.util.ArrayList;
 
 /**
  * Created by ZooM- on 4/24/2016.
  */
 public class Offer {
-    private String objectId;
-    private String title; //*
-    private String updatedAt;
-    private String createdAt;
-    private String Desc; //*
-    private String PriceBefore; //*
-    private String PriceAfter; //*
-    private String Period; //*
-    private String endTime;
-    private int viewNum;
-    private int favoriteNum;
-    private String CategoryId; //*
-    private String ShopId; //*
-    private String ShopName; //*
+    private String objectId = "";
+    private String title = ""; //*
+    private String updatedAt = "";
+    private String createdAt = "";
+    private String Desc = ""; //*
+    private String PriceBefore = ""; //*
+    private String PriceAfter = ""; //*
+    private String Period = ""; //*
+    private String endTime = "";
+    private int viewNum = 0;
+    private int favoriteNum = 0;
+    private String CategoryId = ""; //*
+    private String ShopId = ""; //*
+    private String ShopName = ""; //*
 
     // ref3t add
-    private ArrayList<String> ImagePaths; // later will be <img> //*
+    private ArrayList<String> ImagePaths = new ArrayList<>(); // later will be <img> //*
 
     // rate
-    private int numberUsersRated;
-    private int totalRate;
-    private int averageRate;
+    private int numberUsersRated = 0;
+    private int totalRate = 0;
+    private int averageRate = 0;
 
     public String getObjectId() {
         return objectId;

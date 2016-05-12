@@ -1,7 +1,13 @@
 package com.app3roodk.UI.Signing;
 
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,17 +17,17 @@ import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.app3roodk.Back4App.CallRestApi;
 import com.app3roodk.Back4App.UtilityRestApi;
+import com.app3roodk.ObjectConverter;
 import com.app3roodk.R;
 import com.app3roodk.Schema.User;
+import com.app3roodk.UtilityGeneral;
+import com.google.android.gms.maps.model.LatLng;
 import com.loopj.android.http.TextHttpResponseHandler;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.HashMap;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -35,6 +41,7 @@ public class SignUpFragment extends Fragment {
     TextView txtError;
     Spinner spnCountry, spnState;
     RadioButton rbtnMale, rbtnFemale;
+    User user;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -77,15 +84,18 @@ public class SignUpFragment extends Fragment {
                             if (result.length() > 0) {
                                 showErrorMessage("هذا البريد الإلكتروني مسجل سابقاً");
                             } else {
-                                HashMap<String, String> map = new HashMap<String, String>();
-                                map.put("name", edtxtUserName.getText().toString());
-                                map.put("email", edtxtUserEmail.getText().toString());
-                                map.put("password", edtxtUserPassword.getText().toString());
+                                user = new User();
+                                LatLng latLng = UtilityGeneral.getCurrentLonAndLat(getActivity());
+                                user.setName(edtxtUserName.getText().toString());
+                                user.setEmail(edtxtUserEmail.getText().toString());
+                                user.setPassword(edtxtUserPassword.getText().toString());
+                                user.setLat(String.valueOf(latLng.latitude));
+                                user.setLon(String.valueOf(latLng.longitude));
                                 if (rbtnMale.isChecked())
-                                    map.put("gender", "Male");
+                                    user.setGender("Male");
                                 else
-                                    map.put("gender", "Female");
-                                UtilityRestApi.registerNewUser(getActivity().getBaseContext(), map, new TextHttpResponseHandler() {
+                                    user.setGender("Female");
+                                UtilityRestApi.registerNewUser(getActivity().getBaseContext(), ObjectConverter.convertUserToHashMap(user), new TextHttpResponseHandler() {
                                     @Override
                                     public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                                         showErrorMessage("Check your internet connection");
@@ -95,17 +105,10 @@ public class SignUpFragment extends Fragment {
                                     public void onSuccess(int statusCode, Header[] headers, String responseString) {
                                         try {
                                             JSONObject result = new JSONObject(responseString);
-
-                                            User user = new User();
-                                            user.setName(edtxtUserName.getText().toString());
-                                            user.setEmail(edtxtUserEmail.getText().toString());
-                                            user.setPassword(edtxtUserPassword.getText().toString());
                                             user.setObjectId(result.getString("objectId"));
                                             user.setCreatedAt(result.getString("createdAt"));
-                                            if (rbtnMale.isChecked())
-                                                user.setGender("Male");
-                                            else
-                                                user.setGender("Female");
+                                            UtilityGeneral.saveUser(getActivity(), user);
+                                            getActivity().onBackPressed();
                                             showErrorMessage("");
                                         } catch (JSONException e) {
                                             showErrorMessage(e.getMessage());
@@ -139,10 +142,36 @@ public class SignUpFragment extends Fragment {
             showErrorMessage("كلمة السر غير متطابقة");
             return false;
         }
+        LocationManager manager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+        if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setMessage("Your GPS seems to be disabled, do you want to enable it?")
+                    .setCancelable(false)
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        public void onClick(final DialogInterface dialog, final int id) {
+                            startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                        }
+                    })
+                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        public void onClick(final DialogInterface dialog, final int id) {
+                            dialog.cancel();
+                        }
+                    });
+            builder.show();
+            return false;
+        }
+        if (UtilityGeneral.getCurrentLonAndLat(getActivity()) == null) {
+            showErrorMessage("Make sure that Location Permission is allowed on your device!");
+            return false;
+        }
         return true;
     }
 
     private void showErrorMessage(String message) {
-        txtError.setText(message);
+        try {
+            txtError.setText(message);
+        } catch (Exception ex) {
+            Log.e("SignUpFragment", ex.getMessage());
+        }
     }
 }

@@ -56,5 +56,9 @@
     <string name="shop_err_msg_name">من فضلك أدخل اسم صحيح لمحلك</string>
     <string name="shop_err_msg_working">من فضلك أدخل مواعيد عمل صحيحه</string>
     <string name="shop_err_msg_addressinfo">من فضلك ادخل تفاصيل مفيده لعنوان محلك</string>
+    <string name="ability_to_sign">يمكنك التسجيل معنا</string>
+    <string name="choose_location">حدد مكانك</string>
+    <string name="or">ـــــــــ أو ـــــــــ</string>
+    <string name="look_offers_around_you">شوف العروض اللى حواليك</string>
 
 </resources>

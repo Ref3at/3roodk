@@ -54,14 +54,14 @@ public class UtilityRestApi {
     static public void getUserByEmail(Context context, String email, TextHttpResponseHandler handler) {
         HashMap map = new HashMap();
         map.put("email", email);
-        CallRestApi.GET(context, "User", map, handler);
+        CallRestApi.GET(context, "Clients", map, handler);
     }
 
     static public void loginUser(Context context, String email, String password, TextHttpResponseHandler handler) {
         HashMap map = new HashMap();
         map.put("email", email);
         map.put("password", password);
-        CallRestApi.GET(context, "User", map, handler);
+        CallRestApi.GET(context, "Clients", map, handler);
     }
 //Anonymous user session
 
@@ -201,25 +201,25 @@ public class UtilityRestApi {
     // Regular User
 
     static public void registerNewUser(Context context, HashMap values, TextHttpResponseHandler handler) {
-        CallRestApi.POST(context, "User", values, handler);
+        CallRestApi.POST(context, "Clients", values, handler);
     }
 
     static public void changeUserName(Context context, String userId, String newUserName, TextHttpResponseHandler handler) {
         HashMap map = new HashMap();
         map.put("name", newUserName);
-        CallRestApi.PUT(context, "User", map, userId, handler);
+        CallRestApi.PUT(context, "Clients", map, userId, handler);
     }
 
     static public void changePassword(Context context, String userId, String newPassword, TextHttpResponseHandler handler) {
         HashMap map = new HashMap();
         map.put("password", newPassword);
-        CallRestApi.PUT(context, "User", map, userId, handler);
+        CallRestApi.PUT(context, "Clients", map, userId, handler);
     }
 
     static public void changeUserProfileImg(Context context, String userId, String profileImageId, TextHttpResponseHandler handler) {
         HashMap map = new HashMap();
         map.put("profileImageId", profileImageId);
-        CallRestApi.PUT(context, "User", map, userId, handler);
+        CallRestApi.PUT(context, "Clients", map, userId, handler);
     }
 
     static public void rateOffer(Context context, String offerId, int rate, int newAverage, TextHttpResponseHandler handler) {

@@ -172,8 +172,6 @@ public class ObjectConverter {
 //                user.setCommentsRate(jsonObject.getString("commentsRate"));
 //            if (jsonObject.has("offersRate") && !jsonObject.isNull("offersRate"))
 //                user.setOffersRate(jsonObject.getString("offersRate"));
-            if (jsonObject.has("gender") && !jsonObject.isNull("gender"))
-                user.setGender(jsonObject.getString("gender"));
             if (jsonObject.has("profileImg") && !jsonObject.isNull("profileImg"))
                 user.setProfileImg(jsonObject.getString("profileImg"));
         } catch (Exception ex) {

@@ -33,7 +33,7 @@ public class CategoriesActivity extends AppCompatActivity {
 
         // Adding Toolbar to Main screen
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle("gggggggggg");
+        toolbar.setTitle("Categories");
         setSupportActionBar(toolbar);
 
 

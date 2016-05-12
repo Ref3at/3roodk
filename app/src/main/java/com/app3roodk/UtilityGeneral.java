@@ -2,18 +2,23 @@ package com.app3roodk;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
+import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
+import android.util.Base64;
 import android.util.Log;
 
 import com.app3roodk.Schema.Shop;
+import com.app3roodk.Schema.User;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 
+import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -52,10 +57,8 @@ public class UtilityGeneral {
         try {
             mapsPathsIntent.putExtra("fromLat", from.latitude);
             mapsPathsIntent.putExtra("fromLng", from.longitude);
-        }
-        catch (Exception ex)
-        {
-            Log.e(TAG,ex.getMessage());
+        } catch (Exception ex) {
+            Log.e(TAG, ex.getMessage());
         }
         mapsPathsIntent.putExtra("toLat", to.latitude);
         mapsPathsIntent.putExtra("toLng", to.longitude);
@@ -87,8 +90,87 @@ public class UtilityGeneral {
         }
         return bestLocation;
     }
+
     static public String getCurrentDate(Date date) {
         return new SimpleDateFormat("yyyyMMdd").format(date);
+    }
+    //endregion
+
+    //region Save Load Remove
+    static public LatLng loadLatLong(Context context) {
+        User user;
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        String userJson = prefs.getString(Constants.KEY_USER, "");
+        if (userJson.equals("")) return null;
+        else {
+            try {
+                byte[] data = Base64.decode(userJson, Base64.DEFAULT);
+                String text = new String(data, "UTF-8");
+                user = new Gson().fromJson(text, User.class);
+                return new LatLng(Double.parseDouble(user.getLat()), Double.parseDouble(user.getLon()));
+            } catch (Exception e) {
+                Log.e(TAG, e.getMessage());
+                return null;
+            }
+        }
+    }
+
+    static public void saveUser(Context context, User user) {
+        try {
+            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+            SharedPreferences.Editor editor = sharedPref.edit();
+            String userJson = new Gson().toJson(user);
+            byte[] data = userJson.getBytes("UTF-8");
+            String base64 = Base64.encodeToString(data, Base64.DEFAULT);
+            editor.putString(Constants.KEY_USER, base64);
+            editor.commit();
+        } catch (UnsupportedEncodingException e) {
+            Log.e(TAG, e.getMessage());
+        }
+    }
+
+    static public User loadUser(Context context) {
+        User user = null;
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        String userJson = prefs.getString(Constants.KEY_USER, "");
+        if (userJson.equals("")) return user;
+        else {
+            try {
+                byte[] data = Base64.decode(userJson, Base64.DEFAULT);
+                String text = new String(data, "UTF-8");
+                user = new Gson().fromJson(text, User.class);
+                return user;
+            } catch (Exception e) {
+                Log.e(TAG, e.getMessage());
+                return user;
+            }
+        }
+    }
+
+    static public boolean isUserExist(Context context) {
+        try {
+            return !loadUser(context).getLat().isEmpty();
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+            return false;
+        }
+    }
+
+    static public boolean isThisRegisteredUser(Context context) {
+        try {
+            return !loadUser(context).getObjectId().isEmpty();
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+            return false;
+        }
+    }
+
+    static public void removeUser(Context context) {
+        User temp = loadUser(context);
+        User user = new User();
+        user.setLat(temp.getLat());
+        user.setLon(temp.getLon());
+        saveUser(context, user);
     }
     //endregion
 }

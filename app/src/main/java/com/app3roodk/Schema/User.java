@@ -7,35 +7,35 @@ import java.util.HashMap;
  * Created by ZooM- on 4/23/2016.
  */
 public class User {
-    private String objectId;
-    private String name;
-    private String email;
-    private String password;
-    private String createdAt;
-    private String updatedAt;
-    private String profileImg;
-    private String lat;
-    private String lon;
-    private String city;
-    private String governate;
-    private String gender;
-    private String type;
-    private String favOfferIds;
-    private String favShopIds;
-    private String planId;
-    private String subsCategoryIds;
+    private String objectId = "";
+    private String name = "";
+    private String email = "";
+    private String password = "";
+    private String createdAt = "";
+    private String updatedAt = "";
+    private String profileImg = "";
+    private String lat = "";
+    private String lon = "";
+    private String city = "";
+    private String governate = "";
+    private String gender = "";
+    private String type = "";
+    private String favOfferIds = "";
+    private String favShopIds = "";
+    private String planId = "";
+    private String subsCategoryIds = "";
 
     // ref3t add
-    private String subsShopsIds;
+    private String subsShopsIds = "";
 
     //rate
-    private HashMap<String,String> commentsRate;
-    private HashMap<String,String> offersRate;
+    private HashMap<String, String> commentsRate = new HashMap<>();
+    private HashMap<String, String> offersRate = new HashMap<>();
 
     public User() {
     }
 
-    public User(String objectId, String name, String email, String createdAt, String profileImg, String lat, String lon, String city, String governate, String type, String favOfferIds, String favShopIds, String planId, String subsCategoryIds, HashMap<String,String> commentsRate, HashMap<String,String> offersRate) {
+    public User(String objectId, String name, String email, String createdAt, String profileImg, String lat, String lon, String city, String governate, String type, String favOfferIds, String favShopIds, String planId, String subsCategoryIds, HashMap<String, String> commentsRate, HashMap<String, String> offersRate) {
         this.objectId = objectId;
         this.name = name;
         this.email = email;
@@ -50,7 +50,7 @@ public class User {
         this.favShopIds = favShopIds;
         this.planId = planId;
         this.subsCategoryIds = subsCategoryIds;
-        this.commentsRate =commentsRate;
+        this.commentsRate = commentsRate;
         this.offersRate = offersRate;
     }
 
@@ -185,8 +185,9 @@ public class User {
     public void addCommentsRate(HashMap<String, String> commentsRate) {
         this.commentsRate.putAll(commentsRate);
     }
+
     public void addCommentsRate(String key, String Value) {
-        this.commentsRate.put(key,Value);
+        this.commentsRate.put(key, Value);
     }
 
     public HashMap<String, String> getOffersRate() {
@@ -200,8 +201,9 @@ public class User {
     public void addOffersRate(HashMap<String, String> offersRate) {
         this.offersRate.putAll(offersRate);
     }
+
     public void addOffersRate(String key, String Value) {
-        this.offersRate.put(key,Value);
+        this.offersRate.put(key, Value);
     }
 
     public String getPassword() {
