@@ -52,6 +52,18 @@ public class UtilityGeneral {
         return addresses;
     }
 
+    static public List<Address> getCurrentGovAndCity(Context context,LatLng latLng) {
+        List<Address> addresses = null;
+        try {
+            Geocoder geo = new Geocoder(context, Locale.getDefault());
+            addresses = geo.getFromLocation(latLng.latitude, latLng.longitude, 1);
+
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+        }
+        return addresses;
+    }
+
     static public Intent DrawPathToCertainShop(Context context, LatLng from, LatLng to) {
         Intent mapsPathsIntent = new Intent(context, MapsPathsActivity.class);
         try {

@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Address;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -30,10 +31,14 @@ import android.widget.Toast;
 
 import com.app3roodk.Back4App.UtilityRestApi;
 import com.app3roodk.Imgur.ImgurUploadTask;
+import com.app3roodk.MapsShopLocationActivity;
 import com.app3roodk.R;
+import com.app3roodk.UtilityGeneral;
+import com.google.android.gms.maps.model.LatLng;
 import com.loopj.android.http.TextHttpResponseHandler;
 
 import java.util.HashMap;
+import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -46,11 +51,12 @@ public class CreateShopFragment extends Fragment {
 
     String mlogoId = null;
 
+    static public LatLng latLngShop;
 
     private TextView AddressFromMap;
     private EditText inputShopName, inputWorkingTime, inputAddressInfo;
     private TextInputLayout inputLayoutShopName, inputLayoutWorkingTime, inputLayoutAddressInfo;
-    private Button createShop;
+    private Button createShop, btnChangeLocation;
 
     private ImageButton addShopLogo;
     private Switch haveAlogo;
@@ -62,6 +68,7 @@ public class CreateShopFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.creatshop_layout, container, false);
 
+        AddressFromMap = (TextView) rootView.findViewById(R.id.txtShopAddressFromMap);
 
         inputLayoutShopName = (TextInputLayout) rootView.findViewById(R.id.input_layout_shopname);
         inputLayoutWorkingTime = (TextInputLayout) rootView.findViewById(R.id.input_layout_workingtime);
@@ -115,8 +122,30 @@ public class CreateShopFragment extends Fragment {
             }
         });
 
+        latLngShop = UtilityGeneral.loadLatLong(getActivity());
 
+        btnChangeLocation = (Button) rootView.findViewById(R.id.btnChangeAddress);
+        btnChangeLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getContext(), MapsShopLocationActivity.class));
+            }
+        });
         return rootView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        writeAddresss();
+    }
+
+    private void writeAddresss() {
+        try {
+            List<Address> addresses = UtilityGeneral.getCurrentGovAndCity(getActivity(), latLngShop);
+            AddressFromMap.setText(addresses.get(0).getAddressLine(3) + " - " + addresses.get(0).getAddressLine(2) + " - " + addresses.get(0).getAddressLine(1) + " - " + addresses.get(0).getAddressLine(0));
+        } catch (Exception ex) {
+        }
     }
 
     private void selectLogo() {

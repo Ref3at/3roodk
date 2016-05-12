@@ -11,6 +11,7 @@ import android.widget.Toast;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
@@ -46,7 +47,7 @@ public class MapsPathsActivity extends AppCompatActivity {
     }
 
     private void initMAPS() {
-        map.addMarker(new MarkerOptions().position(toPlace).title("Shop"));
+        map.addMarker(new MarkerOptions().position(toPlace).title("Shop").icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_account_balance_black_24dp)));
         map.addMarker(new MarkerOptions().position(fromPlace).title("You are here"));
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(toPlace, 13));
         map.animateCamera(CameraUpdateFactory.zoomTo(10), 2000, null);

@@ -42,6 +42,7 @@
         <activity android:name=".UI.Signing.SignInActivity" />
         <activity android:name=".MapsPathsActivity" />
         <activity android:name=".MapsShopsActivity" />
+        <activity android:name=".MapsShopLocationActivity" />
         <activity
             android:name=".UI.FullScreenImage.FullScreenImageSlider"
             android:label="@string/title_activity_full_screen_image_slider"
