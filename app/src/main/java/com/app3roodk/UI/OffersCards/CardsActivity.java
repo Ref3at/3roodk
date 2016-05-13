@@ -1,6 +1,9 @@
 package com.app3roodk.UI.OffersCards;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -12,30 +15,34 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.app3roodk.Back4App.UtilityRestApi;
+import com.app3roodk.Constants;
+import com.app3roodk.ObjectConverter;
 import com.app3roodk.R;
+import com.app3roodk.Schema.User;
 import com.app3roodk.UI.Offer.OfferActivity;
 import com.app3roodk.UI.Shop.ShopActivity;
+import com.app3roodk.UI.Signing.SignInActivity;
 import com.app3roodk.UI.Signing.SignUpActivity;
+import com.app3roodk.UtilityGeneral;
+import com.google.android.gms.maps.model.LatLng;
+import com.loopj.android.http.TextHttpResponseHandler;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import cz.msebera.android.httpclient.Header;
 
-/**
- * Provides UI for the main screen.
- */
-
-/**
- * Provides UI for the main screen.
- */
 public class CardsActivity extends AppCompatActivity {
 
     Intent mIntent;
@@ -45,16 +52,12 @@ public class CardsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cards);
-
         if (this.getIntent() != null) {
             mIntent = this.getIntent();
         }
 
-
-        // Adding Toolbar to Main screen
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        // toolbar.setTitle("gggggggggg");
-        toolbar.setTitle(mIntent.getExtras().getString("titl"));
+        toolbar.setTitle(mIntent.getExtras().getString("title"));
         setSupportActionBar(toolbar);
         // Setting ViewPager for each Tabs
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
@@ -65,51 +68,60 @@ public class CardsActivity extends AppCompatActivity {
         // Create Navigation drawer and inlfate layout
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer);
-        // Adding menu icon to Toolbar
-        ActionBar supportActionBar = getSupportActionBar();
-        if (supportActionBar != null) {
-            supportActionBar.setHomeAsUpIndicator(R.drawable.ic_menu_white_24dp);
-            supportActionBar.setDisplayHomeAsUpEnabled(true);
-        }
+
         // Set behavior of Navigation drawer
+        hideDrawerItems();
         assert navigationView != null;
         navigationView.setNavigationItemSelectedListener(
                 new NavigationView.OnNavigationItemSelectedListener() {
                     // This method will trigger on item Click of navigation menu
                     @Override
                     public boolean onNavigationItemSelected(MenuItem menuItem) {
-                        // Set item in checked state
                         menuItem.setChecked(true);
 
-                        // TODO: handle navigation
-                        //Check to see which item was clicked and perform the appropriate action.
                         switch (menuItem.getItemId()) {
 
                             case R.id.action_add_offers:
+                                mDrawerLayout.closeDrawer(GravityCompat.END);
                                 startActivity(new Intent(CardsActivity.this, OfferActivity.class));
                                 return true;
 
                             case R.id.action_signup:
+                                mDrawerLayout.closeDrawer(GravityCompat.END);
                                 startActivity(new Intent(CardsActivity.this, SignUpActivity.class));
                                 return true;
 
-                            case R.id.action_createshop:
+                            case R.id.action_signin:
+                                mDrawerLayout.closeDrawer(GravityCompat.END);
+                                startActivity(new Intent(CardsActivity.this, SignInActivity.class));
+                                return true;
+
+                            case R.id.action_new_shop:
+                                mDrawerLayout.closeDrawer(GravityCompat.END);
                                 startActivity(new Intent(CardsActivity.this, ShopActivity.class));
                                 return true;
 
-                            case R.id.action_go_to_home:
-                                startActivity(new Intent(CardsActivity.this, CardsActivity.class));
+                            case R.id.action_home:
+                                mDrawerLayout.closeDrawer(GravityCompat.END);
+                                finish();
+                                return true;
+
+                            case R.id.action_new_location:
+                                mDrawerLayout.closeDrawer(GravityCompat.END);
+                                changeLocation();
+                                return true;
+
+                            case R.id.action_logout:
+                                mDrawerLayout.closeDrawer(GravityCompat.END);
+                                UtilityGeneral.removeShop(getBaseContext());
+                                UtilityGeneral.removeUser(getBaseContext());
+                                hideDrawerItems();
                                 return true;
 
                             default:
-                                Toast.makeText(getApplicationContext(), "item clicked", Toast.LENGTH_SHORT).show();
                                 mDrawerLayout.closeDrawers();
                                 return true;
-
                         }
-
-
-
                     }
                 });
         // Adding Floating Action Button to bottom right of main view
@@ -118,11 +130,61 @@ public class CardsActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Snackbar.make(v, "Hello Snackbar!", Snackbar.LENGTH_LONG).show();
-                //  startActivity(new Intent(CardsActivity.this,Add_NewAdd.class));
-                // startActivity(new Intent(CardsActivity.this,LoginActivity.class));
+                if (!UtilityGeneral.isRegisteredUser(getBaseContext())) {
+                    Snackbar.make(v, "سجل معنا لتتمكن من اضافه عرض", Snackbar.LENGTH_LONG).show();
+                    return;
+                }
+                if (!UtilityGeneral.isShopExist(getBaseContext())) {
+                    Snackbar.make(v, "أضف المحل بتاعك علشان تظهر عروضك عندنا", Snackbar.LENGTH_LONG).show();
+                    return;
+                }
+                startActivity(new Intent(getBaseContext(), OfferActivity.class));
             }
         });
+    }
+
+    private void changeLocation() {
+        LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                Toast.makeText(getBaseContext(), "Open Location First", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+            }
+        } else {
+            try {
+                final User user;
+                LatLng latLng = UtilityGeneral.getCurrentLonAndLat(getBaseContext());
+                if (!UtilityGeneral.isRegisteredUser(getBaseContext())) {
+                    user = new User();
+                    user.setLat(String.valueOf(latLng.latitude));
+                    user.setLon(String.valueOf(latLng.longitude));
+                    UtilityGeneral.saveUser(getBaseContext(), user);
+                } else {
+                    user = UtilityGeneral.loadUser(getBaseContext());
+                    user.setLat(String.valueOf(latLng.latitude));
+                    user.setLon(String.valueOf(latLng.longitude));
+                    UtilityRestApi.updateUser(getBaseContext(), user.getObjectId(), ObjectConverter.convertUserToHashMap(user), new TextHttpResponseHandler() {
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                        }
+
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, String responseString) {
+                            UtilityGeneral.saveUser(getBaseContext(), user);
+                        }
+                    });
+                }
+            } catch (Exception ex) {
+                Toast.makeText(getBaseContext(), "Make sure that Location Permission is allowed on your device!", Toast.LENGTH_LONG).show();
+                Log.e("CategoryActivity", ex.getMessage());
+            }
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
     }
 
     // Add Fragments to Tabs
@@ -158,30 +220,53 @@ public class CardsActivity extends AppCompatActivity {
         }
         adapter.addFragment(cardContentFragment3, "عروض مميزه");
 
-
         viewPager.setAdapter(adapter);
     }
 
+    private void hideDrawerItems() {
+        Menu nav_Menu = ((NavigationView) findViewById(R.id.nav_view)).getMenu();
+
+        if (UtilityGeneral.isRegisteredUser(getBaseContext())) {
+            nav_Menu.findItem(R.id.action_signin).setVisible(false);
+            nav_Menu.findItem(R.id.action_signup).setVisible(false);
+            nav_Menu.findItem(R.id.action_logout).setVisible(true);
+            if (UtilityGeneral.isShopExist(getBaseContext())) {
+                nav_Menu.findItem(R.id.action_new_shop).setVisible(false);
+                nav_Menu.findItem(R.id.action_add_offers).setVisible(true);
+            } else {
+                nav_Menu.findItem(R.id.action_new_shop).setVisible(true);
+                nav_Menu.findItem(R.id.action_add_offers).setVisible(false);
+            }
+        } else {
+            nav_Menu.findItem(R.id.action_signin).setVisible(true);
+            nav_Menu.findItem(R.id.action_signup).setVisible(true);
+            nav_Menu.findItem(R.id.action_logout).setVisible(false);
+            nav_Menu.findItem(R.id.action_new_shop).setVisible(false);
+            nav_Menu.findItem(R.id.action_add_offers).setVisible(false);
+        }
+    }
+
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
+    public void onBackPressed() {
+        if (mDrawerLayout.isDrawerOpen(GravityCompat.END))
+            mDrawerLayout.closeDrawer(GravityCompat.END);
+        else
+            super.onBackPressed();
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        } else if (id == android.R.id.home) {
-            mDrawerLayout.openDrawer(GravityCompat.START);
+        if (id == R.id.action_menu) {
+            mDrawerLayout.openDrawer(GravityCompat.END);
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        hideDrawerItems();
     }
 
     static class Adapter extends FragmentPagerAdapter {
@@ -211,5 +296,6 @@ public class CardsActivity extends AppCompatActivity {
         public CharSequence getPageTitle(int position) {
             return mFragmentTitleList.get(position);
         }
+
     }
 }

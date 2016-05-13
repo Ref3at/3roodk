@@ -49,8 +49,8 @@ public class MapsPathsActivity extends AppCompatActivity {
     private void initMAPS() {
         map.addMarker(new MarkerOptions().position(toPlace).title("Shop").icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_account_balance_black_24dp)));
         map.addMarker(new MarkerOptions().position(fromPlace).title("You are here"));
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(toPlace, 13));
-        map.animateCamera(CameraUpdateFactory.zoomTo(10), 2000, null);
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(toPlace, 12));
+        map.animateCamera(CameraUpdateFactory.zoomTo(16), 2000, null);
     }
 
     static public boolean isNetworkConnected(Context context) {

@@ -17,6 +17,7 @@ import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,12 +33,16 @@ import android.widget.Toast;
 import com.app3roodk.Back4App.UtilityRestApi;
 import com.app3roodk.Imgur.ImgurUploadTask;
 import com.app3roodk.MapsShopLocationActivity;
+import com.app3roodk.ObjectConverter;
 import com.app3roodk.R;
+import com.app3roodk.Schema.Shop;
 import com.app3roodk.UtilityGeneral;
 import com.google.android.gms.maps.model.LatLng;
 import com.loopj.android.http.TextHttpResponseHandler;
 
-import java.util.HashMap;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
@@ -50,7 +55,8 @@ public class CreateShopFragment extends Fragment {
     int REQUEST_CAMERA = 0, SELECT_FILE = 1;
 
     String mlogoId = null;
-
+    Shop shop;
+    List<Address> addresses;
     static public LatLng latLngShop;
 
     private TextView AddressFromMap;
@@ -61,13 +67,18 @@ public class CreateShopFragment extends Fragment {
     private ImageButton addShopLogo;
     private Switch haveAlogo;
 
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
         View rootView = inflater.inflate(R.layout.creatshop_layout, container, false);
+        initViews(rootView);
+        clickConfig();
+        latLngShop = UtilityGeneral.getCurrentLonAndLat(getActivity());
+        if (latLngShop == null) latLngShop = UtilityGeneral.loadLatLong(getActivity());
+        return rootView;
+    }
 
+    private void initViews(View rootView) {
         AddressFromMap = (TextView) rootView.findViewById(R.id.txtShopAddressFromMap);
 
         inputLayoutShopName = (TextInputLayout) rootView.findViewById(R.id.input_layout_shopname);
@@ -85,19 +96,24 @@ public class CreateShopFragment extends Fragment {
 
         addShopLogo = (ImageButton) rootView.findViewById(R.id.imgbtn_addlogo);
         addShopLogo.setAlpha(0.5f);
+        addShopLogo.setClickable(false);
 
+        createShop = (Button) rootView.findViewById(R.id.btn_create_shop);
+
+        btnChangeLocation = (Button) rootView.findViewById(R.id.btnChangeAddress);
+
+        haveAlogo = (Switch) rootView.findViewById(R.id.hava_alogo_switch);
+    }
+
+    private void clickConfig() {
         addShopLogo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(getActivity(), "هيختار لوجو", Toast.LENGTH_SHORT).show();
-
                 selectLogo();
             }
         });
-        addShopLogo.setClickable(false);
 
-
-        haveAlogo = (Switch) rootView.findViewById(R.id.hava_alogo_switch);
         haveAlogo.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -112,9 +128,6 @@ public class CreateShopFragment extends Fragment {
             }
         });
 
-
-        createShop = (Button) rootView.findViewById(R.id.btn_create_shop);
-
         createShop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -122,40 +135,44 @@ public class CreateShopFragment extends Fragment {
             }
         });
 
-        latLngShop = UtilityGeneral.loadLatLong(getActivity());
-
-        btnChangeLocation = (Button) rootView.findViewById(R.id.btnChangeAddress);
         btnChangeLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(getContext(), MapsShopLocationActivity.class));
             }
         });
-        return rootView;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        writeAddresss();
+        writeAddress();
     }
 
-    private void writeAddresss() {
+    private void writeAddress() {
         try {
-            List<Address> addresses = UtilityGeneral.getCurrentGovAndCity(getActivity(), latLngShop);
-            AddressFromMap.setText(addresses.get(0).getAddressLine(3) + " - " + addresses.get(0).getAddressLine(2) + " - " + addresses.get(0).getAddressLine(1) + " - " + addresses.get(0).getAddressLine(0));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    final List<Address> tempAddresses = UtilityGeneral.getCurrentGovAndCity(getActivity(), latLngShop);
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                AddressFromMap.setText(tempAddresses.get(0).getAddressLine(3) + " - " + tempAddresses.get(0).getAddressLine(2) + " - " + tempAddresses.get(0).getAddressLine(1) + " - " + tempAddresses.get(0).getAddressLine(0));
+                            } catch (Exception ex) {
+                                Log.e("CreateShopFragment", ex.getMessage());
+                            }
+                        }
+                    });
+                    addresses = UtilityGeneral.getCurrentGovAndCityInEnglish(getActivity(), latLngShop);
+                }
+            }).start();
         } catch (Exception ex) {
         }
     }
 
     private void selectLogo() {
-
-
-/*        final CharSequence[] items = {
-                "إلتقط صوره!",
-
-                "إختار صوره",
-                "إلغاء"}; */
 
         final CharSequence[] items = {"إختار لوجو", "إلغاء"};
 
@@ -164,10 +181,6 @@ public class CreateShopFragment extends Fragment {
         builder.setItems(items, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int item) {
-               /* if (items[item].equals("إلتقط صوره!")) {
-                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    startActivityForResult(intent, REQUEST_CAMERA);
-                } else */
                 if (items[item].equals("إختار لوجو")) {
                     Intent intent = new Intent(
                             Intent.ACTION_PICK,
@@ -194,39 +207,13 @@ public class CreateShopFragment extends Fragment {
                 onSelectFromGalleryResult(data, u);
             } else if (requestCode == REQUEST_CAMERA) {
                 Uri u = data.getData();
-                //               onCaptureImageResult(data, u);
             }
         }
     }
-/*
-    private void onCaptureImageResult(Intent data, Uri uri) {
-        Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        thumbnail.compress(Bitmap.CompressFormat.JPEG, 90, bytes);
-
-        File destination = new File(Environment.getExternalStorageDirectory(),
-                System.currentTimeMillis() + ".jpg");
-
-        FileOutputStream fo;
-        try {
-            destination.createNewFile();
-            fo = new FileOutputStream(destination);
-            fo.write(bytes.toByteArray());
-            fo.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        setLogo(thumbnail, uri);
-    }
-*/
 
     private void onSelectFromGalleryResult(Intent data, Uri uri) {
         Uri selectedImageUri = data.getData();
         String[] projection = {MediaStore.MediaColumns.DATA};
-        // Cursor cursor = managedQuery(selectedImageUri, projection, null, null, null);
 
         Cursor cursor = getActivity().getContentResolver().query(selectedImageUri, projection, null, null, null);
 
@@ -256,10 +243,7 @@ public class CreateShopFragment extends Fragment {
 
         addShopLogo.setImageBitmap(thumbnail);
         addShopLogo.setAlpha(0.4f);
-
         new MyImgurUploadTask(uri, addShopLogo).execute();
-
-
     }
 
 
@@ -280,48 +264,40 @@ public class CreateShopFragment extends Fragment {
 
             return;
         }
-
-
         Create();
-        Toast.makeText(getActivity(), "تم إنشاء محلك بنجاح", Toast.LENGTH_SHORT).show();
     }
 
     private void Create() {
+        shop = new Shop();
+        shop.setName(inputShopName.getText().toString());
+        shop.setAddress(inputAddressInfo.getText().toString());
+        shop.setWorkingTime(inputWorkingTime.getText().toString());
+        shop.setLogoId(mlogoId);
+        shop.setUserId(UtilityGeneral.loadUser(getActivity()).getObjectId());
+        shop.setCity(addresses.get(0).getAddressLine(2));
+        shop.setGovernate(addresses.get(0).getAddressLine(3));
+        shop.setLon(String.valueOf(latLngShop.longitude));
+        shop.setLat(String.valueOf(latLngShop.latitude));
 
-
-        HashMap<String, String> map = new HashMap<String, String>();
-        map.put("name", inputShopName.getText().toString());
-        map.put("address", inputAddressInfo.getText().toString());
-        map.put("workingTime", inputWorkingTime.getText().toString());
-
-        map.put("logoId", mlogoId);
-
-
-        map.put("userId", "j7gPGenT7n");
-
-        //from Shared Pref
-        // we have two lon and lat
-        // for user as a user this we get it on positing activity or any where
-        // for user as merchants (shop fixed location)  this we get from this activity just one
-        map.put("governate", "ggggggggggggggg");
-        map.put("city", "cccccccccccccccccccc");
-        map.put("lon", "looooooon");
-        map.put("lat", "laaaaaaaaaaat");
-
-        UtilityRestApi.createShop(getActivity(), map, new TextHttpResponseHandler() {
+        UtilityRestApi.createShop(getActivity(), ObjectConverter.convertShopToHashMap(shop), new TextHttpResponseHandler() {
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                 Toast.makeText(getActivity(), "حصل مشكله ما", Toast.LENGTH_SHORT).show();
-
             }
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, String responseString) {
-                Toast.makeText(getActivity(), "نجااااااااااااااااح", Toast.LENGTH_SHORT).show();
-
+                try {
+                    JSONObject result = new JSONObject(responseString);
+                    shop.setObjectId(result.getString("objectId"));
+                    shop.setCreatedAt(result.getString("createdAt"));
+                    UtilityGeneral.saveShop(getActivity(), shop);
+                    getActivity().onBackPressed();
+                } catch (JSONException e) {
+                    Log.e("CreateShopFragment", e.getMessage());
+                }
             }
         });
-
     }
 
     private Boolean validateShopName() {
@@ -333,7 +309,6 @@ public class CreateShopFragment extends Fragment {
         } else {
             inputLayoutShopName.setErrorEnabled(false);
         }
-
         return true;
     }
 
@@ -359,7 +334,6 @@ public class CreateShopFragment extends Fragment {
         } else {
             inputLayoutAddressInfo.setErrorEnabled(false);
         }
-
         return true;
     }
 
@@ -417,23 +391,14 @@ public class CreateShopFragment extends Fragment {
         protected void onPostExecute(String imageId) {
             super.onPostExecute(imageId);
             if (imageId != null) {
-                mImgurUrl = "http://i.imgur.com/" + imageId;
-
+                mImgurUrl = "http://i.imgur.com/" + imageId + ".jpg";
                 addShopLogo.setAlpha(1.0f);
-
                 Toast.makeText(getActivity(), mImgurUrl + "", Toast.LENGTH_LONG).show();
-
                 mlogoId = mImgurUrl;
-
-
             } else {
                 mImgurUrl = null;
                 Toast.makeText(getActivity(), "imgur_upload_error", Toast.LENGTH_LONG).show();
-
-
             }
-
         }
     }
-
 }

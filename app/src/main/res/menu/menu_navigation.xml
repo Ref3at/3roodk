@@ -16,41 +16,46 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/action_go_to_home"
-            android:icon="@drawable/ic_home_black_24dp"
+            android:id="@+id/action_home"
+            android:icon="@drawable/house"
             android:tint="@color/button_grey"
-            android:title="Home" />
+            android:title="@string/home" />
 
+
+        <item
+            android:id="@+id/action_signin"
+            android:icon="@drawable/profile_image"
+            android:tint="@color/button_grey"
+            android:title="@string/sign_in" />
 
         <item
             android:id="@+id/action_signup"
-            android:icon="@android:drawable/ic_input_add"
+            android:icon="@drawable/profile_image"
             android:tint="@color/button_grey"
-            android:title="Sign up" />
+            android:title="@string/new_user" />
 
         <item
-            android:id="@+id/action_createshop"
-            android:icon="@drawable/ic_home_black_24dp"
+            android:id="@+id/action_new_shop"
+            android:icon="@drawable/shop"
             android:tint="@color/button_grey"
-            android:title="Create Shop" />
+            android:title="@string/create_new_shop" />
 
         <item
             android:id="@+id/action_add_offers"
-            android:icon="@drawable/ic_home_black_24dp"
+            android:icon="@drawable/camera"
             android:tint="@color/button_grey"
-            android:title="Add new Offer" />
+            android:title="@string/add_new_offer" />
 
         <item
-            android:icon="@drawable/ic_home_black_24dp"
+            android:id="@+id/action_new_location"
+            android:icon="@drawable/location"
             android:tint="@color/button_grey"
-            android:title="Home" />
+            android:title="@string/re_get_location" />
+
         <item
-            android:icon="@drawable/ic_favorite_black_24dp"
+            android:id="@+id/action_logout"
             android:tint="@color/button_grey"
-            android:title="Two" />
-        <item
-            android:icon="@drawable/ic_bookmark_border_black_24dp"
-            android:tint="@color/button_grey"
-            android:title="Three" />
+            android:title="@string/logout" />
+
     </group>
 </menu>

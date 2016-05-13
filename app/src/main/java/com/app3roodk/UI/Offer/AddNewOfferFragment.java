@@ -47,7 +47,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -183,7 +182,7 @@ public class AddNewOfferFragment extends Fragment {
         }
 
         Publish();
-        Toast.makeText(getActivity(), "تم إضافه العرض، شكرا لك", Toast.LENGTH_SHORT).show();
+
     }
 
     private Boolean validateOfferName() {
@@ -387,9 +386,7 @@ public class AddNewOfferFragment extends Fragment {
 
         Toast.makeText(getActivity(), "uploading...", Toast.LENGTH_SHORT).show();
 
-
         new MyImgurUploadTask(uri, imageView, imgdone, imgsContainer.getChildCount()).execute();
-
 
         ImageButton del_image = (ImageButton) rootview.findViewById(R.id.delete_img);
         del_image.setOnClickListener(new View.OnClickListener() {
@@ -403,78 +400,48 @@ public class AddNewOfferFragment extends Fragment {
                     images_id.remove(imgsContainer.indexOfChild(rootview));
                 }
                 imgsContainer.removeView(rootview);
-
             }
         });
-
-
     }
 
     private void Publish() {
-
-        mOffer.setCategoryId(getCategoryId(category_spinner));
-
-        mOffer.setTitle(inputName.getText().toString());
-
-        mOffer.setDesc(inputDesc.getText().toString());
-
-        mOffer.setPriceBefore(inputPriceBefore.getText().toString());
-
-        mOffer.setPriceAfter(inputPriceAfter.getText().toString());
-
-        mOffer.setPeriod(duration_spinner.getText().toString());
-
-        mOffer.setImagePaths(images_id);
-
-        mOffer.setShopId("qEmoVmW9Ep");
-
-        mOffer.setShopName("ShopHazem");
-
-        Calendar cal= Calendar.getInstance();
-
-        for (int i =0 ;i<durtation_list.length;i++)
-        {
-            if (mOffer.getPeriod().equals(durtation_list[i]))
-            {
-                if(i == 12)
-                    cal.add(Calendar.DAY_OF_MONTH,14);
-                else
-                    cal.add(Calendar.DAY_OF_MONTH,i+1);
+        try {
+            mOffer.setCategoryId(getCategoryId(category_spinner));
+            mOffer.setTitle(inputName.getText().toString());
+            mOffer.setDesc(inputDesc.getText().toString());
+            mOffer.setPriceBefore(inputPriceBefore.getText().toString());
+            mOffer.setPriceAfter(inputPriceAfter.getText().toString());
+            mOffer.setPeriod(duration_spinner.getText().toString());
+            mOffer.setImagePaths(images_id);
+            mOffer.setShopId(UtilityGeneral.loadShop(getActivity()).getObjectId());
+            mOffer.setShopName(UtilityGeneral.loadShop(getActivity()).getName());
+            Calendar cal = Calendar.getInstance();
+            for (int i = 0; i < durtation_list.length; i++) {
+                if (mOffer.getPeriod().equals(durtation_list[i])) {
+                    if (i == 12)
+                        cal.add(Calendar.DAY_OF_MONTH, 14);
+                    else
+                        cal.add(Calendar.DAY_OF_MONTH, i + 1);
+                }
             }
+            mOffer.setEndTime(UtilityGeneral.getCurrentDate(cal.getTime()));
+
+            UtilityRestApi.addNewOffer(getActivity(), ObjectConverter.convertOfferToHashMap(mOffer), new TextHttpResponseHandler() {
+                @Override
+                public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                    Toast.makeText(getActivity(), "حصل مشكله شوف النت ", Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, String responseString) {
+                    Toast.makeText(getActivity(), "تم إضافه العرض، شكرا لك", Toast.LENGTH_SHORT).show();
+                    getActivity().onBackPressed();
+                }
+            });
+
+        } catch (Exception ex) {
+            Log.e("AddNewOfferFrag", ex.getMessage());
         }
-        mOffer.setEndTime(UtilityGeneral.getCurrentDate(cal.getTime()));
-
-//        HashMap<String, String> map = new HashMap<String, String>();
-//        map.put("title", inputName.getText().toString());
-//        map.put("CategoryId", getCategoryId(category_spinner));
-//        map.put("Desc", inputDesc.getText().toString());
-//        map.put("PriceBefore", inputPriceBefore.getText().toString());
-//        map.put("PriceAfter", inputPriceAfter.getText().toString());
-//        map.put("Period", duration_spinner.getText().toString());
-//        map.put("ImagePaths", images_id.toString());
-//        map.put("ShopId", "qEmoVmW9Ep");
-//        map.put("ShopName", "ShopHazem");
-
-//        UtilityRestApi.addNewOffer(getActivity(), map, new TextHttpResponseHandler() {
-        HashMap map = ObjectConverter.convertOfferToHashMap(mOffer);
-        Log.v("11111111111",map.toString());
-        UtilityRestApi.addNewOffer(getActivity(), ObjectConverter.convertOfferToHashMap(mOffer), new TextHttpResponseHandler() {
-            @Override
-            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                Log.v("11111111111", responseString);
-                Toast.makeText(getActivity(), "حصل مشكله شوف النت ", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, String responseString) {
-
-                Toast.makeText(getActivity(), "نجاااااااح", Toast.LENGTH_SHORT).show();
-
-
-            }
-        });
-
-
     }
 
     private String getCategoryId(BetterSpinner category_spinner) {
@@ -489,8 +456,8 @@ public class AddNewOfferFragment extends Fragment {
                 cat_id = Constants.CATEGORY_SUPER_MARKET;
 
                 break;
-            case "كافيه":
-                cat_id = Constants.CATEGORY_CAFES;
+            case "أدوات منزليه":
+                cat_id = Constants.CATEGORY_HOME_TOOLS;
 
                 break;
             case "موبايل":
@@ -507,6 +474,9 @@ public class AddNewOfferFragment extends Fragment {
                 break;
             case "إكسسوار":
                 cat_id = Constants.CATEGORY_ACCESSORIES;
+                break;
+            case "خدمات":
+                cat_id = Constants.CATEGORY_SERVICES;
 
                 break;
             case "ملابس":

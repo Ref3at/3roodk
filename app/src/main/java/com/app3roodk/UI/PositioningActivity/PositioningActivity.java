@@ -1,13 +1,10 @@
 package com.app3roodk.UI.PositioningActivity;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -55,20 +52,8 @@ public class PositioningActivity extends AppCompatActivity {
             public void onClick(View v) {
                 LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
                 if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(getBaseContext());
-                    builder.setMessage("Your GPS seems to be disabled, do you want to enable it?")
-                            .setCancelable(false)
-                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                                public void onClick(final DialogInterface dialog, final int id) {
-                                    startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-                                }
-                            })
-                            .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                                public void onClick(final DialogInterface dialog, final int id) {
-                                    dialog.cancel();
-                                }
-                            });
-                    builder.show();
+                    Toast.makeText(getBaseContext(), "Open Location First", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
                 } else {
                     try {
                         User user = new User();
@@ -80,7 +65,6 @@ public class PositioningActivity extends AppCompatActivity {
                         finish();
                     } catch (Exception ex) {
                         Toast.makeText(getBaseContext(), "Make sure that Location Permission is allowed on your device!", Toast.LENGTH_LONG).show();
-                        Log.e("PositioningActivity", ex.getMessage());
                     }
                 }
             }
@@ -90,7 +74,7 @@ public class PositioningActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (UtilityGeneral.isUserExist(getBaseContext())) {
+        if (UtilityGeneral.isLocationExist(getBaseContext())) {
             startActivity(new Intent(PositioningActivity.this, CategoriesActivity.class));
             finish();
         }

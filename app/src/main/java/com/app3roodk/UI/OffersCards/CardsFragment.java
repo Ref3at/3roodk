@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,8 @@ import com.app3roodk.ObjectConverter;
 import com.app3roodk.R;
 import com.app3roodk.Schema.Offer;
 import com.app3roodk.UI.DetailActivity.DetailActivity;
+import com.app3roodk.UtilityGeneral;
+import com.google.android.gms.maps.model.LatLng;
 import com.loopj.android.http.TextHttpResponseHandler;
 import com.squareup.picasso.Picasso;
 
@@ -36,39 +39,57 @@ import cz.msebera.android.httpclient.Header;
  */
 public class CardsFragment extends Fragment {
     static public ArrayList<Offer> lstOffers = new ArrayList<>();
+    static public int mode;
     ContentAdapter adapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         RecyclerView recyclerView = (RecyclerView) inflater.inflate(
                 R.layout.cards_recycler_view, container, false);
-        adapter = new ContentAdapter();
-        recyclerView.setAdapter(adapter);
-        recyclerView.setHasFixedSize(true);
-        lstOffers.clear();
-        adapter.notifyDataSetChanged();
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        UtilityRestApi.getActiveCategoryOffersByGovAndCity(getContext(), getActivity().getIntent().getStringExtra("titl"), "gharbiyah", "tanta", new TextHttpResponseHandler() {
-            @Override
-            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                Toast.makeText(getActivity(), responseString, Toast.LENGTH_LONG).show();
-            }
-
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, String responseString) {
-                try {
-                    lstOffers.clear();
-                    JSONArray result = new JSONObject(responseString).getJSONArray("results");
-                    for (int i = 0; i < result.length(); i++) {
-                        lstOffers.add(ObjectConverter.convertJsonToOffer(result.getJSONObject(i)));
+        try {
+            adapter = new ContentAdapter();
+            recyclerView.setAdapter(adapter);
+            recyclerView.setHasFixedSize(true);
+            lstOffers.clear();
+            adapter.notifyDataSetChanged();
+            recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+            LatLng latLng = UtilityGeneral.getCurrentLonAndLat(getActivity());
+            if (latLng == null) latLng = UtilityGeneral.loadLatLong(getActivity());
+            UtilityRestApi.getActiveCategoryOffersByLonAndLat(getContext(), latLng.latitude, latLng.longitude, 100, getActivity().getIntent().getStringExtra("name"), new TextHttpResponseHandler() {
+                @Override
+                public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                    try {
+                        Toast.makeText(getActivity(), responseString, Toast.LENGTH_LONG).show();
+                    } catch (Exception ex) {
+                        try {
+                            Log.e("CardsFragment", ex.getMessage());
+                        }
+                        catch (Exception exs){}
                     }
-                    adapter.notifyDataSetChanged();
-                } catch (JSONException e) {
-                    e.printStackTrace();
                 }
-            }
-        });
+
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, String responseString) {
+                    try {
+                        if (isFragmentUINotActive())
+                            return;
+                        lstOffers.clear();
+                        JSONArray result = new JSONObject(responseString).getJSONArray("results");
+                        for (int i = 0; i < result.length(); i++) {
+                            lstOffers.add(ObjectConverter.convertJsonToOffer(result.getJSONObject(i)));
+                        }
+                        UtilityGeneral.sortOffersByViews(lstOffers);
+                        adapter.notifyDataSetChanged();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        } catch (Exception ex) {
+            Log.e("CardsFragment", ex.getMessage());
+        }
         return recyclerView;
     }
 
@@ -88,6 +109,10 @@ public class CardsFragment extends Fragment {
             });
 
         }
+    }
+
+    public boolean isFragmentUINotActive() {
+        return !(isAdded() && !isDetached() && !isRemoving());
     }
 
     /**
@@ -128,6 +153,7 @@ public class CardsFragment extends Fragment {
             cardHolder.shopName.setText(lstOffers.get(position).getShopName());
             cardHolder.title.setText(lstOffers.get(position).getTitle());
             cardHolder.rate.setText(String.valueOf(lstOffers.get(position).getAverageRate()));
+            cardHolder.discount.setText(String.format("%.0f", (1 - (Double.parseDouble(lstOffers.get(position).getPriceAfter()) / Double.parseDouble(lstOffers.get(position).getPriceBefore()))) * 100) +"%");
             fillTimer(cardHolder, position);
             Picasso.with(holder.itemView.getContext()).load(lstOffers.get(position).getImagePaths().get(0)).into(cardHolder.imgCard);
             // no-op
@@ -141,11 +167,12 @@ public class CardsFragment extends Fragment {
 }
 
 class CardHolder {
-    public TextView title, rate, distance, shopName, day, hour, minute;
+    public TextView title, rate, distance, shopName, day, hour, minute, discount;
     public ImageView imgCard;
 
     CardHolder(View rootView) {
         title = (TextView) rootView.findViewById(R.id.card_text);
+        discount = (TextView) rootView.findViewById(R.id.card_txt_discount);
         shopName = (TextView) rootView.findViewById(R.id.card_shop_name);
         distance = (TextView) rootView.findViewById(R.id.card_distance);
         rate = (TextView) rootView.findViewById(R.id.card_rate);

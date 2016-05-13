@@ -39,7 +39,7 @@ public class UtilityRestApi {
         mapTime.put("$gte", getCurrentDate());
 
         HashMap mapFinal = new HashMap();
-        mapFinal.putAll(getNestedQuery("shopId", "Shop", "objectId", mapLatLong));
+        mapFinal.putAll(getNestedQuery("ShopId", "Shop", "objectId", mapLatLong));
         mapFinal.put("endTime", mapTime);
 
         if (CategoryName != null) {
@@ -204,6 +204,10 @@ public class UtilityRestApi {
         CallRestApi.POST(context, "Clients", values, handler);
     }
 
+    static public void updateUser(Context context, String userId, HashMap values, TextHttpResponseHandler handler) {
+        CallRestApi.PUT(context, "Clients", values, userId, handler);
+    }
+
     static public void changeUserName(Context context, String userId, String newUserName, TextHttpResponseHandler handler) {
         HashMap map = new HashMap();
         map.put("name", newUserName);
@@ -255,6 +259,12 @@ public class UtilityRestApi {
 
     static public void createShop(Context context, HashMap values, TextHttpResponseHandler handler) {
         CallRestApi.POST(context, "Shop", values, handler);
+    }
+
+    static public void getUserShops(Context context, String userId, TextHttpResponseHandler handler) {
+        HashMap map = new HashMap();
+        map.put("userId", userId);
+        CallRestApi.GET(context, "Shop", map, handler);
     }
 
     static public void editShopData(Context context, String shopId, HashMap values, TextHttpResponseHandler handler) {

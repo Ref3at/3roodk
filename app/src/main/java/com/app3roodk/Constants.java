@@ -8,11 +8,8 @@ public class Constants {
     /**
      * Constants for bundles, extras and shared preferences keys
      */
-    public static final String KEY_CURRENT_GOVERNATE = "GOVERNATE";
-    public static final String KEY_CURRENT_CITY = "CITY";
-    public static final String KEY_CURRENT_LATITUDE = "LATITUDE";
-    public static final String KEY_CURRENT_LONGITUDE = "LONGITUDE";
     public static final String KEY_USER = "keyuser";
+    public static final String KEY_SHOP = "keyshop";
 
     // imgur
 
@@ -31,10 +28,13 @@ public class Constants {
     public static final String CATEGORY_ELECTRICAl_TOOLS = "ICXT6WBpnU";
     public static final String CATEGORY_COMPUTERS = "Wc7B88oc37";
     public static final String CATEGORY_MOBILES = "YQU2zlAjN5";
-    public static final String CATEGORY_CAFES = "rA2RtUvkWQ";
+    public static final String CATEGORY_HOME_TOOLS = "rA2RtUvkWQ";
     public static final String CATEGORY_SUPER_MARKET = "CImwmoS4YT";
     public static final String CATEGORY_RESTAURANTS = "vnvH1EoyBb";
+    public static final String CATEGORY_SERVICES = "MycOzBXbkI";
 
-
-
+    //fragments mode
+    public static final int FRAGMENT_NEWEST = 123;
+    public static final int FRAGMENT_MOST_VIEWED = 133;
+    public static final int FRAGMENT_BEST_SALE = 143;
 }

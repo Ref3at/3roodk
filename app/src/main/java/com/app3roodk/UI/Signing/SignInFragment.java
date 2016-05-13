@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.app3roodk.Back4App.UtilityRestApi;
 import com.app3roodk.ObjectConverter;
 import com.app3roodk.R;
+import com.app3roodk.Schema.User;
 import com.app3roodk.UtilityGeneral;
 import com.loopj.android.http.TextHttpResponseHandler;
 
@@ -65,8 +66,29 @@ public class SignInFragment extends Fragment {
                                 showErrorMessage("البريد الإلكتروني او كلمة السر غير صحيحة");
                                 return;
                             }
-                            UtilityGeneral.saveUser(getActivity(), ObjectConverter.convertJsonToUser(result.getJSONObject(0)));
-                            getActivity().onBackPressed();
+                            User user = ObjectConverter.convertJsonToUser(result.getJSONObject(0));
+                            UtilityGeneral.saveUser(getActivity(), user);
+
+                            UtilityRestApi.getUserShops(getActivity(), user.getObjectId(), new TextHttpResponseHandler() {
+                                @Override
+                                public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                                    showErrorMessage("Check your internet connection");
+                                }
+
+                                @Override
+                                public void onSuccess(int statusCode, Header[] headers, String responseString) {
+                                    try {
+                                        JSONArray result = new JSONObject(responseString).getJSONArray("results");
+                                        if (!result.isNull(0)) {
+                                            UtilityGeneral.saveShop(getActivity(), ObjectConverter.convertJsonToShop(result.getJSONObject(0)));
+                                        }
+                                        getActivity().onBackPressed();
+                                    } catch (Exception ex) {
+                                        Log.e("SignInFragment", ex.getMessage());
+                                    }
+                                }
+                            });
+
                         } catch (Exception ex) {
                             Log.e("SignInFragment", ex.getMessage());
                         }

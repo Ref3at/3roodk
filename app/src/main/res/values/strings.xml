@@ -60,5 +60,34 @@
     <string name="choose_location">حدد مكانك</string>
     <string name="or">ـــــــــ أو ـــــــــ</string>
     <string name="look_offers_around_you">شوف العروض اللى حواليك</string>
+    <string name="home">الصفحة الرئيسية</string>
+    <string name="add_new_offer">أضف عرض جديد</string>
+    <string name="logout">تسجيل الخروج</string>
+    <string name="re_get_location">إعادة معرفة المكان</string>
+    <string name="create_new_shop">عمل محل جديد</string>
+    <string name="menu">القائمة</string>
+    <string name="here">هنا</string>
+    <string name="with_us_sale">معانا هتوفر هتوفر</string>
+    <string name="accessories">إكسسوار</string>
+    <string name="home_tools">أدوات منزليه</string>
+    <string name="resturants">مطاعم</string>
+    <string name="mobile_category">موبايل</string>
+    <string name="computer">كمبيوتر</string>
+    <string name="shoes">أحذيه</string>
+    <string name="services">خدمات</string>
+    <string name="super_market">سوبر ماركت</string>
+    <string name="clothes">ملابس</string>
+    <string name="offer_name">اسم العرض</string>
+    <string name="offer_desc">وصف العرض</string>
+    <string name="price_before_sale">السعر قبل الخصم</string>
+    <string name="price_after_sale">السعر بعد الخصم</string>
+    <string name="offer_duration">مده العرض</string>
+    <string name="choose_category">اختار القسم</string>
+    <string name="add_offer">ضيف إعلان</string>
+    <string name="change_address">تغيير العنوان</string>
+    <string name="shop_working_time">مواعيد عمل المحل</string>
+    <string name="have_logo">لديك لوجو</string>
+    <string name="shop_address">عنوان المحل</string>
+    <string name="address_details">تفاصيل للعنوان</string>
 
 </resources>

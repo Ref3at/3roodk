@@ -13,6 +13,7 @@ import android.support.v4.app.ActivityCompat;
 import android.util.Base64;
 import android.util.Log;
 
+import com.app3roodk.Schema.Offer;
 import com.app3roodk.Schema.Shop;
 import com.app3roodk.Schema.User;
 import com.google.android.gms.maps.model.LatLng;
@@ -21,20 +22,20 @@ import com.google.gson.Gson;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 public class UtilityGeneral {
 
-    final static private String TAG = "UtilityGeneral";
 
     static public LatLng getCurrentLonAndLat(Context context) {
         try {
             Location location = getLastKnownLocation(context);
             return new LatLng(location.getLatitude(), location.getLongitude());
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
             return null;
         }
     }
@@ -47,19 +48,28 @@ public class UtilityGeneral {
             addresses = geo.getFromLocation(latlng.latitude, latlng.longitude, 1);
 
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
         }
         return addresses;
     }
 
-    static public List<Address> getCurrentGovAndCity(Context context,LatLng latLng) {
+    static public List<Address> getCurrentGovAndCity(Context context, LatLng latLng) {
         List<Address> addresses = null;
         try {
             Geocoder geo = new Geocoder(context, Locale.getDefault());
             addresses = geo.getFromLocation(latLng.latitude, latLng.longitude, 1);
 
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
+        }
+        return addresses;
+    }
+
+    static public List<Address> getCurrentGovAndCityInEnglish(Context context, LatLng latLng) {
+        List<Address> addresses = null;
+        try {
+            Geocoder geo = new Geocoder(context, Locale.ENGLISH);
+            addresses = geo.getFromLocation(latLng.latitude, latLng.longitude, 1);
+
+        } catch (Exception e) {
         }
         return addresses;
     }
@@ -70,7 +80,8 @@ public class UtilityGeneral {
             mapsPathsIntent.putExtra("fromLat", from.latitude);
             mapsPathsIntent.putExtra("fromLng", from.longitude);
         } catch (Exception ex) {
-            Log.e(TAG, ex.getMessage());
+            mapsPathsIntent.putExtra("fromLat", loadLatLong(context).latitude);
+            mapsPathsIntent.putExtra("fromLng", loadLatLong(context).longitude);
         }
         mapsPathsIntent.putExtra("toLat", to.latitude);
         mapsPathsIntent.putExtra("toLng", to.longitude);
@@ -81,6 +92,44 @@ public class UtilityGeneral {
         Intent mapsShopsIntent = new Intent(context, MapsShopsActivity.class);
         mapsShopsIntent.putExtra("JsonShops", new Gson().toJson(lstShops));
         return mapsShopsIntent;
+    }
+
+    static public void sortOffersByViews(ArrayList<Offer> lstOffers) {
+        Collections.sort(lstOffers, new Comparator<Offer>() {
+            @Override
+            public int compare(Offer o1, Offer o2) {
+                if (o1.getViewNum() >= o2.getViewNum())
+                    return 1;
+                if (o1.getViewNum() < o2.getViewNum())
+                    return -1;
+                return 0;
+            }
+        });
+    }
+
+    static public void sortOffersByDiscount(ArrayList<Offer> lstOffers) {
+        Collections.sort(lstOffers, new Comparator<Offer>() {
+            @Override
+            public int compare(Offer o1, Offer o2) {
+                if ((Double.parseDouble(o1.getPriceBefore()) - Double.parseDouble((o1.getPriceAfter()))) / Double.parseDouble(o1.getPriceBefore()) >= (Double.parseDouble(o2.getPriceBefore()) - Double.parseDouble((o2.getPriceAfter()))) / Double.parseDouble(o2.getPriceBefore()))
+                    return 1;
+                else
+                    return -1;
+            }
+        });
+    }
+
+    static public void sortOffersByNewest(ArrayList<Offer> lstOffers) {
+        Collections.sort(lstOffers, new Comparator<Offer>() {
+            @Override
+            public int compare(Offer o1, Offer o2) {
+                if (Integer.parseInt(o1.getEndTime()) >= Integer.parseInt(o2.getEndTime()))
+                    return 1;
+                if (Integer.parseInt(o1.getEndTime()) < Integer.parseInt(o2.getEndTime()))
+                    return -1;
+                return 0;
+            }
+        });
     }
 
     //region Helping Functions
@@ -121,7 +170,6 @@ public class UtilityGeneral {
                 user = new Gson().fromJson(text, User.class);
                 return new LatLng(Double.parseDouble(user.getLat()), Double.parseDouble(user.getLon()));
             } catch (Exception e) {
-                Log.e(TAG, e.getMessage());
                 return null;
             }
         }
@@ -137,7 +185,6 @@ public class UtilityGeneral {
             editor.putString(Constants.KEY_USER, base64);
             editor.commit();
         } catch (UnsupportedEncodingException e) {
-            Log.e(TAG, e.getMessage());
         }
     }
 
@@ -153,26 +200,23 @@ public class UtilityGeneral {
                 user = new Gson().fromJson(text, User.class);
                 return user;
             } catch (Exception e) {
-                Log.e(TAG, e.getMessage());
                 return user;
             }
         }
     }
 
-    static public boolean isUserExist(Context context) {
+    static public boolean isLocationExist(Context context) {
         try {
             return !loadUser(context).getLat().isEmpty();
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
             return false;
         }
     }
 
-    static public boolean isThisRegisteredUser(Context context) {
+    static public boolean isRegisteredUser(Context context) {
         try {
             return !loadUser(context).getObjectId().isEmpty();
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
             return false;
         }
     }
@@ -183,6 +227,51 @@ public class UtilityGeneral {
         user.setLat(temp.getLat());
         user.setLon(temp.getLon());
         saveUser(context, user);
+    }
+
+    static public void saveShop(Context context, Shop shop) {
+        try {
+            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+            SharedPreferences.Editor editor = sharedPref.edit();
+            String userJson = new Gson().toJson(shop);
+            byte[] data = userJson.getBytes("UTF-8");
+            String base64 = Base64.encodeToString(data, Base64.DEFAULT);
+            editor.putString(Constants.KEY_SHOP, base64);
+            editor.commit();
+        } catch (UnsupportedEncodingException e) {
+        }
+    }
+
+    static public Shop loadShop(Context context) {
+        Shop shop = null;
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        String userJson = prefs.getString(Constants.KEY_SHOP, "");
+        if (userJson.equals("")) return shop;
+        else {
+            try {
+                byte[] data = Base64.decode(userJson, Base64.DEFAULT);
+                String text = new String(data, "UTF-8");
+                shop = new Gson().fromJson(text, Shop.class);
+                return shop;
+            } catch (Exception e) {
+                return shop;
+            }
+        }
+    }
+
+    static public boolean isShopExist(Context context) {
+        try {
+            return !loadShop(context).getObjectId().isEmpty();
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    static public void removeShop(Context context) {
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.remove(Constants.KEY_SHOP);
+        editor.commit();
     }
     //endregion
 }

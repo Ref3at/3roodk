@@ -1,24 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
-    android:layoutDirection="rtl">
-
+    android:background="@drawable/background_gradient"
+    android:layoutDirection="rtl"
+    android:padding="20dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="10dp"
-            android:text="تسجيل محل جديد"
-            android:textSize="22sp" />
-
 
         <android.support.design.widget.TextInputLayout
             android:id="@+id/input_layout_shopname"
@@ -30,11 +22,14 @@
                 android:id="@+id/input_shopname"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
+                android:background="@drawable/custom_background_content"
                 android:gravity="center"
-                android:hint="اسم المحل"
+                android:hint="@string/shop_name"
                 android:inputType="textCapWords"
-                android:singleLine="true" />
+                android:padding="10dp"
+                android:singleLine="true"
+                android:textColor="@color/black"
+                android:textColorHint="@color/light_black" />
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
@@ -47,11 +42,14 @@
                 android:id="@+id/input_workingtime"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
+                android:background="@drawable/custom_background_content"
                 android:gravity="center"
-                android:hint="واعيد عمل المحل"
+                android:hint="@string/shop_working_time"
                 android:inputType="textCapWords"
-                android:singleLine="true" />
+                android:padding="10dp"
+                android:singleLine="true"
+                android:textColor="@color/black"
+                android:textColorHint="@color/light_black" />
         </android.support.design.widget.TextInputLayout>
 
 
@@ -70,18 +68,17 @@
                 android:layout_margin="5dp"
                 android:gravity="center"
                 android:layoutDirection="ltr"
-                android:text="لديك لوجو" />
+                android:text="@string/have_logo" />
 
             <ImageButton
 
                 android:id="@+id/imgbtn_addlogo"
                 android:layout_width="72dp"
                 android:layout_height="72dp"
-
                 android:alpha="0.4"
                 android:clickable="false"
                 android:scaleType="centerCrop"
-                android:src="@android:drawable/ic_dialog_dialer" />
+                android:src="@drawable/add_image" />
 
 
         </LinearLayout>
@@ -90,7 +87,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:text="عنوان المحل"
+            android:text="@string/shop_address"
             android:textSize="18sp" />
 
         <LinearLayout
@@ -107,14 +104,17 @@
                 android:layout_gravity="center"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="الدقهليه - السنبلاوين شارع الاستقلال" />
+                tools:text="الدقهليه - السنبلاوين شارع الاستقلال" />
 
             <Button
                 android:id="@+id/btnChangeAddress"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="تغيير العنوان" />
+                android:background="@drawable/custom_background_buttons"
+                android:text="@string/change_address"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
 
         </LinearLayout>
 
@@ -128,24 +128,27 @@
                 android:id="@+id/input_addressinfo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
+                android:background="@drawable/custom_background_content"
                 android:gravity="center"
-                android:hint="تفاصيل إضافيه للعنوان"
+                android:hint="@string/address_details"
                 android:inputType="textCapWords"
-                android:singleLine="true" />
+                android:padding="10dp"
+                android:singleLine="true"
+                android:textColor="@color/black"
+                android:textColorHint="@color/light_black" />
         </android.support.design.widget.TextInputLayout>
 
+        <Button
+            android:id="@+id/btn_create_shop"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/custom_background_buttons"
+            android:text="@string/user_register"
+            android:textColor="@color/white"
+            android:textSize="24sp"
+            android:textStyle="bold" />
 
     </LinearLayout>
-
-
-    <Button
-        android:id="@+id/btn_create_shop"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_margin="5dp"
-        android:text="تسجيل" />
-
 
 </RelativeLayout>

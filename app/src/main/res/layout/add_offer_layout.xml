@@ -31,8 +31,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
-                        android:background="#00ffffff"
-                        android:src="@drawable/icon" />
+                        android:src="@drawable/add_image" />
 
 
                 </LinearLayout>
@@ -50,10 +49,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
+                    android:background="@drawable/custom_background_content"
                     android:gravity="center"
-                    android:hint="اسم العرض"
+                    android:hint="@string/offer_name"
                     android:inputType="textCapWords"
                     android:lines="1"
+                    android:padding="10dp"
                     android:singleLine="true" />
             </android.support.design.widget.TextInputLayout>
 
@@ -68,9 +69,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
+                    android:background="@drawable/custom_background_content"
                     android:gravity="center"
-                    android:hint="وصف العرض"
-                    android:inputType="textCapWords" />
+                    android:hint="@string/offer_desc"
+                    android:inputType="textCapWords"
+                    android:padding="10dp" />
             </android.support.design.widget.TextInputLayout>
 
             <LinearLayout
@@ -78,13 +81,11 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-
                 <TextView
                     android:id="@+id/discount_percentage"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="1.5"
-                    android:background="@color/colorPrimaryDark" />
+                    android:layout_weight="1.5" />
 
                 <android.support.design.widget.TextInputLayout
                     android:id="@+id/input_layout_priceafter"
@@ -92,15 +93,16 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="3">
 
-
                     <EditText
                         android:id="@+id/input_priceafter"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_margin="10dp"
+                        android:background="@drawable/custom_background_content"
                         android:gravity="center"
-                        android:hint="السعر بعد الخصم"
-                        android:inputType="textCapWords"
+                        android:hint="@string/price_after_sale"
+                        android:inputType="numberDecimal"
+                        android:padding="10dp"
                         android:singleLine="true" />
                 </android.support.design.widget.TextInputLayout>
 
@@ -116,9 +118,11 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_margin="10dp"
+                        android:background="@drawable/custom_background_content"
                         android:gravity="center"
-                        android:hint="السعر قبل الخصم"
-                        android:inputType="textCapWords"
+                        android:hint="@string/price_before_sale"
+                        android:inputType="numberDecimal"
+                        android:padding="10dp"
                         android:singleLine="true" />
                 </android.support.design.widget.TextInputLayout>
 
@@ -142,15 +146,17 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/activity_vertical_margin"
                     android:layout_weight="2"
+                    android:background="@drawable/custom_background_content"
                     android:gravity="center_horizontal"
-                    android:hint="مده العرض" />
+                    android:hint="@string/offer_duration"
+                    android:padding="10dp" />
 
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:text="مده العرض" />
+                    android:text="@string/offer_duration" />
             </LinearLayout>
 
             <LinearLayout
@@ -170,22 +176,23 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/activity_vertical_margin"
                     android:layout_weight="2"
+                    android:background="@drawable/custom_background_content"
                     android:gravity="center_horizontal"
-                    android:hint="اختار القسم" />
+                    android:hint="@string/choose_category"
+                    android:padding="10dp" />
 
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:text="اختار القسم" />
+                    android:text="@string/choose_category" />
             </LinearLayout>
 
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:layout_alignParentBottom="true"
                 android:layout_margin="5dp"
                 android:orientation="horizontal">
 
@@ -194,14 +201,19 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:text="مراجعه" />
+                    android:text="مراجعه"
+                    android:visibility="gone" />
 
                 <Button
                     android:id="@+id/btn_publishadd"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:text="ضيف إعلان" />
+                    android:background="@drawable/custom_background_buttons"
+                    android:text="@string/add_offer"
+                    android:textColor="@color/white"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
 
             </LinearLayout>
 

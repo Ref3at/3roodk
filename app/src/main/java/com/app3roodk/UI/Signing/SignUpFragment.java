@@ -39,7 +39,6 @@ public class SignUpFragment extends Fragment {
     Button btnRegister;
     EditText edtxtUserName, edtxtUserEmail, edtxtUserPassword, edtxtUserConfirmPassword;
     TextView txtError;
-    Spinner spnCountry, spnState;
     RadioButton rbtnMale, rbtnFemale;
     User user;
 
@@ -58,8 +57,6 @@ public class SignUpFragment extends Fragment {
         edtxtUserPassword = (EditText) rootView.findViewById(R.id.edtxtPassword);
         txtError = (TextView) rootView.findViewById(R.id.txtError);
         btnRegister = (Button) rootView.findViewById(R.id.btnRegister);
-        spnCountry = (Spinner) rootView.findViewById(R.id.spnCountry);
-        spnState = (Spinner) rootView.findViewById(R.id.spnState);
         rbtnMale = (RadioButton) rootView.findViewById(R.id.rbtnMale);
         rbtnFemale = (RadioButton) rootView.findViewById(R.id.rbtnFemale);
         rbtnMale.setChecked(true);

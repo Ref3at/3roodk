@@ -76,7 +76,7 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
             txtRate.setText(String.valueOf(String.valueOf(offer.getAverageRate())));
             initSlider(offer.getImagePaths());
             txtSale.setText(
-                    String.format("%.0f", (1 - (Double.parseDouble(offer.getPriceAfter()) / Double.parseDouble(offer.getPriceBefore()))) * 100));
+                    String.format("%.0f", (1 - (Double.parseDouble(offer.getPriceAfter()) / Double.parseDouble(offer.getPriceBefore()))) * 100)+"%");
         } catch (Exception ex) {
         }
     }

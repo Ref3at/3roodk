@@ -3,347 +3,303 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#f0ecec"
+
     tools:context="com.app3roodk.UI.CategoriesActivity.CategoriesActivity">
 
-
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:baselineAligned="false"
+            android:orientation="horizontal">
 
-            <TextView
-                android:layout_width="match_parent"
+            <RelativeLayout
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_margin="20dp"
-                android:gravity="center"
-                android:text="القائمه الرئيسيه"
-                android:textColor="#ff368fff"
-                android:textSize="30sp" />
+                android:layout_weight="1"
+                android:background="@drawable/custom_background_category">
 
+                <ImageButton
+                    android:id="@+id/imageButton1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:background="@android:color/transparent"
+                    android:onClick="gooo"
+                    android:padding="10dp"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/c1" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/imageButton1"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginBottom="10dp"
+                    android:text="@string/resturants"
+                    android:textColor="@color/dark_grey"
+                    android:textSize="@dimen/abc_text_size_medium_material" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/custom_background_category">
+
+                <ImageButton
+                    android:id="@+id/imageButton2"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="5dp"
+                    android:background="@android:color/transparent"
+                    android:onClick="gooo"
+                    android:padding="10dp"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/c2" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/imageButton2"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginBottom="10dp"
+                    android:text="@string/home_tools"
+                    android:textColor="@color/dark_grey"
+
+                    android:textSize="@dimen/abc_text_size_medium_material" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/custom_background_category">
+
+                <ImageButton
+                    android:id="@+id/imageButton3"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="5dp"
+                    android:background="@android:color/transparent"
+                    android:onClick="gooo"
+                    android:padding="10dp"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/c3" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/imageButton3"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginBottom="10dp"
+                    android:text="@string/accessories"
+                    android:textColor="@color/dark_grey"
+
+                    android:textSize="@dimen/abc_text_size_medium_material" />
+            </RelativeLayout>
 
         </LinearLayout>
-
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:orientation="vertical">
+            android:orientation="horizontal">
 
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:orientation="horizontal">
+                android:background="@drawable/custom_background_category">
 
-                <RelativeLayout
-                    android:layout_width="0dp"
+                <ImageButton
+                    android:id="@+id/imageButton4"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="5dp"
+                    android:background="@android:color/transparent"
+                    android:onClick="gooo"
+                    android:padding="10dp"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/c4" />
+
+                <TextView
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
+                    android:layout_below="@+id/imageButton4"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginBottom="10dp"
+                    android:text="@string/mobile_category"
+                    android:textColor="@color/dark_grey"
+                    android:textSize="@dimen/abc_text_size_medium_material" />
+            </RelativeLayout>
 
-                    >
-
-                    <ImageButton
-                        android:id="@+id/imageButton1"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_margin="5dp"
-                        android:background="@drawable/back_g"
-                        android:onClick="gooo"
-                        android:padding="10dp"
-                        android:scaleType="centerInside"
-                        android:src="@drawable/c1" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignBottom="@+id/imageButton1"
-                        android:layout_centerHorizontal="true"
-                        android:layout_marginBottom="10dp"
-                        android:text="مطاعم"
-                        android:textColor="#ffffff"
-                        android:textSize="@dimen/abc_text_size_medium_material" />
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-
-                    >
-
-                    <ImageButton
-                        android:id="@+id/imageButton2"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_margin="5dp"
-                        android:background="@drawable/back_g"
-                        android:onClick="gooo"
-                        android:padding="10dp"
-                        android:scaleType="centerInside"
-                        android:src="@drawable/c2" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignBottom="@+id/imageButton2"
-                        android:layout_centerHorizontal="true"
-                        android:layout_marginBottom="10dp"
-                        android:text="أدوات منزليه"
-                        android:textColor="#ffffff"
-                        android:textSize="@dimen/abc_text_size_medium_material" />
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-
-                    >
-
-                    <ImageButton
-                        android:id="@+id/imageButton3"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_margin="5dp"
-                        android:background="@drawable/back_g"
-                        android:onClick="gooo"
-                        android:padding="10dp"
-                        android:scaleType="centerInside"
-                        android:src="@drawable/c3" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignBottom="@+id/imageButton3"
-                        android:layout_centerHorizontal="true"
-                        android:layout_marginBottom="10dp"
-                        android:text="أدوات كهربائيه"
-                        android:textColor="#ffffff"
-                        android:textSize="@dimen/abc_text_size_medium_material" />
-                </RelativeLayout>
-
-            </LinearLayout>
-
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:orientation="horizontal">
+                android:background="@drawable/custom_background_category">
 
-                <RelativeLayout
-                    android:layout_width="0dp"
+                <ImageButton
+                    android:id="@+id/imageButton5"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="5dp"
+                    android:background="@android:color/transparent"
+                    android:onClick="gooo"
+                    android:padding="10dp"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/c5" />
+
+                <TextView
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
+                    android:layout_below="@+id/imageButton5"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginBottom="10dp"
+                    android:text="@string/computer"
+                    android:textColor="@color/dark_grey"
+                    android:textSize="@dimen/abc_text_size_medium_material" />
+            </RelativeLayout>
 
-                    >
-
-                    <ImageButton
-                        android:id="@+id/imageButton4"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_margin="5dp"
-                        android:background="@drawable/back_g"
-                        android:onClick="gooo"
-                        android:padding="10dp"
-                        android:scaleType="centerInside"
-                        android:src="@drawable/c4" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignBottom="@+id/imageButton4"
-                        android:layout_centerHorizontal="true"
-                        android:layout_marginBottom="10dp"
-                        android:text="موبايل"
-                        android:textColor="#ffffff"
-                        android:textSize="@dimen/abc_text_size_medium_material" />
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-
-                    >
-
-                    <ImageButton
-                        android:id="@+id/imageButton5"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_margin="5dp"
-                        android:background="@drawable/back_g"
-                        android:onClick="gooo"
-                        android:padding="10dp"
-                        android:scaleType="centerInside"
-                        android:src="@drawable/c5" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignBottom="@+id/imageButton5"
-                        android:layout_centerHorizontal="true"
-                        android:layout_marginBottom="10dp"
-                        android:text="كمبيوتر"
-                        android:textColor="#ffffff"
-                        android:textSize="@dimen/abc_text_size_medium_material" />
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-
-                    >
-
-                    <ImageButton
-                        android:id="@+id/imageButton6"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_margin="5dp"
-                        android:background="@drawable/back_g"
-                        android:onClick="gooo"
-                        android:padding="10dp"
-                        android:scaleType="centerInside"
-                        android:src="@drawable/c6" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignBottom="@+id/imageButton6"
-                        android:layout_centerHorizontal="true"
-                        android:layout_marginBottom="10dp"
-                        android:text="أحذيه"
-                        android:textColor="#ffffff"
-                        android:textSize="@dimen/abc_text_size_medium_material" />
-                </RelativeLayout>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:orientation="horizontal">
+                android:background="@drawable/custom_background_category">
 
-                <RelativeLayout
-                    android:layout_width="0dp"
+                <ImageButton
+                    android:id="@+id/imageButton6"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="5dp"
+                    android:background="@android:color/transparent"
+                    android:onClick="gooo"
+                    android:padding="10dp"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/c6" />
+
+                <TextView
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-
-                    >
-
-                    <ImageButton
-                        android:id="@+id/imageButton7"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_margin="5dp"
-                        android:background="@drawable/back_g"
-                        android:onClick="gooo"
-                        android:padding="10dp"
-                        android:scaleType="centerInside"
-                        android:src="@drawable/c7" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignBottom="@+id/imageButton7"
-                        android:layout_centerHorizontal="true"
-                        android:layout_marginBottom="10dp"
-                        android:text="ملابس"
-                        android:textColor="#ffffff"
-                        android:textSize="@dimen/abc_text_size_medium_material" />
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-
-                    >
-
-                    <ImageButton
-                        android:id="@+id/imageButton8"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_margin="5dp"
-                        android:background="@drawable/back_g"
-                        android:onClick="gooo"
-                        android:padding="10dp"
-                        android:scaleType="centerInside"
-                        android:src="@drawable/c8" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignBottom="@+id/imageButton8"
-                        android:layout_centerHorizontal="true"
-                        android:layout_marginBottom="10dp"
-                        android:text="سوبر ماركت"
-                        android:textColor="#ffffff"
-                        android:textSize="@dimen/abc_text_size_medium_material" />
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-
-                    >
-
-                    <ImageButton
-                        android:id="@+id/imageButton9"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_margin="5dp"
-                        android:background="@drawable/back_g"
-                        android:onClick="gooo"
-                        android:padding="10dp"
-                        android:scaleType="centerInside"
-                        android:src="@drawable/c9" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignBottom="@+id/imageButton9"
-                        android:layout_centerHorizontal="true"
-                        android:layout_marginBottom="10dp"
-                        android:text="خدمات"
-                        android:textColor="#ffffff"
-                        android:textSize="@dimen/abc_text_size_medium_material" />
-                </RelativeLayout>
-            </LinearLayout>
-
-
+                    android:layout_below="@+id/imageButton6"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginBottom="10dp"
+                    android:text="@string/shoes"
+                    android:textColor="@color/dark_grey"
+                    android:textSize="@dimen/abc_text_size_medium_material" />
+            </RelativeLayout>
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1">
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
 
-            <TextView
-                android:layout_width="match_parent"
+            <RelativeLayout
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_margin="20dp"
-                android:gravity="center"
-                android:text="معانا هتوفر هتوفر"
-                android:textColor="#ff368fff"
-                android:textSize="30sp" />
+                android:layout_weight="1"
+                android:background="@drawable/custom_background_category">
 
+                <ImageButton
+                    android:id="@+id/imageButton7"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="5dp"
+                    android:background="@android:color/transparent"
+                    android:onClick="gooo"
+                    android:padding="10dp"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/c7" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/imageButton7"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginBottom="10dp"
+                    android:text="@string/clothes"
+                    android:textColor="@color/dark_grey"
+                    android:textSize="@dimen/abc_text_size_medium_material" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/custom_background_category">
+
+                <ImageButton
+                    android:id="@+id/imageButton8"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="5dp"
+                    android:background="@android:color/transparent"
+                    android:onClick="gooo"
+                    android:padding="10dp"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/c8" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/imageButton8"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginBottom="10dp"
+                    android:text="@string/super_market"
+                    android:textColor="@color/dark_grey"
+                    android:textSize="@dimen/abc_text_size_medium_material" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/custom_background_category">
+
+                <ImageButton
+                    android:id="@+id/imageButton9"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="5dp"
+                    android:background="@android:color/transparent"
+                    android:onClick="gooo"
+                    android:padding="10dp"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/c9" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/imageButton9"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginBottom="10dp"
+                    android:text="@string/services"
+                    android:textColor="@color/dark_grey"
+                    android:textSize="@dimen/abc_text_size_medium_material" />
+            </RelativeLayout>
 
         </LinearLayout>
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="20dp"
+            android:gravity="center"
+            android:text="@string/with_us_sale"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="30sp"
+            android:textStyle="bold" />
 
     </LinearLayout>
-
 
 </ScrollView>

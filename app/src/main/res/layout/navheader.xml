@@ -18,4 +18,11 @@
     android:layout_height="@dimen/navheader_height"
     android:background="?attr/colorPrimaryDark"
     android:orientation="vertical"
-    android:padding="@dimen/md_keylines"></LinearLayout>
+    android:padding="@dimen/md_keylines">
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="30dp"
+        android:src="@drawable/logo"/>
+</LinearLayout>
