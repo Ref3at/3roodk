@@ -3,10 +3,8 @@ package com.app3roodk.UI.DetailActivity;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 
 import com.app3roodk.R;
-import com.app3roodk.UI.Signing.SignUpFragment;
 
 
 public class DetailActivity extends AppCompatActivity {

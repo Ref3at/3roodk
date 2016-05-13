@@ -57,7 +57,7 @@ public class CardsFragment extends Fragment {
             recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
             LatLng latLng = UtilityGeneral.getCurrentLonAndLat(getActivity());
             if (latLng == null) latLng = UtilityGeneral.loadLatLong(getActivity());
-            UtilityRestApi.getActiveCategoryOffersByLonAndLat(getContext(), latLng.latitude, latLng.longitude, 100, getActivity().getIntent().getStringExtra("name"), new TextHttpResponseHandler() {
+            UtilityRestApi.getActiveCategoryOffersByLonAndLat(getContext(), latLng.latitude, latLng.longitude, 0.5, getActivity().getIntent().getStringExtra("name"), new TextHttpResponseHandler() {
                 @Override
                 public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                     try {

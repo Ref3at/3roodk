@@ -99,9 +99,9 @@ public class UtilityGeneral {
             @Override
             public int compare(Offer o1, Offer o2) {
                 if (o1.getViewNum() >= o2.getViewNum())
-                    return 1;
-                if (o1.getViewNum() < o2.getViewNum())
                     return -1;
+                if (o1.getViewNum() < o2.getViewNum())
+                    return 1;
                 return 0;
             }
         });
@@ -112,9 +112,9 @@ public class UtilityGeneral {
             @Override
             public int compare(Offer o1, Offer o2) {
                 if ((Double.parseDouble(o1.getPriceBefore()) - Double.parseDouble((o1.getPriceAfter()))) / Double.parseDouble(o1.getPriceBefore()) >= (Double.parseDouble(o2.getPriceBefore()) - Double.parseDouble((o2.getPriceAfter()))) / Double.parseDouble(o2.getPriceBefore()))
-                    return 1;
-                else
                     return -1;
+                else
+                    return 1;
             }
         });
     }
@@ -124,9 +124,9 @@ public class UtilityGeneral {
             @Override
             public int compare(Offer o1, Offer o2) {
                 if (Integer.parseInt(o1.getEndTime()) >= Integer.parseInt(o2.getEndTime()))
-                    return 1;
-                if (Integer.parseInt(o1.getEndTime()) < Integer.parseInt(o2.getEndTime()))
                     return -1;
+                if (Integer.parseInt(o1.getEndTime()) < Integer.parseInt(o2.getEndTime()))
+                    return 1;
                 return 0;
             }
         });

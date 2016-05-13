@@ -11,25 +11,34 @@ import java.util.HashMap;
 
 public class UtilityRestApi {
 
-    static public void getOffersWithin(Context context, double latitude, double longitude, double distanceInKM, String CategoryName, TextHttpResponseHandler textHttpResponseHandler) {
-        double earthRadius = 6378.1;
-        double bearing = 1.57;
-        double lat1 = Math.toRadians(latitude);
-        double lon1 = Math.toRadians(longitude);
-        double lat2 = Math.asin(Math.sin(lat1) * Math.cos(distanceInKM / earthRadius) +
-                Math.cos(lat1) * Math.sin(distanceInKM / earthRadius) * Math.cos(bearing));
-        double lon2 = lon1 + Math.atan2(Math.sin(bearing) * Math.sin(distanceInKM / earthRadius) * Math.cos(lat1),
-                Math.cos(distanceInKM / earthRadius) - Math.sin(lat1) * Math.sin(lat2));
-        double differenceLat = Math.abs(latitude - Math.toDegrees(lat2));
-        double differenceLon = Math.abs(longitude - Math.toDegrees(lon2));
+    static public void getOffersWithin(Context context, double latitude, double longitude, double difference, String CategoryName, TextHttpResponseHandler textHttpResponseHandler) {
+//        double earthRadius = 6378.1;
+//        double bearing = 1.57;
+//        double lat1 = Math.toRadians(latitude);
+//        double lon1 = Math.toRadians(longitude);
+//        double lat2 = Math.asin(Math.sin(lat1) * Math.cos(distanceInKM / earthRadius) +
+//                Math.cos(lat1) * Math.sin(distanceInKM / earthRadius) * Math.cos(bearing));
+//        double lon2 = lon1 + Math.atan2(Math.sin(bearing) * Math.sin(distanceInKM / earthRadius) * Math.cos(lat1),
+//                Math.cos(distanceInKM / earthRadius) - Math.sin(lat1) * Math.sin(lat2));
+//        double differenceLat = Math.abs(latitude - Math.toDegrees(lat2));
+//        double differenceLon = Math.abs(longitude - Math.toDegrees(lon2));
+
+//        HashMap mapLat = new HashMap();
+//        mapLat.put("$gte", String.valueOf(latitude - differenceLat));
+//        mapLat.put("$lte", String.valueOf(latitude + differenceLat));
+//
+//        HashMap mapLong = new HashMap();
+//        mapLong.put("$gte", String.valueOf(longitude - differenceLon));
+//        mapLong.put("$lte", String.valueOf(longitude + differenceLon));
 
         HashMap mapLat = new HashMap();
-        mapLat.put("$gte", String.valueOf(latitude - differenceLat));
-        mapLat.put("$lte", String.valueOf(latitude + differenceLat));
+        mapLat.put("$gte", String.valueOf(latitude - difference));
+        mapLat.put("$lte", String.valueOf(latitude + difference));
 
         HashMap mapLong = new HashMap();
-        mapLong.put("$gte", String.valueOf(longitude - differenceLon));
-        mapLong.put("$lte", String.valueOf(longitude + differenceLon));
+        mapLong.put("$gte", String.valueOf(longitude - difference));
+        mapLong.put("$lte", String.valueOf(longitude + difference));
+
 
         HashMap mapLatLong = new HashMap();
         mapLatLong.put("lat", mapLat);
@@ -88,8 +97,8 @@ public class UtilityRestApi {
         CallRestApi.GET(context, "Offer", mapFinal, handler);
     }
 
-    static public void getActiveCategoryOffersByLonAndLat(Context context, double latitude, double longitude, double distanceInKM, String categoryName, TextHttpResponseHandler handler) {
-        getOffersWithin(context, latitude, longitude, distanceInKM, categoryName, handler);
+    static public void getActiveCategoryOffersByLonAndLat(Context context, double latitude, double longitude, double percent, String categoryName, TextHttpResponseHandler handler) {
+        getOffersWithin(context, latitude, longitude, percent, categoryName, handler);
     }
 
     static public void getShopsByCityName(Context context, String cityName, TextHttpResponseHandler handler) {
