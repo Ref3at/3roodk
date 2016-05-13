@@ -141,39 +141,41 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
     }
 
     private void init(View rootView) {
+        try {
+            mDemoSlider = (SliderLayout) rootView.findViewById(R.id.imgOffer);
 
-        mDemoSlider = (SliderLayout) rootView.findViewById(R.id.imgOffer);
+            btnFavorite = (Button) rootView.findViewById(R.id.btnFavorite);
+            btnShare = (Button) rootView.findViewById(R.id.btnShare);
+            btnShopWay = (Button) rootView.findViewById(R.id.btnShopWay);
+            txtViews = (TextView) rootView.findViewById(R.id.txtViews);
+            txtSale = (TextView) rootView.findViewById(R.id.txtSale);
+            txtPriceBefore = (TextView) rootView.findViewById(R.id.txtPriceBefore);
+            txtPriceAfter = (TextView) rootView.findViewById(R.id.txtPriceAfter);
+            txtDay = (TextView) rootView.findViewById(R.id.txtDay);
+            txtHour = (TextView) rootView.findViewById(R.id.txtHour);
+            txtMinute = (TextView) rootView.findViewById(R.id.txtMinute);
+            txtDescription = (TextView) rootView.findViewById(R.id.txtDesc);
+            txtShopName = (TextView) rootView.findViewById(R.id.txtShopName);
+            txtWorkTime = (TextView) rootView.findViewById(R.id.txtWorkTime);
+            txtAddress = (TextView) rootView.findViewById(R.id.txtAddress);
+            txtMobile = (TextView) rootView.findViewById(R.id.txtMobile);
+            txtRate = (TextView) rootView.findViewById(R.id.txtRateNumber);
+            ratebar = (RatingBar) rootView.findViewById(R.id.ratingbar);
 
-        btnFavorite = (Button) rootView.findViewById(R.id.btnFavorite);
-        btnShare = (Button) rootView.findViewById(R.id.btnShare);
-        btnShopWay = (Button) rootView.findViewById(R.id.btnShopWay);
-        txtViews = (TextView) rootView.findViewById(R.id.txtViews);
-        txtSale = (TextView) rootView.findViewById(R.id.txtSale);
-        txtPriceBefore = (TextView) rootView.findViewById(R.id.txtPriceBefore);
-        txtPriceAfter = (TextView) rootView.findViewById(R.id.txtPriceAfter);
-        txtDay = (TextView) rootView.findViewById(R.id.txtDay);
-        txtHour = (TextView) rootView.findViewById(R.id.txtHour);
-        txtMinute = (TextView) rootView.findViewById(R.id.txtMinute);
-        txtDescription = (TextView) rootView.findViewById(R.id.txtDesc);
-        txtShopName = (TextView) rootView.findViewById(R.id.txtShopName);
-        txtWorkTime = (TextView) rootView.findViewById(R.id.txtWorkTime);
-        txtAddress = (TextView) rootView.findViewById(R.id.txtAddress);
-        txtMobile = (TextView) rootView.findViewById(R.id.txtMobile);
-        txtRate = (TextView) rootView.findViewById(R.id.txtRateNumber);
-        ratebar = (RatingBar) rootView.findViewById(R.id.ratingbar);
-
-        String id = getActivity().getIntent().getStringExtra("objectId");
-        for (Offer o : CardsFragment.lstOffers)
-            if (o.getObjectId().equals(id))
-                offer = o;
-        cal = Calendar.getInstance();
-        cal.set(Calendar.YEAR, Integer.parseInt(offer.getEndTime().substring(0, 4)));
-        cal.set(Calendar.MONTH, Integer.parseInt(offer.getEndTime().substring(4, 6)) - 1);
-        cal.set(Calendar.DAY_OF_MONTH, Integer.parseInt(offer.getEndTime().substring(6, 8)));
-        cal.set(Calendar.HOUR_OF_DAY, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
-        cal.set(Calendar.MILLISECOND, 0);
+            String id = getActivity().getIntent().getStringExtra("objectId");
+            for (Offer o : CardsFragment.lstOffers)
+                if (o.getObjectId().equals(id))
+                    offer = o;
+            cal = Calendar.getInstance();
+            cal.set(Calendar.YEAR, Integer.parseInt(offer.getEndTime().substring(0, 4)));
+            cal.set(Calendar.MONTH, Integer.parseInt(offer.getEndTime().substring(4, 6)) - 1);
+            cal.set(Calendar.DAY_OF_MONTH, Integer.parseInt(offer.getEndTime().substring(6, 8)));
+            cal.set(Calendar.HOUR_OF_DAY, 0);
+            cal.set(Calendar.MINUTE, 0);
+            cal.set(Calendar.SECOND, 0);
+            cal.set(Calendar.MILLISECOND, 0);
+        }
+        catch (Exception ex){try{getActivity().finish();}catch (Exception exx){}}
     }
 
     private Runnable updateTimerThread = new Runnable() {

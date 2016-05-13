@@ -131,11 +131,11 @@ public class CardsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (!UtilityGeneral.isRegisteredUser(getBaseContext())) {
-                    Snackbar.make(v, "سجل معنا لتتمكن من اضافه عرض", Snackbar.LENGTH_LONG).show();
+                    startActivity(new Intent(getBaseContext(), SignUpActivity.class));
                     return;
                 }
                 if (!UtilityGeneral.isShopExist(getBaseContext())) {
-                    Snackbar.make(v, "أضف المحل بتاعك علشان تظهر عروضك عندنا", Snackbar.LENGTH_LONG).show();
+                    startActivity(new Intent(getBaseContext(), ShopActivity.class));
                     return;
                 }
                 startActivity(new Intent(getBaseContext(), OfferActivity.class));

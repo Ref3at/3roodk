@@ -57,7 +57,7 @@ public class CardsFragment extends Fragment {
             recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
             LatLng latLng = UtilityGeneral.getCurrentLonAndLat(getActivity());
             if (latLng == null) latLng = UtilityGeneral.loadLatLong(getActivity());
-            UtilityRestApi.getActiveCategoryOffersByLonAndLat(getContext(), latLng.latitude, latLng.longitude, 0.5, getActivity().getIntent().getStringExtra("name"), new TextHttpResponseHandler() {
+            UtilityRestApi.getActiveCategoryOffers(getContext(), getActivity().getIntent().getStringExtra("name"), new TextHttpResponseHandler() {
                 @Override
                 public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                     try {
@@ -65,8 +65,8 @@ public class CardsFragment extends Fragment {
                     } catch (Exception ex) {
                         try {
                             Log.e("CardsFragment", ex.getMessage());
+                        } catch (Exception exs) {
                         }
-                        catch (Exception exs){}
                     }
                 }
 
@@ -153,7 +153,7 @@ public class CardsFragment extends Fragment {
             cardHolder.shopName.setText(lstOffers.get(position).getShopName());
             cardHolder.title.setText(lstOffers.get(position).getTitle());
             cardHolder.rate.setText(String.valueOf(lstOffers.get(position).getAverageRate()));
-            cardHolder.discount.setText(String.format("%.0f", (1 - (Double.parseDouble(lstOffers.get(position).getPriceAfter()) / Double.parseDouble(lstOffers.get(position).getPriceBefore()))) * 100) +"%");
+            cardHolder.discount.setText(String.format("%.0f", (1 - (Double.parseDouble(lstOffers.get(position).getPriceAfter()) / Double.parseDouble(lstOffers.get(position).getPriceBefore()))) * 100) + "%");
             fillTimer(cardHolder, position);
             Picasso.with(holder.itemView.getContext()).load(lstOffers.get(position).getImagePaths().get(0)).into(cardHolder.imgCard);
             // no-op

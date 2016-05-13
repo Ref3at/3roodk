@@ -97,6 +97,23 @@ public class UtilityRestApi {
         CallRestApi.GET(context, "Offer", mapFinal, handler);
     }
 
+    static public void getActiveCategoryOffers(Context context, String categoryName, TextHttpResponseHandler handler) {
+
+        HashMap mapTime = new HashMap();
+        mapTime.put("$gte", getCurrentDate());
+
+        HashMap mapFinal = new HashMap();
+        mapFinal.put("endTime", mapTime);
+
+        if (categoryName != null) {
+            HashMap mapCategory = new HashMap();
+            mapCategory.put("category", categoryName);
+            mapFinal.putAll(getNestedQuery("CategoryId", "Category", "objectId", mapCategory));
+        }
+
+        CallRestApi.GET(context, "Offer", mapFinal, handler);
+    }
+
     static public void getActiveCategoryOffersByLonAndLat(Context context, double latitude, double longitude, double percent, String categoryName, TextHttpResponseHandler handler) {
         getOffersWithin(context, latitude, longitude, percent, categoryName, handler);
     }
