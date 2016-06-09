@@ -27,6 +27,7 @@ import com.daimajia.slider.library.SliderTypes.BaseSliderView;
 import com.daimajia.slider.library.SliderTypes.TextSliderView;
 import com.daimajia.slider.library.Tricks.ViewPagerEx;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.gson.Gson;
 import com.loopj.android.http.TextHttpResponseHandler;
 
 import org.json.JSONException;
@@ -37,9 +38,6 @@ import java.util.Calendar;
 
 import cz.msebera.android.httpclient.Header;
 
-/**
- * Created by ZooM- on 5/9/2016.
- */
 public class DetailFragment extends Fragment implements BaseSliderView.OnSliderClickListener, ViewPagerEx.OnPageChangeListener {
 
     Button btnFavorite, btnShare, btnShopWay;
@@ -108,12 +106,12 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
             @Override
             public void onSuccess(int statusCode, Header[] headers, String responseString) {
                 try {
-                    offer.setViewNum(Integer.parseInt(new JSONObject(responseString).getString("viewNum")));
-                    for (int i = 0; i < CardsFragment.lstOffers.size(); i++)
-                        if (CardsFragment.lstOffers.get(i).getObjectId().equals(offer.getObjectId())) {
-                            CardsFragment.lstOffers.get(i).setViewNum(offer.getViewNum());
-                            txtViews.setText(String.valueOf(offer.getViewNum()));
-                        }
+//                    offer.setViewNum(Integer.parseInt(new JSONObject(responseString).getString("viewNum")));
+//                    for (int i = 0; i < CardsFragment.lstOffers.size(); i++)
+//                        if (CardsFragment.lstOffers.get(i).getObjectId().equals(offer.getObjectId())) {
+//                            CardsFragment.lstOffers.get(i).setViewNum(offer.getViewNum());
+//                            txtViews.setText(String.valueOf(offer.getViewNum()));
+//                        }
                 } catch (Exception ex) {
                 }
             }
@@ -162,10 +160,7 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
             txtRate = (TextView) rootView.findViewById(R.id.txtRateNumber);
             ratebar = (RatingBar) rootView.findViewById(R.id.ratingbar);
 
-            String id = getActivity().getIntent().getStringExtra("objectId");
-            for (Offer o : CardsFragment.lstOffers)
-                if (o.getObjectId().equals(id))
-                    offer = o;
+            offer = new Gson().fromJson(getActivity().getIntent().getStringExtra("offer"),Offer.class);
             cal = Calendar.getInstance();
             cal.set(Calendar.YEAR, Integer.parseInt(offer.getEndTime().substring(0, 4)));
             cal.set(Calendar.MONTH, Integer.parseInt(offer.getEndTime().substring(4, 6)) - 1);

@@ -30,14 +30,14 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.app3roodk.Back4App.UtilityRestApi;
 import com.app3roodk.Constants;
 import com.app3roodk.Imgur.ImgurUploadTask;
-import com.app3roodk.ObjectConverter;
 import com.app3roodk.R;
 import com.app3roodk.Schema.Offer;
 import com.app3roodk.UtilityGeneral;
-import com.loopj.android.http.TextHttpResponseHandler;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.weiwangcn.betterspinner.library.BetterSpinner;
 
 import java.io.ByteArrayOutputStream;
@@ -47,14 +47,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
-import cz.msebera.android.httpclient.Header;
-
-/**
- * Created by Refaat on 5/6/2016.
- */
 public class AddNewOfferFragment extends Fragment {
-
 
     ArrayList<String> images_id = new ArrayList<>();
 
@@ -79,7 +74,6 @@ public class AddNewOfferFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         mOffer = new Offer();
-
 
         View rootView = inflater.inflate(R.layout.add_offer_layout, container, false);
 
@@ -406,7 +400,7 @@ public class AddNewOfferFragment extends Fragment {
 
     private void Publish() {
         try {
-            mOffer.setCategoryId(getCategoryId(category_spinner));
+            mOffer.setCategoryName(category_spinner.getText().toString());
             mOffer.setTitle(inputName.getText().toString());
             mOffer.setDesc(inputDesc.getText().toString());
             mOffer.setPriceBefore(inputPriceBefore.getText().toString());
@@ -415,6 +409,9 @@ public class AddNewOfferFragment extends Fragment {
             mOffer.setImagePaths(images_id);
             mOffer.setShopId(UtilityGeneral.loadShop(getActivity()).getObjectId());
             mOffer.setShopName(UtilityGeneral.loadShop(getActivity()).getName());
+            mOffer.setLat(UtilityGeneral.loadShop(getActivity()).getLat());
+            mOffer.setLon(UtilityGeneral.loadShop(getActivity()).getLon());
+            mOffer.setCreatedAt(UtilityGeneral.getCurrentDate(new Date()));
             Calendar cal = Calendar.getInstance();
             for (int i = 0; i < durtation_list.length; i++) {
                 if (mOffer.getPeriod().equals(durtation_list[i])) {
@@ -425,23 +422,27 @@ public class AddNewOfferFragment extends Fragment {
                 }
             }
             mOffer.setEndTime(UtilityGeneral.getCurrentDate(cal.getTime()));
-
-            UtilityRestApi.addNewOffer(getActivity(), ObjectConverter.convertOfferToHashMap(mOffer), new TextHttpResponseHandler() {
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            DatabaseReference myRef = database.getReference("Offers").child(UtilityGeneral.loadShop(getActivity()).getCity()).child(UtilityGeneral.getCategoryEnglishName(category_spinner.getText().toString()));
+            mOffer.setObjectId(myRef.push().getKey());
+            myRef.child(mOffer.getObjectId()).setValue(mOffer, new DatabaseReference.CompletionListener() {
                 @Override
-                public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                    Toast.makeText(getActivity(), "حصل مشكله شوف النت ", Toast.LENGTH_SHORT).show();
-                }
-
-                @Override
-                public void onSuccess(int statusCode, Header[] headers, String responseString) {
-                    Toast.makeText(getActivity(), "تم إضافه العرض، شكرا لك", Toast.LENGTH_SHORT).show();
-                    getActivity().onBackPressed();
+                public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                    if(databaseError !=null) {
+                        Toast.makeText(getActivity(), "حصل مشكله شوف النت ", Toast.LENGTH_SHORT).show();
+                        Log.e("Frebaaase", databaseError.getMessage());
+                    }
+                    else
+                    {
+                        Toast.makeText(getActivity(), "تم إضافه العرض، شكرا لك", Toast.LENGTH_SHORT).show();
+                        getActivity().onBackPressed();
+                    }
                 }
             });
-
         } catch (Exception ex) {
             Log.e("AddNewOfferFrag", ex.getMessage());
         }
+
     }
 
     private String getCategoryId(BetterSpinner category_spinner) {

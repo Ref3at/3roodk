@@ -1,6 +1,5 @@
 package com.app3roodk.UI.Shop;
 
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -30,26 +29,19 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.app3roodk.Back4App.UtilityRestApi;
 import com.app3roodk.Imgur.ImgurUploadTask;
 import com.app3roodk.MapsShopLocationActivity;
-import com.app3roodk.ObjectConverter;
 import com.app3roodk.R;
 import com.app3roodk.Schema.Shop;
 import com.app3roodk.UtilityGeneral;
 import com.google.android.gms.maps.model.LatLng;
-import com.loopj.android.http.TextHttpResponseHandler;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
+import java.util.Date;
 import java.util.List;
 
-import cz.msebera.android.httpclient.Header;
-
-/**
- * Created by Refaat on 5/6/2016.
- */
 public class CreateShopFragment extends Fragment {
 
     int REQUEST_CAMERA = 0, SELECT_FILE = 1;
@@ -273,28 +265,26 @@ public class CreateShopFragment extends Fragment {
         shop.setAddress(inputAddressInfo.getText().toString());
         shop.setWorkingTime(inputWorkingTime.getText().toString());
         shop.setLogoId(mlogoId);
-        shop.setUserId(UtilityGeneral.loadUser(getActivity()).getObjectId());
         shop.setCity(addresses.get(0).getAddressLine(2));
         shop.setGovernate(addresses.get(0).getAddressLine(3));
         shop.setLon(String.valueOf(latLngShop.longitude));
         shop.setLat(String.valueOf(latLngShop.latitude));
-
-        UtilityRestApi.createShop(getActivity(), ObjectConverter.convertShopToHashMap(shop), new TextHttpResponseHandler() {
+        shop.setCreatedAt(UtilityGeneral.getCurrentDate(new Date()));
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference("Shops").child(UtilityGeneral.loadUser(getActivity()).getObjectId());
+        shop.setObjectId(myRef.push().getKey());
+        myRef.child(shop.getObjectId()).setValue(shop, new DatabaseReference.CompletionListener() {
             @Override
-            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                Toast.makeText(getActivity(), "حصل مشكله ما", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, String responseString) {
-                try {
-                    JSONObject result = new JSONObject(responseString);
-                    shop.setObjectId(result.getString("objectId"));
-                    shop.setCreatedAt(result.getString("createdAt"));
+            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                if(databaseError !=null) {
+                    Toast.makeText(getActivity(), "حصل مشكله شوف النت ", Toast.LENGTH_SHORT).show();
+                    Log.e("Frebaaase", databaseError.getMessage());
+                }
+                else
+                {
+                    Toast.makeText(getActivity(), "تم إضافه المحل، شكرا لك", Toast.LENGTH_SHORT).show();
                     UtilityGeneral.saveShop(getActivity(), shop);
                     getActivity().onBackPressed();
-                } catch (JSONException e) {
-                    Log.e("CreateShopFragment", e.getMessage());
                 }
             }
         });

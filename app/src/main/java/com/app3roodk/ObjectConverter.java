@@ -37,7 +37,7 @@ public class ObjectConverter {
             if (jsonObject.has("averageRate") && !jsonObject.isNull("averageRate"))
                 offer.setAverageRate(Integer.parseInt(jsonObject.getString("averageRate")));
             if (jsonObject.has("CategoryId") && !jsonObject.isNull("CategoryId"))
-                offer.setCategoryId(jsonObject.getString("CategoryId"));
+                offer.setCategoryName(jsonObject.getString("CategoryId"));
             if (jsonObject.has("Period") && !jsonObject.isNull("Period"))
                 offer.setPeriod(jsonObject.getString("Period"));
             if (jsonObject.has("endTime") && !jsonObject.isNull("endTime"))
@@ -50,8 +50,8 @@ public class ObjectConverter {
                 offer.setTotalRate(jsonObject.getInt("totalRate"));
             if (jsonObject.has("numberUsersRated") && !jsonObject.isNull("numberUsersRated"))
                 offer.setNumberUsersRated(jsonObject.getInt("numberUsersRated"));
-            if (jsonObject.has("ImagePaths") && !jsonObject.isNull("ImagePaths"))
-                offer.setImagePaths(jsonObject.getString("ImagePaths"));
+//            if (jsonObject.has("ImagePaths") && !jsonObject.isNull("ImagePaths"))
+//                offer.setImagePaths(jsonObject.getString("ImagePaths"));
         } catch (Exception ex) {
             Log.e(TAG, ex.getMessage());
         } finally {
@@ -63,7 +63,7 @@ public class ObjectConverter {
         HashMap map = new HashMap<>();
         try {
             map.put("title", offer.getTitle());
-            map.put("CategoryId", offer.getCategoryId());
+            map.put("CategoryId", offer.getCategoryName());
             map.put("Desc", offer.getDesc());
             map.put("PriceBefore", offer.getPriceBefore());
             map.put("PriceAfter", offer.getPriceAfter());
@@ -106,8 +106,6 @@ public class ObjectConverter {
                 shop.setWorkingTime(jsonObject.getString("workingTime"));
             if (jsonObject.has("logoId") && !jsonObject.isNull("logoId"))
                 shop.setLogoId(jsonObject.getString("logoId"));
-            if (jsonObject.has("userId") && !jsonObject.isNull("userId"))
-                shop.setUserId(jsonObject.getString("userId"));
             if (jsonObject.has("workingTime") && !jsonObject.isNull("workingTime"))
                 shop.setWorkingTime(jsonObject.getString("workingTime"));
         } catch (Exception ex) {
@@ -128,7 +126,6 @@ public class ObjectConverter {
             map.put("address", shop.getAddress());
             map.put("favoriteNum", "0");
             map.put("workingTime", shop.getWorkingTime());
-            map.put("userId", shop.getUserId());
             map.put("contacts", shop.getContacts().toString());
             map.put("logoId", shop.getLogoId());
         } catch (Exception ex) {
@@ -158,16 +155,8 @@ public class ObjectConverter {
                 user.setGender(jsonObject.getString("gender"));
             if (jsonObject.has("type") && !jsonObject.isNull("type"))
                 user.setType(jsonObject.getString("type"));
-            if (jsonObject.has("favOfferIds") && !jsonObject.isNull("favOfferIds"))
-                user.setFavOfferIds(jsonObject.getString("favOfferIds"));
-            if (jsonObject.has("favShopIds") && !jsonObject.isNull("favShopIds"))
-                user.setFavShopIds(jsonObject.getString("favShopIds"));
             if (jsonObject.has("planId") && !jsonObject.isNull("planId"))
                 user.setPlanId(jsonObject.getString("planId"));
-            if (jsonObject.has("subsCategoryIds") && !jsonObject.isNull("subsCategoryIds"))
-                user.setSubsCategoryIds(jsonObject.getString("subsCategoryIds"));
-            if (jsonObject.has("password") && !jsonObject.isNull("password"))
-                user.setPassword(jsonObject.getString("password"));
 //            if (jsonObject.has("commentsRate") && !jsonObject.isNull("commentsRate"))
 //                user.setCommentsRate(jsonObject.getString("commentsRate"));
 //            if (jsonObject.has("offersRate") && !jsonObject.isNull("offersRate"))
@@ -195,7 +184,6 @@ public class ObjectConverter {
             map.put("favShopIds", user.getFavShopIds());
             map.put("planId", user.getPlanId());
             map.put("subsCategoryIds", user.getSubsCategoryIds());
-            map.put("password", user.getPassword());
             map.put("commentsRate", user.getCommentsRate().toString());
             map.put("offersRate", user.getOffersRate().toString());
             map.put("gender", user.getGender());

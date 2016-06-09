@@ -1,32 +1,29 @@
 package com.app3roodk.Schema;
 
-
+import java.util.ArrayList;
 import java.util.HashMap;
 
-/**
- * Created by ZooM- on 4/23/2016.
- */
 public class User {
-    private String objectId = "";
-    private String name = "";
-    private String email = "";
-    private String password = "";
-    private String createdAt = "";
-    private String updatedAt = "";
-    private String profileImg = "";
-    private String lat = "";
-    private String lon = "";
-    private String city = "";
-    private String governate = "";
-    private String gender = "";
-    private String type = "";
-    private String favOfferIds = "";
-    private String favShopIds = "";
-    private String planId = "";
-    private String subsCategoryIds = "";
+    private String objectId;
+    private String name;
+    private String email;
+    private String createdAt;
+    private String updatedAt;
+    private String profileImg;
+    private String lat;
+    private String lon;
+    private String city;
+    private String governate;
+    private String gender;
+    private String type;
+    private ArrayList<String> favOfferIds ;
+    private ArrayList<String> favShopIds ;
+    private String planId;
+    private ArrayList<String> subsCategoryIds;
+    private ArrayList<String> shopsIDs;
 
     // ref3t add
-    private String subsShopsIds = "";
+    private ArrayList<String> subsShopsIds;
 
     //rate
     private HashMap<String, String> commentsRate = new HashMap<>();
@@ -35,21 +32,22 @@ public class User {
     public User() {
     }
 
-    public User(String objectId, String name, String email, String createdAt, String profileImg, String lat, String lon, String city, String governate, String type, String favOfferIds, String favShopIds, String planId, String subsCategoryIds, HashMap<String, String> commentsRate, HashMap<String, String> offersRate) {
-        this.objectId = objectId;
+    public User(String name, String email, String profileImg, String lat, String lon, String city, String governate, String gender, String type, ArrayList<String> favOfferIds, ArrayList<String> favShopIds, String planId, ArrayList<String> subsCategoryIds, ArrayList<String> shopsIDs, ArrayList<String> subsShopsIds, HashMap<String, String> commentsRate, HashMap<String, String> offersRate) {
         this.name = name;
         this.email = email;
-        this.createdAt = createdAt;
         this.profileImg = profileImg;
         this.lat = lat;
         this.lon = lon;
         this.city = city;
         this.governate = governate;
+        this.gender = gender;
         this.type = type;
         this.favOfferIds = favOfferIds;
         this.favShopIds = favShopIds;
         this.planId = planId;
         this.subsCategoryIds = subsCategoryIds;
+        this.shopsIDs = shopsIDs;
+        this.subsShopsIds = subsShopsIds;
         this.commentsRate = commentsRate;
         this.offersRate = offersRate;
     }
@@ -130,22 +128,6 @@ public class User {
         this.type = type;
     }
 
-    public String getFavOfferIds() {
-        return favOfferIds;
-    }
-
-    public void setFavOfferIds(String favOfferIds) {
-        this.favOfferIds = favOfferIds;
-    }
-
-    public String getFavShopIds() {
-        return favShopIds;
-    }
-
-    public void setFavShopIds(String favShopIds) {
-        this.favShopIds = favShopIds;
-    }
-
     public String getPlanId() {
         return planId;
     }
@@ -154,24 +136,8 @@ public class User {
         this.planId = planId;
     }
 
-    public String getSubsCategoryIds() {
-        return subsCategoryIds;
-    }
-
-    public void setSubsCategoryIds(String subsCategoryIds) {
-        this.subsCategoryIds = subsCategoryIds;
-    }
-
     public String getCreatedAt() {
         return createdAt;
-    }
-
-    public String getSubsShopsIds() {
-        return subsShopsIds;
-    }
-
-    public void setSubsShopsIds(String subsShopsIds) {
-        this.subsShopsIds = subsShopsIds;
     }
 
     public HashMap<String, String> getCommentsRate() {
@@ -206,14 +172,6 @@ public class User {
         this.offersRate.put(key, Value);
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     public String getGender() {
         return gender;
     }
@@ -228,5 +186,45 @@ public class User {
 
     public void setUpdatedAt(String updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public ArrayList<String> getFavOfferIds() {
+        return favOfferIds;
+    }
+
+    public void setFavOfferIds(ArrayList<String> favOfferIds) {
+        this.favOfferIds = favOfferIds;
+    }
+
+    public ArrayList<String> getFavShopIds() {
+        return favShopIds;
+    }
+
+    public void setFavShopIds(ArrayList<String> favShopIds) {
+        this.favShopIds = favShopIds;
+    }
+
+    public ArrayList<String> getSubsCategoryIds() {
+        return subsCategoryIds;
+    }
+
+    public void setSubsCategoryIds(ArrayList<String> subsCategoryIds) {
+        this.subsCategoryIds = subsCategoryIds;
+    }
+
+    public ArrayList<String> getSubsShopsIds() {
+        return subsShopsIds;
+    }
+
+    public void setSubsShopsIds(ArrayList<String> subsShopsIds) {
+        this.subsShopsIds = subsShopsIds;
+    }
+
+    public void setshopsIDs(ArrayList<String> shopsIDs) {
+        this.shopsIDs = shopsIDs;
+    }
+
+    public ArrayList<String> getShopsIDs() {
+        return shopsIDs;
     }
 }

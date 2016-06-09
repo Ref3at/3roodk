@@ -18,6 +18,7 @@ import com.app3roodk.Schema.Shop;
 import com.app3roodk.Schema.User;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
+import com.weiwangcn.betterspinner.library.BetterSpinner;
 
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
@@ -36,7 +37,7 @@ public class UtilityGeneral {
             Location location = getLastKnownLocation(context);
             return new LatLng(location.getLatitude(), location.getLongitude());
         } catch (Exception e) {
-            return null;
+            return new LatLng(Double.parseDouble(loadUser(context).getLat()),Double.parseDouble(loadUser(context).getLon()));
         }
     }
 
@@ -153,7 +154,53 @@ public class UtilityGeneral {
     }
 
     static public String getCurrentDate(Date date) {
-        return new SimpleDateFormat("yyyyMMdd").format(date);
+        return new SimpleDateFormat("yyyyMMddhhmm").format(date);
+    }
+
+    static public String getCategoryEnglishName(String arCategory) {
+        String categoryName="" ;
+
+        switch (arCategory) {
+            case "مطاعم":
+                categoryName = "Restaurants";
+                break;
+            case "سوبر ماركت":
+                categoryName = "Super market";
+
+                break;
+            case "أدوات منزليه":
+                categoryName = "Home Tools";
+
+                break;
+            case "موبايل":
+                categoryName = "Mobiles";
+
+                break;
+            case "كمبيوتر":
+                categoryName = "Computers";
+
+                break;
+            case "أدوات كهربائيه":
+                categoryName = "Electrical Tools";
+
+                break;
+            case "إكسسوار":
+                categoryName = "Accessories";
+                break;
+            case "خدمات":
+                categoryName = "Services";
+
+                break;
+            case "ملابس":
+                categoryName = "Clothes";
+
+                break;
+            case "أحذيه":
+                categoryName = "Shoes";
+
+                break;
+        }
+        return categoryName;
     }
     //endregion
 

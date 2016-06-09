@@ -136,7 +136,7 @@ public class CategoriesActivity extends AppCompatActivity {
                 i.putExtra("name", "Restaurants");
                 break;
             case R.id.imageButton2:
-                i.putExtra("title", "أدوات منزلية");
+                i.putExtra("title", "أدوات منزليه");
                 i.putExtra("name", "Home Tools");
 
                 break;

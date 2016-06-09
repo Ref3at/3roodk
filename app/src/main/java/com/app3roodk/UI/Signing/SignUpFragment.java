@@ -85,7 +85,6 @@ public class SignUpFragment extends Fragment {
                                 LatLng latLng = UtilityGeneral.getCurrentLonAndLat(getActivity());
                                 user.setName(edtxtUserName.getText().toString());
                                 user.setEmail(edtxtUserEmail.getText().toString());
-                                user.setPassword(edtxtUserPassword.getText().toString());
                                 user.setLat(String.valueOf(latLng.latitude));
                                 user.setLon(String.valueOf(latLng.longitude));
                                 if (rbtnMale.isChecked())

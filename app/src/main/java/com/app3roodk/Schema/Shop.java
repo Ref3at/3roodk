@@ -2,26 +2,37 @@ package com.app3roodk.Schema;
 
 import java.util.HashMap;
 
-/**
- * Created by ZooM- on 4/24/2016.
- */
 public class Shop {
-    private String objectId = "";
-    private String updatedAt = "";
-    private String createdAt = "";
-    private String name = ""; //*
-    private String lat = ""; //*
-    private String lon = ""; //*
-    private String city = "";  //*
-    private String governate = ""; //*
-    private String address = ""; //*
-    private String userId = ""; //*
-    private HashMap<String, String> contacts = new HashMap<>();
-
+    private String objectId;
+    private String updatedAt;
+    private String createdAt;
+    private String name; //*
+    private String lat; //*
+    private String lon; //*
+    private String city;  //*
+    private String governate; //*
+    private String address; //*
+    private HashMap<String, String> contacts ;
     //ref3t add
-    private String logoId = ""; //*
-    private String subscribedNum = "";
-    private String workingTime = ""; //*
+    private String logoId; //*
+    private String subscribedNum;
+    private String workingTime; //*
+
+    public Shop() {
+    }
+
+    public Shop(String name, String lat, String lon, String city, String governate, String address, HashMap<String, String> contacts, String logoId, String subscribedNum, String workingTime) {
+        this.name = name;
+        this.lat = lat;
+        this.lon = lon;
+        this.city = city;
+        this.governate = governate;
+        this.address = address;
+        this.contacts = contacts;
+        this.logoId = logoId;
+        this.subscribedNum = subscribedNum;
+        this.workingTime = workingTime;
+    }
 
     public String getObjectId() {
         return objectId;
@@ -93,14 +104,6 @@ public class Shop {
 
     public void setAddress(String address) {
         this.address = address;
-    }
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
     }
 
     public String getLogoId() {

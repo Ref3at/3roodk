@@ -2,32 +2,54 @@ package com.app3roodk.Schema;
 
 import java.util.ArrayList;
 
-/**
- * Created by ZooM- on 4/24/2016.
- */
 public class Offer {
-    private String objectId = "";
-    private String title = ""; //*
-    private String updatedAt = "";
-    private String createdAt = "";
-    private String Desc = ""; //*
-    private String PriceBefore = ""; //*
-    private String PriceAfter = ""; //*
-    private String Period = ""; //*
-    private String endTime = "";
-    private int viewNum = 0;
-    private int favoriteNum = 0;
-    private String CategoryId = ""; //*
-    private String ShopId = ""; //*
-    private String ShopName = ""; //*
+    private String objectId ;
+    private String title ; //*
+    private String updatedAt;
+    private String createdAt ;
+    private String Desc; //*
+    private String PriceBefore; //*
+    private String PriceAfter ; //*
+    private String Period ; //*
+    private String endTime ;
+    private int viewNum;
+    private int favoriteNum;
+    private String CategoryName; //*
+    private String ShopId ; //*
+    private String ShopName ; //*
+    private String lat ; //*
+    private String lon ; //*
 
     // ref3t add
     private ArrayList<String> ImagePaths = new ArrayList<>(); // later will be <img> //*
 
     // rate
-    private int numberUsersRated = 0;
-    private int totalRate = 0;
-    private int averageRate = 0;
+    private int numberUsersRated;
+    private int totalRate;
+    private int averageRate;
+
+    public Offer() {
+    }
+
+    public Offer(String title, String desc, String priceBefore, String priceAfter, String period, String endTime, int viewNum, int favoriteNum, String categoryName, String shopId, String shopName, String lat, String lon, ArrayList<String> imagePaths, int numberUsersRated, int totalRate, int averageRate) {
+        this.title = title;
+        Desc = desc;
+        PriceBefore = priceBefore;
+        PriceAfter = priceAfter;
+        Period = period;
+        this.endTime = endTime;
+        this.viewNum = viewNum;
+        this.favoriteNum = favoriteNum;
+        CategoryName = categoryName;
+        ShopId = shopId;
+        ShopName = shopName;
+        this.lat = lat;
+        this.lon = lon;
+        ImagePaths = imagePaths;
+        this.numberUsersRated = numberUsersRated;
+        this.totalRate = totalRate;
+        this.averageRate = averageRate;
+    }
 
     public String getObjectId() {
         return objectId;
@@ -109,12 +131,12 @@ public class Offer {
         this.favoriteNum = favoriteNum;
     }
 
-    public String getCategoryId() {
-        return CategoryId;
+    public String getCategoryName() {
+        return CategoryName;
     }
 
-    public void setCategoryId(String categoryId) {
-        this.CategoryId = categoryId;
+    public void setCategoryName(String categoryName) {
+        this.CategoryName = categoryName;
     }
 
     public String getShopId() {
@@ -147,32 +169,8 @@ public class Offer {
         return ImagePaths;
     }
 
-    public void setImagePaths(String imagePaths) {
-        try {
-            this.ImagePaths = new ArrayList<>();
-            imagePaths = imagePaths.substring(1, imagePaths.length() - 1);
-            String[] images = imagePaths.split(",");
-            for (int i = 0; i < images.length; i++) {
-                ImagePaths.add(images[i]);
-            }
-        } catch (Exception ex) {
-        }
-    }
-
     public void setImagePaths(ArrayList<String> imagePaths) {
         this.ImagePaths = imagePaths;
-    }
-
-    public void addImagePath(String imagePath) {
-        if (ImagePaths == null)
-            ImagePaths = new ArrayList<>();
-        ImagePaths.add(imagePath);
-    }
-
-    public void addImagePaths(ArrayList<String> imagePaths) {
-        if (imagePaths == null)
-            imagePaths = new ArrayList<>();
-        imagePaths.addAll(imagePaths);
     }
 
     public int getAverageRate() {
@@ -197,5 +195,21 @@ public class Offer {
 
     public void setEndTime(String endTime) {
         this.endTime = endTime;
+    }
+
+    public String getLat() {
+        return lat;
+    }
+
+    public void setLat(String lat) {
+        this.lat = lat;
+    }
+
+    public String getLon() {
+        return lon;
+    }
+
+    public void setLon(String lon) {
+        this.lon = lon;
     }
 }
