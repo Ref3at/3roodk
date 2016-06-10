@@ -19,6 +19,7 @@ public class Offer {
     private String ShopName ; //*
     private String lat ; //*
     private String lon ; //*
+    private String userId;
 
     // ref3t add
     private ArrayList<String> ImagePaths = new ArrayList<>(); // later will be <img> //*
@@ -31,7 +32,7 @@ public class Offer {
     public Offer() {
     }
 
-    public Offer(String title, String desc, String priceBefore, String priceAfter, String period, String endTime, int viewNum, int favoriteNum, String categoryName, String shopId, String shopName, String lat, String lon, ArrayList<String> imagePaths, int numberUsersRated, int totalRate, int averageRate) {
+    public Offer(String title, String desc, String priceBefore, String priceAfter, String period, String endTime, int viewNum, int favoriteNum, String categoryName, String shopId, String shopName, String lat, String lon, String userId, ArrayList<String> imagePaths, int numberUsersRated, int totalRate, int averageRate, String createdAt) {
         this.title = title;
         Desc = desc;
         PriceBefore = priceBefore;
@@ -45,10 +46,12 @@ public class Offer {
         ShopName = shopName;
         this.lat = lat;
         this.lon = lon;
+        this.userId = userId;
         ImagePaths = imagePaths;
         this.numberUsersRated = numberUsersRated;
         this.totalRate = totalRate;
         this.averageRate = averageRate;
+        this.createdAt = createdAt;
     }
 
     public String getObjectId() {
@@ -211,5 +214,13 @@ public class Offer {
 
     public void setLon(String lon) {
         this.lon = lon;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 }

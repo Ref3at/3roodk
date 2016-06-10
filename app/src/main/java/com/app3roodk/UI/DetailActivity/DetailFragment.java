@@ -8,6 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -16,33 +18,41 @@ import com.app3roodk.Back4App.CallRestApi;
 import com.app3roodk.Back4App.UtilityRestApi;
 import com.app3roodk.ObjectConverter;
 import com.app3roodk.R;
+import com.app3roodk.Schema.Comments;
 import com.app3roodk.Schema.Offer;
 import com.app3roodk.Schema.Shop;
 import com.app3roodk.UI.FullScreenImage.FullScreenImageSlider;
-import com.app3roodk.UI.OffersCards.CardsFragment;
 import com.app3roodk.UtilityGeneral;
 import com.daimajia.slider.library.Animations.DescriptionAnimation;
 import com.daimajia.slider.library.SliderLayout;
 import com.daimajia.slider.library.SliderTypes.BaseSliderView;
 import com.daimajia.slider.library.SliderTypes.TextSliderView;
 import com.daimajia.slider.library.Tricks.ViewPagerEx;
+import com.firebase.ui.database.FirebaseListAdapter;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.Gson;
 import com.loopj.android.http.TextHttpResponseHandler;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Comment;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 import cz.msebera.android.httpclient.Header;
 
 public class DetailFragment extends Fragment implements BaseSliderView.OnSliderClickListener, ViewPagerEx.OnPageChangeListener {
 
-    Button btnFavorite, btnShare, btnShopWay;
+    Button btnFavorite, btnShare, btnShopWay, btnComment;
     TextView txtViews, txtSale, txtPriceBefore, txtPriceAfter, txtDay, txtHour, txtMinute, txtDescription,
             txtShopName, txtWorkTime, txtAddress, txtMobile, txtRate;
+    EditText edtxtComment;
+    ListView lsvComments;
     RatingBar ratebar;
     private SliderLayout mDemoSlider;
     Calendar cal;
@@ -54,6 +64,7 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
     private Shop shop;
     long timeInMilliseconds;
     Thread timer;
+    private FirebaseListAdapter<Comments> mAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -75,6 +86,52 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
             initSlider(offer.getImagePaths());
             txtSale.setText(
                     String.format("%.0f", (1 - (Double.parseDouble(offer.getPriceAfter()) / Double.parseDouble(offer.getPriceBefore()))) * 100)+"%");
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Comments").child(offer.getObjectId());
+
+            mAdapter = new FirebaseListAdapter<Comments>(getActivity(), Comments.class, R.layout.comment_item, ref) {
+                @Override
+                protected void populateView(View view, Comments comment, int position) {
+                    CommentHolder holder = new CommentHolder(view);
+                    holder.Name.setText(comment.getUserName());
+                    holder.Comment.setText(comment.getCommentText());
+                    holder.DislikeNumber.setText(String.valueOf(comment.getDislike()));
+                    holder.LikeNumber.setText(String.valueOf(comment.getLike()));
+                    holder.Date.setText(comment.getTime());
+                }
+            };
+            lsvComments.setAdapter(mAdapter);
+            btnComment.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(edtxtComment.getText().toString().isEmpty())
+                    {
+                        Toast.makeText(getActivity(),"اكتب التعليق من فضلك اولاً",Toast.LENGTH_LONG);
+                        return;
+                    }
+                    Comments comment = new Comments();
+                    comment.setTime(UtilityGeneral.getCurrentDate(new Date()));
+                    comment.setUserName(UtilityGeneral.loadUser(getActivity()).getName());
+                    comment.setUserId(UtilityGeneral.loadUser(getActivity()).getObjectId());
+                    comment.setCommentText(edtxtComment.getText().toString());
+                    FirebaseDatabase database = FirebaseDatabase.getInstance();
+                    DatabaseReference myRef = database.getReference("Comments").child(offer.getObjectId());
+                    comment.setObjectId(myRef.push().getKey());
+                    myRef.child(comment.getObjectId()).setValue(comment, new DatabaseReference.CompletionListener() {
+                        @Override
+                        public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                            if(databaseError !=null) {
+                                Toast.makeText(getActivity(), "حصل مشكله شوف النت ", Toast.LENGTH_SHORT).show();
+                                Log.e("Frebaaase", databaseError.getMessage());
+                            }
+                            else
+                            {
+                                Toast.makeText(getActivity(), "تم إضافه التعليق، شكرا لك", Toast.LENGTH_SHORT).show();
+                                getActivity().onBackPressed();
+                            }
+                        }
+                    });
+                }
+            });
         } catch (Exception ex) {
         }
     }
@@ -145,6 +202,7 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
             btnFavorite = (Button) rootView.findViewById(R.id.btnFavorite);
             btnShare = (Button) rootView.findViewById(R.id.btnShare);
             btnShopWay = (Button) rootView.findViewById(R.id.btnShopWay);
+            btnComment =(Button) rootView.findViewById(R.id.btnComment);
             txtViews = (TextView) rootView.findViewById(R.id.txtViews);
             txtSale = (TextView) rootView.findViewById(R.id.txtSale);
             txtPriceBefore = (TextView) rootView.findViewById(R.id.txtPriceBefore);
@@ -158,7 +216,9 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
             txtAddress = (TextView) rootView.findViewById(R.id.txtAddress);
             txtMobile = (TextView) rootView.findViewById(R.id.txtMobile);
             txtRate = (TextView) rootView.findViewById(R.id.txtRateNumber);
+            edtxtComment = (EditText) rootView.findViewById(R.id.edtxtComment);
             ratebar = (RatingBar) rootView.findViewById(R.id.ratingbar);
+            lsvComments = (ListView) rootView.findViewById(R.id.lsvComments);
 
             offer = new Gson().fromJson(getActivity().getIntent().getStringExtra("offer"),Offer.class);
             cal = Calendar.getInstance();
@@ -247,5 +307,20 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
         Intent i = new Intent(getActivity(), FullScreenImageSlider.class);
         i.putStringArrayListExtra("IMAGES", offer.getImagePaths());
         startActivity(i);
+    }
+}
+class CommentHolder {
+    public TextView Name, Comment, Date,LikeNumber,DislikeNumber;
+    public Button btnLike,btnDislike;
+    public Comment comment;
+
+    public CommentHolder(View rootView) {
+        Name = (TextView) rootView.findViewById(R.id.txtName);
+        Comment= (TextView) rootView.findViewById(R.id.txtComment);
+        Date = (TextView) rootView.findViewById(R.id.txtTime);
+        LikeNumber = (TextView) rootView.findViewById(R.id.txtLikeNumber);
+        DislikeNumber= (TextView) rootView.findViewById(R.id.txtDisikeNumber);
+        btnLike = (Button) rootView.findViewById(R.id.btnLike);
+        btnDislike = (Button) rootView.findViewById(R.id.btnDislike);
     }
 }

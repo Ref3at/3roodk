@@ -1,15 +1,12 @@
 package com.app3roodk.Schema;
 
-/**
- * Created by Refaat on 4/27/2016.
- */
 public class Comments {
 
     private String objectId;
     private String time;
     private String commentText;
+    private String userName;
     private String userId;
-    private String offerId;
     private int like;
     private int dislike;
 
@@ -17,12 +14,11 @@ public class Comments {
     public Comments() {
     }
 
-    public Comments(String objectId, String time, String commentText, String userId, String offerId,int like, int dislike) {
-        this.objectId = objectId;
+    public Comments(String time, String commentText, String userName, String userId, int like, int dislike) {
         this.time = time;
         this.commentText = commentText;
+        this.userName = userName;
         this.userId = userId;
-        this.offerId = offerId;
         this.like = like;
         this.dislike = dislike;
     }
@@ -59,12 +55,12 @@ public class Comments {
         this.userId = userId;
     }
 
-    public String getOfferId() {
-        return offerId;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setOfferId(String offerId) {
-        this.offerId = offerId;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public int getDislike() {
