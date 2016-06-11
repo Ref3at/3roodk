@@ -1,5 +1,7 @@
 package com.app3roodk.UI.DetailActivity;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -7,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -14,9 +17,6 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.app3roodk.Back4App.CallRestApi;
-import com.app3roodk.Back4App.UtilityRestApi;
-import com.app3roodk.ObjectConverter;
 import com.app3roodk.R;
 import com.app3roodk.Schema.Comments;
 import com.app3roodk.Schema.Offer;
@@ -28,23 +28,18 @@ import com.daimajia.slider.library.SliderLayout;
 import com.daimajia.slider.library.SliderTypes.BaseSliderView;
 import com.daimajia.slider.library.SliderTypes.TextSliderView;
 import com.daimajia.slider.library.Tricks.ViewPagerEx;
-import com.firebase.ui.database.FirebaseListAdapter;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
-import com.loopj.android.http.TextHttpResponseHandler;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.w3c.dom.Comment;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-
-import cz.msebera.android.httpclient.Header;
+import java.util.Iterator;
 
 public class DetailFragment extends Fragment implements BaseSliderView.OnSliderClickListener, ViewPagerEx.OnPageChangeListener {
 
@@ -64,13 +59,16 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
     private Shop shop;
     long timeInMilliseconds;
     Thread timer;
-    private FirebaseListAdapter<Comments> mAdapter;
+    CommentsAdapter adapter;
+    ArrayList<Comments> lstComments;
+    private ValueEventListener postListener;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
         init(rootView);
         fillViews();
+        clickConfig();
         initCallApi();
         return rootView;
     }
@@ -86,54 +84,55 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
             initSlider(offer.getImagePaths());
             txtSale.setText(
                     String.format("%.0f", (1 - (Double.parseDouble(offer.getPriceAfter()) / Double.parseDouble(offer.getPriceBefore()))) * 100)+"%");
-            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Comments").child(offer.getObjectId());
 
-            mAdapter = new FirebaseListAdapter<Comments>(getActivity(), Comments.class, R.layout.comment_item, ref) {
-                @Override
-                protected void populateView(View view, Comments comment, int position) {
-                    CommentHolder holder = new CommentHolder(view);
-                    holder.Name.setText(comment.getUserName());
-                    holder.Comment.setText(comment.getCommentText());
-                    holder.DislikeNumber.setText(String.valueOf(comment.getDislike()));
-                    holder.LikeNumber.setText(String.valueOf(comment.getLike()));
-                    holder.Date.setText(comment.getTime());
-                }
-            };
-            lsvComments.setAdapter(mAdapter);
-            btnComment.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if(edtxtComment.getText().toString().isEmpty())
-                    {
-                        Toast.makeText(getActivity(),"اكتب التعليق من فضلك اولاً",Toast.LENGTH_LONG);
-                        return;
-                    }
-                    Comments comment = new Comments();
-                    comment.setTime(UtilityGeneral.getCurrentDate(new Date()));
-                    comment.setUserName(UtilityGeneral.loadUser(getActivity()).getName());
-                    comment.setUserId(UtilityGeneral.loadUser(getActivity()).getObjectId());
-                    comment.setCommentText(edtxtComment.getText().toString());
-                    FirebaseDatabase database = FirebaseDatabase.getInstance();
-                    DatabaseReference myRef = database.getReference("Comments").child(offer.getObjectId());
-                    comment.setObjectId(myRef.push().getKey());
-                    myRef.child(comment.getObjectId()).setValue(comment, new DatabaseReference.CompletionListener() {
-                        @Override
-                        public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                            if(databaseError !=null) {
-                                Toast.makeText(getActivity(), "حصل مشكله شوف النت ", Toast.LENGTH_SHORT).show();
-                                Log.e("Frebaaase", databaseError.getMessage());
-                            }
-                            else
-                            {
-                                Toast.makeText(getActivity(), "تم إضافه التعليق، شكرا لك", Toast.LENGTH_SHORT).show();
-                                getActivity().onBackPressed();
-                            }
-                        }
-                    });
-                }
-            });
+            FirebaseDatabase.getInstance().getReference("Comments").child(offer.getObjectId()).addValueEventListener(postListener);
+
+
         } catch (Exception ex) {
         }
+    }
+
+    private void clickConfig(){
+        btnComment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(edtxtComment.getText().toString().isEmpty())
+                {
+                    Toast.makeText(getActivity(),"اكتب التعليق من فضلك اولاً",Toast.LENGTH_LONG).show();
+                    return;
+                }
+                Comments comment = new Comments();
+                comment.setTime(UtilityGeneral.getCurrentDate(new Date()));
+                comment.setUserName(UtilityGeneral.loadUser(getActivity()).getName());
+                comment.setUserId(UtilityGeneral.loadUser(getActivity()).getObjectId());
+                comment.setCommentText(edtxtComment.getText().toString());
+                FirebaseDatabase database = FirebaseDatabase.getInstance();
+                DatabaseReference myRef = database.getReference("Comments").child(offer.getObjectId());
+                comment.setObjectId(myRef.push().getKey());
+                myRef.child(comment.getObjectId()).setValue(comment, new DatabaseReference.CompletionListener() {
+                    @Override
+                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                        if(databaseError !=null) {
+                            Toast.makeText(getActivity(), "حصل مشكله شوف النت ", Toast.LENGTH_SHORT).show();
+                            Log.e("Frebaaase", databaseError.getMessage());
+                        }
+                        else
+                        {
+                            Toast.makeText(getActivity(), "تم إضافه التعليق، شكرا لك", Toast.LENGTH_SHORT).show();
+                            edtxtComment.setText("");
+                        }
+                    }
+                });
+            }
+        });
+        btnShopWay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(UtilityGeneral.DrawPathToCertainShop(
+                        getContext(), UtilityGeneral.getCurrentLonAndLat(getContext()),
+                        new LatLng(Double.parseDouble(offer.getLat()), Double.parseDouble(offer.getLon()))));
+            }
+        });
     }
 
     private void initShopViews() {
@@ -143,56 +142,11 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
             txtMobile.setText(shop.getContacts().get("Mobile"));
         } catch (Exception ex) {
         }
-        btnShopWay.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(UtilityGeneral.DrawPathToCertainShop(
-                        getContext(), UtilityGeneral.getCurrentLonAndLat(getContext()),
-                        new LatLng(Double.parseDouble(shop.getLat()), Double.parseDouble(shop.getLon()))));
-            }
-        });
+
     }
 
     private void initCallApi() {
-        UtilityRestApi.raiseOfferViewsByOne(getContext(), offer.getObjectId(), new TextHttpResponseHandler() {
-            @Override
-            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
 
-            }
-
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, String responseString) {
-                try {
-//                    offer.setViewNum(Integer.parseInt(new JSONObject(responseString).getString("viewNum")));
-//                    for (int i = 0; i < CardsFragment.lstOffers.size(); i++)
-//                        if (CardsFragment.lstOffers.get(i).getObjectId().equals(offer.getObjectId())) {
-//                            CardsFragment.lstOffers.get(i).setViewNum(offer.getViewNum());
-//                            txtViews.setText(String.valueOf(offer.getViewNum()));
-//                        }
-                } catch (Exception ex) {
-                }
-            }
-        });
-        CallRestApi.GET(getContext(), "Shop", offer.getShopId(), new TextHttpResponseHandler() {
-            @Override
-            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-
-            }
-
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, String responseString) {
-                try {
-                    if (responseString.equals("{}")) {
-                        Toast.makeText(getContext(), "No valid shop for this offer", Toast.LENGTH_LONG).show();
-                        return;
-                    }
-                    shop = ObjectConverter.convertJsonToShop(new JSONObject(responseString));
-                    initShopViews();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
     }
 
     private void init(View rootView) {
@@ -219,16 +173,35 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
             edtxtComment = (EditText) rootView.findViewById(R.id.edtxtComment);
             ratebar = (RatingBar) rootView.findViewById(R.id.ratingbar);
             lsvComments = (ListView) rootView.findViewById(R.id.lsvComments);
-
+            lstComments = new ArrayList<>();
+            adapter = new CommentsAdapter(getActivity(),R.layout.comment_item, lstComments);
+            lsvComments.setAdapter(adapter);
             offer = new Gson().fromJson(getActivity().getIntent().getStringExtra("offer"),Offer.class);
             cal = Calendar.getInstance();
             cal.set(Calendar.YEAR, Integer.parseInt(offer.getEndTime().substring(0, 4)));
             cal.set(Calendar.MONTH, Integer.parseInt(offer.getEndTime().substring(4, 6)) - 1);
             cal.set(Calendar.DAY_OF_MONTH, Integer.parseInt(offer.getEndTime().substring(6, 8)));
-            cal.set(Calendar.HOUR_OF_DAY, 0);
-            cal.set(Calendar.MINUTE, 0);
+            cal.set(Calendar.HOUR_OF_DAY, Integer.parseInt(offer.getEndTime().substring(8, 10)));
+            cal.set(Calendar.MINUTE, Integer.parseInt(offer.getEndTime().substring(10, 12)));
             cal.set(Calendar.SECOND, 0);
             cal.set(Calendar.MILLISECOND, 0);
+
+            postListener = new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    lstComments.clear();
+                    Iterator<DataSnapshot> iterator = dataSnapshot.getChildren().iterator();
+                    while(iterator.hasNext())
+                        lstComments.add(iterator.next().getValue(Comments.class));
+                    UtilityGeneral.sortCommentsByTime(lstComments);
+                    adapter.notifyDataSetChanged();
+                    UtilityGeneral.setListViewHeightBasedOnChildren(lsvComments);
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                }
+            };
         }
         catch (Exception ex){try{getActivity().finish();}catch (Exception exx){}}
     }
@@ -290,6 +263,15 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+        try {
+            FirebaseDatabase.getInstance().getReference("Comments").child(offer.getObjectId()).removeEventListener(postListener);
+        }
+        catch (Exception ex){}
+    }
+
+    @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
     }
 
@@ -309,10 +291,48 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
         startActivity(i);
     }
 }
+
+class CommentsAdapter extends ArrayAdapter{
+
+    Context context;
+    int layoutResourceId;
+    ArrayList<Comments> data = null;
+
+    public CommentsAdapter(Context context, int layoutResourceId, ArrayList<Comments> data) {
+        super(context, layoutResourceId, data);
+        this.layoutResourceId = layoutResourceId;
+        this.context = context;
+        this.data = data;
+    }
+
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        View row = convertView;
+        CommentHolder holder;
+        if(row == null)
+        {
+            LayoutInflater inflater = ((Activity) context).getLayoutInflater();
+            row = inflater.inflate(layoutResourceId, parent, false);
+            holder = new CommentHolder(row);
+            row.setTag(holder);
+        }
+        else
+        {
+            holder = (CommentHolder) row.getTag();
+        }
+        holder.Name.setText(data.get(position).getUserName());
+        holder.Comment.setText(data.get(position).getCommentText());
+        holder.DislikeNumber.setText(String.valueOf(data.get(position).getDislike()));
+        holder.LikeNumber.setText(String.valueOf(data.get(position).getLike()));
+        holder.Date.setText(data.get(position).getTime());
+        return row;
+    }
+}
+
 class CommentHolder {
     public TextView Name, Comment, Date,LikeNumber,DislikeNumber;
     public Button btnLike,btnDislike;
-    public Comment comment;
+    public Comments comment;
 
     public CommentHolder(View rootView) {
         Name = (TextView) rootView.findViewById(R.id.txtName);

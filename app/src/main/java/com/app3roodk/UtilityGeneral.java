@@ -12,7 +12,12 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.util.Base64;
 import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 
+import com.app3roodk.Schema.Comments;
 import com.app3roodk.Schema.Offer;
 import com.app3roodk.Schema.Shop;
 import com.app3roodk.Schema.User;
@@ -108,6 +113,19 @@ public class UtilityGeneral {
         });
     }
 
+    static public void sortCommentsByTime(ArrayList<Comments> lstComments) {
+        Collections.sort(lstComments, new Comparator<Comments>() {
+            @Override
+            public int compare(Comments o1, Comments o2) {
+                if (Double.parseDouble(o1.getTime()) >= Double.parseDouble(o2.getTime()))
+                    return -1;
+                if (Double.parseDouble(o1.getTime()) < Double.parseDouble(o2.getTime()))
+                    return 1;
+                return 0;
+            }
+        });
+    }
+
     static public void sortOffersByDiscount(ArrayList<Offer> lstOffers) {
         Collections.sort(lstOffers, new Comparator<Offer>() {
             @Override
@@ -154,7 +172,7 @@ public class UtilityGeneral {
     }
 
     static public String getCurrentDate(Date date) {
-        return new SimpleDateFormat("yyyyMMddhhmm").format(date);
+        return new SimpleDateFormat("yyyyMMddHHmm").format(date);
     }
 
     static public String getCategoryEnglishName(String arCategory) {
@@ -201,6 +219,27 @@ public class UtilityGeneral {
                 break;
         }
         return categoryName;
+    }
+
+    public static void setListViewHeightBasedOnChildren(ListView listView) {
+        ListAdapter listAdapter = listView.getAdapter();
+        if (listAdapter == null)
+            return;
+
+        int desiredWidth = View.MeasureSpec.makeMeasureSpec(listView.getWidth(), View.MeasureSpec.UNSPECIFIED);
+        int totalHeight = 0;
+        View view = null;
+        for (int i = 0; i < listAdapter.getCount(); i++) {
+            view = listAdapter.getView(i, view, listView);
+            if (i == 0)
+                view.setLayoutParams(new ViewGroup.LayoutParams(desiredWidth, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+            view.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
+            totalHeight += view.getMeasuredHeight();
+        }
+        ViewGroup.LayoutParams params = listView.getLayoutParams();
+        params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
+        listView.setLayoutParams(params);
     }
     //endregion
 

@@ -20,7 +20,7 @@ public class User {
     private ArrayList<String> favShopIds ;
     private String planId;
     private ArrayList<String> subsCategoryIds;
-    private ArrayList<String> shopsIDs;
+    private String NotificationToken;
 
     // ref3t add
     private ArrayList<String> subsShopsIds;
@@ -30,26 +30,6 @@ public class User {
     private HashMap<String, String> offersRate = new HashMap<>();
 
     public User() {
-    }
-
-    public User(String name, String email, String profileImg, String lat, String lon, String city, String governate, String gender, String type, ArrayList<String> favOfferIds, ArrayList<String> favShopIds, String planId, ArrayList<String> subsCategoryIds, ArrayList<String> shopsIDs, ArrayList<String> subsShopsIds, HashMap<String, String> commentsRate, HashMap<String, String> offersRate) {
-        this.name = name;
-        this.email = email;
-        this.profileImg = profileImg;
-        this.lat = lat;
-        this.lon = lon;
-        this.city = city;
-        this.governate = governate;
-        this.gender = gender;
-        this.type = type;
-        this.favOfferIds = favOfferIds;
-        this.favShopIds = favShopIds;
-        this.planId = planId;
-        this.subsCategoryIds = subsCategoryIds;
-        this.shopsIDs = shopsIDs;
-        this.subsShopsIds = subsShopsIds;
-        this.commentsRate = commentsRate;
-        this.offersRate = offersRate;
     }
 
     public String getObjectId() {
@@ -220,11 +200,11 @@ public class User {
         this.subsShopsIds = subsShopsIds;
     }
 
-    public void setshopsIDs(ArrayList<String> shopsIDs) {
-        this.shopsIDs = shopsIDs;
+    public String getNotificationToken() {
+        return NotificationToken;
     }
 
-    public ArrayList<String> getShopsIDs() {
-        return shopsIDs;
+    public void setNotificationToken(String notificationToken) {
+        NotificationToken = notificationToken;
     }
 }

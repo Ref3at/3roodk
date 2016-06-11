@@ -10,7 +10,6 @@ public class Comments {
     private int like;
     private int dislike;
 
-
     public Comments() {
     }
 

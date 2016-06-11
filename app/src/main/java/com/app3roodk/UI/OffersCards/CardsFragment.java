@@ -17,6 +17,7 @@ import com.app3roodk.R;
 import com.app3roodk.Schema.Offer;
 import com.app3roodk.UI.DetailActivity.DetailActivity;
 import com.app3roodk.UtilityGeneral;
+import com.bumptech.glide.Glide;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -62,7 +63,7 @@ public class CardsFragment extends Fragment {
                                                 cardHolder.rate.setText(String.valueOf(offer.getAverageRate()));
                                                 cardHolder.discount.setText(String.format("%.0f", (1 - (Double.parseDouble(offer.getPriceAfter()) / Double.parseDouble(offer.getPriceBefore()))) * 100) + "%");
                                                 fillTimer(cardHolder, offer);
-                                                Picasso.with(cardHolder.itemView.getContext()).load(offer.getImagePaths().get(0)).into(cardHolder.imgCard);
+                                                Glide.with(cardHolder.itemView.getContext()).load(offer.getImagePaths().get(0)).into(cardHolder.imgCard);
                                             }
                                         };
                                         recyclerView.setAdapter(mAdapter);

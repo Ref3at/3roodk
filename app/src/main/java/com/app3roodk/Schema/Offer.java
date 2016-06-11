@@ -20,6 +20,7 @@ public class Offer {
     private String lat ; //*
     private String lon ; //*
     private String userId;
+    private String userNotificationToken;
 
     // ref3t add
     private ArrayList<String> ImagePaths = new ArrayList<>(); // later will be <img> //*
@@ -30,28 +31,6 @@ public class Offer {
     private int averageRate;
 
     public Offer() {
-    }
-
-    public Offer(String title, String desc, String priceBefore, String priceAfter, String period, String endTime, int viewNum, int favoriteNum, String categoryName, String shopId, String shopName, String lat, String lon, String userId, ArrayList<String> imagePaths, int numberUsersRated, int totalRate, int averageRate, String createdAt) {
-        this.title = title;
-        Desc = desc;
-        PriceBefore = priceBefore;
-        PriceAfter = priceAfter;
-        Period = period;
-        this.endTime = endTime;
-        this.viewNum = viewNum;
-        this.favoriteNum = favoriteNum;
-        CategoryName = categoryName;
-        ShopId = shopId;
-        ShopName = shopName;
-        this.lat = lat;
-        this.lon = lon;
-        this.userId = userId;
-        ImagePaths = imagePaths;
-        this.numberUsersRated = numberUsersRated;
-        this.totalRate = totalRate;
-        this.averageRate = averageRate;
-        this.createdAt = createdAt;
     }
 
     public String getObjectId() {
@@ -222,5 +201,13 @@ public class Offer {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public String getUserNotificationToken() {
+        return userNotificationToken;
+    }
+
+    public void setUserNotificationToken(String userNotificationToken) {
+        this.userNotificationToken = userNotificationToken;
     }
 }
