@@ -17,6 +17,7 @@ public class Offer {
     private String CategoryName; //*
     private String ShopId ; //*
     private String ShopName ; //*
+    private String city ; //*
     private String lat ; //*
     private String lon ; //*
     private String userId;
@@ -209,5 +210,13 @@ public class Offer {
 
     public void setUserNotificationToken(String userNotificationToken) {
         this.userNotificationToken = userNotificationToken;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
     }
 }

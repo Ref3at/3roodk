@@ -400,7 +400,7 @@ public class AddNewOfferFragment extends Fragment {
 
     private void Publish() {
         try {
-            mOffer.setCategoryName(category_spinner.getText().toString());
+            mOffer.setCategoryName(UtilityGeneral.getCategoryEnglishName(category_spinner.getText().toString()));
             mOffer.setTitle(inputName.getText().toString());
             mOffer.setDesc(inputDesc.getText().toString());
             mOffer.setPriceBefore(inputPriceBefore.getText().toString());
@@ -412,6 +412,9 @@ public class AddNewOfferFragment extends Fragment {
             mOffer.setLat(UtilityGeneral.loadShop(getActivity()).getLat());
             mOffer.setLon(UtilityGeneral.loadShop(getActivity()).getLon());
             mOffer.setCreatedAt(UtilityGeneral.getCurrentDate(new Date()));
+            mOffer.setUserId(UtilityGeneral.loadUser(getActivity()).getObjectId());
+            mOffer.setCity(UtilityGeneral.loadShop(getActivity()).getCity());
+            mOffer.setUserNotificationToken(UtilityGeneral.loadUser(getActivity()).getNotificationToken());
             Calendar cal = Calendar.getInstance();
             for (int i = 0; i < durtation_list.length; i++) {
                 if (mOffer.getPeriod().equals(durtation_list[i])) {

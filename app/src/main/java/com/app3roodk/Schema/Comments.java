@@ -1,5 +1,8 @@
 package com.app3roodk.Schema;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+
 public class Comments {
 
     private String objectId;
@@ -7,19 +10,11 @@ public class Comments {
     private String commentText;
     private String userName;
     private String userId;
-    private int like;
-    private int dislike;
+    private String offerId;
+    private ArrayList<String> userLike ;
+    private ArrayList<String> userDislike ;
 
     public Comments() {
-    }
-
-    public Comments(String time, String commentText, String userName, String userId, int like, int dislike) {
-        this.time = time;
-        this.commentText = commentText;
-        this.userName = userName;
-        this.userId = userId;
-        this.like = like;
-        this.dislike = dislike;
     }
 
     public String getObjectId() {
@@ -28,6 +23,13 @@ public class Comments {
 
     public void setObjectId(String objectId) {
         this.objectId = objectId;
+    }
+
+    public String getReadableTime(){
+        try {
+            return new SimpleDateFormat("dd-MM-yyyy  HH:mm").format(new SimpleDateFormat("yyyyMMddHHmm").parse(time));
+        }
+        catch (Exception ex){return "";}
     }
 
     public String getTime() {
@@ -62,19 +64,27 @@ public class Comments {
         this.userName = userName;
     }
 
-    public int getDislike() {
-        return dislike;
+    public ArrayList<String> getUserLike() {
+        return userLike;
     }
 
-    public void setDislike(int dislike) {
-        this.dislike = dislike;
+    public void setUserLike(ArrayList<String> userLike) {
+        this.userLike = userLike;
     }
 
-    public int getLike() {
-        return like;
+    public ArrayList<String> getUserDislike() {
+        return userDislike;
     }
 
-    public void setLike(int like) {
-        this.like = like;
+    public void setUserDislike(ArrayList<String> userDislike) {
+        this.userDislike = userDislike;
+    }
+
+    public String getOfferId() {
+        return offerId;
+    }
+
+    public void setOfferId(String offerId) {
+        this.offerId = offerId;
     }
 }

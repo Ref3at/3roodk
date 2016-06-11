@@ -18,7 +18,6 @@ import android.widget.Toast;
 import com.app3roodk.Back4App.UtilityRestApi;
 import com.app3roodk.ObjectConverter;
 import com.app3roodk.R;
-import com.app3roodk.Schema.Categories;
 import com.app3roodk.Schema.User;
 import com.app3roodk.UI.Offer.OfferActivity;
 import com.app3roodk.UI.OffersCards.CardsActivity;

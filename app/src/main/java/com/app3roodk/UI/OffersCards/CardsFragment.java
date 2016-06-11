@@ -72,8 +72,8 @@ public class CardsFragment extends Fragment {
                                     }
                                 }
                             });
+                        } catch (Exception ex) {
                         }
-                        catch (Exception ex){}
                     }
                 }).start();
             } catch (Exception ex) {
@@ -106,8 +106,8 @@ public class CardsFragment extends Fragment {
         super.onDestroy();
         try {
             mAdapter.cleanup();
+        } catch (Exception ex) {
         }
-        catch (Exception ex){}
     }
 }
 
@@ -132,6 +132,8 @@ class CardHolder extends RecyclerView.ViewHolder {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(v.getContext(), DetailActivity.class);
+                FirebaseDatabase.getInstance().getReference("Offers").child(offer.getCity()).child(offer.getCategoryName()).child(offer.getObjectId()).child("viewNum").setValue(offer.getViewNum() + 1);
+                offer.setViewNum(offer.getViewNum() + 1);
                 intent.putExtra("offer", new Gson().toJson(offer));
                 v.getContext().startActivity(intent);
             }
