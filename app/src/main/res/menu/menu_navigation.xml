@@ -41,6 +41,12 @@
             android:title="@string/create_new_shop" />
 
         <item
+            android:id="@+id/action_view_my_shop"
+            android:icon="@drawable/shop"
+            android:tint="@color/button_grey"
+            android:title="@string/my_shop" />
+
+        <item
             android:id="@+id/action_add_offers"
             android:icon="@drawable/camera"
             android:tint="@color/button_grey"

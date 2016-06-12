@@ -22,6 +22,7 @@ import com.app3roodk.Schema.Comments;
 import com.app3roodk.Schema.Offer;
 import com.app3roodk.Schema.Shop;
 import com.app3roodk.UI.FullScreenImage.FullScreenImageSlider;
+import com.app3roodk.UI.Shop.ViewShopActivity;
 import com.app3roodk.UtilityGeneral;
 import com.daimajia.slider.library.Animations.DescriptionAnimation;
 import com.daimajia.slider.library.SliderLayout;
@@ -43,25 +44,46 @@ import java.util.Iterator;
 
 public class DetailFragment extends Fragment implements BaseSliderView.OnSliderClickListener, ViewPagerEx.OnPageChangeListener {
 
+    final static long minutesInMilli = 1000 * 60;
+    final static long hoursInMilli = minutesInMilli * 60;
+    final static long daysInMilli = hoursInMilli * 24;
     Button btnFavorite, btnShare, btnShopWay, btnComment;
     TextView txtViews, txtSale, txtPriceBefore, txtPriceAfter, txtDay, txtHour, txtMinute, txtDescription,
             txtShopName, txtWorkTime, txtAddress, txtMobile, txtRate;
     EditText edtxtComment;
     ListView lsvComments;
     RatingBar ratebar;
-    private SliderLayout mDemoSlider;
     Calendar cal;
-    final static long minutesInMilli = 1000 * 60;
-    final static long hoursInMilli = minutesInMilli * 60;
-    final static long daysInMilli = hoursInMilli * 24;
-
-    private Offer offer;
-    private Shop shop;
     long timeInMilliseconds;
     Thread timer;
     CommentsAdapter adapter;
     ArrayList<Comments> lstComments;
+    private SliderLayout mDemoSlider;
+    private Offer offer;
+    private Shop shop;
     private ValueEventListener postListener;
+    private Runnable updateTimerThread = new Runnable() {
+        public void run() {
+            while (true) {
+                timeInMilliseconds = cal.getTime().getTime() - System.currentTimeMillis();
+                try {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            txtDay.setText(String.valueOf((int) (timeInMilliseconds / daysInMilli)));
+                            timeInMilliseconds = timeInMilliseconds % daysInMilli;
+                            txtHour.setText(String.valueOf((int) (timeInMilliseconds / hoursInMilli)));
+                            timeInMilliseconds = timeInMilliseconds % hoursInMilli;
+                            txtMinute.setText(String.valueOf((int) (timeInMilliseconds / minutesInMilli)));
+                        }
+                    });
+                    Thread.sleep(30000);
+                } catch (Exception ex) {
+                    break;
+                }
+            }
+        }
+    };
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -69,6 +91,19 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
         init(rootView);
         fillViews();
         clickConfig();
+
+        txtShopName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getActivity(), ViewShopActivity.class);
+                if (shop != null) {
+                    i.putExtra("shop", new Gson().toJson(shop));
+                }
+                startActivity(i);
+
+            }
+        });
+
         return rootView;
     }
 
@@ -142,10 +177,12 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
                     shop = dataSnapshot.getValue(Shop.class);
                     txtAddress.setText(shop.getAddress());
                     txtWorkTime.setText(shop.getWorkingTime());
-                    if (shop.getContacts().containsKey("Mobile"))
+                    txtMobile.setText(shop.getContacts());
+
+                   /* if (shop.getContacts().containsKey("Mobile"))
                         txtMobile.setText(shop.getContacts().get("Mobile"));
                     else
-                        txtMobile.setText("لا يوجد");
+                        txtMobile.setText("لا يوجد"); */
                 }
 
                 @Override
@@ -218,36 +255,13 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
         }
     }
 
-    private Runnable updateTimerThread = new Runnable() {
-        public void run() {
-            while (true) {
-                timeInMilliseconds = cal.getTime().getTime() - System.currentTimeMillis();
-                try {
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            txtDay.setText(String.valueOf((int) (timeInMilliseconds / daysInMilli)));
-                            timeInMilliseconds = timeInMilliseconds % daysInMilli;
-                            txtHour.setText(String.valueOf((int) (timeInMilliseconds / hoursInMilli)));
-                            timeInMilliseconds = timeInMilliseconds % hoursInMilli;
-                            txtMinute.setText(String.valueOf((int) (timeInMilliseconds / minutesInMilli)));
-                        }
-                    });
-                    Thread.sleep(30000);
-                } catch (Exception ex) {
-                    break;
-                }
-            }
-        }
-    };
-
     private void initSlider(ArrayList<String> lstImages) {
 
         for (String image : lstImages) {
             TextSliderView textSliderView = new TextSliderView(getActivity());
             textSliderView
                     .image(image)
-                    .setScaleType(BaseSliderView.ScaleType.Fit)
+                    .setScaleType(BaseSliderView.ScaleType.FitCenterCrop)
                     .setOnSliderClickListener(this);
             mDemoSlider.addSlider(textSliderView);
         }

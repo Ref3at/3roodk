@@ -22,6 +22,7 @@ import com.app3roodk.Schema.User;
 import com.app3roodk.UI.Offer.OfferActivity;
 import com.app3roodk.UI.OffersCards.CardsActivity;
 import com.app3roodk.UI.Shop.ShopActivity;
+import com.app3roodk.UI.Shop.ViewShopActivity;
 import com.app3roodk.UI.Signing.SignInActivity;
 import com.app3roodk.UI.Signing.SignUpActivity;
 import com.app3roodk.UtilityGeneral;
@@ -92,6 +93,11 @@ public class CategoriesActivity extends AppCompatActivity {
                             case R.id.action_new_location:
                                 mDrawerLayout.closeDrawer(GravityCompat.END);
                                 changeLocation();
+                                return true;
+
+                            case R.id.action_view_my_shop:
+                                mDrawerLayout.closeDrawer(GravityCompat.END);
+                                startActivity(new Intent(CategoriesActivity.this, ViewShopActivity.class));
                                 return true;
 
                             case R.id.action_logout:
@@ -181,9 +187,13 @@ public class CategoriesActivity extends AppCompatActivity {
             if (UtilityGeneral.isShopExist(getBaseContext())) {
                 nav_Menu.findItem(R.id.action_new_shop).setVisible(false);
                 nav_Menu.findItem(R.id.action_add_offers).setVisible(true);
+                nav_Menu.findItem(R.id.action_view_my_shop).setVisible(true);
+
             } else {
                 nav_Menu.findItem(R.id.action_new_shop).setVisible(true);
                 nav_Menu.findItem(R.id.action_add_offers).setVisible(false);
+                nav_Menu.findItem(R.id.action_view_my_shop).setVisible(false);
+
             }
         } else {
             nav_Menu.findItem(R.id.action_signin).setVisible(true);

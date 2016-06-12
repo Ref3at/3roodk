@@ -1,13 +1,11 @@
 package com.app3roodk.UI.OffersCards;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -15,23 +13,21 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.app3roodk.Back4App.UtilityRestApi;
-import com.app3roodk.Constants;
 import com.app3roodk.ObjectConverter;
 import com.app3roodk.R;
 import com.app3roodk.Schema.User;
 import com.app3roodk.UI.Offer.OfferActivity;
 import com.app3roodk.UI.Shop.ShopActivity;
+import com.app3roodk.UI.Shop.ViewShopActivity;
 import com.app3roodk.UI.Signing.SignInActivity;
 import com.app3roodk.UI.Signing.SignUpActivity;
 import com.app3roodk.UtilityGeneral;
@@ -109,6 +105,11 @@ public class CardsActivity extends AppCompatActivity {
                             case R.id.action_new_location:
                                 mDrawerLayout.closeDrawer(GravityCompat.END);
                                 changeLocation();
+                                return true;
+
+                            case R.id.action_view_my_shop:
+                                mDrawerLayout.closeDrawer(GravityCompat.END);
+                                startActivity(new Intent(CardsActivity.this, ViewShopActivity.class));
                                 return true;
 
                             case R.id.action_logout:
@@ -233,9 +234,12 @@ public class CardsActivity extends AppCompatActivity {
             if (UtilityGeneral.isShopExist(getBaseContext())) {
                 nav_Menu.findItem(R.id.action_new_shop).setVisible(false);
                 nav_Menu.findItem(R.id.action_add_offers).setVisible(true);
+                nav_Menu.findItem(R.id.action_view_my_shop).setVisible(true);
             } else {
                 nav_Menu.findItem(R.id.action_new_shop).setVisible(true);
                 nav_Menu.findItem(R.id.action_add_offers).setVisible(false);
+                nav_Menu.findItem(R.id.action_view_my_shop).setVisible(false);
+
             }
         } else {
             nav_Menu.findItem(R.id.action_signin).setVisible(true);

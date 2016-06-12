@@ -5,11 +5,11 @@
     <string name="URI">https://parseapi.back4app.com/classes/</string>
 
     <!-- hazem maps key -->
-    <string name="key_map">AIzaSyBDw98HmGde195atmc4qi6xhr7PWX0hHLg</string>
+    <!-- <string name="key_map">AIzaSyBDw98HmGde195atmc4qi6xhr7PWX0hHLg</string>-->
 
 
     <!-- mohamed maps key -->
-    <!--<string name="key_map">AIzaSyAopijmR0CjdJJXF6KQgM7dRnosllvaPeQ</string>-->
+    <string name="key_map">AIzaSyAopijmR0CjdJJXF6KQgM7dRnosllvaPeQ</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="sign_in">تسجيل الدخول</string>
@@ -44,8 +44,10 @@
     <string name="err_msg_desc">ادخل وصف مناسب</string>
     <string name="err_msg_priceBefore">ادخل سعر حقيقى</string>
     <string name="err_msg_priceAfter">ادخل سعر مناسب</string>
+
     <string name="shop_err_msg_name">من فضلك أدخل اسم صحيح لمحلك</string>
     <string name="shop_err_msg_working">من فضلك أدخل مواعيد عمل صحيحه</string>
+    <string name="shop_err_msg_contacts">من فضلك أدخل رقم موبايلك</string>
     <string name="shop_err_msg_addressinfo">من فضلك ادخل تفاصيل مفيده لعنوان محلك</string>
     <string name="ability_to_sign">يمكنك التسجيل معنا</string>
     <string name="choose_location">حدد مكانك</string>
@@ -84,5 +86,6 @@
     <string name="dislike">Dislike</string>
     <string name="add">أضف</string>
     <string name="add_comment">أضف تعليق</string>
+    <string name="my_shop">محلك</string>
 
 </resources>

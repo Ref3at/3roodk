@@ -44,16 +44,14 @@ import java.util.List;
 
 public class CreateShopFragment extends Fragment {
 
+    static public LatLng latLngShop;
     int REQUEST_CAMERA = 0, SELECT_FILE = 1;
-
     String mlogoId = null;
     Shop shop;
     List<Address> addresses;
-    static public LatLng latLngShop;
-
     private TextView AddressFromMap;
-    private EditText inputShopName, inputWorkingTime, inputAddressInfo;
-    private TextInputLayout inputLayoutShopName, inputLayoutWorkingTime, inputLayoutAddressInfo;
+    private EditText inputShopName, inputWorkingTime, inputAddressInfo, inputContacts;
+    private TextInputLayout inputLayoutShopName, inputLayoutWorkingTime, inputLayoutAddressInfo, inputLayoutContacts;
     private Button createShop, btnChangeLocation;
 
     private ImageButton addShopLogo;
@@ -76,15 +74,18 @@ public class CreateShopFragment extends Fragment {
         inputLayoutShopName = (TextInputLayout) rootView.findViewById(R.id.input_layout_shopname);
         inputLayoutWorkingTime = (TextInputLayout) rootView.findViewById(R.id.input_layout_workingtime);
         inputLayoutAddressInfo = (TextInputLayout) rootView.findViewById(R.id.input_layout_addressinfo);
+        inputLayoutContacts = (TextInputLayout) rootView.findViewById(R.id.input_layout_contacts);
 
         inputShopName = (EditText) rootView.findViewById(R.id.input_shopname);
         inputWorkingTime = (EditText) rootView.findViewById(R.id.input_workingtime);
         inputAddressInfo = (EditText) rootView.findViewById(R.id.input_addressinfo);
+        inputContacts = (EditText) rootView.findViewById(R.id.input_contacts);
 
 
         inputShopName.addTextChangedListener(new MyTextWatcher(inputShopName));
         inputWorkingTime.addTextChangedListener(new MyTextWatcher(inputWorkingTime));
         inputAddressInfo.addTextChangedListener(new MyTextWatcher(inputAddressInfo));
+        inputContacts.addTextChangedListener(new MyTextWatcher(inputContacts));
 
         addShopLogo = (ImageButton) rootView.findViewById(R.id.imgbtn_addlogo);
         addShopLogo.setAlpha(0.5f);
@@ -251,6 +252,10 @@ public class CreateShopFragment extends Fragment {
         if (!validateAddressInfo()) {
             return;
         }
+
+        if (!validateContcats()) {
+            return;
+        }
         if (mlogoId == null && haveAlogo.isChecked()) {
             Toast.makeText(getActivity(), "يجب تحديد لوجو!", Toast.LENGTH_SHORT).show();
 
@@ -261,6 +266,7 @@ public class CreateShopFragment extends Fragment {
 
     private void Create() {
         shop = new Shop();
+        shop.setContacts(inputContacts.getText().toString());
         shop.setName(inputShopName.getText().toString());
         shop.setAddress(inputAddressInfo.getText().toString());
         shop.setWorkingTime(inputWorkingTime.getText().toString());
@@ -328,6 +334,19 @@ public class CreateShopFragment extends Fragment {
     }
 
 
+    private Boolean validateContcats() {
+
+        if (inputContacts.getText().toString().trim().isEmpty()) {
+            inputLayoutContacts.setError(getString(R.string.shop_err_msg_contacts));
+            requestFocus(inputContacts);
+            return false;
+        } else {
+            inputLayoutContacts.setErrorEnabled(false);
+        }
+        return true;
+    }
+
+
     private void requestFocus(View view) {
         if (view.requestFocus()) {
             getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
@@ -358,6 +377,11 @@ public class CreateShopFragment extends Fragment {
                     break;
                 case R.id.input_addressinfo:
                     validateAddressInfo();
+                    break;
+
+                case R.id.input_contacts:
+                    validateContcats();
+
                     break;
             }
         }

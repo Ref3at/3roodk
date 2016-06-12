@@ -1,7 +1,5 @@
 package com.app3roodk.Schema;
 
-import java.util.HashMap;
-
 public class Shop {
     private String objectId;
     private String updatedAt;
@@ -12,7 +10,9 @@ public class Shop {
     private String city;  //*
     private String governate; //*
     private String address; //*
-    private HashMap<String, String> contacts ;
+    //  private HashMap<String, String> contacts ;
+
+    private String contacts;  //temp just mobile no.
     //ref3t add
     private String logoId; //*
     private String subscribedNum;
@@ -21,7 +21,8 @@ public class Shop {
     public Shop() {
     }
 
-    public Shop(String name, String lat, String lon, String city, String governate, String address, HashMap<String, String> contacts, String logoId, String subscribedNum, String workingTime) {
+
+    public Shop(String name, String lat, String lon, String city, String governate, String address, String contacts, String logoId, String subscribedNum, String workingTime) {
         this.name = name;
         this.lat = lat;
         this.lon = lon;
@@ -129,7 +130,7 @@ public class Shop {
     public void setWorkingTime(String workingTime) {
         this.workingTime = workingTime;
     }
-
+/*
     public HashMap<String, String> getContacts() {
         if (contacts == null)
             contacts = new HashMap<>();
@@ -150,5 +151,14 @@ public class Shop {
         if (contacts == null)
             contacts = new HashMap<>();
         this.contacts.put(key, value);
+    } */
+
+    public String getContacts() {
+
+        return contacts;
+    }
+
+    public void setContacts(String contacts) {
+        this.contacts = contacts;
     }
 }
