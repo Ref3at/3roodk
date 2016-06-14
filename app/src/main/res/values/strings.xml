@@ -87,5 +87,8 @@
     <string name="add">أضف</string>
     <string name="add_comment">أضف تعليق</string>
     <string name="my_shop">محلك</string>
+    <string name="edit">تعديل</string>
+    <string name="done">حفظ التعديلات</string>
+    <string name="facebookPage">تابعنا على الفيس بوك</string>
 
 </resources>

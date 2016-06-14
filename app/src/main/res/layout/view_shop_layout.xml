@@ -1,147 +1,363 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layoutDirection="rtl"
-    android:orientation="vertical">
-
-
-    <ImageView
-        android:id="@+id/v_logo"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:layout_gravity="center_horizontal"
-        android:layout_margin="5dp"
-        android:src="@drawable/icon" />
-
-
-    <TextView
-        android:id="@+id/v_shopname"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_margin="10dp"
-        android:text="محل فلااااااااااااااان"
-        android:textSize="30dp" />
-
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_margin="5dp"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="5dp"
-            android:text="مواعيد العمل : "
-            android:textSize="22sp" />
-
-        <TextView
-            android:id="@+id/v_workingtime"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            android:text="واعيد العمل"
-            android:textSize="22sp" />
-
-
-    </LinearLayout>
-
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_margin="5dp"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="5dp"
-            android:text="رقم الموبايل :"
-            android:textSize="22sp" />
-
-        <TextView
-            android:id="@+id/v_contacts"
-            android:layout_width="wrap_content"
-
-            android:layout_height="wrap_content"
-
-            android:text="واعيد العمل"
-            android:textSize="22sp" />
-
-
-    </LinearLayout>
+    android:layout_height="match_parent">
 
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:orientation="horizontal">
-
-
-        <TextView
-            android:id="@+id/v_txtShopAddressFromMap"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            android:gravity="center"
-            tools:text="الدقهليه - السنبلاوين شارع الاستقلال" />
-
-        <Button
-            android:id="@+id/v_btnShopWay"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:background="@drawable/custom_background_buttons"
-            android:text="@string/see_way"
-            android:textColor="@color/white"
-            android:textSize="16sp" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
+        android:layout_height="match_parent"
+        android:layoutDirection="rtl"
         android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="160dp">
+
+
+            <ImageButton
+                android:id="@+id/btn_edit_logo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@+id/v_logo"
+                android:src="@android:drawable/ic_menu_edit"
+
+                android:visibility="gone" />
+
+            <ImageButton
+                android:id="@+id/btn_done_logo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@+id/v_logo"
+                android:src="@android:drawable/ic_dialog_info"
+                android:visibility="gone" />
+
+            <ImageView
+                android:id="@+id/v_logo"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+
+                android:layout_centerHorizontal="true"
+                android:layout_gravity="center_horizontal"
+                android:layout_margin="5dp"
+                android:src="@drawable/icon" />
+
+            <Button
+                android:id="@+id/btn_change_logo"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_centerHorizontal="true"
+
+                android:layout_gravity="center_horizontal"
+                android:background="#5b6d6d6d"
+                android:backgroundTint="#747474"
+                android:text="غير اللوجو"
+                android:textColor="#0044fe"
+                android:visibility="gone" />
+
+
+        </RelativeLayout>
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/v_shopname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:text="محل فلااااااااااااااان"
+                android:textSize="30dp" />
+
+
+            <EditText
+                android:id="@+id/E_shopname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#218ffc"
+                android:textSize="30dp"
+                android:visibility="gone" />
+
+            <ImageButton
+                android:id="@+id/btn_edit_shopname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@android:drawable/ic_menu_edit"
+                android:visibility="gone" />
+
+            <ImageButton
+                android:id="@+id/btn_done_shopname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@android:drawable/ic_dialog_info"
+                android:visibility="gone" />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="5dp"
+            android:orientation="vertical">
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:padding="5dp"
+                android:text="مواعيد العمل"
+                android:textSize="22sp" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/v_workingtime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_margin="10dp"
+                    android:text="hhhh"
+                    android:textSize="22sp" />
+
+                <EditText
+                    android:id="@+id/E_workingtime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="hhhh"
+                    android:textColor="#218ffc"
+                    android:textSize="22sp"
+                    android:visibility="gone" />
+
+
+                <ImageButton
+                    android:id="@+id/btn_edit_workingtime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@android:drawable/ic_menu_edit"
+                    android:visibility="gone" />
+
+                <ImageButton
+                    android:id="@+id/btn_done_workingtime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@android:drawable/ic_dialog_info"
+                    android:visibility="gone" />
+
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="5dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:padding="5dp"
+                android:text="رقم الموبايل "
+                android:textSize="22sp" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:orientation="horizontal">
+
+
+                <TextView
+                    android:id="@+id/v_contacts"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_margin="10dp"
+                    android:text="010000000"
+                    android:textSize="22sp" />
+
+                <EditText
+                    android:id="@+id/E_contacts"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="010000000"
+                    android:textColor="#218ffc"
+                    android:textSize="22sp"
+                    android:visibility="gone" />
+
+
+                <ImageButton
+                    android:id="@+id/btn_edit_contacts"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@android:drawable/ic_menu_edit"
+                    android:visibility="gone" />
+
+                <ImageButton
+                    android:id="@+id/btn_done_contacts"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@android:drawable/ic_dialog_info"
+                    android:visibility="gone" />
+
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:padding="5dp"
-            android:text="تفاصيل العنوان"
-            android:textSize="22sp" />
+            android:text="@string/shop_address"
+            android:textSize="18sp" />
+
+
+        <LinearLayout
+            android:id="@+id/linear_address"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:orientation="horizontal">
+
+
+            <TextView
+                android:id="@+id/v_txtShopAddressFromMap"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:gravity="center"
+                tools:text="الدقهليه - السنبلاوين شارع الاستقلال" />
+
+            <Button
+                android:id="@+id/v_btnShopWay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@drawable/custom_background_buttons"
+                android:text="@string/see_way"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linear_address_fromEditing"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+
+            <TextView
+                android:id="@+id/txtShopAddressFromMapByEditing"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textColor="#218ffc"
+                tools:text="الدقهليه - السنبلاوين شارع الاستقلال" />
+
+            <Button
+                android:id="@+id/btnChangeAddress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@drawable/custom_background_buttons"
+                android:text="@string/change_address"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:padding="5dp"
+                android:text="تفاصيل العنوان"
+                android:textSize="22sp" />
+
+
+            <ImageButton
+                android:id="@+id/btn_edit_addressinfo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@android:drawable/ic_menu_edit"
+                android:visibility="gone" />
+
+            <ImageButton
+                android:id="@+id/btn_done_addressinfo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@android:drawable/ic_dialog_info"
+                android:visibility="gone" />
+
+
+        </LinearLayout>
+
 
         <TextView
             android:id="@+id/v_addressinfo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-
-            android:padding="5dp"
+            android:layout_margin="10dp"
             android:text="جنب المحطه عالصول"
+
+            android:textSize="22sp" />
+
+        <EditText
+            android:id="@+id/E_addressinfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="جنب المحطه عالصول"
+            android:textColor="#218ffc"
+            android:textSize="22sp"
+            android:visibility="gone" />
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:padding="5dp"
+            android:text="هنا كاردز العروض بقى"
             android:textSize="22sp" />
 
 
     </LinearLayout>
-
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:padding="5dp"
-        android:text="هنا كاردز العروض بقى"
-        android:textSize="22sp" />
-
-
-</LinearLayout>
+</ScrollView>

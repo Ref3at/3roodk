@@ -4,14 +4,18 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -47,7 +51,8 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
     final static long minutesInMilli = 1000 * 60;
     final static long hoursInMilli = minutesInMilli * 60;
     final static long daysInMilli = hoursInMilli * 24;
-    Button btnFavorite, btnShare, btnShopWay, btnComment;
+    ImageButton btnFavorite, btnShare;
+    Button btnShopWay, btnComment;
     TextView txtViews, txtSale, txtPriceBefore, txtPriceAfter, txtDay, txtHour, txtMinute, txtDescription,
             txtShopName, txtWorkTime, txtAddress, txtMobile, txtRate;
     EditText edtxtComment;
@@ -84,6 +89,13 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
             }
         }
     };
+
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -142,6 +154,13 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
                 comment.setUserId(UtilityGeneral.loadUser(getActivity()).getObjectId());
                 comment.setOfferId(offer.getObjectId());
                 comment.setCommentText(edtxtComment.getText().toString());
+                // hide keyboard
+                InputMethodManager inputManager = (InputMethodManager)
+                        getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+
+                inputManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(),
+                        InputMethodManager.HIDE_NOT_ALWAYS);
+                // end hide keyboard
                 FirebaseDatabase database = FirebaseDatabase.getInstance();
                 DatabaseReference myRef = database.getReference("Comments").child(offer.getObjectId());
                 comment.setObjectId(myRef.push().getKey());
@@ -198,8 +217,8 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
     private void init(View rootView) {
         try {
             mDemoSlider = (SliderLayout) rootView.findViewById(R.id.imgOffer);
-            btnFavorite = (Button) rootView.findViewById(R.id.btnFavorite);
-            btnShare = (Button) rootView.findViewById(R.id.btnShare);
+            btnFavorite = (ImageButton) rootView.findViewById(R.id.btnFavorite);
+            btnShare = (ImageButton) rootView.findViewById(R.id.btnShare);
             btnShopWay = (Button) rootView.findViewById(R.id.btnShopWay);
             btnComment = (Button) rootView.findViewById(R.id.btnComment);
             txtViews = (TextView) rootView.findViewById(R.id.txtViews);
@@ -389,8 +408,7 @@ class CommentsAdapter extends ArrayAdapter {
                                 comment.getUserDislike().remove(userId);
                             else
                                 comment.getUserDislike().add(userId);
-                        }
-                        else {
+                        } else {
                             comment.setUserDislike(new ArrayList<String>());
                             comment.getUserDislike().add(userId);
                         }

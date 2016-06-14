@@ -3,6 +3,7 @@ package com.app3roodk.UI.OffersCards;
 import android.content.Context;
 import android.content.Intent;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -43,6 +44,16 @@ public class CardsActivity extends AppCompatActivity {
 
     Intent mIntent;
     private DrawerLayout mDrawerLayout;
+
+    public static Intent getOpenFacebookIntent(Context context) {
+
+        try {
+            context.getPackageManager().getPackageInfo("com.facebook.katana", 0);
+            return new Intent(Intent.ACTION_VIEW, Uri.parse("fb://page/583145478505894"));
+        } catch (Exception e) {
+            return new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.facebook.com/3roodk"));
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,6 +130,11 @@ public class CardsActivity extends AppCompatActivity {
                                 hideDrawerItems();
                                 return true;
 
+                            case R.id.action_facebookPage:
+                                mDrawerLayout.closeDrawer(GravityCompat.END);
+                                facebookIntent();
+                                return true;
+
                             default:
                                 mDrawerLayout.closeDrawers();
                                 return true;
@@ -142,6 +158,11 @@ public class CardsActivity extends AppCompatActivity {
                 startActivity(new Intent(getBaseContext(), OfferActivity.class));
             }
         });
+    }
+
+    public void facebookIntent() {
+
+        startActivity(getOpenFacebookIntent(getApplicationContext()));
     }
 
     private void changeLocation() {

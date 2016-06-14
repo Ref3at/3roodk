@@ -7,6 +7,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.app3roodk.UI.Shop.CreateShopFragment;
+import com.app3roodk.UI.Shop.ViewShopFragment;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -29,8 +30,13 @@ public class MapsShopLocationActivity extends AppCompatActivity {
         btnHere = (Button) findViewById(R.id.btnHere);
         btnHere.setVisibility(View.VISIBLE);
         if (map != null) {
-            initMAPS();
+            if (CreateShopFragment.latLngShop != null) {
+                initMAPS();
+            } else {
+                initMAPS_fromEditing();
+            }
             Toast.makeText(getBaseContext(), "اضغط ضغطه طويله علشان تختار المكان", Toast.LENGTH_LONG).show();
+
         }
         btnHere.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -51,6 +57,21 @@ public class MapsShopLocationActivity extends AppCompatActivity {
                 marker.remove();
                 marker = map.addMarker(new MarkerOptions().position(latLng).title("Shop").icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_account_balance_black_24dp)));
                 CreateShopFragment.latLngShop = latLng;
+            }
+        });
+    }
+
+    private void initMAPS_fromEditing() {
+        marker = map.addMarker(new MarkerOptions().position(ViewShopFragment.latLngShop_Editing).title("Shop").icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_account_balance_black_24dp)));
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(ViewShopFragment.latLngShop_Editing, 12));
+        map.animateCamera(CameraUpdateFactory.zoomTo(16), 2000, null);
+
+        map.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+            @Override
+            public void onMapLongClick(final LatLng latLng) {
+                marker.remove();
+                marker = map.addMarker(new MarkerOptions().position(latLng).title("Shop").icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_account_balance_black_24dp)));
+                ViewShopFragment.latLngShop_Editing = latLng;
             }
         });
     }

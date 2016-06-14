@@ -148,6 +148,8 @@ public class CreateShopFragment extends Fragment {
                 @Override
                 public void run() {
                     final List<Address> tempAddresses = UtilityGeneral.getCurrentGovAndCity(getActivity(), latLngShop);
+                    if (getActivity() == null)
+                        return;
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {

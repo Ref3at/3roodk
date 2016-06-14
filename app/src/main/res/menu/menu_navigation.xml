@@ -63,5 +63,10 @@
             android:tint="@color/button_grey"
             android:title="@string/logout" />
 
+        <item
+            android:id="@+id/action_facebookPage"
+            android:icon="@drawable/facebook"
+            android:title="@string/facebookPage" />
+
     </group>
 </menu>

@@ -3,6 +3,7 @@ package com.app3roodk.UI.CategoriesActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.NavigationView;
@@ -35,6 +36,16 @@ public class CategoriesActivity extends AppCompatActivity {
 
     private DrawerLayout mDrawerLayout;
     private Boolean exit = false;
+
+    public static Intent getOpenFacebookIntent(Context context) {
+
+        try {
+            context.getPackageManager().getPackageInfo("com.facebook.katana", 0);
+            return new Intent(Intent.ACTION_VIEW, Uri.parse("fb://page/583145478505894"));
+        } catch (Exception e) {
+            return new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.facebook.com/3roodk"));
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,12 +118,22 @@ public class CategoriesActivity extends AppCompatActivity {
                                 hideDrawerItems();
                                 return true;
 
+                            case R.id.action_facebookPage:
+                                mDrawerLayout.closeDrawer(GravityCompat.END);
+                                facebookIntent();
+                                return true;
+
                             default:
                                 mDrawerLayout.closeDrawers();
                                 return true;
                         }
                     }
                 });
+    }
+
+    public void facebookIntent() {
+
+        startActivity(getOpenFacebookIntent(getApplicationContext()));
     }
 
     @Override
@@ -201,6 +222,8 @@ public class CategoriesActivity extends AppCompatActivity {
             nav_Menu.findItem(R.id.action_logout).setVisible(false);
             nav_Menu.findItem(R.id.action_new_shop).setVisible(false);
             nav_Menu.findItem(R.id.action_add_offers).setVisible(false);
+            nav_Menu.findItem(R.id.action_view_my_shop).setVisible(false);
+
         }
     }
 
