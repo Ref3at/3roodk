@@ -11,7 +11,6 @@ import android.location.LocationManager;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.util.Base64;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListAdapter;
@@ -23,7 +22,6 @@ import com.app3roodk.Schema.Shop;
 import com.app3roodk.Schema.User;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
-import com.weiwangcn.betterspinner.library.BetterSpinner;
 
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
@@ -130,7 +128,8 @@ public class UtilityGeneral {
         Collections.sort(lstOffers, new Comparator<Offer>() {
             @Override
             public int compare(Offer o1, Offer o2) {
-                if ((Double.parseDouble(o1.getPriceBefore()) - Double.parseDouble((o1.getPriceAfter()))) / Double.parseDouble(o1.getPriceBefore()) >= (Double.parseDouble(o2.getPriceBefore()) - Double.parseDouble((o2.getPriceAfter()))) / Double.parseDouble(o2.getPriceBefore()))
+                //  if ((Double.parseDouble(o1.getPriceBefore()) - Double.parseDouble((o1.getPriceAfter()))) / Double.parseDouble(o1.getPriceBefore()) >= (Double.parseDouble(o2.getPriceBefore()) - Double.parseDouble((o2.getPriceAfter()))) / Double.parseDouble(o2.getPriceBefore()))
+                if ((Double.parseDouble(o1.getItems().get(0).getPriceBefore()) - Double.parseDouble((o1.getItems().get(0).getPriceAfter()))) / Double.parseDouble(o1.getItems().get(0).getPriceBefore()) >= (Double.parseDouble(o2.getItems().get(0).getPriceBefore()) - Double.parseDouble((o2.getItems().get(0).getPriceAfter()))) / Double.parseDouble(o2.getItems().get(0).getPriceBefore()))
                     return -1;
                 else
                     return 1;

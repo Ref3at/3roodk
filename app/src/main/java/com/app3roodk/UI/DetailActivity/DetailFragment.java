@@ -119,17 +119,22 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
         return rootView;
     }
 
+
     private void fillViews() {
         try {
             txtDescription.setText(offer.getDesc());
             txtShopName.setText(offer.getShopName());
-            txtPriceAfter.setText(offer.getPriceAfter());
-            txtPriceBefore.setText(offer.getPriceBefore());
+            //txtPriceAfter.setText(offer.getPriceAfter());
+            //txtPriceBefore.setText(offer.getPriceBefore());
             txtViews.setText(String.valueOf(offer.getViewNum()));
             txtRate.setText(String.valueOf(String.valueOf(offer.getAverageRate())));
-            initSlider(offer.getImagePaths());
+            initSlider(offer.getItems().get(0).getImagePaths());
+            //  initSlider(offer.getImagePaths());
+            //  txtSale.setText(
+            //          String.format("%.0f", (1 - (Double.parseDouble(offer.getPriceAfter()) / Double.parseDouble(offer.getPriceBefore()))) * 100) + "%");
+
             txtSale.setText(
-                    String.format("%.0f", (1 - (Double.parseDouble(offer.getPriceAfter()) / Double.parseDouble(offer.getPriceBefore()))) * 100) + "%");
+                    String.format("%.0f", (1 - (Double.parseDouble(offer.getItems().get(0).getPriceAfter()) / Double.parseDouble(offer.getItems().get(0).getPriceBefore()))) * 100) + "%");
             ShopViewsAndUpdateViewsNumber();
             FirebaseDatabase.getInstance().getReference("Comments").child(offer.getObjectId()).addValueEventListener(postListener);
         } catch (Exception ex) {
@@ -332,7 +337,8 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
     @Override
     public void onSliderClick(BaseSliderView slider) {
         Intent i = new Intent(getActivity(), FullScreenImageSlider.class);
-        i.putStringArrayListExtra("IMAGES", offer.getImagePaths());
+        //  i.putStringArrayListExtra("IMAGES", offer.getImagePaths());
+        i.putStringArrayListExtra("IMAGES", offer.getItems().get(0).getImagePaths());
         startActivity(i);
     }
 }

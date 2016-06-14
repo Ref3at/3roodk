@@ -2,12 +2,14 @@ package com.app3roodk;
 
 import android.util.Log;
 
+import com.app3roodk.Schema.Item;
 import com.app3roodk.Schema.Offer;
 import com.app3roodk.Schema.Shop;
 import com.app3roodk.Schema.User;
 
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -18,6 +20,11 @@ public class ObjectConverter {
 
     static public Offer convertJsonToOffer(JSONObject jsonObject) {
         Offer offer = new Offer();
+        Item item = new Item();
+        ArrayList<Item> items_list = new ArrayList<>();
+        items_list.add(item);
+        offer.setItems(items_list);
+
         try {
             offer.setObjectId(jsonObject.getString("objectId"));
             offer.setCreatedAt(jsonObject.getString("createdAt"));
@@ -31,9 +38,11 @@ public class ObjectConverter {
             if (jsonObject.has("ShopId") && !jsonObject.isNull("ShopId"))
                 offer.setShopId(jsonObject.getString("ShopId"));
             if (jsonObject.has("PriceAfter") && !jsonObject.isNull("PriceAfter"))
-                offer.setPriceAfter(jsonObject.getString("PriceAfter"));
+                //      offer.setPriceAfter(jsonObject.getString("PriceAfter"));
+                offer.getItems().get(0).setPriceAfter(jsonObject.getString("PriceAfter"));
             if (jsonObject.has("PriceBefore") && !jsonObject.isNull("PriceBefore"))
-                offer.setPriceBefore(jsonObject.getString("PriceBefore"));
+                //    offer.setPriceBefore(jsonObject.getString("PriceBefore"));
+                offer.getItems().get(0).setPriceBefore(jsonObject.getString("PriceBefore"));
             if (jsonObject.has("averageRate") && !jsonObject.isNull("averageRate"))
                 offer.setAverageRate(Integer.parseInt(jsonObject.getString("averageRate")));
             if (jsonObject.has("CategoryId") && !jsonObject.isNull("CategoryId"))
@@ -65,10 +74,13 @@ public class ObjectConverter {
             map.put("title", offer.getTitle());
             map.put("CategoryId", offer.getCategoryName());
             map.put("Desc", offer.getDesc());
-            map.put("PriceBefore", offer.getPriceBefore());
-            map.put("PriceAfter", offer.getPriceAfter());
+            //map.put("PriceBefore", offer.getPriceBefore());
+            // map.put("PriceAfter", offer.getPriceAfter());
+            //
+            map.put("PriceBefore", offer.getItems().get(0).getPriceBefore());
+            map.put("PriceAfter", offer.getItems().get(0).getPriceAfter());
             map.put("Period", offer.getPeriod());
-            map.put("ImagePaths", offer.getImagePaths().toString());
+            map.put("ImagePaths", offer.getItems().get(0).getImagePaths().toString());
             map.put("ShopId", offer.getShopId());
             map.put("ShopName", offer.getShopName());
             map.put("endTime", offer.getEndTime());

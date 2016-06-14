@@ -22,7 +22,6 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.Gson;
-import com.squareup.picasso.Picasso;
 
 import java.util.Calendar;
 import java.util.List;
@@ -61,9 +60,11 @@ public class CardsFragment extends Fragment {
                                                 cardHolder.shopName.setText(offer.getShopName());
                                                 cardHolder.title.setText(offer.getTitle());
                                                 cardHolder.rate.setText(String.valueOf(offer.getAverageRate()));
-                                                cardHolder.discount.setText(String.format("%.0f", (1 - (Double.parseDouble(offer.getPriceAfter()) / Double.parseDouble(offer.getPriceBefore()))) * 100) + "%");
+                                                //  cardHolder.discount.setText(String.format("%.0f", (1 - (Double.parseDouble(offer.getPriceAfter()) / Double.parseDouble(offer.getPriceBefore()))) * 100) + "%");
+                                                cardHolder.discount.setText(String.format("%.0f", (1 - (Double.parseDouble(offer.getItems().get(0).getPriceAfter()) / Double.parseDouble(offer.getItems().get(0).getPriceBefore()))) * 100) + "%");
                                                 fillTimer(cardHolder, offer);
-                                                Glide.with(cardHolder.itemView.getContext()).load(offer.getImagePaths().get(0)).into(cardHolder.imgCard);
+                                                //     Glide.with(cardHolder.itemView.getContext()).load(offer.getImagePaths().get(0)).into(cardHolder.imgCard);
+                                                Glide.with(cardHolder.itemView.getContext()).load(offer.getItems().get(0).getImagePaths().get(0)).into(cardHolder.imgCard);
                                             }
                                         };
                                         recyclerView.setAdapter(mAdapter);

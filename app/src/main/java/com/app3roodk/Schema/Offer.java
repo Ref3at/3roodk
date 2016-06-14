@@ -8,8 +8,6 @@ public class Offer {
     private String updatedAt;
     private String createdAt ;
     private String Desc; //*
-    private String PriceBefore; //*
-    private String PriceAfter ; //*
     private String Period ; //*
     private String endTime ;
     private int viewNum;
@@ -24,7 +22,8 @@ public class Offer {
     private String userNotificationToken;
 
     // ref3t add
-    private ArrayList<String> ImagePaths = new ArrayList<>(); // later will be <img> //*
+    // private ArrayList<String> ImagePaths = new ArrayList<>(); // later will be <img> //*
+    private ArrayList<Item> Items = new ArrayList<>(); // later will be <img> //*
 
     // rate
     private int numberUsersRated;
@@ -32,6 +31,14 @@ public class Offer {
     private int averageRate;
 
     public Offer() {
+    }
+
+    public ArrayList<Item> getItems() {
+        return Items;
+    }
+
+    public void setItems(ArrayList<Item> items) {
+        Items = items;
     }
 
     public String getObjectId() {
@@ -72,22 +79,6 @@ public class Offer {
 
     public void setDesc(String desc) {
         this.Desc = desc;
-    }
-
-    public String getPriceBefore() {
-        return PriceBefore;
-    }
-
-    public void setPriceBefore(String priceBefore) {
-        this.PriceBefore = priceBefore;
-    }
-
-    public String getPriceAfter() {
-        return PriceAfter;
-    }
-
-    public void setPriceAfter(String priceAfter) {
-        this.PriceAfter = priceAfter;
     }
 
     public String getPeriod() {
@@ -146,15 +137,6 @@ public class Offer {
         this.totalRate = totalRate;
     }
 
-    public ArrayList<String> getImagePaths() {
-        if (ImagePaths == null)
-            ImagePaths = new ArrayList<>();
-        return ImagePaths;
-    }
-
-    public void setImagePaths(ArrayList<String> imagePaths) {
-        this.ImagePaths = imagePaths;
-    }
 
     public int getAverageRate() {
         return averageRate;

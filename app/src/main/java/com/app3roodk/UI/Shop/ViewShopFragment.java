@@ -517,6 +517,8 @@ public class ViewShopFragment extends Fragment {
                     Toast.makeText(getActivity(), "حصل مشكله شوف النت ", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(getActivity(), "تم إضافه تعديل بيانات المحل شكرا لك", Toast.LENGTH_SHORT).show();
+                    UtilityGeneral.saveShop(getActivity(), shop);
+
                 }
             }
         });

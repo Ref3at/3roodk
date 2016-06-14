@@ -34,6 +34,7 @@ import android.widget.Toast;
 import com.app3roodk.Constants;
 import com.app3roodk.Imgur.ImgurUploadTask;
 import com.app3roodk.R;
+import com.app3roodk.Schema.Item;
 import com.app3roodk.Schema.Offer;
 import com.app3roodk.UtilityGeneral;
 import com.google.firebase.database.DatabaseError;
@@ -53,6 +54,7 @@ import java.util.Date;
 public class AddNewOfferFragment extends Fragment {
 
     ArrayList<String> images_id = new ArrayList<>();
+    ArrayList<Item> items_list = new ArrayList<>();
 
 
     Offer mOffer;
@@ -64,6 +66,7 @@ public class AddNewOfferFragment extends Fragment {
     LinearLayout imgsContainer;
     BetterSpinner duration_spinner;
     BetterSpinner category_spinner;
+    int count = 1;
     private EditText inputName, inputDesc, inputPriceBefore, inputPriceAfter;
     private TextInputLayout inputLayoutName, inputLayoutDesc, inputLayoutPriceBefore, inputLayoutPriceAfter;
     private Button publishOffer, previewOffer;
@@ -188,6 +191,24 @@ public class AddNewOfferFragment extends Fragment {
         if (!validateCategory()) {
             return;
         }
+
+
+        prepareItems();
+
+    }
+
+    private void prepareItems() {
+
+        for (int i = 0; i < count; i++) {
+            Item item = new Item();
+            item.setPriceAfter(inputPriceBefore.getText().toString());
+            item.setPriceBefore(inputPriceAfter.getText().toString());
+            item.setImagePaths(images_id);
+
+            items_list.add(item);
+        }
+
+
 
         Publish();
 
@@ -420,10 +441,15 @@ public class AddNewOfferFragment extends Fragment {
             mOffer.setCategoryName(UtilityGeneral.getCategoryEnglishName(category_spinner.getText().toString()));
             mOffer.setTitle(inputName.getText().toString());
             mOffer.setDesc(inputDesc.getText().toString());
-            mOffer.setPriceBefore(inputPriceBefore.getText().toString());
-            mOffer.setPriceAfter(inputPriceAfter.getText().toString());
+
+            //    mOffer.setPriceBefore(inputPriceBefore.getText().toString());
+            //    mOffer.setPriceAfter(inputPriceAfter.getText().toString());
             mOffer.setPeriod(duration_spinner.getText().toString());
-            mOffer.setImagePaths(images_id);
+            //  mOffer.setImagePaths(images_id);
+
+            // new
+            mOffer.setItems(items_list);
+
             mOffer.setShopId(UtilityGeneral.loadShop(getActivity()).getObjectId());
             mOffer.setShopName(UtilityGeneral.loadShop(getActivity()).getName());
             mOffer.setLat(UtilityGeneral.loadShop(getActivity()).getLat());
