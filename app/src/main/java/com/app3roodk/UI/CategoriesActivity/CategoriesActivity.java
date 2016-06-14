@@ -20,6 +20,9 @@ import com.app3roodk.Back4App.UtilityRestApi;
 import com.app3roodk.ObjectConverter;
 import com.app3roodk.R;
 import com.app3roodk.Schema.User;
+import com.app3roodk.UI.About.AboutActivity;
+import com.app3roodk.UI.Favorites.FavoritesActivity;
+import com.app3roodk.UI.Feedback.FeedbackActivity;
 import com.app3roodk.UI.Offer.OfferActivity;
 import com.app3roodk.UI.OffersCards.CardsActivity;
 import com.app3roodk.UI.Shop.ShopActivity;
@@ -121,6 +124,21 @@ public class CategoriesActivity extends AppCompatActivity {
                             case R.id.action_facebookPage:
                                 mDrawerLayout.closeDrawer(GravityCompat.END);
                                 facebookIntent();
+                                return true;
+
+                            case R.id.action_favorites:
+                                mDrawerLayout.closeDrawer(GravityCompat.END);
+                                startActivity(new Intent(CategoriesActivity.this, FavoritesActivity.class));
+                                return true;
+
+                            case R.id.action_feedback:
+                                mDrawerLayout.closeDrawer(GravityCompat.END);
+                                startActivity(new Intent(CategoriesActivity.this, FeedbackActivity.class));
+                                return true;
+
+                            case R.id.action_aboutapp:
+                                mDrawerLayout.closeDrawer(GravityCompat.END);
+                                startActivity(new Intent(CategoriesActivity.this, AboutActivity.class));
                                 return true;
 
                             default:

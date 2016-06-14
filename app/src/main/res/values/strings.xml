@@ -90,5 +90,9 @@
     <string name="edit">تعديل</string>
     <string name="done">حفظ التعديلات</string>
     <string name="facebookPage">تابعنا على الفيس بوك</string>
+    <string name="favorites">العروض المُفضله</string>
+    <string name="feedback">رأيك يهمنا</string>
+    <string name="privacypolicy">سياسه الخصوصيه</string>
+    <string name="aboutapp">حول التطبيق</string>
 
 </resources>

@@ -52,7 +52,10 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.app3roodk.UI.DetailActivity.DetailActivity" />
         </activity>
-        <activity android:name=".UI.Shop.ViewShopActivity"></activity>
+        <activity android:name=".UI.Shop.ViewShopActivity" />
+        <activity android:name=".UI.Feedback.FeedbackActivity" />
+        <activity android:name=".UI.Favorites.FavoritesActivity" />
+        <activity android:name=".UI.About.AboutActivity"></activity>
     </application>
 
 </manifest>

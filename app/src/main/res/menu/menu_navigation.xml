@@ -64,9 +64,24 @@
             android:title="@string/logout" />
 
         <item
+            android:id="@+id/action_favorites"
+            android:icon="@drawable/ic_favorite_black_24dp"
+            android:title="@string/favorites" />
+
+        <item
             android:id="@+id/action_facebookPage"
             android:icon="@drawable/facebook"
             android:title="@string/facebookPage" />
+
+        <item
+            android:id="@+id/action_feedback"
+            android:icon="@drawable/feedback_icon"
+            android:title="@string/feedback" />
+
+        <item
+            android:id="@+id/action_aboutapp"
+            android:icon="@android:drawable/ic_dialog_info"
+            android:title="@string/aboutapp" />
 
     </group>
 </menu>

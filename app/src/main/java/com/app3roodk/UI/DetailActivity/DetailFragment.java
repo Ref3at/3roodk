@@ -126,6 +126,9 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
             txtShopName.setText(offer.getShopName());
             //txtPriceAfter.setText(offer.getPriceAfter());
             //txtPriceBefore.setText(offer.getPriceBefore());
+            //
+            txtPriceAfter.setText(offer.getItems().get(0).getPriceAfter());
+            txtPriceBefore.setText(offer.getItems().get(0).getPriceBefore());
             txtViews.setText(String.valueOf(offer.getViewNum()));
             txtRate.setText(String.valueOf(String.valueOf(offer.getAverageRate())));
             initSlider(offer.getItems().get(0).getImagePaths());
