@@ -10,8 +10,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.app3roodk.R;
 import com.app3roodk.Schema.Offer;
@@ -117,6 +119,8 @@ class CardHolder extends RecyclerView.ViewHolder {
     public ImageView imgCard;
     public Offer offer;
 
+    ImageButton btnFavorite, btnShare;
+
     public CardHolder(View rootView) {
         super(rootView);
         title = (TextView) rootView.findViewById(R.id.card_text);
@@ -129,6 +133,9 @@ class CardHolder extends RecyclerView.ViewHolder {
         minute = (TextView) rootView.findViewById(R.id.card_txt_minute);
         imgCard = (ImageView) rootView.findViewById(R.id.card_image);
 
+        btnFavorite = (ImageButton) rootView.findViewById(R.id.favorite_button);
+        btnShare = (ImageButton) rootView.findViewById(R.id.share_button2);
+
         itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -137,6 +144,21 @@ class CardHolder extends RecyclerView.ViewHolder {
                 offer.setViewNum(offer.getViewNum() + 1);
                 intent.putExtra("offer", new Gson().toJson(offer));
                 v.getContext().startActivity(intent);
+            }
+        });
+
+        btnFavorite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(v.getContext(), "i will add", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        btnShare.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(v.getContext(), "i will share", Toast.LENGTH_SHORT).show();
+
             }
         });
     }

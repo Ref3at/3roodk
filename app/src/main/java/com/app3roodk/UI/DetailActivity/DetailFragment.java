@@ -3,6 +3,8 @@ package com.app3roodk.UI.DetailActivity;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -25,6 +27,7 @@ import com.app3roodk.R;
 import com.app3roodk.Schema.Comments;
 import com.app3roodk.Schema.Offer;
 import com.app3roodk.Schema.Shop;
+import com.app3roodk.Schema.TestTable;
 import com.app3roodk.UI.FullScreenImage.FullScreenImageSlider;
 import com.app3roodk.UI.Shop.ViewShopActivity;
 import com.app3roodk.UtilityGeneral;
@@ -104,6 +107,9 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
         init(rootView);
         fillViews();
         clickConfig();
+
+        new FetchFromDB(btnFavorite).execute();
+
 
         txtShopName.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -192,25 +198,22 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
         ratebar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
             public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
-                if(!fromUser) return;
+                if (!fromUser) return;
                 if (!UtilityGeneral.isRegisteredUser(getActivity())) {
                     Toast.makeText(getActivity(), "سجل الاول علشان تعرف تقييم العرض", Toast.LENGTH_LONG).show();
                     return;
                 }
                 String userId = UtilityGeneral.loadUser(getActivity()).getObjectId();
-                if (offer.getUsersRates().containsKey(userId))
-                {
+                if (offer.getUsersRates().containsKey(userId)) {
                     float diff = rating - Float.parseFloat(offer.getUsersRates().get(userId));
                     offer.getUsersRates().remove(userId);
-                    offer.getUsersRates().put(userId,String.valueOf(rating));
+                    offer.getUsersRates().put(userId, String.valueOf(rating));
                     offer.setTotalRate(String.valueOf(Float.parseFloat(offer.getTotalRate()) + diff));
-                    offer.setAverageRate(String.valueOf(Float.parseFloat(offer.getTotalRate())/offer.getUsersRates().size()));
-                }
-                else
-                {
-                    offer.getUsersRates().put(userId,String.valueOf(rating));
-                    offer.setTotalRate(String.valueOf(Float.parseFloat(offer.getTotalRate())+ rating));
-                    offer.setAverageRate(String.valueOf(Float.parseFloat(offer.getTotalRate())/offer.getUsersRates().size()));
+                    offer.setAverageRate(String.valueOf(Float.parseFloat(offer.getTotalRate()) / offer.getUsersRates().size()));
+                } else {
+                    offer.getUsersRates().put(userId, String.valueOf(rating));
+                    offer.setTotalRate(String.valueOf(Float.parseFloat(offer.getTotalRate()) + rating));
+                    offer.setAverageRate(String.valueOf(Float.parseFloat(offer.getTotalRate()) / offer.getUsersRates().size()));
                 }
 
                 HashMap<String, Object> childUpdates = new HashMap<>();
@@ -227,6 +230,124 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
                 startActivity(UtilityGeneral.DrawPathToCertainShop(
                         getContext(), UtilityGeneral.getCurrentLonAndLat(getContext()),
                         new LatLng(Double.parseDouble(offer.getLat()), Double.parseDouble(offer.getLon()))));
+            }
+        });
+
+        btnFavorite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getActivity(), "i will add", Toast.LENGTH_SHORT).show();
+
+                if (offer != null) {
+                    // check if movie is in favorites or not
+
+                    new AsyncTask<Void, Void, Integer>() {
+
+                        @Override
+                        protected Integer doInBackground(Void... params) {
+
+                            Cursor cursor = getActivity().getContentResolver().query(TestTable.CONTENT_URI, null
+                                    , TestTable.FIELD_OBJECTID + " = ?" // selection
+                                    , new String[]{offer.getObjectId()}
+
+                                    , null);
+                            int numRows = 0;
+                            if (cursor != null) {
+                                numRows = cursor.getCount();
+                                cursor.close();
+                            }
+                            return numRows;
+                        }
+
+                        @Override
+                        protected void onPostExecute(Integer numRows) {
+                            // if it is in favorites
+                            if (numRows >= 1) {
+                                // delete from favorites
+                                new AsyncTask<Void, Void, Integer>() {
+                                    @Override
+                                    protected Integer doInBackground(Void... params) {
+
+                                    /*    // delete poster form storage
+                                        if (mMovie.poster_Path != null) {
+                                            new File(mMovie.poster_Path.toString()).delete();
+                                        } */
+                                        return getActivity().getContentResolver().delete(
+                                                TestTable.CONTENT_URI,
+                                                TestTable.FIELD_OBJECTID + " = ?",
+                                                new String[]{offer.getObjectId()}
+                                        );
+                                    }
+
+                                    @Override
+                                    protected void onPostExecute(Integer rowsDeleted) {
+                                        btnFavorite.setImageResource(R.drawable.abc_btn_rating_star_off_mtrl_alpha);
+                                        // if (mToast != null) {
+                                        //    mToast.cancel();
+                                        // }
+                                        Toast.makeText(getActivity(), "Removed_from_favorites", Toast.LENGTH_SHORT).show();
+
+                                    }
+                                }.execute();
+                            }
+
+                            // if it is not in favorites
+                            else {
+                                // add to favorites
+                                new AsyncTask<Void, Void, Void>() {
+                                    String poster_loc;
+                                    String backdroploc;
+
+                                    @Override
+                                    protected void onPreExecute() {
+                                        super.onPreExecute();
+                                        Toast.makeText(getContext(), "i will add", Toast.LENGTH_SHORT).show();
+                                        //*************************************************************************************************
+                                        //*** hna i will save the poster
+                                        //     poster_loc = downloadPoster();
+                                        //    backdroploc = downloadBackdrop();
+
+                                    }
+
+                                    @Override
+                                    protected Void doInBackground(Void... params) {
+                                        //*************************************************************************************************
+                                        //*** hna i will save the poster
+
+                                        //  mMovie.setPoster_Path(poster_loc);
+                                        //*************************************************************************************************
+                                        //*** hna i will save the backdrop
+                                        //   mMovie.setBackdrop_path(backdroploc);
+
+
+                                        getActivity().getContentResolver().insert(TestTable.CONTENT_URI, TestTable.getContentValues(offer, false));
+                                        return null;
+                                    }
+
+
+                                    @Override
+                                    protected void onPostExecute(Void aVoid) {
+                                        super.onPostExecute(aVoid);
+                                        btnFavorite.setImageResource(android.R.drawable.btn_star_big_on);
+                                        //  checked = true;
+                                        Toast.makeText(getContext(), "added", Toast.LENGTH_SHORT).show();
+
+                                    }
+                                }.execute();
+                            }
+                        }
+                    }.execute();
+                }
+
+
+            }
+        });
+
+        btnShare.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getActivity(), "i will share", Toast.LENGTH_SHORT).show();
+
             }
         });
     }
@@ -378,6 +499,48 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
         //  i.putStringArrayListExtra("IMAGES", offer.getImagePaths());
         i.putStringArrayListExtra("IMAGES", offer.getItems().get(0).getImagePaths());
         startActivity(i);
+    }
+
+    public class FetchFromDB extends AsyncTask<ImageButton, Void, ImageButton> {
+        int numRows;
+        ImageButton ItemFav;
+
+        public FetchFromDB(ImageButton btn) {
+            this.ItemFav = btn;
+
+        }
+
+        @Override
+        protected ImageButton doInBackground(ImageButton... params) {
+            if (offer.getObjectId() != null) {
+                if (getActivity() != null) {
+                    Cursor cursor = getActivity().getContentResolver().query(TestTable.CONTENT_URI, null
+                            , TestTable.FIELD_OBJECTID + " = ?" // selection
+                            , new String[]{offer.getObjectId()}
+                            , null);
+
+                    assert cursor != null;
+                    if (cursor != null) {
+                        this.numRows = cursor.getCount();
+
+                        cursor.close();
+                    }
+                }
+            }  //testRows = Fav_movieTable.getRows(cursor, false);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(ImageButton menuItem) {
+            super.onPostExecute(menuItem);
+
+
+            ItemFav.setImageResource(numRows >= 1 ?
+                    android.R.drawable.btn_star_big_on :
+                    R.drawable.abc_btn_rating_star_off_mtrl_alpha);
+
+        }
+
     }
 }
 

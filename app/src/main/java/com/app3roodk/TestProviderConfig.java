@@ -9,7 +9,7 @@ import ckm.simple.sql_provider.annotation.SimpleSQLConfig;
  */
 @SimpleSQLConfig(
         name = "TestProvider",
-        authority = "just.some.test_provider.authority",
+        authority = "com.app3roodk.authority",
         database = "test.db",
         version = 1)
 public class TestProviderConfig implements ProviderConfig {

@@ -56,6 +56,10 @@
         <activity android:name=".UI.Feedback.FeedbackActivity" />
         <activity android:name=".UI.Favorites.FavoritesActivity" />
         <activity android:name=".UI.About.AboutActivity"></activity>
+
+        <provider
+            android:name="com.app3roodk.TestProvider"
+            android:authorities="com.app3roodk.authority" />
     </application>
 
 </manifest>
