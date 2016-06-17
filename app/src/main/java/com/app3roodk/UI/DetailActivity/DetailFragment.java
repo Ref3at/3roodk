@@ -44,6 +44,7 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 
 public class DetailFragment extends Fragment implements BaseSliderView.OnSliderClickListener, ViewPagerEx.OnPageChangeListener {
@@ -135,7 +136,9 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
             //  initSlider(offer.getImagePaths());
             //  txtSale.setText(
             //          String.format("%.0f", (1 - (Double.parseDouble(offer.getPriceAfter()) / Double.parseDouble(offer.getPriceBefore()))) * 100) + "%");
-
+            if (offer.getUsersRates().containsKey(UtilityGeneral.loadUser(getActivity()).getObjectId())) {
+                ratebar.setRating(Float.parseFloat(offer.getUsersRates().get(UtilityGeneral.loadUser(getActivity()).getObjectId())));
+            }
             txtSale.setText(
                     String.format("%.0f", (1 - (Double.parseDouble(offer.getItems().get(0).getPriceAfter()) / Double.parseDouble(offer.getItems().get(0).getPriceBefore()))) * 100) + "%");
             ShopViewsAndUpdateViewsNumber();
@@ -184,6 +187,38 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
                         }
                     }
                 });
+            }
+        });
+        ratebar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+            @Override
+            public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+                if(!fromUser) return;
+                if (!UtilityGeneral.isRegisteredUser(getActivity())) {
+                    Toast.makeText(getActivity(), "سجل الاول علشان تعرف تقييم العرض", Toast.LENGTH_LONG).show();
+                    return;
+                }
+                String userId = UtilityGeneral.loadUser(getActivity()).getObjectId();
+                if (offer.getUsersRates().containsKey(userId))
+                {
+                    float diff = rating - Float.parseFloat(offer.getUsersRates().get(userId));
+                    offer.getUsersRates().remove(userId);
+                    offer.getUsersRates().put(userId,String.valueOf(rating));
+                    offer.setTotalRate(String.valueOf(Float.parseFloat(offer.getTotalRate()) + diff));
+                    offer.setAverageRate(String.valueOf(Float.parseFloat(offer.getTotalRate())/offer.getUsersRates().size()));
+                }
+                else
+                {
+                    offer.getUsersRates().put(userId,String.valueOf(rating));
+                    offer.setTotalRate(String.valueOf(Float.parseFloat(offer.getTotalRate())+ rating));
+                    offer.setAverageRate(String.valueOf(Float.parseFloat(offer.getTotalRate())/offer.getUsersRates().size()));
+                }
+
+                HashMap<String, Object> childUpdates = new HashMap<>();
+                childUpdates.put("/usersRates", offer.getUsersRates());
+                childUpdates.put("/totalRate", offer.getTotalRate());
+                childUpdates.put("/averageRate", offer.getAverageRate());
+                FirebaseDatabase.getInstance().getReference("Offers").child(offer.getCity()).child(offer.getCategoryName()).child(offer.getObjectId()).updateChildren(childUpdates);
+                txtRate.setText(String.valueOf(offer.getAverageRate()));
             }
         });
         btnShopWay.setOnClickListener(new View.OnClickListener() {

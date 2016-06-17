@@ -43,8 +43,8 @@ public class ObjectConverter {
             if (jsonObject.has("PriceBefore") && !jsonObject.isNull("PriceBefore"))
                 //    offer.setPriceBefore(jsonObject.getString("PriceBefore"));
                 offer.getItems().get(0).setPriceBefore(jsonObject.getString("PriceBefore"));
-            if (jsonObject.has("averageRate") && !jsonObject.isNull("averageRate"))
-                offer.setAverageRate(Integer.parseInt(jsonObject.getString("averageRate")));
+//            if (jsonObject.has("averageRate") && !jsonObject.isNull("averageRate"))
+//                offer.setAverageRate(Integer.parseInt(jsonObject.getString("averageRate")));
             if (jsonObject.has("CategoryId") && !jsonObject.isNull("CategoryId"))
                 offer.setCategoryName(jsonObject.getString("CategoryId"));
             if (jsonObject.has("Period") && !jsonObject.isNull("Period"))
@@ -55,8 +55,8 @@ public class ObjectConverter {
                 offer.setFavoriteNum(jsonObject.getInt("favoriteNum"));
             if (jsonObject.has("viewNum") && !jsonObject.isNull("viewNum"))
                 offer.setViewNum(jsonObject.getInt("viewNum"));
-            if (jsonObject.has("totalRate") && !jsonObject.isNull("totalRate"))
-                offer.setTotalRate(jsonObject.getInt("totalRate"));
+//            if (jsonObject.has("totalRate") && !jsonObject.isNull("totalRate"))
+//                offer.setTotalRate(jsonObject.getInt("totalRate"));
             if (jsonObject.has("numberUsersRated") && !jsonObject.isNull("numberUsersRated"))
                 offer.setNumberUsersRated(jsonObject.getInt("numberUsersRated"));
 //            if (jsonObject.has("ImagePaths") && !jsonObject.isNull("ImagePaths"))

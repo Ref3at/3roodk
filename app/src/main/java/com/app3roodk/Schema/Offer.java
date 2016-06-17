@@ -1,6 +1,7 @@
 package com.app3roodk.Schema;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Offer {
     private String objectId ;
@@ -20,6 +21,7 @@ public class Offer {
     private String lon ; //*
     private String userId;
     private String userNotificationToken;
+    private HashMap<String,String> usersRates;
 
     // ref3t add
     // private ArrayList<String> ImagePaths = new ArrayList<>(); // later will be <img> //*
@@ -27,8 +29,8 @@ public class Offer {
 
     // rate
     private int numberUsersRated;
-    private int totalRate;
-    private int averageRate;
+    private String totalRate ="0";
+    private String averageRate="0";
 
     public Offer() {
     }
@@ -129,20 +131,20 @@ public class Offer {
         this.numberUsersRated = numberUsersRated;
     }
 
-    public int getTotalRate() {
+    public String getTotalRate() {
         return totalRate;
     }
 
-    public void setTotalRate(int totalRate) {
+    public void setTotalRate(String totalRate) {
         this.totalRate = totalRate;
     }
 
 
-    public int getAverageRate() {
+    public String getAverageRate() {
         return averageRate;
     }
 
-    public void setAverageRate(int averageRate) {
+    public void setAverageRate(String averageRate) {
         this.averageRate = averageRate;
     }
 
@@ -200,5 +202,15 @@ public class Offer {
 
     public void setCity(String city) {
         this.city = city;
+    }
+
+    public HashMap<String, String> getUsersRates() {
+        if(this.usersRates == null) this.usersRates = new HashMap<>();
+        return usersRates;
+    }
+
+    public void setUsersRates(HashMap<String, String> usersRates) {
+        if(this.usersRates == null) this.usersRates = new HashMap<>();
+        this.usersRates = usersRates;
     }
 }
