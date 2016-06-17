@@ -1,38 +1,119 @@
 package com.app3roodk.Schema;
 
+import com.app3roodk.ObjectConverter;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class Offer {
-    private String objectId ;
-    private String title ; //*
-    private String updatedAt;
-    private String createdAt ;
-    private String Desc; //*
-    private String Period ; //*
-    private String endTime ;
-    private int viewNum;
-    private int favoriteNum;
-    private String CategoryName; //*
-    private String ShopId ; //*
-    private String ShopName ; //*
-    private String city ; //*
-    private String lat ; //*
-    private String lon ; //*
-    private String userId;
-    private String userNotificationToken;
-    private HashMap<String,String> usersRates;
+import ckm.simple.sql_provider.annotation.SimpleSQLColumn;
+import ckm.simple.sql_provider.annotation.SimpleSQLTable;
 
+@SimpleSQLTable(table = "test", provider = "TestProvider")
+public class Offer {
+
+
+    @SimpleSQLColumn(value = "col_int", primary = true)
+    public int anInt;
+
+    @SimpleSQLColumn("objectId")
+    private String objectId ;
+
+    @SimpleSQLColumn("title")
+    private String title ; //*
+
+    @SimpleSQLColumn("updatedAt")
+    private String updatedAt;
+
+    @SimpleSQLColumn("createdAt")
+    private String createdAt ;
+
+    @SimpleSQLColumn("Desc")
+    private String Desc; //*
+
+    @SimpleSQLColumn("Period")
+    private String Period ; //*
+
+    @SimpleSQLColumn("endTime")
+    private String endTime ;
+
+    @SimpleSQLColumn("viewNum")
+    private int viewNum;
+
+    @SimpleSQLColumn("favoriteNum")
+    private int favoriteNum;
+
+    @SimpleSQLColumn("CategoryName")
+    private String CategoryName; //*
+
+    @SimpleSQLColumn("ShopId")
+    private String ShopId ; //*
+
+    @SimpleSQLColumn("ShopName")
+    private String ShopName ; //*
+
+    @SimpleSQLColumn("city")
+    private String city ; //*
+
+    @SimpleSQLColumn("lat")
+    private String lat ; //*
+
+    @SimpleSQLColumn("lon")
+    private String lon ; //*
+
+    @SimpleSQLColumn("userId")
+    private String userId;
+
+    @SimpleSQLColumn("userNotificationToken")
+    private String userNotificationToken;
+
+
+    /*
+     * as simple content provider does not accept arraylist and hashmap
+     * so we use another two String variables to represent them
+    */
+    @SimpleSQLColumn("hashmapUsersRates")
+    private String hashmapUsersRates;
+
+
+    @SimpleSQLColumn("arrayListItems")
+    private String arrayListItems;
+    private HashMap<String, String> usersRates;
     // ref3t add
     // private ArrayList<String> ImagePaths = new ArrayList<>(); // later will be <img> //*
     private ArrayList<Item> Items = new ArrayList<>(); // later will be <img> //*
-
-    // rate
+    @SimpleSQLColumn("numberUsersRated")
     private int numberUsersRated;
-    private String totalRate ="0";
-    private String averageRate="0";
+    @SimpleSQLColumn("totalRate")
+    private String totalRate = "0";
+    @SimpleSQLColumn("averageRate")
+    private String averageRate = "0";
 
     public Offer() {
+    }
+
+    // rate
+
+    public String getHashmapUsersRates() {
+
+        hashmapUsersRates = ObjectConverter.fromHashmapToStringUsersRates(this.usersRates);
+        return hashmapUsersRates;
+    }
+
+    public void setHashmapUsersRates(String hashmapUsersRates) {
+        this.hashmapUsersRates = hashmapUsersRates;
+        usersRates = ObjectConverter.fromStringToHashmapUsersRates(hashmapUsersRates);
+    }
+
+    public String getArrayListItems() {
+
+        arrayListItems = ObjectConverter.fromArraylistToStringItems(this.Items);
+        return arrayListItems;
+    }
+
+    public void setArrayListItems(String arrayListItems) {
+        this.arrayListItems = arrayListItems;
+        Items = ObjectConverter.fromStringToArraylistItems(arrayListItems);
+
     }
 
     public ArrayList<Item> getItems() {
@@ -212,5 +293,13 @@ public class Offer {
     public void setUsersRates(HashMap<String, String> usersRates) {
         if(this.usersRates == null) this.usersRates = new HashMap<>();
         this.usersRates = usersRates;
+    }
+
+    public int getAnInt() {
+        return anInt;
+    }
+
+    public void setAnInt(int anInt) {
+        this.anInt = anInt;
     }
 }

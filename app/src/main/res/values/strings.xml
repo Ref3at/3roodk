@@ -94,5 +94,6 @@
     <string name="feedback">رأيك يهمنا</string>
     <string name="privacypolicy">سياسه الخصوصيه</string>
     <string name="aboutapp">حول التطبيق</string>
+    <string name="your_rate">قيم</string>
 
 </resources>

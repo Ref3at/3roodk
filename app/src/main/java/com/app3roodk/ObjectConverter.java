@@ -6,11 +6,15 @@ import com.app3roodk.Schema.Item;
 import com.app3roodk.Schema.Offer;
 import com.app3roodk.Schema.Shop;
 import com.app3roodk.Schema.User;
+import com.google.gson.Gson;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * Created by ZooM- on 5/10/2016.
@@ -90,7 +94,7 @@ public class ObjectConverter {
             map.put("favoriteNum", offer.getFavoriteNum());
             map.put("numberUsersRated", offer.getNumberUsersRated());
         } catch (Exception ex) {
-            Log.e(TAG,ex.getMessage());
+            Log.e(TAG, ex.getMessage());
         } finally {
             return map;
         }
@@ -141,7 +145,7 @@ public class ObjectConverter {
             map.put("contacts", shop.getContacts().toString());
             map.put("logoId", shop.getLogoId());
         } catch (Exception ex) {
-            Log.e(TAG,ex.getMessage());
+            Log.e(TAG, ex.getMessage());
         } finally {
             return map;
         }
@@ -201,9 +205,118 @@ public class ObjectConverter {
             map.put("gender", user.getGender());
             map.put("profileImg", user.getProfileImg());
         } catch (Exception ex) {
-            Log.e(TAG,ex.getMessage());
+            Log.e(TAG, ex.getMessage());
         } finally {
             return map;
         }
     }
+
+    public static HashMap<String, String> fromStringToHashmapUsersRates(String stringUsersRates) {
+        JSONObject jsonObject = null;
+        try {
+            jsonObject = new JSONObject(stringUsersRates);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        HashMap<String, String> hashmapUsersRates = new HashMap<String, String>();
+
+        Iterator<?> keys = jsonObject.keys();
+
+        while (keys.hasNext()) {
+            String key = (String) keys.next();
+            String value = null;
+            try {
+                value = jsonObject.getString(key);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            hashmapUsersRates.put(key, value);
+
+        }
+        return hashmapUsersRates;
+
+    }
+
+    public static String fromHashmapToStringUsersRates(HashMap<String, String> usersRates) {
+        String stringUsersRates = new Gson().toJson(usersRates);
+        return stringUsersRates;
+    }
+
+
+    public static String fromArraylistToStringItems(ArrayList<Item> items) {
+        JSONArray jsonAraay = new JSONArray(items);
+        return new Gson().toJson(jsonAraay);
+    }
+
+    public static ArrayList<Item> fromStringToArraylistItems(String hashmapUsersRates) {
+
+
+        try {
+            return doJsonForitemArrayList(hashmapUsersRates);
+        } finally {
+            return new ArrayList<>();
+        }
+        // return itemArrayList;
+    }
+
+    private static ArrayList<Item> doJsonForitemArrayList(String hashmapUsersRates) {
+        ArrayList<Item> itemArrayList = new ArrayList<>();
+        Item item = new Item();
+        JSONObject jsonObject = null;
+        try {
+            jsonObject = new JSONObject(hashmapUsersRates);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        JSONArray jsonArray = null;
+        try {
+            jsonArray = jsonObject.getJSONArray("items");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        for (int i = 0; i < jsonArray.length(); i++) {
+
+            JSONObject new_Item_object = null;
+            try {
+                new_Item_object = jsonArray.getJSONObject(i);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            JSONArray array = null;
+            try {
+                array = new_Item_object.getJSONArray("imagePaths");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            ArrayList<String> ImagePaths = new ArrayList<>(); // later will be <img> //*
+            for (int j = 0; j < array.length(); j++) {
+                String s = null;
+                try {
+                    s = array.getString(j);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                ImagePaths.add(s);
+            }
+
+            item.setImagePaths(ImagePaths);
+            try {
+                item.setPriceAfter(new_Item_object.getString(""));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            try {
+                item.setPriceBefore(new_Item_object.getString(""));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            itemArrayList.add(item);
+        }
+
+        return itemArrayList;
+    }
+
+
 }
