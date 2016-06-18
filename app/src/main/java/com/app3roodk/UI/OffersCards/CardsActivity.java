@@ -23,6 +23,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.app3roodk.Back4App.UtilityRestApi;
+import com.app3roodk.Constants;
 import com.app3roodk.ObjectConverter;
 import com.app3roodk.R;
 import com.app3roodk.Schema.User;
@@ -239,6 +240,7 @@ public class CardsActivity extends AppCompatActivity {
         CardsFragment cardContentFragment1 = new CardsFragment();
         if (!cardContentFragment1.isAdded()) {
             cardContentFragment1.setArguments(arguments1);
+            cardContentFragment1.fragmentType = Constants.FRAGMENT_NEWEST;
         }
         adapter.addFragment(cardContentFragment1, "الأحدث");
 
@@ -248,6 +250,8 @@ public class CardsActivity extends AppCompatActivity {
         CardsFragment cardContentFragment2 = new CardsFragment();
         if (!cardContentFragment2.isAdded()) {
             cardContentFragment2.setArguments(arguments2);
+            cardContentFragment2.fragmentType = Constants.FRAGMENT_MOST_VIEWED;
+
         }
         adapter.addFragment(cardContentFragment2, "الأكثر مشاهده");
 
@@ -258,6 +262,8 @@ public class CardsActivity extends AppCompatActivity {
         CardsFragment cardContentFragment3 = new CardsFragment();
         if (!cardContentFragment3.isAdded()) {
             cardContentFragment3.setArguments(arguments3);
+            cardContentFragment3.fragmentType = Constants.FRAGMENT_BEST_SALE;
+
         }
         adapter.addFragment(cardContentFragment3, "عروض مميزه");
 

@@ -130,7 +130,6 @@ public class UtilityGeneral {
         Collections.sort(lstOffers, new Comparator<Offer>() {
             @Override
             public int compare(Offer o1, Offer o2) {
-                //  if ((Double.parseDouble(o1.getPriceBefore()) - Double.parseDouble((o1.getPriceAfter()))) / Double.parseDouble(o1.getPriceBefore()) >= (Double.parseDouble(o2.getPriceBefore()) - Double.parseDouble((o2.getPriceAfter()))) / Double.parseDouble(o2.getPriceBefore()))
                 if ((Double.parseDouble(o1.getItems().get(0).getPriceBefore()) - Double.parseDouble((o1.getItems().get(0).getPriceAfter()))) / Double.parseDouble(o1.getItems().get(0).getPriceBefore()) >= (Double.parseDouble(o2.getItems().get(0).getPriceBefore()) - Double.parseDouble((o2.getItems().get(0).getPriceAfter()))) / Double.parseDouble(o2.getItems().get(0).getPriceBefore()))
                     return -1;
                 else
@@ -143,9 +142,9 @@ public class UtilityGeneral {
         Collections.sort(lstOffers, new Comparator<Offer>() {
             @Override
             public int compare(Offer o1, Offer o2) {
-                if (Integer.parseInt(o1.getEndTime()) >= Integer.parseInt(o2.getEndTime()))
+                if (Double.parseDouble(o1.getCreatedAt()) >= Double.parseDouble(o2.getCreatedAt()))
                     return -1;
-                if (Integer.parseInt(o1.getEndTime()) < Integer.parseInt(o2.getEndTime()))
+                if (Double.parseDouble(o1.getCreatedAt()) < Double.parseDouble(o2.getCreatedAt()))
                     return 1;
                 return 0;
             }
