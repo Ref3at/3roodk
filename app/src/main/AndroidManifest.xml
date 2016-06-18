@@ -55,6 +55,7 @@
         <activity android:name=".UI.Shop.ViewShopActivity" />
         <activity android:name=".UI.Feedback.FeedbackActivity" />
         <activity android:name=".UI.Favorites.FavoritesActivity" />
+        <activity android:name=".UI.Shop.ListShopsActivity" />
         <activity android:name=".UI.About.AboutActivity"></activity>
 
         <provider

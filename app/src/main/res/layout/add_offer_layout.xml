@@ -189,6 +189,35 @@
                     android:text="@string/choose_category" />
             </LinearLayout>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1" />
+
+
+                <com.weiwangcn.betterspinner.library.BetterSpinner
+                    android:id="@+id/shop_spinner"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/activity_vertical_margin"
+                    android:layout_weight="2"
+                    android:background="@drawable/custom_background_content"
+                    android:gravity="center_horizontal"
+                    android:hint="@string/choose_shop"
+                    android:padding="10dp" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@string/choose_shop" />
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"

@@ -36,6 +36,7 @@ import com.app3roodk.Imgur.ImgurUploadTask;
 import com.app3roodk.R;
 import com.app3roodk.Schema.Item;
 import com.app3roodk.Schema.Offer;
+import com.app3roodk.Schema.Shop;
 import com.app3roodk.UtilityGeneral;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -56,7 +57,8 @@ public class AddNewOfferFragment extends Fragment {
     ArrayList<String> images_id = new ArrayList<>();
     ArrayList<Item> items_list = new ArrayList<>();
 
-
+    ArrayList<String> lstShopsString;
+    ArrayList<Shop> lstShops;
     Offer mOffer;
 
     String[] durtation_list, cat_list;
@@ -64,8 +66,7 @@ public class AddNewOfferFragment extends Fragment {
     int REQUEST_CAMERA = 0, SELECT_FILE = 1;
 
     LinearLayout imgsContainer;
-    BetterSpinner duration_spinner;
-    BetterSpinner category_spinner;
+    BetterSpinner duration_spinner, category_spinner, shops_spinnner;
     int count = 1;
     private EditText inputName, inputDesc, inputPriceBefore, inputPriceAfter;
     private TextInputLayout inputLayoutName, inputLayoutDesc, inputLayoutPriceBefore, inputLayoutPriceAfter;
@@ -145,6 +146,14 @@ public class AddNewOfferFragment extends Fragment {
 
         category_spinner.setAdapter(adapter2);
 
+        shops_spinnner = (BetterSpinner) rootView.findViewById(R.id.shop_spinner);
+        lstShopsString = new ArrayList<>();
+        lstShops = UtilityGeneral.loadShopsList(getActivity());
+        for (Shop shop : lstShops)
+            lstShopsString.add(shop.getName());
+        ArrayAdapter<String> adapter3 = new ArrayAdapter<>(getActivity(),
+                android.R.layout.simple_dropdown_item_1line, lstShopsString);
+        shops_spinnner.setAdapter(adapter3);
 
         previewOffer = (Button) rootView.findViewById(R.id.btn_previewadd);
         previewOffer.setOnClickListener(new View.OnClickListener() {
@@ -191,7 +200,9 @@ public class AddNewOfferFragment extends Fragment {
         if (!validateCategory()) {
             return;
         }
-
+        if (!validateShop()) {
+            return;
+        }
 
         prepareItems();
 
@@ -201,13 +212,12 @@ public class AddNewOfferFragment extends Fragment {
 
         for (int i = 0; i < count; i++) {
             Item item = new Item();
-            item.setPriceAfter(inputPriceBefore.getText().toString());
-            item.setPriceBefore(inputPriceAfter.getText().toString());
+            item.setPriceBefore(inputPriceBefore.getText().toString());
+            item.setPriceAfter(inputPriceAfter.getText().toString());
             item.setImagePaths(images_id);
 
             items_list.add(item);
         }
-
 
 
         Publish();
@@ -295,6 +305,17 @@ public class AddNewOfferFragment extends Fragment {
         if (category_spinner.getText().toString().isEmpty()) {
 
             Toast.makeText(getActivity(), "يجب اخيار قسم للعرض", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return true;
+    }
+
+    private Boolean validateShop() {
+
+
+        if (shops_spinnner.getText().toString().isEmpty()) {
+
+            Toast.makeText(getActivity(), "يجب اخيار المحل", Toast.LENGTH_SHORT).show();
             return false;
         }
         return true;
@@ -449,14 +470,20 @@ public class AddNewOfferFragment extends Fragment {
 
             // new
             mOffer.setItems(items_list);
+            Shop shop = null;
+            for (Shop sh : lstShops)
+                if (sh.getName().equals(shops_spinnner.getText().toString())) {
+                    shop = sh;
+                    break;
+                }
 
-            mOffer.setShopId(UtilityGeneral.loadShop(getActivity()).getObjectId());
-            mOffer.setShopName(UtilityGeneral.loadShop(getActivity()).getName());
-            mOffer.setLat(UtilityGeneral.loadShop(getActivity()).getLat());
-            mOffer.setLon(UtilityGeneral.loadShop(getActivity()).getLon());
+            mOffer.setShopId(shop.getObjectId());
+            mOffer.setShopName(shop.getName());
+            mOffer.setLat(shop.getLat());
+            mOffer.setLon(shop.getLon());
             mOffer.setCreatedAt(UtilityGeneral.getCurrentDate(new Date()));
             mOffer.setUserId(UtilityGeneral.loadUser(getActivity()).getObjectId());
-            mOffer.setCity(UtilityGeneral.loadShop(getActivity()).getCity());
+            mOffer.setCity(shop.getCity());
             mOffer.setUserNotificationToken(UtilityGeneral.loadUser(getActivity()).getNotificationToken());
             Calendar cal = Calendar.getInstance();
             for (int i = 0; i < durtation_list.length; i++) {
@@ -469,17 +496,15 @@ public class AddNewOfferFragment extends Fragment {
             }
             mOffer.setEndTime(UtilityGeneral.getCurrentDate(cal.getTime()));
             FirebaseDatabase database = FirebaseDatabase.getInstance();
-            DatabaseReference myRef = database.getReference("Offers").child(UtilityGeneral.loadShop(getActivity()).getCity()).child(UtilityGeneral.getCategoryEnglishName(category_spinner.getText().toString()));
+            DatabaseReference myRef = database.getReference("Offers").child(shop.getCity()).child(UtilityGeneral.getCategoryEnglishName(category_spinner.getText().toString()));
             mOffer.setObjectId(myRef.push().getKey());
             myRef.child(mOffer.getObjectId()).setValue(mOffer, new DatabaseReference.CompletionListener() {
                 @Override
                 public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                    if(databaseError !=null) {
+                    if (databaseError != null) {
                         Toast.makeText(getActivity(), "حصل مشكله شوف النت ", Toast.LENGTH_SHORT).show();
                         Log.e("Frebaaase", databaseError.getMessage());
-                    }
-                    else
-                    {
+                    } else {
                         Toast.makeText(getActivity(), "تم إضافه العرض، شكرا لك", Toast.LENGTH_SHORT).show();
                         getActivity().onBackPressed();
                     }

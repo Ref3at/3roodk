@@ -95,12 +95,11 @@ public class ViewShopFragment extends Fragment {
         if (getActivity().getIntent().getExtras() != null) {
             shop = new Gson().fromJson(getActivity().getIntent().getStringExtra("shop"), Shop.class);
         } else {
-
-            shop = UtilityGeneral.loadShop(getActivity());
+            getActivity().finish();
         }
 
 
-        if (UtilityGeneral.isShopExist(getActivity()) && shop.getObjectId().equals(UtilityGeneral.loadShop(getActivity()).getObjectId())) {
+        if (UtilityGeneral.loadShop(getActivity(),shop.getObjectId())!=null) {
             Toast.makeText(getActivity(), "انت صاحب المحل", Toast.LENGTH_SHORT).show();
 
             canEdit = true;

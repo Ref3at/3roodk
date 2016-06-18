@@ -86,7 +86,7 @@
     <string name="dislike">Dislike</string>
     <string name="add">أضف</string>
     <string name="add_comment">أضف تعليق</string>
-    <string name="my_shop">محلك</string>
+    <string name="my_shop">محلاتي</string>
     <string name="edit">تعديل</string>
     <string name="done">حفظ التعديلات</string>
     <string name="facebookPage">تابعنا على الفيس بوك</string>
@@ -95,5 +95,6 @@
     <string name="privacypolicy">سياسه الخصوصيه</string>
     <string name="aboutapp">حول التطبيق</string>
     <string name="your_rate">قيم</string>
+    <string name="choose_shop">اختار المحل</string>
 
 </resources>

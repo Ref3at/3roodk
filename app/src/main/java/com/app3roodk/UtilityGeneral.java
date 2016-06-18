@@ -22,6 +22,7 @@ import com.app3roodk.Schema.Shop;
 import com.app3roodk.Schema.User;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
@@ -29,18 +30,19 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class UtilityGeneral {
-
 
     static public LatLng getCurrentLonAndLat(Context context) {
         try {
             Location location = getLastKnownLocation(context);
             return new LatLng(location.getLatitude(), location.getLongitude());
         } catch (Exception e) {
-            return new LatLng(Double.parseDouble(loadUser(context).getLat()),Double.parseDouble(loadUser(context).getLon()));
+            return new LatLng(Double.parseDouble(loadUser(context).getLat()), Double.parseDouble(loadUser(context).getLon()));
         }
     }
 
@@ -175,7 +177,7 @@ public class UtilityGeneral {
     }
 
     static public String getCategoryEnglishName(String arCategory) {
-        String categoryName="" ;
+        String categoryName = "";
 
         switch (arCategory) {
             case "مطاعم":
@@ -314,39 +316,122 @@ public class UtilityGeneral {
         saveUser(context, user);
     }
 
-    static public void saveShop(Context context, Shop shop) {
+    static public void saveShops(Context context, HashMap<String, Shop> mapShops) {
         try {
+            if (mapShops == null || mapShops.size() == 0) return;
+            HashMap<String, Shop> shops = loadShopsMap(context);
+            if (shops == null) {
+                shops = mapShops;
+            } else {
+                for (Map.Entry<String, Shop> entry : mapShops.entrySet()) {
+                    if (shops.containsKey(entry.getKey()))
+                        shops.remove(entry.getKey());
+                    shops.put(entry.getKey(), entry.getValue());
+                }
+            }
             SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
             SharedPreferences.Editor editor = sharedPref.edit();
-            String userJson = new Gson().toJson(shop);
-            byte[] data = userJson.getBytes("UTF-8");
-            String base64 = Base64.encodeToString(data, Base64.DEFAULT);
-            editor.putString(Constants.KEY_SHOP, base64);
+            String shopsJson = new Gson().toJson(shops);
+            editor.putString(Constants.KEY_SHOP, shopsJson);
             editor.commit();
-        } catch (UnsupportedEncodingException e) {
+        } catch (Exception e) {
         }
     }
 
-    static public Shop loadShop(Context context) {
-        Shop shop = null;
+    static public void saveShops(Context context, ArrayList<Shop> lstShops) {
+        try {
+            if (lstShops == null || lstShops.size() == 0) return;
+            HashMap<String, Shop> shops = loadShopsMap(context);
+            if (shops == null) {
+                shops = new HashMap<>();
+                for (Shop shop : lstShops)
+                    shops.put(shop.getObjectId(), shop);
+            } else {
+                for (Shop shop : lstShops) {
+                    if (shops.containsKey(shop.getObjectId()))
+                        shops.remove(shop.getObjectId());
+                    shops.put(shop.getObjectId(), shop);
+                }
+            }
+            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+            SharedPreferences.Editor editor = sharedPref.edit();
+            String shopsJson = new Gson().toJson(shops);
+            editor.putString(Constants.KEY_SHOP, shopsJson);
+            editor.commit();
+        } catch (Exception e) {
+        }
+    }
+
+    static public void saveShop(Context context, Shop shop) {
+        try {
+            HashMap<String, Shop> shops = loadShopsMap(context);
+            if (shops == null) {
+                shops = new HashMap<>();
+            } else {
+                if (shops.containsKey(shop.getObjectId()))
+                    shops.remove(shop.getObjectId());
+            }
+            shops.put(shop.getObjectId(), shop);
+            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+            SharedPreferences.Editor editor = sharedPref.edit();
+            String shopsJson = new Gson().toJson(shops);
+            editor.putString(Constants.KEY_SHOP, shopsJson);
+            editor.commit();
+        } catch (Exception e) {
+        }
+    }
+
+    static public Shop loadShop(Context context, String shopId) {
+        HashMap<String, Shop> shops = loadShopsMap(context);
+        if (shops == null) {
+            return null;
+        } else {
+            if (shops.containsKey(shopId))
+                return shops.get(shopId);
+            else
+                return null;
+        }
+    }
+
+    static public HashMap<String, Shop> loadShopsMap(Context context) {
+        HashMap<String, Shop> shops = null;
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        String userJson = prefs.getString(Constants.KEY_SHOP, "");
-        if (userJson.equals("")) return shop;
+        String shopsJson = prefs.getString(Constants.KEY_SHOP, "");
+        if (shopsJson.equals("")) return shops;
         else {
             try {
-                byte[] data = Base64.decode(userJson, Base64.DEFAULT);
-                String text = new String(data, "UTF-8");
-                shop = new Gson().fromJson(text, Shop.class);
-                return shop;
+                shops = new Gson().fromJson(shopsJson, new TypeToken<HashMap<String, Shop>>() {
+                }.getType());
+                return shops;
             } catch (Exception e) {
-                return shop;
+                return shops;
+            }
+        }
+    }
+
+    static public ArrayList<Shop> loadShopsList(Context context) {
+        ArrayList<Shop> shops = null;
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        String shopsJson = prefs.getString(Constants.KEY_SHOP, "");
+        if (shopsJson.equals("")) return shops;
+        else {
+            try {
+                HashMap<String,Shop> mapShops= new Gson().fromJson(shopsJson, new TypeToken<HashMap<String, Shop>>() {
+                }.getType());
+                shops = new ArrayList<>();
+                for (Map.Entry<String, Shop> entry : mapShops.entrySet()) {
+                    shops.add((entry.getValue()));
+                }
+                return shops;
+            } catch (Exception e) {
+                return shops;
             }
         }
     }
 
     static public boolean isShopExist(Context context) {
         try {
-            return !loadShop(context).getObjectId().isEmpty();
+            return loadShopsMap(context).size() > 0;
         } catch (Exception e) {
             return false;
         }

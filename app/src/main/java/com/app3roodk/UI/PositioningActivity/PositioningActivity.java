@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.app3roodk.R;
+import com.app3roodk.Schema.Comments;
 import com.app3roodk.Schema.Shop;
 import com.app3roodk.Schema.User;
 import com.app3roodk.UI.CategoriesActivity.CategoriesActivity;
@@ -39,7 +40,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 public class PositioningActivity extends AppCompatActivity {
@@ -136,8 +139,11 @@ public class PositioningActivity extends AppCompatActivity {
                                                 @Override
                                                 public void onDataChange(DataSnapshot dataSnapshot) {
                                                     try {
-                                                        Shop shop = dataSnapshot.getChildren().iterator().next().getValue(Shop.class);
-                                                        UtilityGeneral.saveShop(getBaseContext(), shop);
+                                                        ArrayList<Shop> shops = new ArrayList<Shop>();
+                                                        Iterator<DataSnapshot> iterator = dataSnapshot.getChildren().iterator();
+                                                        while (iterator.hasNext())
+                                                            shops.add(iterator.next().getValue(Shop.class));
+                                                        UtilityGeneral.saveShops(getBaseContext(), shops);
                                                     } catch (Exception ex) {
                                                     }
                                                     UtilityGeneral.saveUser(getBaseContext(), user);

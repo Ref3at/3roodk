@@ -30,6 +30,7 @@ import com.app3roodk.UI.About.AboutActivity;
 import com.app3roodk.UI.Favorites.FavoritesActivity;
 import com.app3roodk.UI.Feedback.FeedbackActivity;
 import com.app3roodk.UI.Offer.OfferActivity;
+import com.app3roodk.UI.Shop.ListShopsActivity;
 import com.app3roodk.UI.Shop.ShopActivity;
 import com.app3roodk.UI.Shop.ViewShopActivity;
 import com.app3roodk.UI.Signing.SignInActivity;
@@ -123,7 +124,7 @@ public class CardsActivity extends AppCompatActivity {
 
                             case R.id.action_view_my_shop:
                                 mDrawerLayout.closeDrawer(GravityCompat.END);
-                                startActivity(new Intent(CardsActivity.this, ViewShopActivity.class));
+                                startActivity(new Intent(CardsActivity.this, ListShopsActivity.class));
                                 return true;
 
                             case R.id.action_logout:
