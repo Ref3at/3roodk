@@ -32,6 +32,7 @@ import java.util.Calendar;
 
 /**
  * Created by Refaat on 6/19/2016.
+ *
  */
 public class FavoritesFragment extends Fragment {
 
