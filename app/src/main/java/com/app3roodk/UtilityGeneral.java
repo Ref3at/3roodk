@@ -37,6 +37,8 @@ import java.util.Map;
 
 public class UtilityGeneral {
 
+    static public String City;
+
     static public LatLng getCurrentLonAndLat(Context context) {
         try {
             Location location = getLastKnownLocation(context);
@@ -57,6 +59,26 @@ public class UtilityGeneral {
         }
         return addresses;
     }
+
+    static public String getCurrentCity(Context context) {
+        String city;
+        try {
+            LatLng latlng = getCurrentLonAndLat(context);
+            Geocoder geo = new Geocoder(context, Locale.getDefault());
+            List<Address> addresses  = geo.getFromLocation(latlng.latitude, latlng.longitude, 1);
+            if(addresses != null) {
+                city = addresses.get(0).getAddressLine(2);
+                City =city;
+                saveCity(context,city);
+            }
+            else
+                city = loadCity(context);
+        } catch (Exception e) {
+            city = loadCity(context);
+        }
+        return city;
+    }
+
 
     static public List<Address> getCurrentGovAndCity(Context context, LatLng latLng) {
         List<Address> addresses = null;
@@ -289,6 +311,22 @@ public class UtilityGeneral {
                 return user;
             }
         }
+    }
+
+    static public void saveCity(Context context, String city) {
+        try {
+            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+            SharedPreferences.Editor editor = sharedPref.edit();
+            editor.putString(Constants.KEY_CITY, city);
+            editor.commit();
+        } catch (Exception e) {
+        }
+    }
+
+    static public String loadCity(Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        String city = prefs.getString(Constants.KEY_CITY, "No");
+        return  city;
     }
 
     static public boolean isLocationExist(Context context) {

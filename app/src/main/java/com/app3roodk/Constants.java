@@ -10,6 +10,7 @@ public class Constants {
      */
     public static final String KEY_USER = "keyuser";
     public static final String KEY_SHOP = "keyshop";
+    public static final String KEY_CITY = "keycity";
 
     // imgur
 

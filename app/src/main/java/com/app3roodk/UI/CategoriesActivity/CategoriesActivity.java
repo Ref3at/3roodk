@@ -51,6 +51,15 @@ public class CategoriesActivity extends AppCompatActivity {
         }
     }
 
+    private void loadCity(){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                UtilityGeneral.getCurrentCity(getBaseContext());
+            }
+        }).start();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,6 +74,7 @@ public class CategoriesActivity extends AppCompatActivity {
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer);
 
+        loadCity();
         // Set behavior of Navigation drawer
         hideDrawerItems();
         assert navigationView != null;

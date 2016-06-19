@@ -65,27 +65,43 @@ public class CardsFragment extends Fragment {
 
     private void fetchOffers() {
         try {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    final List<Address> tempAddresses = UtilityGeneral.getCurrentGovAndCity(getActivity(), UtilityGeneral.getCurrentLonAndLat(getActivity()));
-                    try {
-                        getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                try {
-                                    Query firebaseQuery = FirebaseDatabase.getInstance().getReference("Offers").child(tempAddresses.get(0).getAddressLine(2)).child(getActivity().getIntent().getStringExtra("name"))
-                                            .orderByChild("endTime").startAt(UtilityGeneral.getCurrentDate(new Date()));
-                                    firebaseQuery.addValueEventListener(postListener);
-                                } catch (Exception ex) {
-                                    Log.e("CreateShopFragment", ex.getMessage());
+            if (UtilityGeneral.City == null || UtilityGeneral.City.isEmpty()) {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        final String city = UtilityGeneral.getCurrentCity(getActivity());
+                        try {
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    try {
+                                        Query firebaseQuery = FirebaseDatabase.getInstance().getReference("Offers").child(city).child(getActivity().getIntent().getStringExtra("name"))
+                                                .orderByChild("endTime").startAt(UtilityGeneral.getCurrentDate(new Date()));
+                                        firebaseQuery.addValueEventListener(postListener);
+                                    } catch (Exception ex) {
+                                        Log.e("CreateShopFragment", ex.getMessage());
+                                    }
                                 }
-                            }
-                        });
-                    } catch (Exception ex) {
+                            });
+                        } catch (Exception ex) {
+                        }
                     }
+                }).start();
+            } else {
+                try {
+                    Query firebaseQuery = FirebaseDatabase.getInstance().getReference("Offers").child(UtilityGeneral.City).child(getActivity().getIntent().getStringExtra("name"))
+                            .orderByChild("endTime").startAt(UtilityGeneral.getCurrentDate(new Date()));
+                    firebaseQuery.addValueEventListener(postListener);
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            UtilityGeneral.getCurrentCity(getActivity());
+                        }
+                    }).start();
+                } catch (Exception ex) {
+                    Log.e("CreateShopFragment", ex.getMessage());
                 }
-            }).start();
+            }
         } catch (Exception ex) {
             Log.e("CardsFragment", ex.getMessage());
         }
