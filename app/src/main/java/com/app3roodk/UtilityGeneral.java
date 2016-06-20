@@ -345,6 +345,13 @@ public class UtilityGeneral {
         }
     }
 
+    static public void removeUserWithLatLong(Context context) {
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.remove(Constants.KEY_USER);
+        editor.commit();
+    }
+
     static public void removeUser(Context context) {
         User temp = loadUser(context);
         User user = new User();

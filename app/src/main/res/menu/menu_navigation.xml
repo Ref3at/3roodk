@@ -29,12 +29,6 @@
             android:title="@string/sign_in" />
 
         <item
-            android:id="@+id/action_signup"
-            android:icon="@drawable/profile_image"
-            android:tint="@color/button_grey"
-            android:title="@string/new_user" />
-
-        <item
             android:id="@+id/action_new_shop"
             android:icon="@drawable/shop"
             android:tint="@color/button_grey"

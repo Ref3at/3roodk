@@ -6,6 +6,15 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right|end">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -324,10 +333,7 @@
         </RelativeLayout>
     </LinearLayout>
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="right|end">
+
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -502,7 +508,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:numStars="5"
-                    android:stepSize="0.1"
+                    android:stepSize="1"
                     android:layout_marginRight="50dp"
                     android:layout_marginEnd="50dp" />
 
@@ -576,6 +582,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp" />
+        </LinearLayout>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>
