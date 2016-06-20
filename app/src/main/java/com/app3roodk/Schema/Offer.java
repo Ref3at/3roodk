@@ -1,9 +1,12 @@
 package com.app3roodk.Schema;
 
+import android.content.ClipData;
+
 import com.app3roodk.ObjectConverter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import ckm.simple.sql_provider.annotation.SimpleSQLColumn;
 import ckm.simple.sql_provider.annotation.SimpleSQLTable;
@@ -16,25 +19,25 @@ public class Offer {
     public int anInt;
 
     @SimpleSQLColumn("objectId")
-    private String objectId ;
+    private String objectId;
 
     @SimpleSQLColumn("title")
-    private String title ; //*
+    private String title; //*
 
     @SimpleSQLColumn("updatedAt")
     private String updatedAt;
 
     @SimpleSQLColumn("createdAt")
-    private String createdAt ;
+    private String createdAt;
 
     @SimpleSQLColumn("Desc")
     private String Desc; //*
 
     @SimpleSQLColumn("Period")
-    private String Period ; //*
+    private String Period; //*
 
     @SimpleSQLColumn("endTime")
-    private String endTime ;
+    private String endTime;
 
     @SimpleSQLColumn("viewNum")
     private int viewNum;
@@ -46,19 +49,19 @@ public class Offer {
     private String CategoryName; //*
 
     @SimpleSQLColumn("ShopId")
-    private String ShopId ; //*
+    private String ShopId; //*
 
     @SimpleSQLColumn("ShopName")
-    private String ShopName ; //*
+    private String ShopName; //*
 
     @SimpleSQLColumn("city")
-    private String city ; //*
+    private String city; //*
 
     @SimpleSQLColumn("lat")
-    private String lat ; //*
+    private String lat; //*
 
     @SimpleSQLColumn("lon")
-    private String lon ; //*
+    private String lon; //*
 
     @SimpleSQLColumn("userId")
     private String userId;
@@ -80,7 +83,7 @@ public class Offer {
     private HashMap<String, String> usersRates;
     // ref3t add
     // private ArrayList<String> ImagePaths = new ArrayList<>(); // later will be <img> //*
-    private ArrayList<Item> Items = new ArrayList<>(); // later will be <img> //*
+    private List<Item> Items = new ArrayList<>(); // later will be <img> //*
     @SimpleSQLColumn("numberUsersRated")
     private int numberUsersRated;
     @SimpleSQLColumn("totalRate")
@@ -94,30 +97,33 @@ public class Offer {
     // rate
 
     public String getHashmapUsersRates() {
-
-        hashmapUsersRates = ObjectConverter.fromHashmapToStringUsersRates(this.usersRates);
+hashmapUsersRates = ObjectConverter.fromHashmapToStringUsersRates(usersRates);
         return hashmapUsersRates;
     }
 
     public void setHashmapUsersRates(String hashmapUsersRates) {
         this.hashmapUsersRates = hashmapUsersRates;
-        usersRates = ObjectConverter.fromStringToHashmapUsersRates(hashmapUsersRates);
+        usersRates=ObjectConverter.fromStringToHashmapUsersRates(hashmapUsersRates);
     }
 
     public String getArrayListItems() {
-
-        arrayListItems = ObjectConverter.fromArraylistToStringItems(this.Items);
-        return arrayListItems;
+     //  if (Items.size()>0&& arrayListItems.toString().length()==0) {
+           arrayListItems = ObjectConverter.fromArraylistToStringItems(Items);
+    //   }
+           return arrayListItems;
     }
 
     public void setArrayListItems(String arrayListItems) {
         this.arrayListItems = arrayListItems;
-        Items = ObjectConverter.fromStringToArraylistItems(arrayListItems);
-
+      if (!arrayListItems.equals(null)) {
+          Items = ObjectConverter.fromStringToArraylistItems(arrayListItems);
+      }
     }
 
-    public ArrayList<Item> getItems() {
+    public List<Item> getItems() {
         return Items;
+
+
     }
 
     public void setItems(ArrayList<Item> items) {
@@ -286,12 +292,12 @@ public class Offer {
     }
 
     public HashMap<String, String> getUsersRates() {
-        if(this.usersRates == null) this.usersRates = new HashMap<>();
+        if (this.usersRates == null) this.usersRates = new HashMap<>();
         return usersRates;
     }
 
     public void setUsersRates(HashMap<String, String> usersRates) {
-        if(this.usersRates == null) this.usersRates = new HashMap<>();
+        if (this.usersRates == null) this.usersRates = new HashMap<>();
         this.usersRates = usersRates;
     }
 
