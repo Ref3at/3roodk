@@ -7,14 +7,17 @@ import com.app3roodk.Schema.Offer;
 import com.app3roodk.Schema.Shop;
 import com.app3roodk.Schema.User;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * Created by ZooM- on 5/10/2016.
@@ -211,30 +214,16 @@ public class ObjectConverter {
         }
     }
 
-    public static HashMap<String, String> fromStringToHashmapUsersRates(String stringUsersRates) {
-        JSONObject jsonObject = null;
-        try {
-            jsonObject = new JSONObject(stringUsersRates);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        HashMap<String, String> hashmapUsersRates = new HashMap<String, String>();
+    public static String fromArraylistToStringItems(List<Item> items) {
+        return new Gson().toJson(items);
+    }
 
-        Iterator<?> keys = jsonObject.keys();
+    public static List<Item> fromStringToArraylistItems(String arrayListItems) {
 
-        while (keys.hasNext()) {
-            String key = (String) keys.next();
-            String value = null;
-            try {
-                value = jsonObject.getString(key);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            hashmapUsersRates.put(key, value);
-
-        }
-        return hashmapUsersRates;
-
+        Type type = new TypeToken<List<Item>>() {
+        }.getType();
+        List<Item> inpList = new Gson().fromJson(arrayListItems, type);
+        return inpList;
     }
 
     public static String fromHashmapToStringUsersRates(HashMap<String, String> usersRates) {
@@ -242,81 +231,12 @@ public class ObjectConverter {
         return stringUsersRates;
     }
 
+    public static HashMap<String, String> fromStringToHashmapUsersRates(String stringUsersRates) {
 
-    public static String fromArraylistToStringItems(ArrayList<Item> items) {
-        JSONArray jsonAraay = new JSONArray(items);
-        return new Gson().toJson(jsonAraay);
+
+        Type type = new TypeToken<HashMap<String, String>>() {
+        }.getType();
+        HashMap<String, String> hashmapUsersRates = new Gson().fromJson(stringUsersRates, type);
+        return hashmapUsersRates;
     }
-
-    public static ArrayList<Item> fromStringToArraylistItems(String hashmapUsersRates) {
-
-
-        try {
-            return doJsonForitemArrayList(hashmapUsersRates);
-        } finally {
-            return new ArrayList<>();
-        }
-        // return itemArrayList;
-    }
-
-    private static ArrayList<Item> doJsonForitemArrayList(String hashmapUsersRates) {
-        ArrayList<Item> itemArrayList = new ArrayList<>();
-        Item item = new Item();
-        JSONObject jsonObject = null;
-        try {
-            jsonObject = new JSONObject(hashmapUsersRates);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        JSONArray jsonArray = null;
-        try {
-            jsonArray = jsonObject.getJSONArray("items");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        for (int i = 0; i < jsonArray.length(); i++) {
-
-            JSONObject new_Item_object = null;
-            try {
-                new_Item_object = jsonArray.getJSONObject(i);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-            JSONArray array = null;
-            try {
-                array = new_Item_object.getJSONArray("imagePaths");
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            ArrayList<String> ImagePaths = new ArrayList<>(); // later will be <img> //*
-            for (int j = 0; j < array.length(); j++) {
-                String s = null;
-                try {
-                    s = array.getString(j);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                ImagePaths.add(s);
-            }
-
-            item.setImagePaths(ImagePaths);
-            try {
-                item.setPriceAfter(new_Item_object.getString(""));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            try {
-                item.setPriceBefore(new_Item_object.getString(""));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            itemArrayList.add(item);
-        }
-
-        return itemArrayList;
-    }
-
-
 }

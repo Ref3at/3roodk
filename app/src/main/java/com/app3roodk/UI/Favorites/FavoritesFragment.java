@@ -133,9 +133,10 @@ public class FavoritesFragment extends Fragment {
             cardHolder.shopName.setText(lstOffers.get(position).getShopName());
             cardHolder.title.setText(lstOffers.get(position).getTitle());
             cardHolder.rate.setText(String.valueOf(lstOffers.get(position).getAverageRate()));
+
             cardHolder.discount.setText(String.format("%.0f", (1 - (Double.parseDouble(lstOffers.get(position).getItems().get(0).getPriceAfter()) / Double.parseDouble(lstOffers.get(position).getItems().get(0).getPriceBefore()))) * 100) + "%");
             fillTimer(cardHolder, position);
-            Glide.with(cardHolder.itemView.getContext()).load(lstOffers.get(position).getItems().get(0).getImagePaths().get(0)).into(cardHolder.imgCard);
+//            Glide.with(cardHolder.itemView.getContext()).load(lstOffers.get(position).getItems().get(0).getImagePaths().get(0)).into(cardHolder.imgCard);
         }
 
         @Override
