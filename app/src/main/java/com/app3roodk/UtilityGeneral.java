@@ -194,7 +194,7 @@ public class UtilityGeneral {
     }
 
     static public String getCurrentDate(Date date) {
-        return new SimpleDateFormat("yyyyMMddHHmm").format(date);
+        return new SimpleDateFormat("yyyyMMddkkmm").format(date);
     }
 
     static public String getCategoryEnglishName(String arCategory) {

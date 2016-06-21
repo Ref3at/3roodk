@@ -27,6 +27,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -60,6 +61,7 @@ public class PositioningActivity extends AppCompatActivity {
                 user.setObjectId(acct.getUid());
                 user.setEmail(acct.getEmail());
                 user.setName(acct.getDisplayName());
+                user.setNotificationToken(FirebaseInstanceId.getInstance().getToken());
                 FirebaseDatabase database = FirebaseDatabase.getInstance();
                 DatabaseReference myRef = database.getReference("Users").child(acct.getUid());
                 myRef.setValue(user, new DatabaseReference.CompletionListener() {

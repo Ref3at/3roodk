@@ -14,6 +14,7 @@ public class Constants {
     public static final int RC_SIGN_IN = 123;
     // imgur
 
+    public static final String FIREBASE_SERVER_KEY_CLOUD_MESSAGING = "AIzaSyDybaDJVfAMGu5PL-BvGhbD5ki5OtxFM0o";
     public static final String MY_IMGUR_CLIENT_ID = "62f6fca2c114a98";
     public static final String MY_IMGUR_CLIENT_SECRET = "d44e58a64a7b38b2f2e70a5c4c9d2bea021ff42f";
     //The arbitrary redirect url (Authorization callback URL), ex. awesome://imgur or http://android,

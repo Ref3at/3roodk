@@ -23,6 +23,7 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.app3roodk.NotificationServices.UtilityCloudMessaging;
 import com.app3roodk.R;
 import com.app3roodk.Schema.Comments;
 import com.app3roodk.Schema.Offer;
@@ -43,12 +44,15 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
+import com.loopj.android.http.TextHttpResponseHandler;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+
+import cz.msebera.android.httpclient.Header;
 
 public class DetailFragment extends Fragment implements BaseSliderView.OnSliderClickListener, ViewPagerEx.OnPageChangeListener {
 
@@ -70,7 +74,7 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
     private SliderLayout mDemoSlider;
     private Offer offer;
     private Shop shop;
-    private ValueEventListener postListener;
+    private ValueEventListener postListener, offerListener;
     private Runnable updateTimerThread = new Runnable() {
         public void run() {
             while (true) {
@@ -106,22 +110,12 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
         init(rootView);
         fillViews();
+        ShopViewsAndUpdateViewsNumber();
+        FirebaseDatabase.getInstance().getReference("Comments").child(offer.getObjectId()).addValueEventListener(postListener);
+        FirebaseDatabase.getInstance().getReference("Offers").child(offer.getCity()).child(offer.getCategoryName()).child(offer.getObjectId()).addValueEventListener(offerListener);
         clickConfig();
 
         new FetchFromDB(btnFavorite).execute();
-
-
-        txtShopName.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(getActivity(), ViewShopActivity.class);
-                if (shop != null) {
-                    i.putExtra("shop", new Gson().toJson(shop));
-                }
-                startActivity(i);
-
-            }
-        });
 
         return rootView;
     }
@@ -147,8 +141,7 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
             }
             txtSale.setText(
                     String.format("%.0f", (1 - (Double.parseDouble(offer.getItems().get(0).getPriceAfter()) / Double.parseDouble(offer.getItems().get(0).getPriceBefore()))) * 100) + "%");
-            ShopViewsAndUpdateViewsNumber();
-            FirebaseDatabase.getInstance().getReference("Comments").child(offer.getObjectId()).addValueEventListener(postListener);
+
         } catch (Exception ex) {
         }
     }
@@ -165,9 +158,12 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
                     Toast.makeText(getActivity(), "اكتب التعليق من فضلك اولاً", Toast.LENGTH_LONG).show();
                     return;
                 }
-                Comments comment = new Comments();
+                final Comments comment = new Comments();
                 comment.setTime(UtilityGeneral.getCurrentDate(new Date()));
-                comment.setUserName(UtilityGeneral.loadUser(getActivity()).getName());
+                if (offer.getUserId().equals(UtilityGeneral.loadUser(getActivity()).getObjectId()))
+                    comment.setUserName(offer.getShopName());
+                else
+                    comment.setUserName(UtilityGeneral.loadUser(getActivity()).getName());
                 comment.setUserId(UtilityGeneral.loadUser(getActivity()).getObjectId());
                 comment.setOfferId(offer.getObjectId());
                 comment.setCommentText(edtxtComment.getText().toString());
@@ -189,6 +185,24 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
                             Log.e("Frebaaase", databaseError.getMessage());
                         } else {
                             Toast.makeText(getActivity(), "تم إضافه التعليق، شكرا لك", Toast.LENGTH_SHORT).show();
+                            if (!(offer.getUserNotificationToken() == null || offer.getUserNotificationToken().isEmpty()
+                                    || offer.getShopName() == comment.getUserName())) {
+                                HashMap<String, String> mapOffer = new HashMap<>();
+                                mapOffer.put("offerId", offer.getObjectId());
+                                UtilityCloudMessaging.sendNotification(getActivity(), offer.getUserNotificationToken(),
+                                        UtilityCloudMessaging.COMMENT_TITLE, comment.getUserName() + UtilityCloudMessaging.COMMENT_BODY,
+                                        offer.getObjectId(), mapOffer, new TextHttpResponseHandler() {
+                                            @Override
+                                            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                                                Log.e("asdasd", responseString);
+                                            }
+
+                                            @Override
+                                            public void onSuccess(int statusCode, Header[] headers, String responseString) {
+                                                Log.e("fgsgsdf", responseString);
+                                            }
+                                        });
+                            }
                             edtxtComment.setText("");
                         }
                     }
@@ -230,6 +244,17 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
                 startActivity(UtilityGeneral.DrawPathToCertainShop(
                         getContext(), UtilityGeneral.getCurrentLonAndLat(getContext()),
                         new LatLng(Double.parseDouble(offer.getLat()), Double.parseDouble(offer.getLon()))));
+            }
+        });
+
+        txtShopName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getActivity(), ViewShopActivity.class);
+                if (shop != null) {
+                    i.putExtra("shop", new Gson().toJson(shop));
+                }
+                startActivity(i);
             }
         });
 
@@ -430,6 +455,17 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
                 public void onCancelled(DatabaseError databaseError) {
                 }
             };
+            offerListener = new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    offer = dataSnapshot.getValue(Offer.class);
+                    fillViews();
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                }
+            };
         } catch (Exception ex) {
             try {
                 getActivity().finish();
@@ -476,6 +512,7 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
         super.onDestroy();
         try {
             FirebaseDatabase.getInstance().getReference("Comments").child(offer.getObjectId()).removeEventListener(postListener);
+            FirebaseDatabase.getInstance().getReference("Offers").child(offer.getCity()).child(offer.getCategoryName()).child(offer.getObjectId()).removeEventListener(offerListener);
         } catch (Exception ex) {
         }
     }

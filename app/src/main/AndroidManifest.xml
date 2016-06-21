@@ -59,6 +59,19 @@
         <activity android:name=".UI.Shop.ListShopsActivity" />
         <activity android:name=".UI.About.AboutActivity"></activity>
 
+        <service
+            android:name=".NotificationServices.MessagingService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
+        <service
+            android:name=".NotificationServices.InstanceIDService">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+            </intent-filter>
+        </service>
+
         <provider
             android:name="com.app3roodk.TestProvider"
             android:authorities="com.app3roodk.authority" />

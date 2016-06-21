@@ -63,6 +63,14 @@ public class CardsFragment extends Fragment {
         return recyclerView;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+//        Log.e("asdasd","adasdsadsa");
+
+    }
+
     private void fetchOffers() {
         try {
             if (UtilityGeneral.City == null || UtilityGeneral.City.isEmpty()) {
@@ -117,7 +125,7 @@ public class CardsFragment extends Fragment {
                 double dateNow = Double.parseDouble(UtilityGeneral.getCurrentDate(new Date()));
                 while (iterator.hasNext()) {
                     of = iterator.next().getValue(Offer.class);
-                    if (Double.parseDouble(of.getCreatedAt()) < dateNow)
+                    if (Double.parseDouble(of.getCreatedAt()) <= dateNow)
                         lstOffers.add(of);
                 }
                 sortOffers();
@@ -162,8 +170,8 @@ public class CardsFragment extends Fragment {
             cal.set(Calendar.YEAR, Integer.parseInt(lstOffers.get(position).getEndTime().substring(0, 4)));
             cal.set(Calendar.MONTH, Integer.parseInt(lstOffers.get(position).getEndTime().substring(4, 6)) - 1);
             cal.set(Calendar.DAY_OF_MONTH, Integer.parseInt(lstOffers.get(position).getEndTime().substring(6, 8)));
-            cal.set(Calendar.HOUR_OF_DAY, 0);
-            cal.set(Calendar.MINUTE, 0);
+            cal.set(Calendar.HOUR_OF_DAY, Integer.parseInt(lstOffers.get(position).getEndTime().substring(8, 10)));
+            cal.set(Calendar.MINUTE, Integer.parseInt(lstOffers.get(position).getEndTime().substring(10, 12)));
             cal.set(Calendar.SECOND, 0);
             cal.set(Calendar.MILLISECOND, 0);
             long timeInMilliseconds = cal.getTime().getTime() - System.currentTimeMillis();
