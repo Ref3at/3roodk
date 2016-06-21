@@ -29,6 +29,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.app3roodk.Constants;
@@ -51,11 +52,16 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.UUID;
 
 public class AddNewOfferFragment extends Fragment {
 
-    ArrayList<String> images_id = new ArrayList<>();
+    //  ArrayList<String> images_id = new ArrayList<>();
+    ArrayList<String>[] images_id_Array = new ArrayList[3];
+
+
     ArrayList<Item> items_list = new ArrayList<>();
+    ArrayList<LinearLayout> listOfContainers = new ArrayList<>();
 
     ArrayList<String> lstShopsString;
     ArrayList<Shop> lstShops;
@@ -63,16 +69,21 @@ public class AddNewOfferFragment extends Fragment {
 
     String[] durtation_list, cat_list;
 
-    int REQUEST_CAMERA = 0, SELECT_FILE = 1;
+//    int REQUEST_CAMERA = 0, SELECT_FILE = 1;
 
-    LinearLayout imgsContainer;
+
+    ArrayList<Integer> REQUEST_CAMERA = new ArrayList<>();
+    ArrayList<Integer> SELECT_FILE = new ArrayList<>();
+
+
+    LinearLayout itemsContainer;
     BetterSpinner duration_spinner, category_spinner, shops_spinnner;
-    int count = 1;
     private EditText inputName, inputDesc, inputPriceBefore, inputPriceAfter;
     private TextInputLayout inputLayoutName, inputLayoutDesc, inputLayoutPriceBefore, inputLayoutPriceAfter;
-    private Button publishOffer, previewOffer;
+    private Button publishOffer, previewOffer, addNewItem;
     private String mImgurUrl;
     private MyImgurUploadTask mImgurUploadTask;
+
 
     /**
      * returns the bytesize of the give bitmap
@@ -91,41 +102,52 @@ public class AddNewOfferFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
+        images_id_Array[0] = new ArrayList<>();
+        images_id_Array[1] = new ArrayList<>();
+        images_id_Array[2] = new ArrayList<>();
+
+
+        REQUEST_CAMERA.add(55);
+        REQUEST_CAMERA.add(66);
+        REQUEST_CAMERA.add(77);
+
+        SELECT_FILE.add(21);
+        SELECT_FILE.add(28);
+        SELECT_FILE.add(35);
+
+
         mOffer = new Offer();
 
         View rootView = inflater.inflate(R.layout.add_offer_layout, container, false);
 
-        ImageButton imageButton = (ImageButton) rootView.findViewById(R.id.add_new_image);
+        addNewItem = (Button) rootView.findViewById(R.id.add_new_item);
 
-        imgsContainer = (LinearLayout) rootView.findViewById(R.id.imgscontainer);
-
-        imageButton.setOnClickListener(new View.OnClickListener() {
+        addNewItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (imgsContainer.getChildCount() > 3) {
-                    Toast.makeText(getActivity(), "you need to delete another image", Toast.LENGTH_SHORT).show();
+
+                if (itemsContainer.getChildCount() > 2) {
+                    Toast.makeText(getActivity(), "you need to delete another item", Toast.LENGTH_SHORT).show();
                 } else {
-                    selectImage();
+                    inflateNewItem();
                 }
             }
         });
 
+        itemsContainer = (LinearLayout) rootView.findViewById(R.id.items_container);
+
 
         inputLayoutName = (TextInputLayout) rootView.findViewById(R.id.input_layout_offername);
         inputLayoutDesc = (TextInputLayout) rootView.findViewById(R.id.input_layout_desc);
-        inputLayoutPriceBefore = (TextInputLayout) rootView.findViewById(R.id.input_layout_pricebefore);
-        inputLayoutPriceAfter = (TextInputLayout) rootView.findViewById(R.id.input_layout_priceafter);
+
 
         inputName = (EditText) rootView.findViewById(R.id.input_offername);
         inputDesc = (EditText) rootView.findViewById(R.id.input_desc);
-        inputPriceBefore = (EditText) rootView.findViewById(R.id.input_pricebefore);
-        inputPriceAfter = (EditText) rootView.findViewById(R.id.input_priceafter);
 
 
         inputName.addTextChangedListener(new MyTextWatcher(inputName));
         inputDesc.addTextChangedListener(new MyTextWatcher(inputDesc));
-        inputPriceBefore.addTextChangedListener(new MyTextWatcher(inputPriceBefore));
-        inputPriceAfter.addTextChangedListener(new MyTextWatcher(inputPriceAfter));
+
 
         duration_spinner = (BetterSpinner) rootView.findViewById(R.id.duration_spinner);
 
@@ -175,6 +197,55 @@ public class AddNewOfferFragment extends Fragment {
         return rootView;
     }
 
+    private void inflateNewItem() {
+
+
+        LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        final View rootView = inflater.inflate(R.layout.add_offer_item_layout, null);
+
+        itemsContainer.addView(rootView);
+
+
+        inputLayoutPriceBefore = (TextInputLayout) rootView.findViewById(R.id.input_layout_pricebefore);
+        inputLayoutPriceAfter = (TextInputLayout) rootView.findViewById(R.id.input_layout_priceafter);
+        inputPriceBefore = (EditText) rootView.findViewById(R.id.input_pricebefore);
+        inputPriceAfter = (EditText) rootView.findViewById(R.id.input_priceafter);
+
+        inputPriceBefore.addTextChangedListener(new MyTextWatcher(inputPriceBefore));
+        inputPriceAfter.addTextChangedListener(new MyTextWatcher(inputPriceAfter));
+
+
+        ImageButton delete_Button = (ImageButton) rootView.findViewById(R.id.delete_item);
+        delete_Button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                images_id_Array[itemsContainer.indexOfChild(rootView)].clear();
+                itemsContainer.removeView(rootView);
+
+
+            }
+        });
+
+
+        ImageButton imageButton = (ImageButton) rootView.findViewById(R.id.add_new_image);
+
+        imageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LinearLayout imgsContainer = (LinearLayout) rootView.findViewById(R.id.imgscontainer);
+
+                if (imgsContainer.getChildCount() > 2) {
+                    Toast.makeText(getActivity(), "you need to delete another images", Toast.LENGTH_SHORT).show();
+                } else {
+                    selectImage(itemsContainer.indexOfChild(rootView));
+                }
+
+            }
+        });
+
+    }
+
     private void SubmitNewOffer() {
         if (!validateOfferName()) {
             return;
@@ -210,11 +281,19 @@ public class AddNewOfferFragment extends Fragment {
 
     private void prepareItems() {
 
-        for (int i = 0; i < count; i++) {
+        for (int i = 0; i < itemsContainer.getChildCount(); i++) {
+
+
+            RelativeLayout rootv = (RelativeLayout) itemsContainer.getChildAt(i);
             Item item = new Item();
+
+            EditText inputPriceBefore = (EditText) rootv.findViewById(R.id.input_pricebefore);
+            EditText inputPriceAfter = (EditText) rootv.findViewById(R.id.input_priceafter);
+
             item.setPriceBefore(inputPriceBefore.getText().toString());
             item.setPriceAfter(inputPriceAfter.getText().toString());
-            item.setImagePaths(images_id);
+            item.setImagePaths(images_id_Array[i]);
+
 
             items_list.add(item);
         }
@@ -278,7 +357,7 @@ public class AddNewOfferFragment extends Fragment {
 
     private Boolean validateImagesIDs() {
 
-        if (images_id.size() < 1) {
+        if (images_id_Array[0].size() < 1 || images_id_Array[1].size() < 1 || images_id_Array[2].size() < 1) {
 
             Toast.makeText(getActivity(), "يجب اضافه صور للعرض", Toast.LENGTH_SHORT).show();
             return false;
@@ -327,7 +406,9 @@ public class AddNewOfferFragment extends Fragment {
         }
     }
 
-    private void selectImage() {
+    private Uri mFileUri = null;
+
+    private void selectImage(final int i) {
 
         final CharSequence[] items = {"إلتقط صوره!", "إختار صوره",
                 "إلغاء"};
@@ -339,7 +420,8 @@ public class AddNewOfferFragment extends Fragment {
             public void onClick(DialogInterface dialog, int item) {
                 if (items[item].equals("إلتقط صوره!")) {
                     Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    startActivityForResult(intent, REQUEST_CAMERA);
+                    intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, mFileUri);
+                    startActivityForResult(intent, REQUEST_CAMERA.get(i));
                 } else if (items[item].equals("إختار صوره")) {
                     Intent intent = new Intent(
                             Intent.ACTION_PICK,
@@ -347,7 +429,7 @@ public class AddNewOfferFragment extends Fragment {
                     intent.setType("image/*");
                     startActivityForResult(
                             Intent.createChooser(intent, "إختار صوره"),
-                            SELECT_FILE);
+                            SELECT_FILE.get(i));
                 } else if (items[item].equals("إلغاء")) {
                     dialog.dismiss();
                 }
@@ -356,22 +438,25 @@ public class AddNewOfferFragment extends Fragment {
         builder.show();
     }
 
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == SELECT_FILE) {
+            if (requestCode < 50) {
                 Uri u = data.getData();
-                onSelectFromGalleryResult(data, u);
-            } else if (requestCode == REQUEST_CAMERA) {
+                onSelectFromGalleryResult(data, u, requestCode);
+
+            } else if (requestCode > 50) {
                 Uri u = data.getData();
-                onCaptureImageResult(data, u);
+                onCaptureImageResult(data, u, requestCode);
             }
+
         }
     }
 
-    private void onCaptureImageResult(Intent data, Uri uri) {
+    private void onCaptureImageResult(Intent data, Uri uri, int requestCode) {
         Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         thumbnail.compress(Bitmap.CompressFormat.JPEG, 90, bytes);
@@ -394,10 +479,10 @@ public class AddNewOfferFragment extends Fragment {
             e.printStackTrace();
         }
 
-        inflateNewImage(thumbnail, uri);
+        inflateNewImage(thumbnail, uri, requestCode);
     }
 
-    private void onSelectFromGalleryResult(Intent data, Uri uri) {
+    private void onSelectFromGalleryResult(Intent data, Uri uri, int requestCode) {
         Uri selectedImageUri = data.getData();
         String[] projection = {MediaStore.MediaColumns.DATA};
         // Cursor cursor = managedQuery(selectedImageUri, projection, null, null, null);
@@ -422,15 +507,26 @@ public class AddNewOfferFragment extends Fragment {
         options.inJustDecodeBounds = false;
         bm = BitmapFactory.decodeFile(selectedImagePath, options);
 
-        inflateNewImage(bm, uri);
+        inflateNewImage(bm, uri, requestCode);
     }
 
-    private void inflateNewImage(Bitmap thumbnail, Uri uri) {
+    private void inflateNewImage(Bitmap thumbnail, Uri uri, int requestCode) {
 
         LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         final View rootview = inflater.inflate(R.layout.image_group, null);
-        imgsContainer.addView(rootview, 0);
+        //****************************
+        int theIndex = 0;
+        if (requestCode < 50) {
+            theIndex = (requestCode / 7) - 3;
+        } else {
+            theIndex = (requestCode / 11) - 5;
+        }
+        LinearLayout imgsContainer = null;
+        if (itemsContainer != null) {
+            imgsContainer = (LinearLayout) itemsContainer.getChildAt(theIndex).findViewById(R.id.imgscontainer);
 
+            imgsContainer.addView(rootview);
+        }
         final ImageView imageView = (ImageView) rootview.findViewById(R.id.theimage);
         imageView.setImageBitmap(thumbnail);
         imageView.setAlpha(0.5f);
@@ -439,9 +535,11 @@ public class AddNewOfferFragment extends Fragment {
 
         Toast.makeText(getActivity(), "uploading...", Toast.LENGTH_SHORT).show();
 
-        new MyImgurUploadTask(uri, imageView, imgdone, imgsContainer.getChildCount()).execute();
+        new MyImgurUploadTask(uri, imageView, imgdone, theIndex).execute();
 
         ImageButton del_image = (ImageButton) rootview.findViewById(R.id.delete_img);
+        final LinearLayout finalImgsContainer = imgsContainer;
+        final int finalTheIndex = theIndex;
         del_image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -449,10 +547,10 @@ public class AddNewOfferFragment extends Fragment {
                 //**************************************************************************
                 /// error here   the id come from asyns after we delete the image
 
-                if (images_id.size() > 0 && !images_id.get(imgsContainer.indexOfChild(rootview)).isEmpty()) {
-                    images_id.remove(imgsContainer.indexOfChild(rootview));
+                if (images_id_Array[finalTheIndex].size() > 0 && !images_id_Array[finalTheIndex].get(finalImgsContainer.indexOfChild(rootview) - 1).isEmpty()) {
+                    images_id_Array[finalTheIndex].remove(finalImgsContainer.indexOfChild(rootview) - 1);
                 }
-                imgsContainer.removeView(rootview);
+                finalImgsContainer.removeView(rootview);
             }
         });
     }
@@ -605,7 +703,7 @@ public class AddNewOfferFragment extends Fragment {
 
             this.imageView = imageView;
             this.imageViewdone = imgdn;
-            this.x = y - 1;
+            this.x = y;
         }
 
         @Override
@@ -629,7 +727,8 @@ public class AddNewOfferFragment extends Fragment {
 
                 Toast.makeText(getActivity(), mImgurUrl + "", Toast.LENGTH_LONG).show();
 
-                images_id.add(mImgurUrl);
+
+                images_id_Array[x].add(mImgurUrl);
 
 
             } else {
@@ -643,4 +742,3 @@ public class AddNewOfferFragment extends Fragment {
         }
     }
 }
-
