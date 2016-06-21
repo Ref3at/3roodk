@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
@@ -31,13 +32,17 @@ import com.app3roodk.UI.About.AboutActivity;
 import com.app3roodk.UI.Favorites.FavoritesActivity;
 import com.app3roodk.UI.Feedback.FeedbackActivity;
 import com.app3roodk.UI.Offer.OfferActivity;
+import com.app3roodk.UI.PositioningActivity.PositioningActivity;
 import com.app3roodk.UI.Shop.ListShopsActivity;
 import com.app3roodk.UI.Shop.ShopActivity;
 import com.app3roodk.UI.Shop.ViewShopActivity;
 import com.app3roodk.UI.Signing.SignInActivity;
 import com.app3roodk.UI.Signing.SignUpActivity;
 import com.app3roodk.UtilityGeneral;
+import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.loopj.android.http.TextHttpResponseHandler;
 
 import java.util.ArrayList;
@@ -98,14 +103,10 @@ public class CardsActivity extends AppCompatActivity {
                                 startActivity(new Intent(CardsActivity.this, OfferActivity.class));
                                 return true;
 
-                            case R.id.action_signup:
-                                mDrawerLayout.closeDrawer(GravityCompat.END);
-                                startActivity(new Intent(CardsActivity.this, SignUpActivity.class));
-                                return true;
-
                             case R.id.action_signin:
                                 mDrawerLayout.closeDrawer(GravityCompat.END);
-                                startActivity(new Intent(CardsActivity.this, SignInActivity.class));
+                                PositioningActivity.stay = true;
+                                startActivity(new Intent(CardsActivity.this, PositioningActivity.class));
                                 return true;
 
                             case R.id.action_new_shop:
@@ -129,11 +130,18 @@ public class CardsActivity extends AppCompatActivity {
                                 return true;
 
                             case R.id.action_logout:
-                                mDrawerLayout.closeDrawer(GravityCompat.END);
-                                UtilityGeneral.removeShop(getBaseContext());
-                                UtilityGeneral.removeUser(getBaseContext());
-                                hideDrawerItems();
-                                return true;
+                                AuthUI.getInstance()
+                                        .signOut(CardsActivity.this)
+                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                mDrawerLayout.closeDrawer(GravityCompat.END);
+                                                UtilityGeneral.removeShop(getBaseContext());
+                                                UtilityGeneral.removeUser(getBaseContext());
+                                                hideDrawerItems();
+                                            }
+                                        });
+                               return true;
 
                             case R.id.action_facebookPage:
                                 mDrawerLayout.closeDrawer(GravityCompat.END);
@@ -168,7 +176,8 @@ public class CardsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (!UtilityGeneral.isRegisteredUser(getBaseContext())) {
-                    startActivity(new Intent(getBaseContext(), SignUpActivity.class));
+                    PositioningActivity.stay = true;
+                    startActivity(new Intent(getBaseContext(), PositioningActivity.class));
                     return;
                 }
                 if (!UtilityGeneral.isShopExist(getBaseContext())) {
@@ -275,7 +284,6 @@ public class CardsActivity extends AppCompatActivity {
 
         if (UtilityGeneral.isRegisteredUser(getBaseContext())) {
             nav_Menu.findItem(R.id.action_signin).setVisible(false);
-            nav_Menu.findItem(R.id.action_signup).setVisible(false);
             nav_Menu.findItem(R.id.action_logout).setVisible(true);
             if (UtilityGeneral.isShopExist(getBaseContext())) {
                 nav_Menu.findItem(R.id.action_new_shop).setVisible(false);
@@ -289,7 +297,6 @@ public class CardsActivity extends AppCompatActivity {
             }
         } else {
             nav_Menu.findItem(R.id.action_signin).setVisible(true);
-            nav_Menu.findItem(R.id.action_signup).setVisible(true);
             nav_Menu.findItem(R.id.action_logout).setVisible(false);
             nav_Menu.findItem(R.id.action_new_shop).setVisible(false);
             nav_Menu.findItem(R.id.action_add_offers).setVisible(false);

@@ -11,7 +11,7 @@ public class Constants {
     public static final String KEY_USER = "keyuser";
     public static final String KEY_SHOP = "keyshop";
     public static final String KEY_CITY = "keycity";
-
+    public static final int RC_SIGN_IN = 123;
     // imgur
 
     public static final String MY_IMGUR_CLIENT_ID = "62f6fca2c114a98";

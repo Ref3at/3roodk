@@ -3,13 +3,13 @@
     <string name="PARSE_REST_API_KEY">oNFr8kLUHfVnKBMtme3G2kz6xDVt3pOxdj7ouB3A</string>
     <string name="PARSE_APPLICATION_ID">sVTrTkJYklEq3JEYh7Xt26S1W7r7lwRe4n37Lmd6</string>
     <string name="URI">https://parseapi.back4app.com/classes/</string>
-
+    <string name="facebook_application_id" translatable="false">1768742846677192</string>
     <!-- hazem maps key -->
-    <!-- <string name="key_map">AIzaSyBDw98HmGde195atmc4qi6xhr7PWX0hHLg</string>-->
+     <string name="key_map">AIzaSyBDw98HmGde195atmc4qi6xhr7PWX0hHLg</string>
 
 
     <!-- mohamed maps key -->
-    <string name="key_map">AIzaSyAopijmR0CjdJJXF6KQgM7dRnosllvaPeQ</string>
+    <!--<string name="key_map">AIzaSyAopijmR0CjdJJXF6KQgM7dRnosllvaPeQ</string>-->
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="sign_in">تسجيل الدخول</string>
@@ -33,7 +33,7 @@
     <string name="shop_name">اسم المحل</string>
     <string name="work_time">مواعيد العمل</string>
     <string name="address">العنوان</string>
-    <string name="rate">التقييم</string>
+    <string name="rate">الكلي التقييم</string>
     <string name="shop_way">طريق المحل</string>
     <string name="see_way">شوف الطريق</string>
     <string name="mobile">الموبايل</string>
@@ -96,5 +96,6 @@
     <string name="aboutapp">حول التطبيق</string>
     <string name="your_rate">قيم</string>
     <string name="choose_shop">اختار المحل</string>
+    <string name="signing_in">جاري تسجيل الدخول</string>
 
 </resources>
