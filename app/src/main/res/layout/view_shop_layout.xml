@@ -349,15 +349,10 @@
             android:textSize="22sp"
             android:visibility="gone" />
 
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:padding="5dp"
-            android:text="هنا كاردز العروض بقى"
-            android:textSize="22sp" />
-
+<ListView
+    android:id="@+id/lvOffers"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"/>
 
     </LinearLayout>
 </ScrollView>

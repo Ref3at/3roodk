@@ -23,27 +23,40 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.app3roodk.Imgur.ImgurUploadTask;
 import com.app3roodk.MapsShopLocationActivity;
 import com.app3roodk.R;
+import com.app3roodk.Schema.Offer;
 import com.app3roodk.Schema.Shop;
+import com.app3roodk.UI.DetailActivity.DetailActivity;
 import com.app3roodk.UtilityGeneral;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+
+import cz.msebera.android.httpclient.pool.PoolStats;
 
 /**
  * Created by Refaat on 5/6/2016.
@@ -56,6 +69,10 @@ public class ViewShopFragment extends Fragment {
     List<Address> addresses;
     List<Address> addressesFromEditing;
 
+    ArrayAdapter<String> adapter;
+    ArrayList<String> lstOffersTitles;
+    ArrayList<Offer> lstOffers;
+    ListView lvOffers;
     Boolean canEdit;
 
     InputMethodManager inputManager;
@@ -82,7 +99,6 @@ public class ViewShopFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-
         inputManager = (InputMethodManager)
                 getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
     }
@@ -98,8 +114,7 @@ public class ViewShopFragment extends Fragment {
             getActivity().finish();
         }
 
-
-        if (UtilityGeneral.loadShop(getActivity(),shop.getObjectId())!=null) {
+        if (UtilityGeneral.loadShop(getActivity(), shop.getObjectId()) != null) {
             Toast.makeText(getActivity(), "انت صاحب المحل", Toast.LENGTH_SHORT).show();
 
             canEdit = true;
@@ -108,14 +123,12 @@ public class ViewShopFragment extends Fragment {
 
             canEdit = false;
         }
-
+        initOffersList(rootView);
         latLngShop = new LatLng(Double.parseDouble(shop.getLat()), Double.parseDouble(shop.getLon()));
 
         if (latLngShop_Editing == null) {
             latLngShop_Editing = new LatLng(Double.parseDouble(shop.getLat()), Double.parseDouble(shop.getLon()));
         }
-
-
         init(rootView);
         fillViews();
         btnsActions();
@@ -138,6 +151,84 @@ public class ViewShopFragment extends Fragment {
         });
 
         return rootView;
+    }
+
+    private void initOffersList(View rootView) {
+        lvOffers = (ListView) rootView.findViewById(R.id.lvOffers);
+        lstOffersTitles = new ArrayList<>();
+        lstOffers = new ArrayList<>();
+        adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, lstOffersTitles);
+        lvOffers.setAdapter(adapter);
+        String[] cats = getResources().getStringArray(R.array.cat_array_eng);
+        for (String cat : cats) {
+            FirebaseDatabase.getInstance().getReference("Offers").child(shop.getCity()).child(cat)
+                    .orderByChild("shopId").startAt(shop.getObjectId()).endAt(shop.getObjectId()).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    Iterator<DataSnapshot> iterator = dataSnapshot.getChildren().iterator();
+                    Offer of;
+                    double dateNow = Double.parseDouble(UtilityGeneral.getCurrentDate(new Date()));
+                    while (iterator.hasNext()) {
+                        of = iterator.next().getValue(Offer.class);
+                        if (Double.parseDouble(of.getCreatedAt()) <= dateNow && Double.parseDouble(of.getEndTime()) > dateNow) {
+                            lstOffers.add(of);
+                            lstOffersTitles.add(of.getTitle());
+                            adapter.notifyDataSetChanged();
+                            UtilityGeneral.setListViewHeightBasedOnChildren(lvOffers);
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        }
+        lvOffers.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Offer offer = lstOffers.get(position);
+                Intent intent = new Intent(getActivity(), DetailActivity.class);
+                FirebaseDatabase.getInstance().getReference("Offers").child(offer.getCity()).child(offer.getCategoryName()).child(offer.getObjectId()).child("viewNum").setValue(offer.getViewNum() + 1);
+                offer.setViewNum(offer.getViewNum() + 1);
+                intent.putExtra("offer", new Gson().toJson(offer));
+                startActivity(intent);
+            }
+        });
+        if (canEdit) {
+            lvOffers.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                @Override
+                public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+                    DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            switch (which) {
+                                case DialogInterface.BUTTON_POSITIVE:
+                                    FirebaseDatabase.getInstance().getReference("Offers").child(shop.getCity()).child(lstOffers.get(position).getCategoryName()).child(lstOffers.get(position).getObjectId()).removeValue(new DatabaseReference.CompletionListener() {
+                                        @Override
+                                        public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                                            lstOffersTitles.remove(position);
+                                            lstOffers.remove(position);
+                                            adapter.notifyDataSetChanged();
+                                            UtilityGeneral.setListViewHeightBasedOnChildren(lvOffers);
+                                        }
+                                    });
+                                    break;
+
+                                case DialogInterface.BUTTON_NEGATIVE:
+                                    break;
+                            }
+                        }
+                    };
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    builder.setMessage("انت عايز تمسح " + lstOffersTitles.get(position)).setPositiveButton("ايوه", dialogClickListener)
+                            .setNegativeButton("لا", dialogClickListener).show();
+                    return true;
+                }
+            });
+        }
     }
 
     private void btnsActions() {

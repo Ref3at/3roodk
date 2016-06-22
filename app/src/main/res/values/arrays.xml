@@ -13,16 +13,16 @@
         <item>أحذيه</item>
     </string-array>
 
-    <string-array name="governates">
-
-        <item>الدقهليه</item>
-        <item>طنطا</item>
-    </string-array>
-
-    <string-array name="cities">
-
-        <item>المنصوره</item>
-        <item>السنبلاوين</item>
+    <string-array name="cat_array_eng">
+        <item>Restaurants</item>
+        <item>Home Tools</item>
+        <item>Accessories</item>
+        <item>Mobiles</item>
+        <item>Computers</item>
+        <item>Shoes</item>
+        <item>Clothes</item>
+        <item>Super market</item>
+        <item>Services</item>
     </string-array>
 
     <string-array name="days_array">
