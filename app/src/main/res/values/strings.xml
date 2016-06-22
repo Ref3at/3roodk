@@ -4,12 +4,7 @@
     <string name="PARSE_APPLICATION_ID">sVTrTkJYklEq3JEYh7Xt26S1W7r7lwRe4n37Lmd6</string>
     <string name="URI">https://parseapi.back4app.com/classes/</string>
     <string name="facebook_application_id" translatable="false">1768742846677192</string>
-    <!-- hazem maps key -->
-    <string name="key_map">AIzaSyBDw98HmGde195atmc4qi6xhr7PWX0hHLg</string>
-
-
-    <!-- mohamed maps key -->
-    <!--<string name="key_map">AIzaSyAopijmR0CjdJJXF6KQgM7dRnosllvaPeQ</string>-->
+    <string name="key_map">AIzaSyBJXyfbeNhkrKAN6FN_5RZDLSUTskdNutU</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="sign_in">تسجيل الدخول</string>
