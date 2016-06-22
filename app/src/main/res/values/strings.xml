@@ -5,7 +5,7 @@
     <string name="URI">https://parseapi.back4app.com/classes/</string>
     <string name="facebook_application_id" translatable="false">1768742846677192</string>
     <!-- hazem maps key -->
-     <string name="key_map">AIzaSyBDw98HmGde195atmc4qi6xhr7PWX0hHLg</string>
+    <string name="key_map">AIzaSyBDw98HmGde195atmc4qi6xhr7PWX0hHLg</string>
 
 
     <!-- mohamed maps key -->

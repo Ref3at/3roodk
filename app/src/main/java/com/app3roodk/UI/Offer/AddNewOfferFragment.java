@@ -242,7 +242,7 @@ public class AddNewOfferFragment extends Fragment {
             public void onClick(View v) {
                 LinearLayout imgsContainer = (LinearLayout) rootView.findViewById(R.id.imgscontainer);
 
-                if (imgsContainer.getChildCount() > 2) {
+                if (imgsContainer.getChildCount() > 3) {
                     Toast.makeText(getActivity(), "you need to delete another images", Toast.LENGTH_SHORT).show();
                 } else {
                     selectImage(itemsContainer.indexOfChild(rootView));

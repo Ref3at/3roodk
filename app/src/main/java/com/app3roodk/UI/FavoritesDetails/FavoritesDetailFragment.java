@@ -1,4 +1,4 @@
-package com.app3roodk.UI.DetailActivity;
+package com.app3roodk.UI.FavoritesDetails;
 
 import android.app.Activity;
 import android.content.Context;
@@ -57,7 +57,10 @@ import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
 
-public class DetailFragment extends Fragment implements BaseSliderView.OnSliderClickListener, ViewPagerEx.OnPageChangeListener {
+/**
+ * Created by Refaat on 6/22/2016.
+ */
+public class FavoritesDetailFragment extends Fragment implements BaseSliderView.OnSliderClickListener, ViewPagerEx.OnPageChangeListener {
 
     final static long minutesInMilli = 1000 * 60;
     final static long hoursInMilli = minutesInMilli * 60;
@@ -113,9 +116,10 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
         init(rootView);
         fillViews();
+
         ShopViewsAndUpdateViewsNumber();
-        FirebaseDatabase.getInstance().getReference("Comments").child(offer.getObjectId()).addValueEventListener(postListener);
-        FirebaseDatabase.getInstance().getReference("Offers").child(offer.getCity()).child(offer.getCategoryName()).child(offer.getObjectId()).addValueEventListener(offerListener);
+        //FirebaseDatabase.getInstance().getReference("Comments").child(offer.getObjectId()).addValueEventListener(postListener);
+        //FirebaseDatabase.getInstance().getReference("Offers").child(offer.getCity()).child(offer.getCategoryName()).child(offer.getObjectId()).addValueEventListener(offerListener);
         clickConfig();
 
         new FetchFromDB(btnFavorite).execute();
@@ -326,16 +330,16 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
                                     String poster_loc;
                                     String backdroploc;
 
-                                    HashMap<String,String> shopInfoHashmap = new HashMap<String, String>();
+                                    HashMap<String, String> shopInfoHashmap = new HashMap<String, String>();
 
 
                                     @Override
                                     protected void onPreExecute() {
                                         super.onPreExecute();
                                         if (shop != null) {
-                                            shopInfoHashmap.put( "shopAddress" , shop.getAddress());
-                                            shopInfoHashmap.put( "shopWorkingTime" , shop.getWorkingTime());
-                                            shopInfoHashmap.put( "shopContacts", shop.getContacts());
+                                            shopInfoHashmap.put("shopAddress", shop.getAddress());
+                                            shopInfoHashmap.put("shopWorkingTime", shop.getWorkingTime());
+                                            shopInfoHashmap.put("shopContacts", shop.getContacts());
 
                                             offer.setShopInfoForFavoeites(ObjectConverter.fromHashmapToStringUsersRates(shopInfoHashmap));
                                         }
@@ -391,7 +395,7 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
         });
     }
 
-    private void ShopViewsAndUpdateViewsNumber() {
+   /* private void ShopViewsAndUpdateViewsNumber() {
         try {
             FirebaseDatabase.getInstance().getReference("Shops").child(offer.getUserId()).child(offer.getShopId()).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
@@ -404,7 +408,7 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
                    /* if (shop.getContacts().containsKey("Mobile"))
                         txtMobile.setText(shop.getContacts().get("Mobile"));
                     else
-                        txtMobile.setText("لا يوجد"); */
+                        txtMobile.setText("لا يوجد");/
                 }
 
                 @Override
@@ -414,6 +418,25 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
 
         } catch (Exception ex) {
         }
+
+    } */
+
+    private void ShopViewsAndUpdateViewsNumber() {
+
+        if (offer.getShopInfoForFavoeites() != null) {
+
+
+            HashMap<String, String> shopInfoHashmap = new HashMap<String, String>();
+
+            shopInfoHashmap = ObjectConverter.fromStringToHashmapUsersRates(offer.getShopInfoForFavoeites());
+
+
+            txtAddress.setText(shopInfoHashmap.get("shopAddress"));
+            txtWorkTime.setText(shopInfoHashmap.get("shopWorkingTime"));
+            txtMobile.setText(shopInfoHashmap.get("shopContacts"));
+
+        }
+
 
     }
 

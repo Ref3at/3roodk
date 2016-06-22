@@ -1,12 +1,10 @@
-package com.app3roodk.UI.Favorites;
+package com.app3roodk.UI.FavoritesCards;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
 import com.app3roodk.R;
-import com.app3roodk.UI.DetailActivity.DetailFragment;
-import com.app3roodk.UI.Offer.AddNewOfferFragment;
 
 public class FavoritesActivity extends AppCompatActivity {
 

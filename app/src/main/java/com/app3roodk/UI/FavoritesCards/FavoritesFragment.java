@@ -1,15 +1,13 @@
-package com.app3roodk.UI.Favorites;
+package com.app3roodk.UI.FavoritesCards;
 
 
 import android.content.Intent;
 import android.database.Cursor;
-import android.location.Address;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +20,7 @@ import com.app3roodk.R;
 import com.app3roodk.Schema.Offer;
 import com.app3roodk.Schema.TestTable;
 import com.app3roodk.UI.DetailActivity.DetailActivity;
+import com.app3roodk.UI.FavoritesDetails.FavoritesDetailActivity;
 import com.bumptech.glide.Glide;
 
 import com.google.firebase.database.FirebaseDatabase;
@@ -136,7 +135,7 @@ public class FavoritesFragment extends Fragment {
 
             cardHolder.discount.setText(String.format("%.0f", (1 - (Double.parseDouble(lstOffers.get(position).getItems().get(0).getPriceAfter()) / Double.parseDouble(lstOffers.get(position).getItems().get(0).getPriceBefore()))) * 100) + "%");
             fillTimer(cardHolder, position);
-//            Glide.with(cardHolder.itemView.getContext()).load(lstOffers.get(position).getItems().get(0).getImagePaths().get(0)).into(cardHolder.imgCard);
+           Glide.with(cardHolder.itemView.getContext()).load(lstOffers.get(position).getItems().get(0).getImagePaths().get(0)).into(cardHolder.imgCard);
         }
 
         @Override
@@ -176,7 +175,7 @@ class CardHolder extends RecyclerView.ViewHolder {
         itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(v.getContext(), DetailActivity.class);
+                Intent intent = new Intent(v.getContext(), FavoritesDetailActivity.class);
                 FirebaseDatabase.getInstance().getReference("Offers").child(offer.getCity()).child(offer.getCategoryName()).child(offer.getObjectId()).child("viewNum").setValue(offer.getViewNum() + 1);
                 offer.setViewNum(offer.getViewNum() + 1);
                 intent.putExtra("offer", new Gson().toJson(offer));

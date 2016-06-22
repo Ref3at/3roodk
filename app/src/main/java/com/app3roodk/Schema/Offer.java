@@ -73,13 +73,20 @@ public class Offer {
     /*
      * as simple content provider does not accept arraylist and hashmap
      * so we use another two String variables to represent them
+     *
+     * also we use one another string to represent shop info requried by favorites view
     */
+    @SimpleSQLColumn("shopInfoForFavoeites")
+    String shopInfoForFavoeites;
+
     @SimpleSQLColumn("hashmapUsersRates")
     private String hashmapUsersRates;
 
 
     @SimpleSQLColumn("arrayListItems")
     private String arrayListItems;
+
+
     private HashMap<String, String> usersRates;
     // ref3t add
     // private ArrayList<String> ImagePaths = new ArrayList<>(); // later will be <img> //*
@@ -93,6 +100,15 @@ public class Offer {
 
     public Offer() {
     }
+
+    public String getShopInfoForFavoeites() {
+        return shopInfoForFavoeites;
+    }
+
+    public void setShopInfoForFavoeites(String shopInfoForFavoeites) {
+        this.shopInfoForFavoeites = shopInfoForFavoeites;
+    }
+
 
     // rate
 

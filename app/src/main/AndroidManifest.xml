@@ -55,26 +55,26 @@
         </activity>
         <activity android:name=".UI.Shop.ViewShopActivity" />
         <activity android:name=".UI.Feedback.FeedbackActivity" />
-        <activity android:name=".UI.Favorites.FavoritesActivity" />
+        <activity android:name=".UI.FavoritesCards.FavoritesActivity" />
         <activity android:name=".UI.Shop.ListShopsActivity" />
-        <activity android:name=".UI.About.AboutActivity"></activity>
+        <activity android:name=".UI.About.AboutActivity" />
 
-        <service
-            android:name=".NotificationServices.MessagingService">
+        <service android:name=".NotificationServices.MessagingService">
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-        <service
-            android:name=".NotificationServices.InstanceIDService">
+        <service android:name=".NotificationServices.InstanceIDService">
             <intent-filter>
-                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
 
         <provider
-            android:name="com.app3roodk.TestProvider"
+            android:name=".TestProvider"
             android:authorities="com.app3roodk.authority" />
+
+        <activity android:name=".UI.FavoritesDetails.FavoritesDetailActivity"></activity>
     </application>
 
 </manifest>
