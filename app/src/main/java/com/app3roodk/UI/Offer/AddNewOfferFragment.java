@@ -56,8 +56,10 @@ import java.util.UUID;
 
 public class AddNewOfferFragment extends Fragment {
 
-    //  ArrayList<String> images_id = new ArrayList<>();
-    ArrayList<String>[] images_id_Array = new ArrayList[3];
+  //  ArrayList<String> images_id = new ArrayList<>();
+    ArrayList<String> [] images_id_Array = new ArrayList[3];
+
+
 
 
     ArrayList<Item> items_list = new ArrayList<>();
@@ -102,9 +104,9 @@ public class AddNewOfferFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        images_id_Array[0] = new ArrayList<>();
-        images_id_Array[1] = new ArrayList<>();
-        images_id_Array[2] = new ArrayList<>();
+        images_id_Array [0]=  new ArrayList<>();
+        images_id_Array [1]=  new ArrayList<>();
+        images_id_Array [2]=  new ArrayList<>();
 
 
         REQUEST_CAMERA.add(55);
@@ -215,6 +217,8 @@ public class AddNewOfferFragment extends Fragment {
         inputPriceAfter.addTextChangedListener(new MyTextWatcher(inputPriceAfter));
 
 
+
+
         ImageButton delete_Button = (ImageButton) rootView.findViewById(R.id.delete_item);
         delete_Button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -224,8 +228,11 @@ public class AddNewOfferFragment extends Fragment {
                 itemsContainer.removeView(rootView);
 
 
+
             }
         });
+
+
 
 
         ImageButton imageButton = (ImageButton) rootView.findViewById(R.id.add_new_image);
@@ -287,7 +294,7 @@ public class AddNewOfferFragment extends Fragment {
             RelativeLayout rootv = (RelativeLayout) itemsContainer.getChildAt(i);
             Item item = new Item();
 
-            EditText inputPriceBefore = (EditText) rootv.findViewById(R.id.input_pricebefore);
+            EditText  inputPriceBefore = (EditText) rootv.findViewById(R.id.input_pricebefore);
             EditText inputPriceAfter = (EditText) rootv.findViewById(R.id.input_priceafter);
 
             item.setPriceBefore(inputPriceBefore.getText().toString());
@@ -357,7 +364,7 @@ public class AddNewOfferFragment extends Fragment {
 
     private Boolean validateImagesIDs() {
 
-        if (images_id_Array[0].size() < 1 || images_id_Array[1].size() < 1 || images_id_Array[2].size() < 1) {
+        if (images_id_Array[0].size() < 1 && images_id_Array[1].size() < 1&& images_id_Array[2].size() < 1) {
 
             Toast.makeText(getActivity(), "يجب اضافه صور للعرض", Toast.LENGTH_SHORT).show();
             return false;
@@ -439,6 +446,9 @@ public class AddNewOfferFragment extends Fragment {
     }
 
 
+
+
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -446,12 +456,11 @@ public class AddNewOfferFragment extends Fragment {
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode < 50) {
                 Uri u = data.getData();
-                onSelectFromGalleryResult(data, u, requestCode);
+                    onSelectFromGalleryResult(data, u, requestCode);
 
             } else if (requestCode > 50) {
-                Uri u = data.getData();
-                onCaptureImageResult(data, u, requestCode);
-            }
+                    Uri u = data.getData();
+                    onCaptureImageResult(data, u, requestCode);}
 
         }
     }
@@ -522,11 +531,11 @@ public class AddNewOfferFragment extends Fragment {
             theIndex = (requestCode / 11) - 5;
         }
         LinearLayout imgsContainer = null;
-        if (itemsContainer != null) {
-            imgsContainer = (LinearLayout) itemsContainer.getChildAt(theIndex).findViewById(R.id.imgscontainer);
+if (itemsContainer!=null) {
+     imgsContainer = (LinearLayout) itemsContainer.getChildAt(theIndex).findViewById(R.id.imgscontainer);
 
-            imgsContainer.addView(rootview);
-        }
+    imgsContainer.addView(rootview);
+}
         final ImageView imageView = (ImageView) rootview.findViewById(R.id.theimage);
         imageView.setImageBitmap(thumbnail);
         imageView.setAlpha(0.5f);
@@ -547,8 +556,8 @@ public class AddNewOfferFragment extends Fragment {
                 //**************************************************************************
                 /// error here   the id come from asyns after we delete the image
 
-                if (images_id_Array[finalTheIndex].size() > 0 && !images_id_Array[finalTheIndex].get(finalImgsContainer.indexOfChild(rootview) - 1).isEmpty()) {
-                    images_id_Array[finalTheIndex].remove(finalImgsContainer.indexOfChild(rootview) - 1);
+                if (images_id_Array[finalTheIndex].size() > 0 && !images_id_Array[finalTheIndex].get(finalImgsContainer.indexOfChild(rootview)-1).isEmpty()) {
+                    images_id_Array[finalTheIndex].remove(finalImgsContainer.indexOfChild(rootview)-1);
                 }
                 finalImgsContainer.removeView(rootview);
             }
@@ -703,7 +712,7 @@ public class AddNewOfferFragment extends Fragment {
 
             this.imageView = imageView;
             this.imageViewdone = imgdn;
-            this.x = y;
+            this.x = y ;
         }
 
         @Override
