@@ -2,7 +2,6 @@ package com.app3roodk.UI.CategoriesActivity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -17,10 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.app3roodk.Back4App.UtilityRestApi;
-import com.app3roodk.ObjectConverter;
 import com.app3roodk.R;
-import com.app3roodk.Schema.User;
 import com.app3roodk.UI.About.AboutActivity;
 import com.app3roodk.UI.FavoritesCards.FavoritesActivity;
 import com.app3roodk.UI.Feedback.FeedbackActivity;
@@ -31,12 +27,8 @@ import com.app3roodk.UI.Shop.ListShopsActivity;
 import com.app3roodk.UI.Shop.ShopActivity;
 import com.app3roodk.UtilityGeneral;
 import com.firebase.ui.auth.AuthUI;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.loopj.android.http.TextHttpResponseHandler;
-
-import cz.msebera.android.httpclient.Header;
 
 public class CategoriesActivity extends AppCompatActivity {
 
@@ -111,11 +103,6 @@ public class CategoriesActivity extends AppCompatActivity {
                             case R.id.action_home:
                                 mDrawerLayout.closeDrawer(GravityCompat.END);
                                 finish();
-                                return true;
-
-                            case R.id.action_new_location:
-                                mDrawerLayout.closeDrawer(GravityCompat.END);
-                                changeLocation();
                                 return true;
 
                             case R.id.action_view_my_shop:
@@ -259,43 +246,6 @@ public class CategoriesActivity extends AppCompatActivity {
         }
     }
 
-    private void changeLocation() {
-        LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                Toast.makeText(getBaseContext(), "Open Location First", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-            }
-        } else {
-            try {
-                final User user;
-                LatLng latLng = UtilityGeneral.getCurrentLonAndLat(getBaseContext());
-                if (!UtilityGeneral.isRegisteredUser(getBaseContext())) {
-                    user = new User();
-                    user.setLat(String.valueOf(latLng.latitude));
-                    user.setLon(String.valueOf(latLng.longitude));
-                    UtilityGeneral.saveUser(getBaseContext(), user);
-                } else {
-                    user = UtilityGeneral.loadUser(getBaseContext());
-                    user.setLat(String.valueOf(latLng.latitude));
-                    user.setLon(String.valueOf(latLng.longitude));
-                    UtilityRestApi.updateUser(getBaseContext(), user.getObjectId(), ObjectConverter.convertUserToHashMap(user), new TextHttpResponseHandler() {
-                        @Override
-                        public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                        }
-
-                        @Override
-                        public void onSuccess(int statusCode, Header[] headers, String responseString) {
-                            UtilityGeneral.saveUser(getBaseContext(), user);
-                        }
-                    });
-                }
-            } catch (Exception ex) {
-                Toast.makeText(getBaseContext(), "Make sure that Location Permission is allowed on your device!", Toast.LENGTH_LONG).show();
-            }
-        }
-    }
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -314,7 +264,7 @@ public class CategoriesActivity extends AppCompatActivity {
                 startActivity(intent);
                 finish();
             } else {
-                Toast.makeText(this, "Press Back again to Exit.",
+                Toast.makeText(this, "اضغط مره كمان علشان تقفل",
                         Toast.LENGTH_SHORT).show();
                 exit = true;
                 new Handler().postDelayed(new Runnable() {

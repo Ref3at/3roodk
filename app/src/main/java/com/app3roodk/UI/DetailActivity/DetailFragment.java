@@ -101,7 +101,6 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
         }
     };
 
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -117,9 +116,7 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
         FirebaseDatabase.getInstance().getReference("Comments").child(offer.getObjectId()).addValueEventListener(postListener);
         FirebaseDatabase.getInstance().getReference("Offers").child(offer.getCity()).child(offer.getCategoryName()).child(offer.getObjectId()).addValueEventListener(offerListener);
         clickConfig();
-
         new FetchFromDB(btnFavorite).execute();
-
         return rootView;
     }
 
@@ -227,12 +224,12 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
                     float diff = rating - Float.parseFloat(offer.getUsersRates().get(userId));
                     offer.getUsersRates().remove(userId);
                     offer.getUsersRates().put(userId, String.valueOf(rating));
-                    offer.setTotalRate(String.valueOf(Float.parseFloat(offer.getTotalRate()) + diff));
-                    offer.setAverageRate(String.valueOf(Float.parseFloat(offer.getTotalRate()) / offer.getUsersRates().size()));
+                    offer.setTotalRate(String.format("%.0f",Float.parseFloat(offer.getTotalRate()) + diff));
+                    offer.setAverageRate(String.format("%.0f",Float.parseFloat(offer.getTotalRate()) / offer.getUsersRates().size()));
                 } else {
                     offer.getUsersRates().put(userId, String.valueOf(rating));
-                    offer.setTotalRate(String.valueOf(Float.parseFloat(offer.getTotalRate()) + rating));
-                    offer.setAverageRate(String.valueOf(Float.parseFloat(offer.getTotalRate()) / offer.getUsersRates().size()));
+                    offer.setTotalRate(String.format("%.0f",Float.parseFloat(offer.getTotalRate()) + rating));
+                    offer.setAverageRate(String.format("%.0f",Float.parseFloat(offer.getTotalRate()) / offer.getUsersRates().size()));
                 }
 
                 HashMap<String, Object> childUpdates = new HashMap<>();
@@ -620,9 +617,7 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
             ItemFav.setImageResource(numRows >= 1 ?
                     android.R.drawable.btn_star_big_on :
                     R.drawable.abc_btn_rating_star_off_mtrl_alpha);
-
         }
-
     }
 }
 

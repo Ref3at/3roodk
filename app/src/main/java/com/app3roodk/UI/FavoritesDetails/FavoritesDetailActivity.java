@@ -4,7 +4,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.app3roodk.R;
-import com.app3roodk.UI.DetailActivity.DetailFragment;
 
 public class FavoritesDetailActivity extends AppCompatActivity {
 

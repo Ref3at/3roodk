@@ -1,8 +1,6 @@
 <resources>
     <string name="app_name">3roodk</string>
-    <string name="PARSE_REST_API_KEY">oNFr8kLUHfVnKBMtme3G2kz6xDVt3pOxdj7ouB3A</string>
-    <string name="PARSE_APPLICATION_ID">sVTrTkJYklEq3JEYh7Xt26S1W7r7lwRe4n37Lmd6</string>
-    <string name="URI">https://parseapi.back4app.com/classes/</string>
+
     <string name="facebook_application_id" translatable="false">229239990794131</string>
     <string name="key_map">AIzaSyBJXyfbeNhkrKAN6FN_5RZDLSUTskdNutU</string>
 

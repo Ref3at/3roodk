@@ -1,9 +1,7 @@
 package com.app3roodk.UI.OffersCards;
 
 import android.content.Intent;
-import android.location.Address;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -28,14 +26,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
-import com.squareup.picasso.Picasso;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.List;
 
 public class CardsFragment extends Fragment {
 
@@ -62,14 +57,6 @@ public class CardsFragment extends Fragment {
         initListener();
         fetchOffers();
         return recyclerView;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-//        Log.e("asdasd","adasdsadsa");
-
     }
 
     private void fetchOffers() {
@@ -194,8 +181,15 @@ public class CardsFragment extends Fragment {
             cardHolder.discount.setText(String.format("%.0f", (1 - (Double.parseDouble(lstOffers.get(position).getItems().get(0).getPriceAfter()) / Double.parseDouble(lstOffers.get(position).getItems().get(0).getPriceBefore()))) * 100) + "%");
             fillTimer(cardHolder, position);
             Glide.with(cardHolder.itemView.getContext()).load(lstOffers.get(position).getItems().get(0).getImagePaths().get(0)).into(cardHolder.imgCard);
-          //  Picasso.with(cardHolder.itemView.getContext()).load(lstOffers.get(position).getItems().get(0).getImagePaths().get(0)).into(cardHolder.imgCard);
-
+            try{
+                cardHolder.distance.setText(String.valueOf(UtilityGeneral.calculateDistanceInKM(
+                        Double.parseDouble(lstOffers.get(position).getLat()),
+                        Double.parseDouble(lstOffers.get(position).getLon()),
+                        UtilityGeneral.getCurrentLonAndLat(cardHolder.itemView.getContext()).latitude,
+                        UtilityGeneral.getCurrentLonAndLat(cardHolder.itemView.getContext()).longitude))+"km");
+                cardHolder.distance.setVisibility(View.VISIBLE);
+            }
+            catch (Exception ex){cardHolder.distance.setVisibility(View.INVISIBLE);}
         }
 
         @Override

@@ -66,6 +66,4 @@ public class CustomImagesSlider extends BaseSliderView {
         bindEventAndShow(v, target);
         return v;
     }
-
-
 }

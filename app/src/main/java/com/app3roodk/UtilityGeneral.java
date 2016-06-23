@@ -78,6 +78,7 @@ public class UtilityGeneral {
         }
         return city;
     }
+
     static public String getCurrentCityEnglish(Context context) {
         String city;
         try {
@@ -96,7 +97,6 @@ public class UtilityGeneral {
         }
         return city;
     }
-
 
     static public List<Address> getCurrentGovAndCity(Context context, LatLng latLng) {
         List<Address> addresses = null;
@@ -138,6 +138,20 @@ public class UtilityGeneral {
         Intent mapsShopsIntent = new Intent(context, MapsShopsActivity.class);
         mapsShopsIntent.putExtra("JsonShops", new Gson().toJson(lstShops));
         return mapsShopsIntent;
+    }
+
+    static public double calculateDistanceInKM(double latA,double lngA , double latB,double lngB)
+    {
+        Location locationA = new Location("point A");
+
+        locationA.setLatitude(latA);
+        locationA.setLongitude(lngA);
+
+        Location locationB = new Location("point B");
+
+        locationB.setLatitude(latB);
+        locationB.setLongitude(lngB);
+        return Math.round((locationA.distanceTo(locationB)/1000)*1000d)/1000d;
     }
 
     static public void sortOffersByViews(ArrayList<Offer> lstOffers) {

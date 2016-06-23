@@ -36,7 +36,6 @@ public class MapsShopLocationActivity extends AppCompatActivity {
                 initMAPS_fromEditing();
             }
             Toast.makeText(getBaseContext(), "اضغط ضغطه طويله علشان تختار المكان", Toast.LENGTH_LONG).show();
-
         }
         btnHere.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -50,7 +49,6 @@ public class MapsShopLocationActivity extends AppCompatActivity {
         marker = map.addMarker(new MarkerOptions().position(CreateShopFragment.latLngShop).title("Shop").icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_account_balance_black_24dp)));
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(CreateShopFragment.latLngShop, 12));
         map.animateCamera(CameraUpdateFactory.zoomTo(16), 2000, null);
-
         map.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
             @Override
             public void onMapLongClick(final LatLng latLng) {
@@ -65,7 +63,6 @@ public class MapsShopLocationActivity extends AppCompatActivity {
         marker = map.addMarker(new MarkerOptions().position(ViewShopFragment.latLngShop_Editing).title("Shop").icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_account_balance_black_24dp)));
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(ViewShopFragment.latLngShop_Editing, 12));
         map.animateCamera(CameraUpdateFactory.zoomTo(16), 2000, null);
-
         map.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
             @Override
             public void onMapLongClick(final LatLng latLng) {

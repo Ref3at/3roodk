@@ -19,7 +19,6 @@ import android.widget.Toast;
 import com.app3roodk.R;
 import com.app3roodk.Schema.Offer;
 import com.app3roodk.Schema.TestTable;
-import com.app3roodk.UI.DetailActivity.DetailActivity;
 import com.app3roodk.UI.FavoritesDetails.FavoritesDetailActivity;
 import com.bumptech.glide.Glide;
 
@@ -29,10 +28,7 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-/**
- * Created by Refaat on 6/19/2016.
- *
- */
+
 public class FavoritesFragment extends Fragment {
 
     ArrayList<Offer> lstOffers;

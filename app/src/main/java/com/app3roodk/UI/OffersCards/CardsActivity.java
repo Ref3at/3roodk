@@ -23,7 +23,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.app3roodk.Back4App.UtilityRestApi;
 import com.app3roodk.Constants;
 import com.app3roodk.ObjectConverter;
 import com.app3roodk.R;
@@ -116,11 +115,6 @@ public class CardsActivity extends AppCompatActivity {
                                 finish();
                                 return true;
 
-                            case R.id.action_new_location:
-                                mDrawerLayout.closeDrawer(GravityCompat.END);
-                                changeLocation();
-                                return true;
-
                             case R.id.action_view_my_shop:
                                 mDrawerLayout.closeDrawer(GravityCompat.END);
                                 startActivity(new Intent(CardsActivity.this, ListShopsActivity.class));
@@ -191,44 +185,6 @@ public class CardsActivity extends AppCompatActivity {
         startActivity(getOpenFacebookIntent(getApplicationContext()));
     }
 
-    private void changeLocation() {
-        LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                Toast.makeText(getBaseContext(), "Open Location First", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-            }
-        } else {
-            try {
-                final User user;
-                LatLng latLng = UtilityGeneral.getCurrentLonAndLat(getBaseContext());
-                if (!UtilityGeneral.isRegisteredUser(getBaseContext())) {
-                    user = new User();
-                    user.setLat(String.valueOf(latLng.latitude));
-                    user.setLon(String.valueOf(latLng.longitude));
-                    UtilityGeneral.saveUser(getBaseContext(), user);
-                } else {
-                    user = UtilityGeneral.loadUser(getBaseContext());
-                    user.setLat(String.valueOf(latLng.latitude));
-                    user.setLon(String.valueOf(latLng.longitude));
-                    UtilityRestApi.updateUser(getBaseContext(), user.getObjectId(), ObjectConverter.convertUserToHashMap(user), new TextHttpResponseHandler() {
-                        @Override
-                        public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                        }
-
-                        @Override
-                        public void onSuccess(int statusCode, Header[] headers, String responseString) {
-                            UtilityGeneral.saveUser(getBaseContext(), user);
-                        }
-                    });
-                }
-            } catch (Exception ex) {
-                Toast.makeText(getBaseContext(), "Make sure that Location Permission is allowed on your device!", Toast.LENGTH_LONG).show();
-                Log.e("CategoryActivity", ex.getMessage());
-            }
-        }
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
@@ -238,21 +194,14 @@ public class CardsActivity extends AppCompatActivity {
     // Add Fragments to Tabs
     private void setupViewPager(ViewPager viewPager) {
         Adapter adapter = new Adapter(getSupportFragmentManager());
-
         Bundle arguments1 = new Bundle();
-        // arguments1.putString("ref",ref1);
-
-
         CardsFragment cardContentFragment1 = new CardsFragment();
         if (!cardContentFragment1.isAdded()) {
             cardContentFragment1.setArguments(arguments1);
             cardContentFragment1.fragmentType = Constants.FRAGMENT_NEWEST;
         }
         adapter.addFragment(cardContentFragment1, "الأحدث");
-
         Bundle arguments2 = new Bundle();
-        // arguments2.putString("ref", ref2);
-
         CardsFragment cardContentFragment2 = new CardsFragment();
         if (!cardContentFragment2.isAdded()) {
             cardContentFragment2.setArguments(arguments2);
@@ -260,11 +209,7 @@ public class CardsActivity extends AppCompatActivity {
 
         }
         adapter.addFragment(cardContentFragment2, "الأكثر مشاهده");
-
-
         Bundle arguments3 = new Bundle();
-        // arguments3.putString("ref", ref3);
-
         CardsFragment cardContentFragment3 = new CardsFragment();
         if (!cardContentFragment3.isAdded()) {
             cardContentFragment3.setArguments(arguments3);
@@ -272,7 +217,6 @@ public class CardsActivity extends AppCompatActivity {
 
         }
         adapter.addFragment(cardContentFragment3, "عروض مميزه");
-
         viewPager.setAdapter(adapter);
     }
 

@@ -47,6 +47,5 @@ public class MapsShopsActivity extends AppCompatActivity {
         map.animateCamera(CameraUpdateFactory.zoomTo(10), 2000, null);
     }
     //endregion
-
 }
 

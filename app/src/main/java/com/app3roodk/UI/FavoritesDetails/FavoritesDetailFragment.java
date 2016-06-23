@@ -57,9 +57,6 @@ import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
 
-/**
- * Created by Refaat on 6/22/2016.
- */
 public class FavoritesDetailFragment extends Fragment implements BaseSliderView.OnSliderClickListener, ViewPagerEx.OnPageChangeListener {
 
     final static long minutesInMilli = 1000 * 60;

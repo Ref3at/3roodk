@@ -6,7 +6,6 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.app3roodk.R;
 
-
 public class DetailActivity extends AppCompatActivity {
 
     @Override

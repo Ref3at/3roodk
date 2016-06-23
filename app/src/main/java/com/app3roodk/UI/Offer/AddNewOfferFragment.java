@@ -52,7 +52,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.UUID;
 
 public class AddNewOfferFragment extends Fragment {
 
@@ -620,54 +619,6 @@ if (itemsContainer!=null) {
         } catch (Exception ex) {
             Log.e("AddNewOfferFrag", ex.getMessage());
         }
-
-    }
-
-    private String getCategoryId(BetterSpinner category_spinner) {
-        String categoryName = category_spinner.getText().toString();
-        String cat_id = null;
-
-        switch (categoryName) {
-            case "مطاعم":
-                cat_id = Constants.CATEGORY_RESTAURANTS;
-                break;
-            case "سوبر ماركت":
-                cat_id = Constants.CATEGORY_SUPER_MARKET;
-
-                break;
-            case "أدوات منزليه":
-                cat_id = Constants.CATEGORY_HOME_TOOLS;
-
-                break;
-            case "موبايل":
-                cat_id = Constants.CATEGORY_MOBILES;
-
-                break;
-            case "كمبيوتر":
-                cat_id = Constants.CATEGORY_COMPUTERS;
-
-                break;
-            case "أدوات كهربائيه":
-                cat_id = Constants.CATEGORY_ELECTRICAl_TOOLS;
-
-                break;
-            case "إكسسوار":
-                cat_id = Constants.CATEGORY_ACCESSORIES;
-                break;
-            case "خدمات":
-                cat_id = Constants.CATEGORY_SERVICES;
-
-                break;
-            case "ملابس":
-                cat_id = Constants.CATEGORY_CLOTHES;
-
-                break;
-            case "أحذيه":
-                cat_id = Constants.CATEGORY_SHOES;
-
-                break;
-        }
-        return cat_id;
     }
 
     private class MyTextWatcher implements TextWatcher {

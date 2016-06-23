@@ -5,11 +5,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
 import com.app3roodk.R;
-import com.app3roodk.UI.Signing.SignInFragment;
-
-/**
- * Created by ZooM- on 5/7/2016.
- */
 
 public class ListShopsActivity extends AppCompatActivity {
 
