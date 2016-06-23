@@ -36,7 +36,10 @@
         </activity>
         <activity android:name=".UI.PositioningActivity.PositioningActivity" />
         <activity android:name=".UI.CategoriesActivity.CategoriesActivity" />
-        <activity android:name=".UI.DetailActivity.DetailActivity" />
+        <activity android:name=".UI.DetailActivity.DetailActivity">
+        <intent-filter>   <action android:name="OPEN_ACTIVITY_1" />
+            <category android:name="android.intent.category.DEFAULT" />
+        </intent-filter></activity>
         <activity android:name=".UI.Shop.ShopActivity" />
         <activity android:name=".UI.Offer.OfferActivity" />
         <activity android:name=".UI.Signing.SignUpActivity" />

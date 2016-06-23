@@ -57,7 +57,7 @@ public class CategoriesActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                UtilityGeneral.getCurrentCity(getBaseContext());
+                UtilityGeneral.getCurrentCityEnglish(getBaseContext());
             }
         }).start();
     }

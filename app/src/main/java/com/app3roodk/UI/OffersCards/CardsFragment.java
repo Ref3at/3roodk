@@ -78,7 +78,7 @@ public class CardsFragment extends Fragment {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        final String city = UtilityGeneral.getCurrentCity(getActivity());
+                        final String city = UtilityGeneral.getCurrentCityEnglish(getActivity());
                         try {
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
@@ -104,7 +104,7 @@ public class CardsFragment extends Fragment {
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            UtilityGeneral.getCurrentCity(getActivity());
+                            UtilityGeneral.getCurrentCityEnglish(getActivity());
                         }
                     }).start();
                 } catch (Exception ex) {

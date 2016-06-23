@@ -78,6 +78,24 @@ public class UtilityGeneral {
         }
         return city;
     }
+    static public String getCurrentCityEnglish(Context context) {
+        String city;
+        try {
+            LatLng latlng = getCurrentLonAndLat(context);
+            Geocoder geo = new Geocoder(context, Locale.ENGLISH);
+            List<Address> addresses  = geo.getFromLocation(latlng.latitude, latlng.longitude, 1);
+            if(addresses != null) {
+                city = addresses.get(0).getAddressLine(2);
+                City =city;
+                saveCity(context,city);
+            }
+            else
+                city = loadCity(context);
+        } catch (Exception e) {
+            city = loadCity(context);
+        }
+        return city;
+    }
 
 
     static public List<Address> getCurrentGovAndCity(Context context, LatLng latLng) {

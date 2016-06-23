@@ -197,10 +197,10 @@ public class FavoritesDetailFragment extends Fragment implements BaseSliderView.
                             if (!(offer.getUserNotificationToken() == null || offer.getUserNotificationToken().isEmpty()
                                     || offer.getShopName() == comment.getUserName())) {
                                 HashMap<String, String> mapOffer = new HashMap<>();
-                                mapOffer.put("offerId", offer.getObjectId());
+                                mapOffer.put("offer", new Gson().toJson(offer));
                                 UtilityCloudMessaging.sendNotification(getActivity(), offer.getUserNotificationToken(),
                                         UtilityCloudMessaging.COMMENT_TITLE, comment.getUserName() + UtilityCloudMessaging.COMMENT_BODY,
-                                        offer.getObjectId(), mapOffer, new TextHttpResponseHandler() {
+                                        offer.getObjectId(), mapOffer,"OPEN_ACTIVITY_1" ,new TextHttpResponseHandler() {
                                             @Override
                                             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                                                 Log.e("asdasd", responseString);

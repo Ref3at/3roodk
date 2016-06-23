@@ -17,7 +17,7 @@ public class UtilityCloudMessaging {
     static public String COMMENT_TITLE = "3roodk";
     static public String COMMENT_BODY = " commented on your offer";
 
-    static public void sendNotification(Context context, String sendToToken, String title, String body, String tag, HashMap<String, String> data, TextHttpResponseHandler handler) {
+    static public void sendNotification(Context context, String sendToToken, String title, String body, String tag, HashMap<String, String> data,String clickAction ,TextHttpResponseHandler handler) {
         AsyncHttpClient client = new AsyncHttpClient();
         client.addHeader("Authorization", "key="+Constants.FIREBASE_SERVER_KEY_CLOUD_MESSAGING);
         client.addHeader("Content-Type", "application/json");
@@ -27,6 +27,8 @@ public class UtilityCloudMessaging {
         HashMap<String, Object> NotificationMap = new HashMap<>();
         NotificationMap.put("title", title);
         NotificationMap.put("body", body);
+        NotificationMap.put("sound", "default");
+        NotificationMap.put("click_action", clickAction);
         NotificationMap.put("tag", tag);
         Properties.put("notification", NotificationMap);
         if(data!=null)
