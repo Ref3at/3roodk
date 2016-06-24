@@ -87,6 +87,8 @@ public class UtilityGeneral {
             List<Address> addresses  = geo.getFromLocation(latlng.latitude, latlng.longitude, 1);
             if(addresses != null) {
                 city = addresses.get(0).getAddressLine(2);
+                if(city == null || city.equals("null"))
+                    city= addresses.get(0).getAddressLine(1);
                 City =city;
                 saveCity(context,city);
             }

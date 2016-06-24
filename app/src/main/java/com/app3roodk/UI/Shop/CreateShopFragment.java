@@ -274,6 +274,8 @@ public class CreateShopFragment extends Fragment {
         shop.setWorkingTime(inputWorkingTime.getText().toString());
         shop.setLogoId(mlogoId);
         shop.setCity(addresses.get(0).getAddressLine(2));
+        if(shop.getCity() == null ||shop.getCity().equals("null"))
+            shop.setCity(addresses.get(0).getAddressLine(1));
         shop.setGovernate(addresses.get(0).getAddressLine(3));
         shop.setLon(String.valueOf(latLngShop.longitude));
         shop.setLat(String.valueOf(latLngShop.latitude));

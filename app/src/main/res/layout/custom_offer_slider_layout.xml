@@ -12,7 +12,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="200dp"
+            android:layout_height="270dp"
             android:orientation="vertical">
 
 
@@ -51,6 +51,7 @@
             android:id="@+id/price_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="#909090"
             android:orientation="horizontal">
 
             <LinearLayout
@@ -62,6 +63,11 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+
+                    android:layout_gravity="center_horizontal"
+                    android:textStyle="bold"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
                     android:text="نسبه الخصم" />
 
 
@@ -69,9 +75,10 @@
                     android:id="@+id/sale_percent"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="#dd1616"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
+                    android:layout_gravity="center_horizontal"
+                    android:textStyle="bold"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"/>
 
             </LinearLayout>
 
@@ -84,6 +91,10 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:textStyle="bold"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
                     android:text="بعد الخصم" />
 
 
@@ -91,9 +102,10 @@
                     android:id="@+id/price_after"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="#dd1616"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
+                    android:layout_gravity="center_horizontal"
+                    android:textStyle="bold"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"/>
 
             </LinearLayout>
 
@@ -106,6 +118,11 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+
+                    android:layout_gravity="center_horizontal"
+                    android:textStyle="bold"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
                     android:text="قبل الخصم" />
 
 
@@ -113,9 +130,10 @@
                     android:id="@+id/price_before"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="#dd1616"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
+                    android:layout_gravity="center_horizontal"
+                    android:textStyle="bold"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"/>
 
             </LinearLayout>
 
