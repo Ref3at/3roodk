@@ -241,6 +241,7 @@ public class CardsActivity extends AppCompatActivity {
             nav_Menu.findItem(R.id.action_logout).setVisible(false);
             nav_Menu.findItem(R.id.action_new_shop).setVisible(false);
             nav_Menu.findItem(R.id.action_add_offers).setVisible(false);
+            nav_Menu.findItem(R.id.action_view_my_shop).setVisible(false);
         }
     }
 

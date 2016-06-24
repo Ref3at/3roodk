@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -181,6 +182,8 @@ public class CardsFragment extends Fragment {
             cardHolder.discount.setText(String.format("%.0f", (1 - (Double.parseDouble(lstOffers.get(position).getItems().get(0).getPriceAfter()) / Double.parseDouble(lstOffers.get(position).getItems().get(0).getPriceBefore()))) * 100) + "%");
             fillTimer(cardHolder, position);
             Glide.with(cardHolder.itemView.getContext()).load(lstOffers.get(position).getItems().get(0).getImagePaths().get(0)).into(cardHolder.imgCard);
+            cardHolder.priceBefore.setText(cardHolder.offer.getItems().get(0).getPriceBefore());
+            cardHolder.priceAfter.setText(cardHolder.offer.getItems().get(0).getPriceAfter());
             try{
                 cardHolder.distance.setText(String.valueOf(UtilityGeneral.calculateDistanceInKM(
                         Double.parseDouble(lstOffers.get(position).getLat()),
@@ -209,14 +212,14 @@ public class CardsFragment extends Fragment {
 }
 
 class CardHolder extends RecyclerView.ViewHolder {
-    public TextView title, rate, distance, shopName, day, hour, minute, discount;
+    public TextView title, rate, distance, shopName, day, hour, minute, discount,priceBefore,priceAfter;
     public ImageView imgCard;
     public Offer offer;
 
-    ImageButton btnFavorite, btnShare;
+//    ImageButton btnFavorite, btnShare;
 
     public CardHolder(LayoutInflater inflater, ViewGroup parent) {
-        super(inflater.inflate(R.layout.card_item, parent, false));
+        super(inflater.inflate(R.layout.card_item_3, parent, false));
         init(itemView);
     }
 
@@ -225,13 +228,15 @@ class CardHolder extends RecyclerView.ViewHolder {
         discount = (TextView) rootView.findViewById(R.id.card_txt_discount);
         shopName = (TextView) rootView.findViewById(R.id.card_shop_name);
         distance = (TextView) rootView.findViewById(R.id.card_distance);
+        priceAfter = (TextView) rootView.findViewById(R.id.card_price_after);
+        priceBefore = (TextView) rootView.findViewById(R.id.card_price_before);
         rate = (TextView) rootView.findViewById(R.id.card_rate);
         day = (TextView) rootView.findViewById(R.id.card_txt_day);
         hour = (TextView) rootView.findViewById(R.id.card_txt_hour);
         minute = (TextView) rootView.findViewById(R.id.card_txt_minute);
         imgCard = (ImageView) rootView.findViewById(R.id.card_image);
-        btnFavorite = (ImageButton) rootView.findViewById(R.id.favorite_button);
-        btnShare = (ImageButton) rootView.findViewById(R.id.share_button2);
+        //btnFavorite = (ImageButton) rootView.findViewById(R.id.favorite_button);
+        //btnShare = (ImageButton) rootView.findViewById(R.id.share_button2);
 
         itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -244,19 +249,19 @@ class CardHolder extends RecyclerView.ViewHolder {
             }
         });
 
-        btnFavorite.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(v.getContext(), "i will add", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        btnShare.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(v.getContext(), "i will share", Toast.LENGTH_SHORT).show();
-
-            }
-        });
+//        btnFavorite.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Toast.makeText(v.getContext(), "i will add", Toast.LENGTH_SHORT).show();
+//            }
+//        });
+//
+//        btnShare.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Toast.makeText(v.getContext(), "i will share", Toast.LENGTH_SHORT).show();
+//
+//            }
+//        });
     }
 }
