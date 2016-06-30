@@ -26,7 +26,7 @@
     <string name="shop_name">اسم المحل</string>
     <string name="work_time">مواعيد العمل</string>
     <string name="address">العنوان</string>
-    <string name="rate">الكلي التقييم</string>
+    <string name="rate">التقييم الكلي</string>
     <string name="shop_way">طريق المحل</string>
     <string name="see_way">شوف الطريق</string>
     <string name="mobile">الموبايل</string>
@@ -87,7 +87,7 @@
     <string name="feedback">رأيك يهمنا</string>
     <string name="privacypolicy">سياسه الخصوصيه</string>
     <string name="aboutapp">حول التطبيق</string>
-    <string name="your_rate">قيم</string>
+    <string name="your_rate">تقييمك</string>
     <string name="choose_shop">اختار المحل</string>
     <string name="signing_in">جاري تسجيل الدخول</string>
 

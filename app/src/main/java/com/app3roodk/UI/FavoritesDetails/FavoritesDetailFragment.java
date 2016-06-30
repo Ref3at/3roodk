@@ -310,7 +310,7 @@ public class FavoritesDetailFragment extends Fragment implements BaseSliderView.
 
                                     @Override
                                     protected void onPostExecute(Integer rowsDeleted) {
-                                        btnFavorite.setImageResource(R.drawable.abc_btn_rating_star_off_mtrl_alpha);
+                                        btnFavorite.setImageResource(android.R.drawable.btn_star_big_off);
                                         // if (mToast != null) {
                                         //    mToast.cancel();
                                         // }
@@ -639,7 +639,7 @@ public class FavoritesDetailFragment extends Fragment implements BaseSliderView.
 
             ItemFav.setImageResource(numRows >= 1 ?
                     android.R.drawable.btn_star_big_on :
-                    R.drawable.abc_btn_rating_star_off_mtrl_alpha);
+                    android.R.drawable.btn_star_big_off);
 
         }
 

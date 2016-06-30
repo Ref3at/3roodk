@@ -34,8 +34,10 @@ import com.app3roodk.Schema.TestTable;
 import com.app3roodk.UI.FullScreenImage.FullScreenImageSlider;
 import com.app3roodk.UI.ImagesSliders.CustomImagesSlider;
 import com.app3roodk.UI.Shop.ViewShopActivity;
+import com.app3roodk.UtilityFirebase;
 import com.app3roodk.UtilityGeneral;
 import com.daimajia.slider.library.Animations.DescriptionAnimation;
+import com.daimajia.slider.library.Indicators.PagerIndicator;
 import com.daimajia.slider.library.SliderLayout;
 import com.daimajia.slider.library.SliderTypes.BaseSliderView;
 import com.daimajia.slider.library.Tricks.ViewPagerEx;
@@ -43,7 +45,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.loopj.android.http.TextHttpResponseHandler;
@@ -59,9 +60,11 @@ import cz.msebera.android.httpclient.Header;
 
 public class DetailFragment extends Fragment implements BaseSliderView.OnSliderClickListener, ViewPagerEx.OnPageChangeListener {
 
+    //region Member Variables
     final static long minutesInMilli = 1000 * 60;
     final static long hoursInMilli = minutesInMilli * 60;
     final static long daysInMilli = hoursInMilli * 24;
+
     ImageButton btnFavorite, btnShare;
     Button btnShopWay, btnComment;
     TextView txtViews, txtSale, txtPriceBefore, txtPriceAfter, txtDay, txtHour, txtMinute, txtDescription,
@@ -69,16 +72,24 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
     EditText edtxtComment;
     ListView lsvComments;
     RatingBar ratebar;
+    SliderLayout mSlider;
+
     Calendar cal;
+
     long timeInMilliseconds;
+
     Thread timer;
+
     CommentsAdapter adapter;
     ArrayList<Comments> lstComments;
-    private SliderLayout mDemoSlider;
-    private Offer offer;
-    private Shop shop;
-    private ValueEventListener postListener, offerListener;
-    private Runnable updateTimerThread = new Runnable() {
+
+    Offer offer;
+    Shop shop;
+
+    ValueEventListener postListener, offerListener;
+    //endregion
+
+    Runnable updateTimerThread = new Runnable() {
         public void run() {
             while (true) {
                 timeInMilliseconds = cal.getTime().getTime() - System.currentTimeMillis();
@@ -112,38 +123,37 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
         init(rootView);
         fillViews();
-        ShopViewsAndUpdateViewsNumber();
-        FirebaseDatabase.getInstance().getReference("Comments").child(offer.getObjectId()).addValueEventListener(postListener);
-        FirebaseDatabase.getInstance().getReference("Offers").child(offer.getCity()).child(offer.getCategoryName()).child(offer.getObjectId()).addValueEventListener(offerListener);
+        initSlider(offer.getItems(),rootView);
+        validateUser();
+        makeFirebaseReferences();
         clickConfig();
         new FetchFromDB(btnFavorite).execute();
         return rootView;
     }
 
+    private void validateUser() {
+        if (!UtilityGeneral.isRegisteredUser(getActivity())) {
+            ratebar.setEnabled(false);
+            btnComment.setVisibility(View.GONE);
+            edtxtComment.setText("سجل الأول علشان تعرف تعمل تعليق!");
+            edtxtComment.setEnabled(false);
+        } else {
+            ratebar.setEnabled(true);
+            btnComment.setVisibility(View.VISIBLE);
+            edtxtComment.setText("");
+            edtxtComment.setEnabled(true);
+        }
+    }
 
     private void fillViews() {
         try {
             txtDescription.setText(offer.getDesc());
             txtShopName.setText(offer.getShopName());
-            //txtPriceAfter.setText(offer.getPriceAfter());
-            //txtPriceBefore.setText(offer.getPriceBefore());
-            //
-            // txtPriceAfter.setText(offer.getItems().get(0).getPriceAfter());
-            // txtPriceBefore.setText(offer.getItems().get(0).getPriceBefore());
             txtViews.setText(String.valueOf(offer.getViewNum()));
             txtRate.setText(String.valueOf(String.valueOf(offer.getAverageRate())));
-            initSlider(offer.getItems());
-
-            //initSlider(offer.getItems().get(0).getImagePaths());
-            //  initSlider(offer.getImagePaths());
-            //  txtSale.setText(
-            //          String.format("%.0f", (1 - (Double.parseDouble(offer.getPriceAfter()) / Double.parseDouble(offer.getPriceBefore()))) * 100) + "%");
             if (offer.getUsersRates().containsKey(UtilityGeneral.loadUser(getActivity()).getObjectId())) {
                 ratebar.setRating(Float.parseFloat(offer.getUsersRates().get(UtilityGeneral.loadUser(getActivity()).getObjectId())));
             }
-            //  txtSale.setText(
-            //        String.format("%.0f", (1 - (Double.parseDouble(offer.getItems().get(0).getPriceAfter()) / Double.parseDouble(offer.getItems().get(0).getPriceBefore()))) * 100) + "%");
-
         } catch (Exception ex) {
         }
     }
@@ -152,10 +162,6 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
         btnComment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!UtilityGeneral.isRegisteredUser(getActivity())) {
-                    Toast.makeText(getActivity(), "سجل الاول علشان تعرف تعمل تعليق", Toast.LENGTH_LONG).show();
-                    return;
-                }
                 if (edtxtComment.getText().toString().isEmpty()) {
                     Toast.makeText(getActivity(), "اكتب التعليق من فضلك اولاً", Toast.LENGTH_LONG).show();
                     return;
@@ -176,32 +182,28 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
                 inputManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(),
                         InputMethodManager.HIDE_NOT_ALWAYS);
                 // end hide keyboard
-                FirebaseDatabase database = FirebaseDatabase.getInstance();
-                DatabaseReference myRef = database.getReference("Comments").child(offer.getObjectId());
-                comment.setObjectId(myRef.push().getKey());
-                myRef.child(comment.getObjectId()).setValue(comment, new DatabaseReference.CompletionListener() {
+                UtilityFirebase.addNewComment(offer, comment, new DatabaseReference.CompletionListener() {
                     @Override
                     public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                         if (databaseError != null) {
                             Toast.makeText(getActivity(), "حصل مشكله شوف النت ", Toast.LENGTH_SHORT).show();
-                            Log.e("Frebaaase", databaseError.getMessage());
+                            Log.e("DetailFragment", "Add New Comment : " + databaseError.getMessage());
                         } else {
-                            Toast.makeText(getActivity(), "تم إضافه التعليق، شكرا لك", Toast.LENGTH_SHORT).show();
                             if (!(offer.getUserNotificationToken() == null || offer.getUserNotificationToken().isEmpty()
                                     || offer.getShopName() == comment.getUserName())) {
                                 HashMap<String, String> mapOffer = new HashMap<>();
                                 mapOffer.put("offer", new Gson().toJson(offer));
                                 UtilityCloudMessaging.sendNotification(getActivity(), offer.getUserNotificationToken(),
                                         UtilityCloudMessaging.COMMENT_TITLE, comment.getUserName() + UtilityCloudMessaging.COMMENT_BODY,
-                                        offer.getObjectId(), mapOffer,"OPEN_ACTIVITY_1" ,new TextHttpResponseHandler() {
+                                        offer.getObjectId(), mapOffer, "OPEN_ACTIVITY_1", new TextHttpResponseHandler() {
                                             @Override
                                             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                                                Log.e("asdasd", responseString);
+                                                Log.e("Send Notification err", responseString);
                                             }
 
                                             @Override
                                             public void onSuccess(int statusCode, Header[] headers, String responseString) {
-                                                Log.e("fgsgsdf", responseString);
+                                                Log.e("Send Notification", responseString);
                                             }
                                         });
                             }
@@ -215,28 +217,25 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
             @Override
             public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
                 if (!fromUser) return;
-                if (!UtilityGeneral.isRegisteredUser(getActivity())) {
-                    Toast.makeText(getActivity(), "سجل الاول علشان تعرف تقييم العرض", Toast.LENGTH_LONG).show();
-                    return;
-                }
                 String userId = UtilityGeneral.loadUser(getActivity()).getObjectId();
                 if (offer.getUsersRates().containsKey(userId)) {
                     float diff = rating - Float.parseFloat(offer.getUsersRates().get(userId));
                     offer.getUsersRates().remove(userId);
                     offer.getUsersRates().put(userId, String.valueOf(rating));
-                    offer.setTotalRate(String.format("%.0f",Float.parseFloat(offer.getTotalRate()) + diff));
-                    offer.setAverageRate(String.format("%.0f",Float.parseFloat(offer.getTotalRate()) / offer.getUsersRates().size()));
+                    offer.setTotalRate(String.format("%.0f", Float.parseFloat(offer.getTotalRate()) + diff));
+                    offer.setAverageRate(String.format("%.1f", Double.parseDouble(offer.getTotalRate()) / offer.getUsersRates().size()));
+
                 } else {
                     offer.getUsersRates().put(userId, String.valueOf(rating));
-                    offer.setTotalRate(String.format("%.0f",Float.parseFloat(offer.getTotalRate()) + rating));
-                    offer.setAverageRate(String.format("%.0f",Float.parseFloat(offer.getTotalRate()) / offer.getUsersRates().size()));
+                    offer.setTotalRate(String.format("%.0f", Float.parseFloat(offer.getTotalRate()) + rating));
+                    offer.setAverageRate(String.format("%.1f", Double.parseDouble(offer.getTotalRate()) / offer.getUsersRates().size()));
                 }
 
                 HashMap<String, Object> childUpdates = new HashMap<>();
-                childUpdates.put("/usersRates", offer.getUsersRates());
+                childUpdates.put("/usersRates/"+userId+"", String.valueOf(rating));
                 childUpdates.put("/totalRate", offer.getTotalRate());
                 childUpdates.put("/averageRate", offer.getAverageRate());
-                FirebaseDatabase.getInstance().getReference("Offers").child(offer.getCity()).child(offer.getCategoryName()).child(offer.getObjectId()).updateChildren(childUpdates);
+                UtilityFirebase.updateOffer(offer, childUpdates);
                 txtRate.setText(String.valueOf(offer.getAverageRate()));
             }
         });
@@ -306,7 +305,7 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
 
                                     @Override
                                     protected void onPostExecute(Integer rowsDeleted) {
-                                        btnFavorite.setImageResource(R.drawable.abc_btn_rating_star_off_mtrl_alpha);
+                                        btnFavorite.setImageResource(android.R.drawable.btn_star_big_off);
                                         // if (mToast != null) {
                                         //    mToast.cancel();
                                         // }
@@ -323,16 +322,16 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
                                     String poster_loc;
                                     String backdroploc;
 
-                                    HashMap<String,String> shopInfoHashmap = new HashMap<String, String>();
+                                    HashMap<String, String> shopInfoHashmap = new HashMap<String, String>();
 
 
                                     @Override
                                     protected void onPreExecute() {
                                         super.onPreExecute();
                                         if (shop != null) {
-                                            shopInfoHashmap.put( "shopAddress" , shop.getAddress());
-                                            shopInfoHashmap.put( "shopWorkingTime" , shop.getWorkingTime());
-                                            shopInfoHashmap.put( "shopContacts", shop.getContacts());
+                                            shopInfoHashmap.put("shopAddress", shop.getAddress());
+                                            shopInfoHashmap.put("shopWorkingTime", shop.getWorkingTime());
+                                            shopInfoHashmap.put("shopContacts", shop.getContacts());
 
                                             offer.setShopInfoForFavoeites(ObjectConverter.fromHashmapToStringUsersRates(shopInfoHashmap));
                                         }
@@ -388,27 +387,23 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
         });
     }
 
-    private void ShopViewsAndUpdateViewsNumber() {
+    private void makeFirebaseReferences() {
         try {
-            FirebaseDatabase.getInstance().getReference("Shops").child(offer.getUserId()).child(offer.getShopId()).addListenerForSingleValueEvent(new ValueEventListener() {
+            UtilityFirebase.getShop(offer).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     shop = dataSnapshot.getValue(Shop.class);
                     txtAddress.setText(shop.getAddress());
                     txtWorkTime.setText(shop.getWorkingTime());
                     txtMobile.setText(shop.getContacts());
-
-                   /* if (shop.getContacts().containsKey("Mobile"))
-                        txtMobile.setText(shop.getContacts().get("Mobile"));
-                    else
-                        txtMobile.setText("لا يوجد"); */
                 }
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
                 }
             });
-
+            UtilityFirebase.getComments(offer).addValueEventListener(postListener);
+            UtilityFirebase.getOffer(offer).addValueEventListener(offerListener);
         } catch (Exception ex) {
         }
 
@@ -416,7 +411,7 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
 
     private void init(View rootView) {
         try {
-            mDemoSlider = (SliderLayout) rootView.findViewById(R.id.imgOffer);
+            mSlider = (SliderLayout) rootView.findViewById(R.id.imgOffer);
             btnFavorite = (ImageButton) rootView.findViewById(R.id.btnFavorite);
             btnShare = (ImageButton) rootView.findViewById(R.id.btnShare);
             btnShopWay = (Button) rootView.findViewById(R.id.btnShopWay);
@@ -485,12 +480,11 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
         }
     }
 
-    private void initSlider(List<Item> lstItems) {
+    private void initSlider(List<Item> lstItems,View rootView) {
 
         for (int i = 0; i < lstItems.size(); i++) {
 
             for (int j = 0; j < lstItems.get(i).getImagePaths().size(); j++) {
-                String imagePath = lstItems.get(i).getImagePaths().get(j);
 
                 CustomImagesSlider customImagesSlider = new CustomImagesSlider(getActivity());
                 customImagesSlider.setOffer_price_before(offer.getItems().get(i).getPriceBefore());
@@ -498,44 +492,30 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
                 customImagesSlider.setOffer_sale_perc(String.format("%.0f", (1 - (Double.parseDouble(offer.getItems().get(i).getPriceAfter())
                         / Double.parseDouble(offer.getItems().get(i).getPriceBefore()))) * 100) + "%");
 
-
                 customImagesSlider
                         .description("حصرى على عروضك")
-                        .image(imagePath)
+                        .image(lstItems.get(i).getImagePaths().get(j))
                         .setScaleType(BaseSliderView.ScaleType.FitCenterCrop)
                         .setOnSliderClickListener(this);
-                mDemoSlider.addSlider(customImagesSlider);
+                mSlider.addSlider(customImagesSlider);
             }
         }
 
-
-        mDemoSlider.setPresetTransformer(SliderLayout.Transformer.Stack);
-        mDemoSlider.setPresetIndicator(SliderLayout.PresetIndicators.Center_Bottom);
-        mDemoSlider.setCustomAnimation(new DescriptionAnimation());
-        mDemoSlider.setDuration(4000);
-        mDemoSlider.addOnPageChangeListener(this);
-    }
-
-    /* private void initSlider(ArrayList<String> lstImages) {
-
-        for (String image : lstImages) {
-            TextSliderView textSliderView = new TextSliderView(getActivity());
-            textSliderView
-                    .image(image)
-                    .setScaleType(BaseSliderView.ScaleType.FitCenterCrop)
-                    .setOnSliderClickListener(this);
-            mDemoSlider.addSlider(textSliderView);
+        if (lstItems.size() == 1 && lstItems.get(0).getImagePaths().size() == 1) {
+            mSlider.stopAutoCycle();
+            mSlider.setIndicatorVisibility(PagerIndicator.IndicatorVisibility.Invisible);
+        } else {
+            mSlider.setPresetTransformer(SliderLayout.Transformer.ZoomOut);
+            mSlider.setCustomIndicator((PagerIndicator) rootView.findViewById(R.id.custom_indicator));
+            mSlider.setCustomAnimation(new DescriptionAnimation());
+            mSlider.setDuration(5000);
         }
-        mDemoSlider.setPresetTransformer(SliderLayout.Transformer.Stack);
-        mDemoSlider.setPresetIndicator(SliderLayout.PresetIndicators.Center_Bottom);
-        mDemoSlider.setCustomAnimation(new DescriptionAnimation());
-        mDemoSlider.setDuration(4000);
-        mDemoSlider.addOnPageChangeListener(this);
+        mSlider.addOnPageChangeListener(this);
     }
-*/
+
     @Override
     public void onStop() {
-        mDemoSlider.stopAutoCycle();
+        mSlider.stopAutoCycle();
         if (timer.isAlive())
             timer.interrupt();
         super.onStop();
@@ -543,7 +523,14 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
 
     @Override
     public void onResume() {
-        mDemoSlider.startAutoCycle();
+        try {
+            if (offer.getItems().size() == 1 && offer.getItems().get(0).getImagePaths().size() == 1) {
+                mSlider.stopAutoCycle();
+            } else {
+                mSlider.startAutoCycle();
+            }
+        }
+        catch (Exception ex){};
         timer = new Thread(updateTimerThread);
         timer.start();
         super.onResume();
@@ -553,8 +540,8 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
     public void onDestroy() {
         super.onDestroy();
         try {
-            FirebaseDatabase.getInstance().getReference("Comments").child(offer.getObjectId()).removeEventListener(postListener);
-            FirebaseDatabase.getInstance().getReference("Offers").child(offer.getCity()).child(offer.getCategoryName()).child(offer.getObjectId()).removeEventListener(offerListener);
+            UtilityFirebase.getComments(offer).removeEventListener(postListener);
+            UtilityFirebase.getOffer(offer).removeEventListener(offerListener);
         } catch (Exception ex) {
         }
     }
@@ -565,7 +552,7 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
 
     @Override
     public void onPageSelected(int position) {
-        Log.d("Slider Demo", "Page Changed: " + position);
+        Log.d("Slider", "Page Changed: " + position);
     }
 
     @Override
@@ -575,7 +562,6 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
     @Override
     public void onSliderClick(BaseSliderView slider) {
         Intent i = new Intent(getActivity(), FullScreenImageSlider.class);
-        //  i.putStringArrayListExtra("IMAGES", offer.getImagePaths());
         i.putStringArrayListExtra("IMAGES", offer.getItems().get(0).getImagePaths());
         startActivity(i);
     }
@@ -616,7 +602,7 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
 
             ItemFav.setImageResource(numRows >= 1 ?
                     android.R.drawable.btn_star_big_on :
-                    R.drawable.abc_btn_rating_star_off_mtrl_alpha);
+                    android.R.drawable.star_big_off);
         }
     }
 }
@@ -648,6 +634,13 @@ class CommentsAdapter extends ArrayAdapter {
             holder = (CommentHolder) row.getTag();
         }
         final Comments comment = data.get(position);
+        if (!UtilityGeneral.isRegisteredUser(row.getContext())) {
+            holder.btnLike.setEnabled(false);
+            holder.btnDislike.setEnabled(false);
+        } else {
+            holder.btnLike.setEnabled(true);
+            holder.btnDislike.setEnabled(true);
+        }
         holder.Name.setText(comment.getUserName());
         holder.Comment.setText(comment.getCommentText());
         if (comment.getUserLike() != null)
@@ -678,7 +671,7 @@ class CommentsAdapter extends ArrayAdapter {
                             if (comment.getUserDislike().contains(userId))
                                 comment.getUserDislike().remove(userId);
                         }
-                        FirebaseDatabase.getInstance().getReference("Comments").child(comment.getOfferId()).child(comment.getObjectId()).setValue(comment);
+                        UtilityFirebase.updateComment(comment);
                     }
                 });
 
@@ -700,7 +693,7 @@ class CommentsAdapter extends ArrayAdapter {
                             if (comment.getUserLike().contains(userId))
                                 comment.getUserLike().remove(userId);
                         }
-                        FirebaseDatabase.getInstance().getReference("Comments").child(comment.getOfferId()).child(comment.getObjectId()).setValue(comment);
+                        UtilityFirebase.updateComment(comment);
                     }
                 });
 
