@@ -2,6 +2,7 @@ package com.app3roodk.UI.OffersCards;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -9,22 +10,19 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.RatingBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.app3roodk.Constants;
 import com.app3roodk.R;
 import com.app3roodk.Schema.Offer;
 import com.app3roodk.UI.DetailActivity.DetailActivity;
+import com.app3roodk.UtilityFirebase;
 import com.app3roodk.UtilityGeneral;
 import com.bumptech.glide.Glide;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 
@@ -39,7 +37,7 @@ public class CardsFragment extends Fragment {
     ArrayList<Offer> lstOffers;
     ContentAdapter adapter;
     ValueEventListener postListener;
-    Query firebaseQuery;
+    String City;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -63,20 +61,20 @@ public class CardsFragment extends Fragment {
     private void fetchOffers() {
         try {
             if (UtilityGeneral.City == null || UtilityGeneral.City.isEmpty()) {
+                showMessage("يتم الآن تحديد المدينة");
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        final String city = UtilityGeneral.getCurrentCityEnglish(getActivity());
+                        City = UtilityGeneral.getCurrentCityEnglish(getActivity());
                         try {
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
                                     try {
-                                        Query firebaseQuery = FirebaseDatabase.getInstance().getReference("Offers").child(city).child(getActivity().getIntent().getStringExtra("name"))
-                                                .orderByChild("endTime").startAt(UtilityGeneral.getCurrentDate(new Date()));
-                                        firebaseQuery.addValueEventListener(postListener);
+                                        showMessage("يتم البحث عن عروض فى مدينة " + City);
+                                        UtilityFirebase.getActiveOffers(City, getActivity().getIntent().getStringExtra("name")).addValueEventListener(postListener);
                                     } catch (Exception ex) {
-                                        Log.e("CreateShopFragment", ex.getMessage());
+                                        Log.e("GettingOffers1", ex.getMessage());
                                     }
                                 }
                             });
@@ -86,9 +84,9 @@ public class CardsFragment extends Fragment {
                 }).start();
             } else {
                 try {
-                    Query firebaseQuery = FirebaseDatabase.getInstance().getReference("Offers").child(UtilityGeneral.City).child(getActivity().getIntent().getStringExtra("name"))
-                            .orderByChild("endTime").startAt(UtilityGeneral.getCurrentDate(new Date()));
-                    firebaseQuery.addValueEventListener(postListener);
+                    City = UtilityGeneral.City;
+                    showMessage("يتم البحث عن عروض فى مدينة " + City);
+                    UtilityFirebase.getActiveOffers(City, getActivity().getIntent().getStringExtra("name")).addValueEventListener(postListener);
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
@@ -96,11 +94,11 @@ public class CardsFragment extends Fragment {
                         }
                     }).start();
                 } catch (Exception ex) {
-                    Log.e("CreateShopFragment", ex.getMessage());
+                    Log.e("GettingOffers2", ex.getMessage());
                 }
             }
         } catch (Exception ex) {
-            Log.e("CardsFragment", ex.getMessage());
+            Log.e("GettingOffers3", ex.getMessage());
         }
     }
 
@@ -122,7 +120,7 @@ public class CardsFragment extends Fragment {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Toast.makeText(getActivity(), "بص على النت كده", Toast.LENGTH_LONG).show();
+                showMessage("بص على النت كده");
             }
         };
     }
@@ -184,15 +182,16 @@ public class CardsFragment extends Fragment {
             Glide.with(cardHolder.itemView.getContext()).load(lstOffers.get(position).getItems().get(0).getImagePaths().get(0)).into(cardHolder.imgCard);
             cardHolder.priceBefore.setText(cardHolder.offer.getItems().get(0).getPriceBefore());
             cardHolder.priceAfter.setText(cardHolder.offer.getItems().get(0).getPriceAfter());
-            try{
+            try {
                 cardHolder.distance.setText(String.valueOf(UtilityGeneral.calculateDistanceInKM(
                         Double.parseDouble(lstOffers.get(position).getLat()),
                         Double.parseDouble(lstOffers.get(position).getLon()),
                         UtilityGeneral.getCurrentLonAndLat(cardHolder.itemView.getContext()).latitude,
-                        UtilityGeneral.getCurrentLonAndLat(cardHolder.itemView.getContext()).longitude))+"km");
+                        UtilityGeneral.getCurrentLonAndLat(cardHolder.itemView.getContext()).longitude)) + "km");
                 cardHolder.distance.setVisibility(View.VISIBLE);
+            } catch (Exception ex) {
+                cardHolder.distance.setVisibility(View.INVISIBLE);
             }
-            catch (Exception ex){cardHolder.distance.setVisibility(View.INVISIBLE);}
         }
 
         @Override
@@ -201,18 +200,21 @@ public class CardsFragment extends Fragment {
         }
     }
 
+    private void showMessage(String msg) {
+        Snackbar.make(getActivity().findViewById(R.id.main_content), msg, Snackbar.LENGTH_LONG).show();
+    }
+
     public void onDestroy() {
         try {
-            firebaseQuery.removeEventListener(postListener);
+            UtilityFirebase.getActiveOffers(City, getActivity().getIntent().getStringExtra("name")).removeEventListener(postListener);
         } catch (Exception ex) {
         }
         super.onDestroy();
     }
-
 }
 
 class CardHolder extends RecyclerView.ViewHolder {
-    public TextView title, rate, distance, shopName, day, hour, minute, discount,priceBefore,priceAfter;
+    public TextView title, rate, distance, shopName, day, hour, minute, discount, priceBefore, priceAfter;
     public ImageView imgCard;
     public Offer offer;
 

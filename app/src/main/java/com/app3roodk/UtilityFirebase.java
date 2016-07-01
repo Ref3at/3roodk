@@ -4,7 +4,9 @@ import com.app3roodk.Schema.Comments;
 import com.app3roodk.Schema.Offer;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 
+import java.util.Date;
 import java.util.HashMap;
 
 public class UtilityFirebase {
@@ -42,6 +44,11 @@ public class UtilityFirebase {
     static public DatabaseReference getOffer(Offer offer)
     {
         return FirebaseDatabase.getInstance().getReference("Offers").child(offer.getCity()).child(offer.getCategoryName()).child(offer.getObjectId());
+    }
+
+    static public Query getActiveOffers(String city, String category)
+    {
+        return FirebaseDatabase.getInstance().getReference("Offers").child(city).child(category).orderByChild("endTime").startAt(UtilityGeneral.getCurrentDate(new Date()));
     }
 
     static public void updateOffer(Offer offer,HashMap<String, Object> childUpdates)

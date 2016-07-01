@@ -2,18 +2,24 @@ package com.app3roodk.UI.CategoriesActivity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.app3roodk.R;
@@ -26,14 +32,18 @@ import com.app3roodk.UI.PositioningActivity.PositioningActivity;
 import com.app3roodk.UI.Shop.ListShopsActivity;
 import com.app3roodk.UI.Shop.ShopActivity;
 import com.app3roodk.UtilityGeneral;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class CategoriesActivity extends AppCompatActivity {
 
-    private DrawerLayout mDrawerLayout;
-    private Boolean exit = false;
+    DrawerLayout mDrawerLayout;
+    NavigationView mNavigationView;
+    Boolean exit = false;
 
     public static Intent getOpenFacebookIntent(Context context) {
 
@@ -45,7 +55,7 @@ public class CategoriesActivity extends AppCompatActivity {
         }
     }
 
-    private void loadCity(){
+    private void loadCity() {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -61,18 +71,21 @@ public class CategoriesActivity extends AppCompatActivity {
 
         // Adding Toolbar to Main screen
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle("الأقسام");
+        ((TextView) findViewById(R.id.toolbarTitle)).setText("الأقسام");
         setSupportActionBar(toolbar);
-
-        // Create Navigation drawer and inlfate layout
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer);
-
         loadCity();
+        initNavigationDrawer();
+
+    }
+
+    public void initNavigationDrawer() {
+        // Create Navigation drawer and inlfate layout
+        mNavigationView = (NavigationView) findViewById(R.id.nav_view);
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer);
         // Set behavior of Navigation drawer
         hideDrawerItems();
-        assert navigationView != null;
-        navigationView.setNavigationItemSelectedListener(
+        assert mNavigationView != null;
+        mNavigationView.setNavigationItemSelectedListener(
                 new NavigationView.OnNavigationItemSelectedListener() {
                     // This method will trigger on item Click of navigation menu
                     @Override
@@ -167,6 +180,7 @@ public class CategoriesActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_menu) {
+            showUserInfoNavigationDrawer();
             mDrawerLayout.openDrawer(GravityCompat.END);
         }
         return super.onOptionsItemSelected(item);
@@ -221,7 +235,8 @@ public class CategoriesActivity extends AppCompatActivity {
 
     private void hideDrawerItems() {
         Menu nav_Menu = ((NavigationView) findViewById(R.id.nav_view)).getMenu();
-        nav_Menu.findItem(R.id.action_home).setVisible(false);
+        //Visibility of Nav items
+        nav_Menu.findItem(R.id.action_home).setChecked(true);
         if (UtilityGeneral.isRegisteredUser(getBaseContext())) {
             nav_Menu.findItem(R.id.action_signin).setVisible(false);
             nav_Menu.findItem(R.id.action_logout).setVisible(true);
@@ -246,9 +261,53 @@ public class CategoriesActivity extends AppCompatActivity {
         }
     }
 
+    private void showUserInfoNavigationDrawer() {
+        //show info of the user
+        try {
+            FirebaseAuth auth = FirebaseAuth.getInstance();
+            if (auth.getCurrentUser() != null) {
+
+                ((TextView) mNavigationView.findViewById(R.id.txtNavName)).setText(auth.getCurrentUser().getDisplayName());
+                ((TextView) mNavigationView.findViewById(R.id.txtNavEmail)).setText(auth.getCurrentUser().getEmail());
+                Glide.with(this)
+                        .load(auth.getCurrentUser().getPhotoUrl())
+                        .asBitmap()
+                        .into(new BitmapImageViewTarget((ImageView) mNavigationView.findViewById(R.id.imgNavProfile)) {
+                            @Override
+                            protected void setResource(Bitmap resource) {
+                                RoundedBitmapDrawable circularBitmapDrawable =
+                                        RoundedBitmapDrawableFactory.create(CategoriesActivity.this.getResources(), resource);
+                                circularBitmapDrawable.setCircular(true);
+                                ((ImageView) mNavigationView.findViewById(R.id.imgNavProfile)).setImageDrawable(circularBitmapDrawable);
+                            }
+                        });
+            } else {
+                ((TextView) mNavigationView.findViewById(R.id.txtNavName)).setText("");
+                ((TextView) mNavigationView.findViewById(R.id.txtNavEmail)).setText("");
+                Glide.with(this)
+                        .load(R.drawable.logo)
+                        .asBitmap()
+                        .into(new BitmapImageViewTarget((ImageView) mNavigationView.findViewById(R.id.imgNavProfile)) {
+                            @Override
+                            protected void setResource(Bitmap resource) {
+                                RoundedBitmapDrawable circularBitmapDrawable =
+                                        RoundedBitmapDrawableFactory.create(CategoriesActivity.this.getResources(), resource);
+                                circularBitmapDrawable.setCircular(true);
+                                ((ImageView) mNavigationView.findViewById(R.id.imgNavProfile)).setImageDrawable(circularBitmapDrawable);
+                            }
+                        });
+
+            }
+        } catch (Exception ex) {
+            Log.e("NavShowInfo", ex.getMessage());
+        }
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
+        if (mDrawerLayout.isDrawerOpen(GravityCompat.END))
+            mDrawerLayout.closeDrawer(GravityCompat.END);
         hideDrawerItems();
     }
 

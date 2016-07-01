@@ -2,7 +2,7 @@ package com.app3roodk.UI.OffersCards;
 
 import android.content.Context;
 import android.content.Intent;
-import android.location.LocationManager;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -12,6 +12,8 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -21,12 +23,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.app3roodk.Constants;
-import com.app3roodk.ObjectConverter;
 import com.app3roodk.R;
-import com.app3roodk.Schema.User;
 import com.app3roodk.UI.About.AboutActivity;
 import com.app3roodk.UI.FavoritesCards.FavoritesActivity;
 import com.app3roodk.UI.Feedback.FeedbackActivity;
@@ -35,24 +36,23 @@ import com.app3roodk.UI.PositioningActivity.PositioningActivity;
 import com.app3roodk.UI.Shop.ListShopsActivity;
 import com.app3roodk.UI.Shop.ShopActivity;
 import com.app3roodk.UtilityGeneral;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.firebase.ui.auth.AuthUI;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.loopj.android.http.TextHttpResponseHandler;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import cz.msebera.android.httpclient.Header;
-
 public class CardsActivity extends AppCompatActivity {
 
     Intent mIntent;
-    private DrawerLayout mDrawerLayout;
+    DrawerLayout mDrawerLayout;
+    NavigationView mNavigationView;
 
     public static Intent getOpenFacebookIntent(Context context) {
-
         try {
             context.getPackageManager().getPackageInfo("com.facebook.katana", 0);
             return new Intent(Intent.ACTION_VIEW, Uri.parse("fb://page/583145478505894"));
@@ -70,7 +70,7 @@ public class CardsActivity extends AppCompatActivity {
         }
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle(mIntent.getExtras().getString("title"));
+        ((TextView) findViewById(R.id.toolbarTitle)).setText(mIntent.getExtras().getString("title"));
         setSupportActionBar(toolbar);
         // Setting ViewPager for each Tabs
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
@@ -78,14 +78,38 @@ public class CardsActivity extends AppCompatActivity {
         // Set Tabs inside Toolbar
         TabLayout tabs = (TabLayout) findViewById(R.id.tabs);
         tabs.setupWithViewPager(viewPager);
+        tabs.getTabAt(2).select();
         // Create Navigation drawer and inlfate layout
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        initNavigationDrawer();
+        // Adding Floating Action Button to bottom right of main view
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        assert fab != null;
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!UtilityGeneral.isRegisteredUser(getBaseContext())) {
+                    PositioningActivity.stay = true;
+                    startActivity(new Intent(getBaseContext(), PositioningActivity.class));
+                    return;
+                }
+                if (!UtilityGeneral.isShopExist(getBaseContext())) {
+                    startActivity(new Intent(getBaseContext(), ShopActivity.class));
+                    return;
+                }
+                startActivity(new Intent(getBaseContext(), OfferActivity.class));
+            }
+        });
+        showUserInfoNavigationDrawer();
+    }
+
+    public void initNavigationDrawer() {
+        mNavigationView = (NavigationView) findViewById(R.id.nav_view);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer);
 
         // Set behavior of Navigation drawer
         hideDrawerItems();
-        assert navigationView != null;
-        navigationView.setNavigationItemSelectedListener(
+        assert mNavigationView != null;
+        mNavigationView.setNavigationItemSelectedListener(
                 new NavigationView.OnNavigationItemSelectedListener() {
                     // This method will trigger on item Click of navigation menu
                     @Override
@@ -132,7 +156,7 @@ public class CardsActivity extends AppCompatActivity {
                                                 hideDrawerItems();
                                             }
                                         });
-                               return true;
+                                return true;
 
                             case R.id.action_facebookPage:
                                 mDrawerLayout.closeDrawer(GravityCompat.END);
@@ -160,24 +184,6 @@ public class CardsActivity extends AppCompatActivity {
                         }
                     }
                 });
-        // Adding Floating Action Button to bottom right of main view
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        assert fab != null;
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!UtilityGeneral.isRegisteredUser(getBaseContext())) {
-                    PositioningActivity.stay = true;
-                    startActivity(new Intent(getBaseContext(), PositioningActivity.class));
-                    return;
-                }
-                if (!UtilityGeneral.isShopExist(getBaseContext())) {
-                    startActivity(new Intent(getBaseContext(), ShopActivity.class));
-                    return;
-                }
-                startActivity(new Intent(getBaseContext(), OfferActivity.class));
-            }
-        });
     }
 
     public void facebookIntent() {
@@ -194,21 +200,6 @@ public class CardsActivity extends AppCompatActivity {
     // Add Fragments to Tabs
     private void setupViewPager(ViewPager viewPager) {
         Adapter adapter = new Adapter(getSupportFragmentManager());
-        Bundle arguments1 = new Bundle();
-        CardsFragment cardContentFragment1 = new CardsFragment();
-        if (!cardContentFragment1.isAdded()) {
-            cardContentFragment1.setArguments(arguments1);
-            cardContentFragment1.fragmentType = Constants.FRAGMENT_NEWEST;
-        }
-        adapter.addFragment(cardContentFragment1, "الأحدث");
-        Bundle arguments2 = new Bundle();
-        CardsFragment cardContentFragment2 = new CardsFragment();
-        if (!cardContentFragment2.isAdded()) {
-            cardContentFragment2.setArguments(arguments2);
-            cardContentFragment2.fragmentType = Constants.FRAGMENT_MOST_VIEWED;
-
-        }
-        adapter.addFragment(cardContentFragment2, "الأكثر مشاهده");
         Bundle arguments3 = new Bundle();
         CardsFragment cardContentFragment3 = new CardsFragment();
         if (!cardContentFragment3.isAdded()) {
@@ -217,15 +208,78 @@ public class CardsActivity extends AppCompatActivity {
 
         }
         adapter.addFragment(cardContentFragment3, "عروض مميزه");
+        Bundle arguments2 = new Bundle();
+        CardsFragment cardContentFragment2 = new CardsFragment();
+        if (!cardContentFragment2.isAdded()) {
+            cardContentFragment2.setArguments(arguments2);
+            cardContentFragment2.fragmentType = Constants.FRAGMENT_MOST_VIEWED;
+
+        }
+        adapter.addFragment(cardContentFragment2, "الأكثر مشاهده");
+        Bundle arguments1 = new Bundle();
+        CardsFragment cardContentFragment1 = new CardsFragment();
+        if (!cardContentFragment1.isAdded()) {
+            cardContentFragment1.setArguments(arguments1);
+            cardContentFragment1.fragmentType = Constants.FRAGMENT_NEWEST;
+        }
+        adapter.addFragment(cardContentFragment1, "الأحدث");
         viewPager.setAdapter(adapter);
     }
 
-    private void hideDrawerItems() {
-        Menu nav_Menu = ((NavigationView) findViewById(R.id.nav_view)).getMenu();
+    private void showUserInfoNavigationDrawer() {
+        //show info of the user
+        try {
+            FirebaseAuth auth = FirebaseAuth.getInstance();
+            if (auth.getCurrentUser() != null) {
 
+                ((TextView) mNavigationView.findViewById(R.id.txtNavName)).setText(auth.getCurrentUser().getDisplayName());
+                ((TextView) mNavigationView.findViewById(R.id.txtNavEmail)).setText(auth.getCurrentUser().getEmail());
+                Glide.with(this)
+                        .load(auth.getCurrentUser().getPhotoUrl())
+                        .asBitmap()
+                        .into(new BitmapImageViewTarget((ImageView) mNavigationView.findViewById(R.id.imgNavProfile)) {
+                            @Override
+                            protected void setResource(Bitmap resource) {
+                                RoundedBitmapDrawable circularBitmapDrawable =
+                                        RoundedBitmapDrawableFactory.create(CardsActivity.this.getResources(), resource);
+                                circularBitmapDrawable.setCircular(true);
+                                ((ImageView) mNavigationView.findViewById(R.id.imgNavProfile)).setImageDrawable(circularBitmapDrawable);
+                            }
+                        });
+            } else {
+                ((TextView) mNavigationView.findViewById(R.id.txtNavName)).setText("");
+                ((TextView) mNavigationView.findViewById(R.id.txtNavEmail)).setText("");
+                Glide.with(this)
+                        .load(R.drawable.logo)
+                        .asBitmap()
+                        .into(new BitmapImageViewTarget((ImageView) mNavigationView.findViewById(R.id.imgNavProfile)) {
+                            @Override
+                            protected void setResource(Bitmap resource) {
+                                RoundedBitmapDrawable circularBitmapDrawable =
+                                        RoundedBitmapDrawableFactory.create(CardsActivity.this.getResources(), resource);
+                                circularBitmapDrawable.setCircular(true);
+                                ((ImageView) mNavigationView.findViewById(R.id.imgNavProfile)).setImageDrawable(circularBitmapDrawable);
+                            }
+                        });
+
+            }
+        } catch (Exception ex) {
+            Log.e("NavShowInfo", ex.getMessage());
+        }
+    }
+
+    private void hideDrawerItems() {
+        Menu nav_Menu = mNavigationView.getMenu();
+
+        //remove selections
+        for (int i = 0; i < nav_Menu.size(); i++)
+            nav_Menu.getItem(i).setChecked(false);
+
+        //Visibility of Nav items
         if (UtilityGeneral.isRegisteredUser(getBaseContext())) {
             nav_Menu.findItem(R.id.action_signin).setVisible(false);
             nav_Menu.findItem(R.id.action_logout).setVisible(true);
+
             if (UtilityGeneral.isShopExist(getBaseContext())) {
                 nav_Menu.findItem(R.id.action_new_shop).setVisible(false);
                 nav_Menu.findItem(R.id.action_add_offers).setVisible(true);
@@ -234,7 +288,6 @@ public class CardsActivity extends AppCompatActivity {
                 nav_Menu.findItem(R.id.action_new_shop).setVisible(true);
                 nav_Menu.findItem(R.id.action_add_offers).setVisible(false);
                 nav_Menu.findItem(R.id.action_view_my_shop).setVisible(false);
-
             }
         } else {
             nav_Menu.findItem(R.id.action_signin).setVisible(true);
@@ -257,7 +310,9 @@ public class CardsActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_menu) {
+            showUserInfoNavigationDrawer();
             mDrawerLayout.openDrawer(GravityCompat.END);
+
         }
         return super.onOptionsItemSelected(item);
     }
@@ -265,6 +320,8 @@ public class CardsActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        if (mDrawerLayout.isDrawerOpen(GravityCompat.END))
+            mDrawerLayout.closeDrawer(GravityCompat.END);
         hideDrawerItems();
     }
 

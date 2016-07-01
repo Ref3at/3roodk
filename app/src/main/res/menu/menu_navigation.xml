@@ -4,57 +4,62 @@
         <item
             android:id="@+id/action_home"
             android:icon="@drawable/house"
-            android:tint="@color/button_grey"
+            android:tint="@color/colorPrimaryDark"
             android:title="@string/home" />
 
 
         <item
             android:id="@+id/action_signin"
             android:icon="@drawable/profile_image"
-            android:tint="@color/button_grey"
+            android:tint="@color/colorPrimaryDark"
             android:title="@string/sign_in" />
 
         <item
             android:id="@+id/action_new_shop"
             android:icon="@drawable/shop"
-            android:tint="@color/button_grey"
+            android:tint="@color/colorPrimaryDark"
             android:title="@string/create_new_shop" />
 
         <item
             android:id="@+id/action_add_offers"
             android:icon="@drawable/camera"
-            android:tint="@color/button_grey"
+            android:tint="@color/colorPrimaryDark"
             android:title="@string/add_new_offer" />
 
         <item
             android:id="@+id/action_view_my_shop"
             android:icon="@drawable/shop"
-            android:tint="@color/button_grey"
+            android:tint="@color/colorPrimaryDark"
             android:title="@string/my_shop" />
 
         <item
             android:id="@+id/action_favorites"
             android:icon="@drawable/ic_favorite_black_24dp"
+            android:tint="@color/colorPrimaryDark"
             android:title="@string/favorites" />
 
         <item
             android:id="@+id/action_facebookPage"
             android:icon="@drawable/facebook"
+            android:tint="@color/colorPrimaryDark"
             android:title="@string/facebookPage" />
 
         <item
             android:id="@+id/action_feedback"
             android:icon="@drawable/feedback_icon"
+            android:tint="@color/colorPrimaryDark"
             android:title="@string/feedback" />
 
         <item
             android:id="@+id/action_aboutapp"
             android:icon="@android:drawable/ic_dialog_info"
+            android:tint="@color/colorPrimaryDark"
             android:title="@string/aboutapp" />
 
         <item
             android:id="@+id/action_logout"
-            android:tint="@color/button_grey"
+            android:icon="@android:drawable/ic_lock_idle_charging"
+            android:tint="@color/colorPrimaryDark"
             android:title="@string/logout" />
 
     </group>
