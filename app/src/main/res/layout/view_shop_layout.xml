@@ -2,357 +2,352 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
+    android:layout_height="match_parent"
+    android:background="#FFF">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layoutDirection="rtl"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="160dp">
+            android:background="#EEE"
+            android:layout_height="170dp"
+            android:paddingBottom="10dp">
 
+            <LinearLayout
+                android:layout_width="230dp"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="@string/all_offers"
+                    android:textColor="@color/black"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/txtOfferNum"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="@string/loading"
+                    android:textColor="@color/black"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_gravity="center_horizontal"
+                    android:text="@string/active_offers"
+                    android:textColor="@color/black"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/txtActiveOfferNum"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="@string/loading"
+                    android:textColor="@color/black"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+
+
+            </LinearLayout>
 
             <ImageButton
                 android:id="@+id/btn_edit_logo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:layout_centerVertical="true"
-                android:layout_toLeftOf="@+id/v_logo"
-                android:src="@android:drawable/ic_menu_edit"
-
+                android:layout_toRightOf="@+id/v_logo"
+                android:background="@android:drawable/ic_menu_edit"
                 android:visibility="gone" />
 
             <ImageButton
                 android:id="@+id/btn_done_logo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:layout_centerVertical="true"
-                android:layout_toLeftOf="@+id/v_logo"
-                android:src="@android:drawable/ic_dialog_info"
+                android:layout_toRightOf="@+id/v_logo"
+                android:background="@android:drawable/ic_menu_save"
                 android:visibility="gone" />
 
             <ImageView
                 android:id="@+id/v_logo"
-                android:layout_width="150dp"
-                android:layout_height="150dp"
-
-                android:layout_centerHorizontal="true"
-                android:layout_gravity="center_horizontal"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_alignParentTop="true"
+                android:layout_gravity="left"
                 android:layout_margin="5dp"
                 android:src="@drawable/icon" />
 
             <Button
-                android:id="@+id/btn_change_logo"
-                android:layout_width="150dp"
-                android:layout_height="150dp"
-                android:layout_centerHorizontal="true"
-
+                android:id="@+id/btnShopWay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
+                android:layout_marginLeft="20dp"
+                android:layout_below="@+id/v_logo"
+                android:background="@drawable/custom_background_buttons"
+                android:text="@string/see_way"
+                android:textColor="@color/white" />
+
+            <Button
+                android:id="@+id/btn_change_logo"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_alignParentTop="true"
+                android:layout_gravity="left"
+                android:layout_margin="5dp"
                 android:background="#5b6d6d6d"
-                android:backgroundTint="#747474"
-                android:text="غير اللوجو"
+                android:text="@string/change_logo"
+                android:textStyle="bold"
                 android:textColor="#0044fe"
                 android:visibility="gone" />
 
-
         </RelativeLayout>
 
-
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
+            android:layout_gravity="right"
+            android:layout_marginLeft="10dp"
+            android:layout_marginBottom="3dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="15dp"
             android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/v_shopname"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:text="محل فلااااااااااااااان"
-                android:textSize="30dp" />
-
-
-            <EditText
-                android:id="@+id/E_shopname"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="#218ffc"
-                android:textSize="30dp"
-                android:visibility="gone" />
-
-            <ImageButton
-                android:id="@+id/btn_edit_shopname"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@android:drawable/ic_menu_edit"
-                android:visibility="gone" />
-
-            <ImageButton
-                android:id="@+id/btn_done_shopname"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@android:drawable/ic_dialog_info"
-                android:visibility="gone" />
-
-        </LinearLayout>
-
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_margin="5dp"
-            android:orientation="vertical">
-
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:padding="5dp"
-                android:text="مواعيد العمل"
-                android:textSize="22sp" />
-
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
+                android:gravity="center_horizontal"
+                android:layout_weight="5"
                 android:orientation="horizontal">
+
+                <ImageButton
+                    android:id="@+id/btn_edit_workingtime"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:background="@android:drawable/ic_menu_edit"
+                    android:visibility="gone" />
+
+                <ImageButton
+                    android:id="@+id/btn_done_workingtime"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:background="@android:drawable/ic_menu_save"
+                    android:visibility="gone" />
 
                 <TextView
                     android:id="@+id/v_workingtime"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_margin="10dp"
-                    android:text="hhhh"
-                    android:textSize="22sp" />
+                    android:textSize="18sp"
+                    tools:text="hhhh" />
 
                 <EditText
                     android:id="@+id/E_workingtime"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:text="hhhh"
                     android:textColor="#218ffc"
-                    android:textSize="22sp"
+                    android:textSize="18sp"
                     android:visibility="gone" />
-
-
-                <ImageButton
-                    android:id="@+id/btn_edit_workingtime"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@android:drawable/ic_menu_edit"
-                    android:visibility="gone" />
-
-                <ImageButton
-                    android:id="@+id/btn_done_workingtime"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@android:drawable/ic_dialog_info"
-                    android:visibility="gone" />
-
 
             </LinearLayout>
 
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:text="@string/work_time"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                android:textStyle="bold" />
 
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_margin="5dp"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:padding="5dp"
-                android:text="رقم الموبايل "
-                android:textSize="22sp" />
+            android:layout_gravity="right"
+            android:layout_marginLeft="10dp"
+            android:layout_marginBottom="3dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="3dp"
+            android:orientation="horizontal">
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
+                android:layout_weight="5"
+                android:gravity="center_horizontal"
                 android:orientation="horizontal">
 
+                <ImageButton
+                    android:id="@+id/btn_edit_contacts"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:background="@android:drawable/ic_menu_edit"
+                    android:visibility="gone" />
+
+                <ImageButton
+                    android:id="@+id/btn_done_contacts"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:background="@android:drawable/ic_menu_save"
+                    android:visibility="gone" />
 
                 <TextView
                     android:id="@+id/v_contacts"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_margin="10dp"
-                    android:text="010000000"
-                    android:textSize="22sp" />
+                    android:textSize="18sp"
+                    tools:text="010000000" />
 
                 <EditText
                     android:id="@+id/E_contacts"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:text="010000000"
+                    android:inputType="phone"
                     android:textColor="#218ffc"
-                    android:textSize="22sp"
+                    android:textSize="18sp"
                     android:visibility="gone" />
-
-
-                <ImageButton
-                    android:id="@+id/btn_edit_contacts"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@android:drawable/ic_menu_edit"
-                    android:visibility="gone" />
-
-                <ImageButton
-                    android:id="@+id/btn_done_contacts"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@android:drawable/ic_dialog_info"
-                    android:visibility="gone" />
-
 
             </LinearLayout>
 
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_weight="2"
+                android:text="@string/mobile"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                android:textStyle="bold" />
 
         </LinearLayout>
 
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:text="@string/shop_address"
-            android:textSize="18sp" />
-
-
         <LinearLayout
-            android:id="@+id/linear_address"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
+            android:layout_gravity="right"
+            android:layout_marginLeft="10dp"
+            android:layout_marginBottom="3dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="3dp"
             android:orientation="horizontal">
-
 
             <TextView
                 android:id="@+id/v_txtShopAddressFromMap"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                android:gravity="center"
+                android:layout_weight="5"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center_horizontal"
                 tools:text="الدقهليه - السنبلاوين شارع الاستقلال" />
 
-            <Button
-                android:id="@+id/v_btnShopWay"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:background="@drawable/custom_background_buttons"
-                android:text="@string/see_way"
-                android:textColor="@color/white"
-                android:textSize="16sp" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/linear_address_fromEditing"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:orientation="horizontal"
-            android:visibility="gone">
-
-
             <TextView
-                android:id="@+id/txtShopAddressFromMapByEditing"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:textColor="#218ffc"
-                tools:text="الدقهليه - السنبلاوين شارع الاستقلال" />
-
-            <Button
-                android:id="@+id/btnChangeAddress"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:background="@drawable/custom_background_buttons"
-                android:text="@string/change_address"
-                android:textColor="@color/white"
-                android:textSize="16sp" />
+                android:layout_gravity="center_horizontal"
+                android:layout_weight="2"
+                android:text="@string/shop_address"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                android:textStyle="bold" />
 
         </LinearLayout>
-
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
+            android:layout_gravity="right"
+            android:layout_marginLeft="10dp"
+            android:layout_marginBottom="3dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="3dp"
             android:orientation="horizontal">
 
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="5"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal">
+
+                <ImageButton
+                    android:id="@+id/btn_edit_addressinfo"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:background="@android:drawable/ic_menu_edit"
+                    android:visibility="gone" />
+
+                <ImageButton
+                    android:id="@+id/btn_done_addressinfo"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:background="@android:drawable/ic_menu_save"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/v_addressinfo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="19sp"
+                    tools:text="جنب المحطه عالصول" />
+
+                <EditText
+                    android:id="@+id/E_addressinfo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#218ffc"
+                    android:textSize="18sp"
+                    android:visibility="gone" />
+
+            </LinearLayout>
+
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:padding="5dp"
-                android:text="تفاصيل العنوان"
-                android:textSize="22sp" />
-
-
-            <ImageButton
-                android:id="@+id/btn_edit_addressinfo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@android:drawable/ic_menu_edit"
-                android:visibility="gone" />
-
-            <ImageButton
-                android:id="@+id/btn_done_addressinfo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@android:drawable/ic_dialog_info"
-                android:visibility="gone" />
-
-
+                android:layout_weight="2"
+                android:text="@string/address_details"
+                android:textColor="@color/black"
+                android:textSize="17sp"
+                android:textStyle="bold" />
         </LinearLayout>
 
-
         <TextView
-            android:id="@+id/v_addressinfo"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_margin="10dp"
-            android:text="جنب المحطه عالصول"
-
-            android:textSize="22sp" />
-
-        <EditText
-            android:id="@+id/E_addressinfo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:text="جنب المحطه عالصول"
-            android:textColor="#218ffc"
+            android:gravity="right"
+            android:padding="10dp"
+            android:text="@string/active_offers"
+            android:textColor="@color/black"
             android:textSize="22sp"
-            android:visibility="gone" />
+            android:textStyle="bold" />
 
-<ListView
-    android:id="@+id/lvOffers"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"/>
+        <ListView
+            android:id="@+id/lvOffers"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:drawable/alert_light_frame"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp" />
 
     </LinearLayout>
 </ScrollView>

@@ -251,11 +251,11 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
         txtShopName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(getActivity(), ViewShopActivity.class);
                 if (shop != null) {
+                    Intent i = new Intent(getActivity(), ViewShopActivity.class);
                     i.putExtra("shop", new Gson().toJson(shop));
+                    startActivity(i);
                 }
-                startActivity(i);
             }
         });
 
@@ -396,6 +396,7 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
                     txtAddress.setText(shop.getAddress());
                     txtWorkTime.setText(shop.getWorkingTime());
                     txtMobile.setText(shop.getContacts());
+                    txtShopName.setTextColor(getActivity().getResources().getColor(R.color.colorPrimaryDark));
                 }
 
                 @Override

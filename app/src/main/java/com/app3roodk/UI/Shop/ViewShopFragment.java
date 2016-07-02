@@ -13,8 +13,10 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.util.Log;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -28,24 +30,22 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.app3roodk.Imgur.ImgurUploadTask;
-import com.app3roodk.MapsShopLocationActivity;
 import com.app3roodk.R;
 import com.app3roodk.Schema.Offer;
 import com.app3roodk.Schema.Shop;
 import com.app3roodk.UI.DetailActivity.DetailActivity;
+import com.app3roodk.UtilityFirebase;
 import com.app3roodk.UtilityGeneral;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 
@@ -70,18 +70,15 @@ public class ViewShopFragment extends Fragment {
 
     InputMethodManager inputManager;
 
-    LinearLayout lineaAdderss, lineaAdderssFromEditing;
-
-    TextView txtShopName, txtWorkingTime, AddressFromMap, AddressFromMapByEditing, txtAdressInfo, txtContacts;
-    EditText e_txtShopName, e_txtWorkingTime, e_txtAdressInfo, e_txtContacts;
+    TextView txtShopName, txtWorkingTime, AddressFromMap, txtAdressInfo, txtContacts, txtOffersNum, txtActiveOffersNum;
+    EditText e_txtWorkingTime, e_txtAdressInfo, e_txtContacts;
     ImageView imageLogo;
-    Button btnShopWay, btnChangeLocation, btnChangeLogo;
+    Button btnChangeLogo, btnShopWay;
 
-    ImageButton btn_done_ShopName, btn_edit_ShopName, btn_done_WorkingTime, btn_edit_WorkingTime, btn_done_AdressInfo,
+    ImageButton btn_done_WorkingTime, btn_edit_WorkingTime, btn_done_AdressInfo,
             btn_edit_AdressInfo, btn_done_Contacts, btn_edit_Contacts, btn_done_logo, btn_edit_logo;
 
-
-    int REQUEST_CAMERA = 0, SELECT_FILE = 1;
+    int REQUEST_CAMERA = 0, SELECT_FILE = 1, allOffersCounter;
     String mlogoId = null;
     Menu mMenu;
 
@@ -98,46 +95,23 @@ public class ViewShopFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.view_shop_layout, container, false);
 
-        if (getActivity().getIntent().getExtras() != null) {
+        if (getActivity().getIntent().getExtras() != null)
             shop = new Gson().fromJson(getActivity().getIntent().getStringExtra("shop"), Shop.class);
-        } else {
+        else
             getActivity().finish();
-        }
 
-        if (UtilityGeneral.loadShop(getActivity(), shop.getObjectId()) != null) {
-            Toast.makeText(getActivity(), "انت صاحب المحل", Toast.LENGTH_SHORT).show();
-
+        if (UtilityGeneral.loadShop(getActivity(), shop.getObjectId()) != null)
             canEdit = true;
-        } else {
-            Toast.makeText(getActivity(), "مش انت صاحب المحل", Toast.LENGTH_SHORT).show();
-
+        else
             canEdit = false;
-        }
         initOffersList(rootView);
         latLngShop = new LatLng(Double.parseDouble(shop.getLat()), Double.parseDouble(shop.getLon()));
-
-        if (latLngShop_Editing == null) {
+        if (latLngShop_Editing == null)
             latLngShop_Editing = new LatLng(Double.parseDouble(shop.getLat()), Double.parseDouble(shop.getLon()));
-        }
+
         init(rootView);
         fillViews();
         btnsActions();
-
-        btnShopWay.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(UtilityGeneral.DrawPathToCertainShop(
-                        getContext(), UtilityGeneral.getCurrentLonAndLat(getContext()),
-                        latLngShop));
-            }
-        });
-
-        btnChangeLocation.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(getContext(), MapsShopLocationActivity.class));
-            }
-        });
 
         return rootView;
     }
@@ -148,10 +122,11 @@ public class ViewShopFragment extends Fragment {
         lstOffers = new ArrayList<>();
         adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, lstOffersTitles);
         lvOffers.setAdapter(adapter);
+        allOffersCounter = 0;
         String[] cats = getResources().getStringArray(R.array.cat_array_eng);
+
         for (String cat : cats) {
-            FirebaseDatabase.getInstance().getReference("Offers").child(shop.getCity()).child(cat)
-                    .orderByChild("shopId").startAt(shop.getObjectId()).endAt(shop.getObjectId()).addListenerForSingleValueEvent(new ValueEventListener() {
+            UtilityFirebase.getOffersForSpecificShop(shop,cat).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     Iterator<DataSnapshot> iterator = dataSnapshot.getChildren().iterator();
@@ -159,13 +134,17 @@ public class ViewShopFragment extends Fragment {
                     double dateNow = Double.parseDouble(UtilityGeneral.getCurrentDate(new Date()));
                     while (iterator.hasNext()) {
                         of = iterator.next().getValue(Offer.class);
+                        allOffersCounter++;
                         if (Double.parseDouble(of.getCreatedAt()) <= dateNow && Double.parseDouble(of.getEndTime()) > dateNow) {
                             lstOffers.add(of);
                             lstOffersTitles.add(of.getTitle());
                             adapter.notifyDataSetChanged();
                             UtilityGeneral.setListViewHeightBasedOnChildren(lvOffers);
+                            lvOffers.getLayoutParams().height = lvOffers.getLayoutParams().height + 100;
                         }
                     }
+                    txtActiveOffersNum.setText(String.valueOf(lstOffersTitles.size()));
+                    txtOffersNum.setText(String.valueOf(allOffersCounter));
                 }
 
                 @Override
@@ -179,7 +158,7 @@ public class ViewShopFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Offer offer = lstOffers.get(position);
                 Intent intent = new Intent(getActivity(), DetailActivity.class);
-                FirebaseDatabase.getInstance().getReference("Offers").child(offer.getCity()).child(offer.getCategoryName()).child(offer.getObjectId()).child("viewNum").setValue(offer.getViewNum() + 1);
+                UtilityFirebase.increaseOfferViewsNum(offer);
                 offer.setViewNum(offer.getViewNum() + 1);
                 intent.putExtra("offer", new Gson().toJson(offer));
                 startActivity(intent);
@@ -194,13 +173,14 @@ public class ViewShopFragment extends Fragment {
                         public void onClick(DialogInterface dialog, int which) {
                             switch (which) {
                                 case DialogInterface.BUTTON_POSITIVE:
-                                    FirebaseDatabase.getInstance().getReference("Offers").child(shop.getCity()).child(lstOffers.get(position).getCategoryName()).child(lstOffers.get(position).getObjectId()).removeValue(new DatabaseReference.CompletionListener() {
+                                    UtilityFirebase.removeOffer(lstOffers.get(position),new DatabaseReference.CompletionListener() {
                                         @Override
                                         public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                                             lstOffersTitles.remove(position);
                                             lstOffers.remove(position);
                                             adapter.notifyDataSetChanged();
                                             UtilityGeneral.setListViewHeightBasedOnChildren(lvOffers);
+                                            lvOffers.getLayoutParams().height = lvOffers.getLayoutParams().height + 100;
                                         }
                                     });
                                     break;
@@ -222,39 +202,6 @@ public class ViewShopFragment extends Fragment {
 
     private void btnsActions() {
 
-        btn_edit_ShopName.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                btn_edit_ShopName.setVisibility(View.GONE);
-                btn_done_ShopName.setVisibility(View.VISIBLE);
-                e_txtShopName.setText(txtShopName.getText().toString());
-                e_txtShopName.requestFocus();
-                txtShopName.setVisibility(View.GONE);
-                e_txtShopName.setVisibility(View.VISIBLE);
-
-            }
-        });
-
-        btn_done_ShopName.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                if (e_txtShopName.getText().toString().trim().isEmpty()) {
-                    Toast.makeText(getActivity(), "ادخل اسم صحيح", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                btn_done_ShopName.setVisibility(View.GONE);
-                btn_edit_ShopName.setVisibility(View.VISIBLE);
-                txtShopName.setText(e_txtShopName.getText().toString());
-                txtShopName.setVisibility(View.VISIBLE);
-                shop.setName(txtShopName.getText().toString());
-                inputManager.hideSoftInputFromWindow(e_txtShopName.getWindowToken(),
-                        InputMethodManager.HIDE_NOT_ALWAYS);
-                e_txtShopName.setVisibility(View.GONE);
-
-            }
-        });
-
 
         btn_edit_WorkingTime.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -273,7 +220,7 @@ public class ViewShopFragment extends Fragment {
             public void onClick(View v) {
 
                 if (e_txtWorkingTime.getText().toString().trim().isEmpty()) {
-                    Toast.makeText(getActivity(), "ادخل مواعيد صحيحه", Toast.LENGTH_SHORT).show();
+                    showMessage("إدخل مواعيد العمل");
                     return;
                 }
                 btn_done_WorkingTime.setVisibility(View.GONE);
@@ -304,7 +251,7 @@ public class ViewShopFragment extends Fragment {
             public void onClick(View v) {
 
                 if (e_txtAdressInfo.getText().toString().trim().isEmpty()) {
-                    Toast.makeText(getActivity(), "ادخل عنوان صحيح", Toast.LENGTH_SHORT).show();
+                    showMessage("إدخل تفاصيل عنوان المحل");
                     return;
                 }
                 btn_done_AdressInfo.setVisibility(View.GONE);
@@ -335,7 +282,7 @@ public class ViewShopFragment extends Fragment {
             public void onClick(View v) {
 
                 if (e_txtContacts.getText().toString().trim().isEmpty()) {
-                    Toast.makeText(getActivity(), "ادخل رقم صحيح لموبايلك", Toast.LENGTH_SHORT).show();
+                    showMessage("إدخل رقم الموبايل");
                     return;
                 }
                 btn_done_Contacts.setVisibility(View.GONE);
@@ -376,6 +323,14 @@ public class ViewShopFragment extends Fragment {
                 selectLogo();
             }
         });
+
+        btnShopWay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(UtilityGeneral.DrawPathToCertainShop(
+                        getContext(), UtilityGeneral.getCurrentLonAndLat(getContext()), latLngShop));
+            }
+        });
     }
 
     @Override
@@ -414,19 +369,6 @@ public class ViewShopFragment extends Fragment {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    final List<Address> tempAddresses = UtilityGeneral.getCurrentGovAndCity(getActivity(), latLngShop_Editing);
-                    if (getActivity() == null)
-                        return;
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                AddressFromMapByEditing.setText(tempAddresses.get(0).getAddressLine(3) + " - " + tempAddresses.get(0).getAddressLine(2) + " - " + tempAddresses.get(0).getAddressLine(1) + " - " + tempAddresses.get(0).getAddressLine(0));
-                            } catch (Exception ex) {
-                                Log.e("CreateShopFragment", ex.getMessage());
-                            }
-                        }
-                    });
                     addressesFromEditing = UtilityGeneral.getCurrentGovAndCityInEnglish(getActivity(), latLngShop_Editing);
                 }
             }).start();
@@ -437,9 +379,25 @@ public class ViewShopFragment extends Fragment {
     private void fillViews() {
 
         if (shop.getLogoId() == null) {
-            imageLogo.setVisibility(View.GONE);
+            Glide.with(getActivity()).load(R.drawable.logo).asBitmap().into(new BitmapImageViewTarget(imageLogo) {
+                @Override
+                protected void setResource(Bitmap resource) {
+                    RoundedBitmapDrawable circularBitmapDrawable =
+                            RoundedBitmapDrawableFactory.create(getActivity().getResources(), resource);
+                    circularBitmapDrawable.setCircular(true);
+                    imageLogo.setImageDrawable(circularBitmapDrawable);
+                }
+            });
         } else {
-            Glide.with(getActivity()).load(shop.getLogoId()).into(imageLogo);
+            Glide.with(getActivity()).load(shop.getLogoId()).asBitmap().into(new BitmapImageViewTarget(imageLogo) {
+                @Override
+                protected void setResource(Bitmap resource) {
+                    RoundedBitmapDrawable circularBitmapDrawable =
+                            RoundedBitmapDrawableFactory.create(getActivity().getResources(), resource);
+                    circularBitmapDrawable.setCircular(true);
+                    imageLogo.setImageDrawable(circularBitmapDrawable);
+                }
+            });
         }
         txtShopName.setText(shop.getName());
         txtWorkingTime.setText(shop.getWorkingTime());
@@ -450,22 +408,19 @@ public class ViewShopFragment extends Fragment {
     private void init(View rootView) {
         // View Views
         imageLogo = (ImageView) rootView.findViewById(R.id.v_logo);
-        txtShopName = (TextView) rootView.findViewById(R.id.v_shopname);
+        txtShopName = (TextView) getActivity().findViewById(R.id.toolbarTitle);
         txtWorkingTime = (TextView) rootView.findViewById(R.id.v_workingtime);
         AddressFromMap = (TextView) rootView.findViewById(R.id.v_txtShopAddressFromMap);
-        AddressFromMapByEditing = (TextView) rootView.findViewById(R.id.txtShopAddressFromMapByEditing);
         txtAdressInfo = (TextView) rootView.findViewById(R.id.v_addressinfo);
         txtContacts = (TextView) rootView.findViewById(R.id.v_contacts);
-        btnShopWay = (Button) rootView.findViewById(R.id.v_btnShopWay);
-        btnChangeLocation = (Button) rootView.findViewById(R.id.btnChangeAddress);
+        txtOffersNum = (TextView) rootView.findViewById(R.id.txtOfferNum);
+        txtActiveOffersNum = (TextView) rootView.findViewById(R.id.txtActiveOfferNum);
         btnChangeLogo = (Button) rootView.findViewById(R.id.btn_change_logo);
+        btnShopWay = (Button) rootView.findViewById(R.id.btnShopWay);
         // Edit Views
-        e_txtShopName = (EditText) rootView.findViewById(R.id.E_shopname);
         e_txtWorkingTime = (EditText) rootView.findViewById(R.id.E_workingtime);
         e_txtAdressInfo = (EditText) rootView.findViewById(R.id.E_addressinfo);
         e_txtContacts = (EditText) rootView.findViewById(R.id.E_contacts);
-        btn_done_ShopName = (ImageButton) rootView.findViewById(R.id.btn_done_shopname);
-        btn_edit_ShopName = (ImageButton) rootView.findViewById(R.id.btn_edit_shopname);
         btn_done_WorkingTime = (ImageButton) rootView.findViewById(R.id.btn_done_workingtime);
         btn_edit_WorkingTime = (ImageButton) rootView.findViewById(R.id.btn_edit_workingtime);
         btn_done_AdressInfo = (ImageButton) rootView.findViewById(R.id.btn_done_addressinfo);
@@ -474,8 +429,6 @@ public class ViewShopFragment extends Fragment {
         btn_edit_Contacts = (ImageButton) rootView.findViewById(R.id.btn_edit_contacts);
         btn_done_logo = (ImageButton) rootView.findViewById(R.id.btn_done_logo);
         btn_edit_logo = (ImageButton) rootView.findViewById(R.id.btn_edit_logo);
-        lineaAdderss = (LinearLayout) rootView.findViewById(R.id.linear_address);
-        lineaAdderssFromEditing = (LinearLayout) rootView.findViewById(R.id.linear_address_fromEditing);
     }
 
     @Override
@@ -508,24 +461,23 @@ public class ViewShopFragment extends Fragment {
     }
 
     private void doneMode() {
-        lineaAdderss.setVisibility(View.VISIBLE);
-        lineaAdderssFromEditing.setVisibility(View.GONE);
-        btn_edit_ShopName.setVisibility(View.GONE);
         btn_edit_WorkingTime.setVisibility(View.GONE);
         btn_edit_AdressInfo.setVisibility(View.GONE);
         btn_edit_Contacts.setVisibility(View.GONE);
         btn_edit_logo.setVisibility(View.GONE);
-        Toast.makeText(getActivity(), "done mode", Toast.LENGTH_SHORT).show();
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("Shops")
-                .child(UtilityGeneral.loadUser(getActivity()).getObjectId());
-        myRef.child(shop.getObjectId()).setValue(shop, new DatabaseReference.CompletionListener() {
+        btn_done_AdressInfo.setVisibility(View.GONE);
+        btn_done_Contacts.setVisibility(View.GONE);
+        btn_done_logo.setVisibility(View.GONE);
+        btn_done_WorkingTime.setVisibility(View.GONE);
+        btn_edit_logo.setVisibility(View.GONE);
+        showMessage("جارى التحديث");
+        UtilityFirebase.updateShop(UtilityGeneral.loadUser(getActivity()).getObjectId(),shop, new DatabaseReference.CompletionListener() {
             @Override
             public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                 if (databaseError != null) {
-                    Toast.makeText(getActivity(), "حصل مشكله شوف النت ", Toast.LENGTH_SHORT).show();
+                    showMessage("حصل مشكلة بص على النت كده");
                 } else {
-                    Toast.makeText(getActivity(), "تم إضافه تعديل بيانات المحل شكرا لك", Toast.LENGTH_SHORT).show();
+                    showMessage("تم التحديث بنجاح");
                     UtilityGeneral.saveShop(getActivity(), shop);
                 }
             }
@@ -534,16 +486,15 @@ public class ViewShopFragment extends Fragment {
 
 
     private void editMode() {
-        btn_edit_ShopName.setVisibility(View.VISIBLE);
         btn_edit_WorkingTime.setVisibility(View.VISIBLE);
         btn_edit_AdressInfo.setVisibility(View.VISIBLE);
         btn_edit_Contacts.setVisibility(View.VISIBLE);
-        lineaAdderss.setVisibility(View.GONE);
-        lineaAdderssFromEditing.setVisibility(View.VISIBLE);
         btn_edit_logo.setVisibility(View.VISIBLE);
-        Toast.makeText(getActivity(), "edit mode", Toast.LENGTH_SHORT).show();
     }
 
+    private void showMessage(String msg){
+        Snackbar.make(getView(),msg,Snackbar.LENGTH_LONG).show();
+    }
 
     private void selectLogo() {
         final CharSequence[] items = {"إختار لوجو", "إلغاء"};
@@ -573,6 +524,7 @@ public class ViewShopFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == SELECT_FILE) {
+                showMessage("جاري رفع اللوجو");
                 Uri u = data.getData();
                 onSelectFromGalleryResult(data, u);
             } else if (requestCode == REQUEST_CAMERA) {
@@ -607,7 +559,15 @@ public class ViewShopFragment extends Fragment {
 
     private void setLogo(Bitmap thumbnail, Uri uri) {
 
-        imageLogo.setImageBitmap(thumbnail);
+        Glide.with(getActivity()).load(uri).asBitmap().into(new BitmapImageViewTarget(imageLogo) {
+            @Override
+            protected void setResource(Bitmap resource) {
+                RoundedBitmapDrawable circularBitmapDrawable =
+                        RoundedBitmapDrawableFactory.create(getActivity().getResources(), resource);
+                circularBitmapDrawable.setCircular(true);
+                imageLogo.setImageDrawable(circularBitmapDrawable);
+            }
+        });
         imageLogo.setAlpha(0.4f);
         new MyImgurUploadTask(uri, imageLogo).execute();
     }
@@ -632,12 +592,13 @@ public class ViewShopFragment extends Fragment {
             if (imageId != null) {
                 mImgurUrl = "http://i.imgur.com/" + imageId + ".jpg";
                 imageLogo.setAlpha(1.0f);
-                Toast.makeText(getActivity(), mImgurUrl + "", Toast.LENGTH_LONG).show();
+                showMessage("تم رفع صورة اللوجو");
                 mlogoId = mImgurUrl;
             } else {
                 mImgurUrl = null;
-                Toast.makeText(getActivity(), "imgur_upload_error", Toast.LENGTH_LONG).show();
+                showMessage("فشل فى رفع صورة اللوجو");
             }
         }
     }
+
 }

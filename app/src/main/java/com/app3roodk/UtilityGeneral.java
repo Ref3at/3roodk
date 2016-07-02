@@ -25,6 +25,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -65,13 +66,12 @@ public class UtilityGeneral {
         try {
             LatLng latlng = getCurrentLonAndLat(context);
             Geocoder geo = new Geocoder(context, Locale.getDefault());
-            List<Address> addresses  = geo.getFromLocation(latlng.latitude, latlng.longitude, 1);
-            if(addresses != null) {
+            List<Address> addresses = geo.getFromLocation(latlng.latitude, latlng.longitude, 1);
+            if (addresses != null) {
                 city = addresses.get(0).getAddressLine(2);
-                City =city;
-                saveCity(context,city);
-            }
-            else
+                City = city;
+                saveCity(context, city);
+            } else
                 city = loadCity(context);
         } catch (Exception e) {
             city = loadCity(context);
@@ -84,15 +84,14 @@ public class UtilityGeneral {
         try {
             LatLng latlng = getCurrentLonAndLat(context);
             Geocoder geo = new Geocoder(context, Locale.ENGLISH);
-            List<Address> addresses  = geo.getFromLocation(latlng.latitude, latlng.longitude, 1);
-            if(addresses != null) {
+            List<Address> addresses = geo.getFromLocation(latlng.latitude, latlng.longitude, 1);
+            if (addresses != null) {
                 city = addresses.get(0).getAddressLine(2);
-                if(city == null || city.equals("null"))
-                    city= addresses.get(0).getAddressLine(1);
-                City =city;
-                saveCity(context,city);
-            }
-            else
+                if (city == null || city.equals("null"))
+                    city = addresses.get(0).getAddressLine(1);
+                City = city;
+                saveCity(context, city);
+            } else
                 city = loadCity(context);
         } catch (Exception e) {
             city = loadCity(context);
@@ -142,8 +141,7 @@ public class UtilityGeneral {
         return mapsShopsIntent;
     }
 
-    static public double calculateDistanceInKM(double latA,double lngA , double latB,double lngB)
-    {
+    static public double calculateDistanceInKM(double latA, double lngA, double latB, double lngB) {
         Location locationA = new Location("point A");
 
         locationA.setLatitude(latA);
@@ -153,7 +151,7 @@ public class UtilityGeneral {
 
         locationB.setLatitude(latB);
         locationB.setLongitude(lngB);
-        return Math.round((locationA.distanceTo(locationB)/1000)*1000d)/1000d;
+        return Math.round((locationA.distanceTo(locationB) / 1000) * 1000d) / 1000d;
     }
 
     static public void sortOffersByViews(ArrayList<Offer> lstOffers) {
@@ -317,6 +315,33 @@ public class UtilityGeneral {
         }
     }
 
+    static public void saveOffers(Context context, String key, ArrayList<Offer> lstOffers) {
+        try {
+            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+            SharedPreferences.Editor editor = sharedPref.edit();
+            String offersJson = new Gson().toJson(lstOffers);
+            editor.putString("key" + key, offersJson);
+            editor.commit();
+        } catch (Exception ex) {
+        }
+    }
+
+    static public ArrayList<Offer> loadOffers(Context context, String key) {
+        ArrayList<Offer> lstOffers = null;
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        String OffersJson = prefs.getString("key" + key, "");
+        if (OffersJson.equals("")) return new ArrayList<>();
+        else {
+            try {
+                lstOffers = new Gson().fromJson(OffersJson, new TypeToken<ArrayList<Offer>>() {
+                }.getType());
+                return lstOffers;
+            } catch (Exception e) {
+                return new ArrayList<>();
+            }
+        }
+    }
+
     static public void saveUser(Context context, User user) {
         try {
             SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
@@ -360,7 +385,7 @@ public class UtilityGeneral {
     static public String loadCity(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         String city = prefs.getString(Constants.KEY_CITY, "No");
-        return  city;
+        return city;
     }
 
     static public boolean isLocationExist(Context context) {
@@ -494,7 +519,7 @@ public class UtilityGeneral {
         if (shopsJson.equals("")) return shops;
         else {
             try {
-                HashMap<String,Shop> mapShops= new Gson().fromJson(shopsJson, new TypeToken<HashMap<String, Shop>>() {
+                HashMap<String, Shop> mapShops = new Gson().fromJson(shopsJson, new TypeToken<HashMap<String, Shop>>() {
                 }.getType());
                 shops = new ArrayList<>();
                 for (Map.Entry<String, Shop> entry : mapShops.entrySet()) {

@@ -90,5 +90,9 @@
     <string name="your_rate">تقييمك</string>
     <string name="choose_shop">اختار المحل</string>
     <string name="signing_in">جاري تسجيل الدخول</string>
+    <string name="active_offers">العروض الحالية</string>
+    <string name="all_offers">كل العروض</string>
+    <string name="loading">جارى التحميل ...</string>
+    <string name="change_logo">غير اللوجو</string>
 
 </resources>

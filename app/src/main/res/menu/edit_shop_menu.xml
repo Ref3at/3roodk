@@ -7,12 +7,10 @@
         android:title="@string/edit"
         app:showAsAction="always" />
 
-
     <item
         android:id="@+id/action_done"
         android:title="@string/done"
         android:visible="false"
         app:showAsAction="always" />
-
 
 </menu>

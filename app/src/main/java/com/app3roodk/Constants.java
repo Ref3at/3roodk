@@ -1,8 +1,5 @@
 package com.app3roodk;
 
-/**
- * Created by Refaat on 5/5/2016.
- */
 public class Constants {
 
     /**

@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.concurrent.ExecutionException;
 
 public class CardsFragment extends Fragment {
 
@@ -44,7 +45,7 @@ public class CardsFragment extends Fragment {
                              Bundle savedInstanceState) {
         final RecyclerView recyclerView = (RecyclerView) inflater.inflate(
                 R.layout.cards_recycler_view, container, false);
-        lstOffers = new ArrayList<>();
+        lstOffers = UtilityGeneral.loadOffers(getActivity(),getActivity().getIntent().getStringExtra("name"));
         adapter = new ContentAdapter(lstOffers);
         recyclerView.setAdapter(adapter);
         if (lstOffers.size() > 0) {
@@ -115,6 +116,10 @@ public class CardsFragment extends Fragment {
                     if (Double.parseDouble(of.getCreatedAt()) <= dateNow)
                         lstOffers.add(of);
                 }
+                try {
+                    UtilityGeneral.saveOffers(getActivity(), getActivity().getIntent().getStringExtra("name"), lstOffers);
+                }
+                catch (Exception ex){}
                 sortOffers();
             }
 
