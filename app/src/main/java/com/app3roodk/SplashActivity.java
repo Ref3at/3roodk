@@ -9,6 +9,8 @@ import com.app3roodk.UI.PositioningActivity.PositioningActivity;
 
 public class SplashActivity extends AppCompatActivity {
 
+    // Helloooooooooo
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
