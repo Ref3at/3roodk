@@ -83,6 +83,9 @@ public class CardsActivity extends AppCompatActivity {
         initNavigationDrawer();
         // Adding Floating Action Button to bottom right of main view
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+
+        fab.setVisibility(View.GONE);
+
         assert fab != null;
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -303,12 +306,21 @@ public class CardsActivity extends AppCompatActivity {
 
             if (UtilityGeneral.isShopExist(getBaseContext())) {
                 nav_Menu.findItem(R.id.action_new_shop).setVisible(false);
-                nav_Menu.findItem(R.id.action_add_offers).setVisible(true);
-                nav_Menu.findItem(R.id.action_view_my_shop).setVisible(true);
-            } else {
-                nav_Menu.findItem(R.id.action_new_shop).setVisible(true);
                 nav_Menu.findItem(R.id.action_add_offers).setVisible(false);
                 nav_Menu.findItem(R.id.action_view_my_shop).setVisible(false);
+                /*
+                nav_Menu.findItem(R.id.action_new_shop).setVisible(false);
+                nav_Menu.findItem(R.id.action_add_offers).setVisible(true);
+                nav_Menu.findItem(R.id.action_view_my_shop).setVisible(true);*/
+
+            } else {
+                nav_Menu.findItem(R.id.action_new_shop).setVisible(false);
+                nav_Menu.findItem(R.id.action_add_offers).setVisible(false);
+                nav_Menu.findItem(R.id.action_view_my_shop).setVisible(false);
+
+              /*  nav_Menu.findItem(R.id.action_new_shop).setVisible(true);
+                nav_Menu.findItem(R.id.action_add_offers).setVisible(false);
+                nav_Menu.findItem(R.id.action_view_my_shop).setVisible(false);*/
             }
         } else {
             nav_Menu.findItem(R.id.action_signin).setVisible(true);

@@ -18,3 +18,4 @@ public class TestProviderConfig implements ProviderConfig {
         return new UpgradeScript[0];
     }
 }
+

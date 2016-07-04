@@ -37,7 +37,7 @@ import java.util.Map;
 
 public class UtilityGeneral {
 
-    static public String City;
+    static public String City = "El-Senbellawein";
 
     static public LatLng getCurrentLonAndLat(Context context) {
         try {
@@ -95,7 +95,8 @@ public class UtilityGeneral {
         } catch (Exception e) {
             city = loadCity(context);
         }
-        return city;
+        //return city;
+        return "El-Senbellawein";
     }
 
     static public List<Address> getCurrentGovAndCity(Context context, LatLng latLng) {
