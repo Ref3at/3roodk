@@ -9,6 +9,9 @@ public class Constants {
     public static final String KEY_SHOP = "keyshop";
     public static final String KEY_CITY = "keycity";
     public static final int RC_SIGN_IN = 123;
+
+    public static final int PERMISSION_MAPS_SIGN_IN = 13;
+    public static final int PERMISSION_MAPS_VISITOR = 12;
     // imgur
 
     public static final String FIREBASE_SERVER_KEY_CLOUD_MESSAGING = "AIzaSyBYMeiNIY7H2cMPeUw6YNPp93Dq2XVOrnY";

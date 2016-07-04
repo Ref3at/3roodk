@@ -11,9 +11,8 @@ public class OfferActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_offer);
+        setContentView(R.layout.activity_add_new_offer);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle("إعلان جديد");
         setSupportActionBar(toolbar);
         if (savedInstanceState == null) {
 

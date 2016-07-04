@@ -93,7 +93,7 @@ public class ViewShopFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.view_shop_layout, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_view_shop, container, false);
 
         if (getActivity().getIntent().getExtras() != null)
             shop = new Gson().fromJson(getActivity().getIntent().getStringExtra("shop"), Shop.class);
@@ -176,6 +176,7 @@ public class ViewShopFragment extends Fragment {
                                     UtilityFirebase.removeOffer(lstOffers.get(position),new DatabaseReference.CompletionListener() {
                                         @Override
                                         public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                                            UtilityFirebase.removeOfferComments(lstOffers.get(position).getObjectId());
                                             lstOffersTitles.remove(position);
                                             lstOffers.remove(position);
                                             adapter.notifyDataSetChanged();

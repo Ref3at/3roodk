@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
@@ -33,11 +34,11 @@ import com.app3roodk.Imgur.ImgurUploadTask;
 import com.app3roodk.MapsShopLocationActivity;
 import com.app3roodk.R;
 import com.app3roodk.Schema.Shop;
+import com.app3roodk.UtilityFirebase;
 import com.app3roodk.UtilityGeneral;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.Date;
 import java.util.List;
@@ -60,7 +61,7 @@ public class CreateShopFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.creatshop_layout, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_create_shop, container, false);
         initViews(rootView);
         clickConfig();
         latLngShop = UtilityGeneral.getCurrentLonAndLat(getActivity());
@@ -102,7 +103,6 @@ public class CreateShopFragment extends Fragment {
         addShopLogo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getActivity(), "هيختار لوجو", Toast.LENGTH_SHORT).show();
                 selectLogo();
             }
         });
@@ -259,8 +259,7 @@ public class CreateShopFragment extends Fragment {
             return;
         }
         if (mlogoId == null && haveAlogo.isChecked()) {
-            Toast.makeText(getActivity(), "يجب تحديد لوجو!", Toast.LENGTH_SHORT).show();
-
+            showMessageToast("يجب تحديد لوجو!");
             return;
         }
         Create();
@@ -275,24 +274,21 @@ public class CreateShopFragment extends Fragment {
         shop.setLogoId(mlogoId);
         shop.setCity(addresses.get(0).getAddressLine(2));
         if(shop.getCity() == null ||shop.getCity().equals("null"))
-            shop.setCity(addresses.get(0).getAddressLine(1));
+            shop.setCity(addresses.get(0).getAddressLine(3));
         shop.setGovernate(addresses.get(0).getAddressLine(3));
         shop.setLon(String.valueOf(latLngShop.longitude));
         shop.setLat(String.valueOf(latLngShop.latitude));
         shop.setCreatedAt(UtilityGeneral.getCurrentDate(new Date()));
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("Shops").child(UtilityGeneral.loadUser(getActivity()).getObjectId());
-        shop.setObjectId(myRef.push().getKey());
-        myRef.child(shop.getObjectId()).setValue(shop, new DatabaseReference.CompletionListener() {
+        UtilityFirebase.createNewShop(shop,UtilityGeneral.loadUser(getActivity()).getObjectId() ,new DatabaseReference.CompletionListener() {
             @Override
             public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                 if(databaseError !=null) {
-                    Toast.makeText(getActivity(), "حصل مشكله شوف النت ", Toast.LENGTH_SHORT).show();
+                    showMessageToast( "حصل مشكله شوف النت ");
                     Log.e("Frebaaase", databaseError.getMessage());
                 }
                 else
                 {
-                    Toast.makeText(getActivity(), "تم إضافه المحل، شكرا لك", Toast.LENGTH_SHORT).show();
+                    showMessageToast("تم إضافه المحل، شكرا لك");
                     UtilityGeneral.saveShop(getActivity(), shop);
                     getActivity().onBackPressed();
                 }
@@ -390,6 +386,18 @@ public class CreateShopFragment extends Fragment {
             }
         }
     }
+    private void showMessage(String msg) {
+        try {
+            Snackbar.make(getView(), msg, Snackbar.LENGTH_LONG).show();
+        }
+        catch (Exception ex){}
+    }
+    private void showMessageToast(String msg) {
+        try {
+            Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG).show();
+        }
+        catch (Exception ex){}
+    }
 
     private class MyImgurUploadTask extends ImgurUploadTask {
         String mImgurUrl = null;
@@ -411,11 +419,11 @@ public class CreateShopFragment extends Fragment {
             if (imageId != null) {
                 mImgurUrl = "http://i.imgur.com/" + imageId + ".jpg";
                 addShopLogo.setAlpha(1.0f);
-                Toast.makeText(getActivity(), mImgurUrl + "", Toast.LENGTH_LONG).show();
+                showMessage("تم رفع الصورة بنجاح");
                 mlogoId = mImgurUrl;
             } else {
                 mImgurUrl = null;
-                Toast.makeText(getActivity(), "imgur_upload_error", Toast.LENGTH_LONG).show();
+                showMessageToast("حصل مشكلة فى رفع الصورة");
             }
         }
     }

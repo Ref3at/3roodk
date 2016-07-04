@@ -25,7 +25,6 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -88,7 +87,7 @@ public class UtilityGeneral {
             if (addresses != null) {
                 city = addresses.get(0).getAddressLine(2);
                 if (city == null || city.equals("null"))
-                    city = addresses.get(0).getAddressLine(1);
+                    city = addresses.get(0).getAddressLine(3);
                 City = city;
                 saveCity(context, city);
             } else
@@ -203,6 +202,28 @@ public class UtilityGeneral {
                 return 0;
             }
         });
+    }
+
+    static public boolean isTotalAndAverageRatingChanged(Offer offer) {
+        boolean isNew= false;
+        try {
+            String previousTotal = offer.getTotalRate(), previousAverage = offer.getAverageRate();
+            Double average, total = 0.0;
+            for (Map.Entry<String, String> entry : offer.getUsersRates().entrySet()) {
+                total += Double.parseDouble(entry.getValue());
+            }
+            average = total / offer.getUsersRates().size();
+            if (!String.format("%.0f", total).equals(previousTotal)) {
+                offer.setTotalRate(String.format("%.0f", total));
+                isNew = true;
+            }
+            if (!String.format("%.1f", average).equals(previousAverage)) {
+                offer.setAverageRate(String.format("%.1f", average));
+                isNew = true;
+            }
+        }
+        catch (Exception ex){isNew =false;}
+        return isNew;
     }
 
     //region Helping Functions

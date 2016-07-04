@@ -32,16 +32,15 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.app3roodk.Constants;
 import com.app3roodk.Imgur.ImgurUploadTask;
 import com.app3roodk.R;
 import com.app3roodk.Schema.Item;
 import com.app3roodk.Schema.Offer;
 import com.app3roodk.Schema.Shop;
+import com.app3roodk.UtilityFirebase;
 import com.app3roodk.UtilityGeneral;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.weiwangcn.betterspinner.library.BetterSpinner;
 
 import java.io.ByteArrayOutputStream;
@@ -119,7 +118,7 @@ public class AddNewOfferFragment extends Fragment {
 
         mOffer = new Offer();
 
-        View rootView = inflater.inflate(R.layout.add_offer_layout, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_add_new_offer, container, false);
 
         addNewItem = (Button) rootView.findViewById(R.id.add_new_item);
 
@@ -202,7 +201,7 @@ public class AddNewOfferFragment extends Fragment {
 
 
         LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        final View rootView = inflater.inflate(R.layout.add_offer_item_layout, null);
+        final View rootView = inflater.inflate(R.layout.add_offer_item, null);
 
         itemsContainer.addView(rootView);
 
@@ -601,10 +600,7 @@ if (itemsContainer!=null) {
                 }
             }
             mOffer.setEndTime(UtilityGeneral.getCurrentDate(cal.getTime()));
-            FirebaseDatabase database = FirebaseDatabase.getInstance();
-            DatabaseReference myRef = database.getReference("Offers").child(shop.getCity()).child(UtilityGeneral.getCategoryEnglishName(category_spinner.getText().toString()));
-            mOffer.setObjectId(myRef.push().getKey());
-            myRef.child(mOffer.getObjectId()).setValue(mOffer, new DatabaseReference.CompletionListener() {
+            UtilityFirebase.createNewOffer(mOffer, new DatabaseReference.CompletionListener() {
                 @Override
                 public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                     if (databaseError != null) {

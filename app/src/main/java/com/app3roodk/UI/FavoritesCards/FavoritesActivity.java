@@ -13,7 +13,6 @@ public class FavoritesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_favorites);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle("العروض المُفضله");
         setSupportActionBar(toolbar);
         if (savedInstanceState == null) {
 

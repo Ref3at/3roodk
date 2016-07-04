@@ -15,7 +15,6 @@ public class ViewShopActivity extends AppCompatActivity {
         setContentView(R.layout.activity_view_shop);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.view_shop_container, new ViewShopFragment())

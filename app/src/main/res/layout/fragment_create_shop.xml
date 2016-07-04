@@ -4,7 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    android:layoutDirection="rtl"
     android:padding="20dp">
 
     <LinearLayout
@@ -16,7 +15,6 @@
             android:id="@+id/input_layout_shopname"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-
 
             <EditText
                 android:id="@+id/input_shopname"
@@ -64,8 +62,8 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/custom_background_content"
                 android:gravity="center"
-                android:hint="أدخل رقم الموبايل"
-                android:inputType="textCapWords"
+                android:hint="@string/add_mobile_number"
+                android:inputType="phone"
                 android:padding="10dp"
                 android:singleLine="true"
                 android:textColor="@color/black"
@@ -80,16 +78,6 @@
             android:layout_margin="10dp"
             android:orientation="horizontal">
 
-            <Switch
-                android:id="@+id/hava_alogo_switch"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_margin="5dp"
-                android:gravity="center"
-                android:layoutDirection="ltr"
-                android:text="@string/have_logo" />
-
             <ImageButton
 
                 android:id="@+id/imgbtn_addlogo"
@@ -99,6 +87,15 @@
                 android:clickable="false"
                 android:scaleType="centerCrop"
                 android:src="@drawable/add_image" />
+
+            <Switch
+                android:id="@+id/hava_alogo_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="5dp"
+                android:gravity="center"
+                android:text="@string/have_logo" />
 
 
         </LinearLayout>
@@ -116,16 +113,6 @@
             android:layout_margin="5dp"
             android:orientation="horizontal">
 
-
-            <TextView
-                android:id="@+id/txtShopAddressFromMap"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                android:gravity="center"
-                tools:text="الدقهليه - السنبلاوين شارع الاستقلال" />
-
             <Button
                 android:id="@+id/btnChangeAddress"
                 android:layout_width="wrap_content"
@@ -135,6 +122,14 @@
                 android:text="@string/change_address"
                 android:textColor="@color/white"
                 android:textSize="16sp" />
+            <TextView
+                android:id="@+id/txtShopAddressFromMap"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:gravity="center"
+                tools:text="الدقهليه - السنبلاوين شارع الاستقلال" />
 
         </LinearLayout>
 

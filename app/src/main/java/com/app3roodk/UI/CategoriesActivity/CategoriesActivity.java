@@ -15,10 +15,8 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.DragEvent;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -33,6 +31,7 @@ import com.app3roodk.UI.OffersCards.CardsActivity;
 import com.app3roodk.UI.PositioningActivity.PositioningActivity;
 import com.app3roodk.UI.Shop.ListShopsActivity;
 import com.app3roodk.UI.Shop.ShopActivity;
+import com.app3roodk.UtilityFirebase;
 import com.app3roodk.UtilityGeneral;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
@@ -40,6 +39,7 @@ import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 public class CategoriesActivity extends AppCompatActivity {
 
@@ -73,11 +73,13 @@ public class CategoriesActivity extends AppCompatActivity {
 
         // Adding Toolbar to Main screen
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        ((TextView) findViewById(R.id.toolbarTitle)).setText("الأقسام");
         setSupportActionBar(toolbar);
         loadCity();
         initNavigationDrawer();
-
+        if (UtilityGeneral.isRegisteredUser(getBaseContext())) {
+            UtilityFirebase.updateUserNotificationToken(getBaseContext(), UtilityGeneral.loadUser(getBaseContext()), FirebaseInstanceId.getInstance().getToken());
+            UtilityFirebase.getUserShops(getBaseContext(),UtilityGeneral.loadUser(getBaseContext()).getObjectId());
+        }
     }
 
     public void initNavigationDrawer() {

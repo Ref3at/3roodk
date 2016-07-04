@@ -40,7 +40,7 @@
                     android:paddingStart="15dp"
                     android:textColor="@color/white"
                     android:textSize="25sp"
-                    tools:text="@string/aboutapp" />
+                    android:text="@string/categories" />
             </android.support.v7.widget.Toolbar>
 
         </android.support.design.widget.AppBarLayout>

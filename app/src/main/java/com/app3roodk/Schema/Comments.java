@@ -1,7 +1,7 @@
 package com.app3roodk.Schema;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Comments {
 
@@ -11,8 +11,8 @@ public class Comments {
     private String userName;
     private String userId;
     private String offerId;
-    private ArrayList<String> userLike ;
-    private ArrayList<String> userDislike ;
+    private HashMap<String,String> userLike ;
+    private HashMap<String,String> userDislike ;
 
     public Comments() {
     }
@@ -64,19 +64,21 @@ public class Comments {
         this.userName = userName;
     }
 
-    public ArrayList<String> getUserLike() {
+    public HashMap<String, String> getUserLike() {
+        if(userLike == null ) userLike = new HashMap<>();
         return userLike;
     }
 
-    public void setUserLike(ArrayList<String> userLike) {
+    public void setUserLike(HashMap<String, String> userLike) {
         this.userLike = userLike;
     }
 
-    public ArrayList<String> getUserDislike() {
+    public HashMap<String, String> getUserDislike() {
+        if(userDislike == null ) userDislike = new HashMap<>();
         return userDislike;
     }
 
-    public void setUserDislike(ArrayList<String> userDislike) {
+    public void setUserDislike(HashMap<String, String> userDislike) {
         this.userDislike = userDislike;
     }
 

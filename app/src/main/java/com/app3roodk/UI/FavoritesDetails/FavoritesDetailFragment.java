@@ -34,6 +34,7 @@ import com.app3roodk.Schema.TestTable;
 import com.app3roodk.UI.FullScreenImage.FullScreenImageSlider;
 import com.app3roodk.UI.ImagesSliders.CustomImagesSlider;
 import com.app3roodk.UI.Shop.ViewShopActivity;
+import com.app3roodk.UtilityFirebase;
 import com.app3roodk.UtilityGeneral;
 import com.daimajia.slider.library.Animations.DescriptionAnimation;
 import com.daimajia.slider.library.SliderLayout;
@@ -689,21 +690,23 @@ class CommentsAdapter extends ArrayAdapter {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        String userId = UtilityGeneral.loadUser(v.getContext()).getObjectId();
-                        if (comment.getUserLike() != null) {
-                            if (comment.getUserLike().contains(userId))
-                                comment.getUserLike().remove(userId);
-                            else
-                                comment.getUserLike().add(userId);
-                        } else {
-                            comment.setUserLike(new ArrayList<String>());
-                            comment.getUserLike().add(userId);
-                        }
-                        if (comment.getUserDislike() != null) {
-                            if (comment.getUserDislike().contains(userId))
-                                comment.getUserDislike().remove(userId);
-                        }
-                        FirebaseDatabase.getInstance().getReference("Comments").child(comment.getOfferId()).child(comment.getObjectId()).setValue(comment);
+//                        String userId = UtilityGeneral.loadUser(v.getContext()).getObjectId();
+//                        if (comment.getUserLike() != null) {
+//                            if (comment.getUserLike().contains(userId))
+//                                comment.getUserLike().remove(userId);
+//                            else
+//                                comment.getUserLike().add(userId);
+//                        } else {
+//                            comment.setUserLike(new ArrayList<String>());
+//                            comment.getUserLike().add(userId);
+//                        }
+//                        if (comment.getUserDislike() != null) {
+//                            if (comment.getUserDislike().contains(userId))
+//                                comment.getUserDislike().remove(userId);
+//                        }
+//                        FirebaseDatabase.getInstance().getReference("Comments").child(comment.getOfferId()).child(comment.getObjectId()).setValue(comment);
+                        UtilityFirebase.updateComment(comment, UtilityGeneral.loadUser(v.getContext()).getObjectId(),true);
+
                     }
                 });
 
@@ -711,21 +714,22 @@ class CommentsAdapter extends ArrayAdapter {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        String userId = UtilityGeneral.loadUser(v.getContext()).getObjectId();
-                        if (comment.getUserDislike() != null) {
-                            if (comment.getUserDislike().contains(userId))
-                                comment.getUserDislike().remove(userId);
-                            else
-                                comment.getUserDislike().add(userId);
-                        } else {
-                            comment.setUserDislike(new ArrayList<String>());
-                            comment.getUserDislike().add(userId);
-                        }
-                        if (comment.getUserLike() != null) {
-                            if (comment.getUserLike().contains(userId))
-                                comment.getUserLike().remove(userId);
-                        }
-                        FirebaseDatabase.getInstance().getReference("Comments").child(comment.getOfferId()).child(comment.getObjectId()).setValue(comment);
+//                        String userId = UtilityGeneral.loadUser(v.getContext()).getObjectId();
+//                        if (comment.getUserDislike() != null) {
+//                            if (comment.getUserDislike().contains(userId))
+//                                comment.getUserDislike().remove(userId);
+//                            else
+//                                comment.getUserDislike().add(userId);
+//                        } else {
+//                            comment.setUserDislike(new ArrayList<String>());
+//                            comment.getUserDislike().add(userId);
+//                        }
+//                        if (comment.getUserLike() != null) {
+//                            if (comment.getUserLike().contains(userId))
+//                                comment.getUserLike().remove(userId);
+//                        }
+//                        FirebaseDatabase.getInstance().getReference("Comments").child(comment.getOfferId()).child(comment.getObjectId()).setValue(comment);                        UtilityFirebase.updateComment(comment, UtilityGeneral.loadUser(v.getContext()).getObjectId(),true);
+                        UtilityFirebase.updateComment(comment, UtilityGeneral.loadUser(v.getContext()).getObjectId(),false);
                     }
                 });
 

@@ -1,9 +1,13 @@
 package com.app3roodk.UI.PositioningActivity;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -114,7 +118,12 @@ public class PositioningActivity extends AppCompatActivity {
         btnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!getLatLng()) return;
+                if (!getLatLng(Constants.PERMISSION_MAPS_SIGN_IN)) return;
+                try {
+                    LatLng latLng = UtilityGeneral.getCurrentLonAndLat(getBaseContext());
+                    user.setLat(String.valueOf(latLng.latitude));
+                    user.setLon(String.valueOf(latLng.longitude));
+                }catch (Exception ex){Toast.makeText(getBaseContext(), "ممكن تفتح الخرائط على الأقل مرة", Toast.LENGTH_LONG).show();}
                 startActivityForResult(
                         AuthUI.getInstance()
                                 .createSignInIntentBuilder()
@@ -132,43 +141,80 @@ public class PositioningActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 stay = false;
-                LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-                if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                    Toast.makeText(getBaseContext(), "Open Location First", Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-                } else {
-                    try {
-                        User user = new User();
-                        LatLng latLng = UtilityGeneral.getCurrentLonAndLat(getBaseContext());
-                        user.setLat(String.valueOf(latLng.latitude));
-                        user.setLon(String.valueOf(latLng.longitude));
-                        UtilityGeneral.saveUser(getBaseContext(), user);
-                        startActivity(new Intent(PositioningActivity.this, CategoriesActivity.class));
-                        finish();
-                    } catch (Exception ex) {
-                        Toast.makeText(getBaseContext(), "Make sure that Location Permission is allowed on your device!", Toast.LENGTH_LONG).show();
-                    }
+                if (!getLatLng(Constants.PERMISSION_MAPS_VISITOR)) return;
+                try {
+                    LatLng latLng = UtilityGeneral.getCurrentLonAndLat(getBaseContext());
+                    user.setLat(String.valueOf(latLng.latitude));
+                    user.setLon(String.valueOf(latLng.longitude));
+                    UtilityGeneral.saveUser(getBaseContext(), user);
+                    startActivity(new Intent(PositioningActivity.this, CategoriesActivity.class));
+                    finish();
+                } catch (Exception ex) {
+                    Toast.makeText(getBaseContext(), "ممكن تفتح الخرائط على الأقل مرة", Toast.LENGTH_LONG).show();
                 }
             }
         });
     }
 
-    private boolean getLatLng() {
+    private boolean getLatLng(int PERMISSION_TYPE) {
         LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             Toast.makeText(getBaseContext(), "Open Location First", Toast.LENGTH_SHORT).show();
             startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
         } else {
             try {
-                LatLng latLng = UtilityGeneral.getCurrentLonAndLat(getBaseContext());
-                user.setLat(String.valueOf(latLng.latitude));
-                user.setLon(String.valueOf(latLng.longitude));
-                return true;
+                if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions( this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                            PERMISSION_TYPE);
+                }
+                else {
+                    return true;
+                }
+
             } catch (Exception ex) {
-                Toast.makeText(getBaseContext(), "Make sure that Location Permission is allowed on your device!", Toast.LENGTH_LONG).show();
+                Toast.makeText(getBaseContext(), "ممكن تفتح الخرائط على الأقل مرة", Toast.LENGTH_LONG).show();
             }
         }
         return false;
+    }
+
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case Constants.PERMISSION_MAPS_SIGN_IN: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    LatLng latLng = UtilityGeneral.getCurrentLonAndLat(getBaseContext());
+                    user.setLat(String.valueOf(latLng.latitude));
+                    user.setLon(String.valueOf(latLng.longitude));
+                    startActivityForResult(
+                            AuthUI.getInstance()
+                                    .createSignInIntentBuilder()
+                                    .setProviders(
+                                            AuthUI.EMAIL_PROVIDER,
+                                            AuthUI.GOOGLE_PROVIDER,
+                                            AuthUI.FACEBOOK_PROVIDER)
+                                    .setTheme(R.style.FirbaseUITheme)
+                                    .build(),
+                            Constants.RC_SIGN_IN);
+                }
+                return;
+            }
+            case Constants.PERMISSION_MAPS_VISITOR :{
+                User user = new User();
+                LatLng latLng = UtilityGeneral.getCurrentLonAndLat(getBaseContext());
+                user.setLat(String.valueOf(latLng.latitude));
+                user.setLon(String.valueOf(latLng.longitude));
+                UtilityGeneral.saveUser(getBaseContext(), user);
+                startActivity(new Intent(PositioningActivity.this, CategoriesActivity.class));
+                finish();
+                return;
+            }
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
     }
 
     @Override

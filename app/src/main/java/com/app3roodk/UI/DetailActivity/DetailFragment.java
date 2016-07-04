@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,7 +22,6 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.app3roodk.NotificationServices.UtilityCloudMessaging;
 import com.app3roodk.ObjectConverter;
@@ -163,7 +163,7 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
             @Override
             public void onClick(View v) {
                 if (edtxtComment.getText().toString().isEmpty()) {
-                    Toast.makeText(getActivity(), "اكتب التعليق من فضلك اولاً", Toast.LENGTH_LONG).show();
+                    showMessage( "اكتب التعليق من فضلك اولاً");
                     return;
                 }
                 final Comments comment = new Comments();
@@ -186,7 +186,7 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
                     @Override
                     public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                         if (databaseError != null) {
-                            Toast.makeText(getActivity(), "حصل مشكله شوف النت ", Toast.LENGTH_SHORT).show();
+                            showMessage("حصل مشكله شوف النت ");
                             Log.e("DetailFragment", "Add New Comment : " + databaseError.getMessage());
                         } else {
                             if (!(offer.getUserNotificationToken() == null || offer.getUserNotificationToken().isEmpty()
@@ -219,22 +219,19 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
                 if (!fromUser) return;
                 String userId = UtilityGeneral.loadUser(getActivity()).getObjectId();
                 if (offer.getUsersRates().containsKey(userId)) {
-                    float diff = rating - Float.parseFloat(offer.getUsersRates().get(userId));
                     offer.getUsersRates().remove(userId);
                     offer.getUsersRates().put(userId, String.valueOf(rating));
-                    offer.setTotalRate(String.format("%.0f", Float.parseFloat(offer.getTotalRate()) + diff));
-                    offer.setAverageRate(String.format("%.1f", Double.parseDouble(offer.getTotalRate()) / offer.getUsersRates().size()));
 
                 } else {
                     offer.getUsersRates().put(userId, String.valueOf(rating));
-                    offer.setTotalRate(String.format("%.0f", Float.parseFloat(offer.getTotalRate()) + rating));
-                    offer.setAverageRate(String.format("%.1f", Double.parseDouble(offer.getTotalRate()) / offer.getUsersRates().size()));
                 }
 
                 HashMap<String, Object> childUpdates = new HashMap<>();
                 childUpdates.put("/usersRates/"+userId+"", String.valueOf(rating));
-                childUpdates.put("/totalRate", offer.getTotalRate());
-                childUpdates.put("/averageRate", offer.getAverageRate());
+                if(UtilityGeneral.isTotalAndAverageRatingChanged(offer)) {
+                    childUpdates.put("/totalRate", offer.getTotalRate());
+                    childUpdates.put("/averageRate", offer.getAverageRate());
+                }
                 UtilityFirebase.updateOffer(offer, childUpdates);
                 txtRate.setText(String.valueOf(offer.getAverageRate()));
             }
@@ -309,7 +306,7 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
                                         // if (mToast != null) {
                                         //    mToast.cancel();
                                         // }
-                                        Toast.makeText(getActivity(), "Removed_from_favorites", Toast.LENGTH_SHORT).show();
+                                        showMessage("تم الإزالة من العروض المفضلة");
 
                                     }
                                 }.execute();
@@ -365,7 +362,7 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
                                         super.onPostExecute(aVoid);
                                         btnFavorite.setImageResource(android.R.drawable.btn_star_big_on);
                                         //  checked = true;
-                                        Toast.makeText(getContext(), "added", Toast.LENGTH_SHORT).show();
+                                        showMessage("تم الإضافة إلي العروض المفضلة");
 
                                     }
                                 }.execute();
@@ -381,7 +378,7 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
         btnShare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getActivity(), "i will share", Toast.LENGTH_SHORT).show();
+                showMessage("I'll share");
 
             }
         });
@@ -392,11 +389,14 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
             UtilityFirebase.getShop(offer).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    shop = dataSnapshot.getValue(Shop.class);
-                    txtAddress.setText(shop.getAddress());
-                    txtWorkTime.setText(shop.getWorkingTime());
-                    txtMobile.setText(shop.getContacts());
-                    txtShopName.setTextColor(getActivity().getResources().getColor(R.color.colorPrimaryDark));
+                    try {
+                        shop = dataSnapshot.getValue(Shop.class);
+                        txtAddress.setText(shop.getAddress());
+                        txtWorkTime.setText(shop.getWorkingTime());
+                        txtMobile.setText(shop.getContacts());
+                        txtShopName.setTextColor(getActivity().getResources().getColor(R.color.colorPrimaryDark));
+                    }
+                    catch (Exception ex){}
                 }
 
                 @Override
@@ -405,9 +405,17 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
             });
             UtilityFirebase.getComments(offer).addValueEventListener(postListener);
             UtilityFirebase.getOffer(offer).addValueEventListener(offerListener);
+            UtilityFirebase.updateOfferUserNotificationToken(offer);
+            if(UtilityGeneral.isTotalAndAverageRatingChanged(offer))
+            {
+                HashMap<String, Object> childUpdates = new HashMap<>();
+                childUpdates.put("/totalRate", offer.getTotalRate());
+                childUpdates.put("/averageRate", offer.getAverageRate());
+                UtilityFirebase.updateOffer(offer, childUpdates);
+                txtRate.setText(String.valueOf(offer.getAverageRate()));
+            }
         } catch (Exception ex) {
         }
-
     }
 
     private void init(View rootView) {
@@ -547,6 +555,10 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
         }
     }
 
+    private void showMessage(String msg){
+        Snackbar.make(getActivity().findViewById(R.id.main_content), msg, Snackbar.LENGTH_LONG).show();
+    }
+
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
     }
@@ -658,21 +670,7 @@ class CommentsAdapter extends ArrayAdapter {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        String userId = UtilityGeneral.loadUser(v.getContext()).getObjectId();
-                        if (comment.getUserLike() != null) {
-                            if (comment.getUserLike().contains(userId))
-                                comment.getUserLike().remove(userId);
-                            else
-                                comment.getUserLike().add(userId);
-                        } else {
-                            comment.setUserLike(new ArrayList<String>());
-                            comment.getUserLike().add(userId);
-                        }
-                        if (comment.getUserDislike() != null) {
-                            if (comment.getUserDislike().contains(userId))
-                                comment.getUserDislike().remove(userId);
-                        }
-                        UtilityFirebase.updateComment(comment);
+                        UtilityFirebase.updateComment(comment, UtilityGeneral.loadUser(v.getContext()).getObjectId(),true);
                     }
                 });
 
@@ -680,21 +678,7 @@ class CommentsAdapter extends ArrayAdapter {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        String userId = UtilityGeneral.loadUser(v.getContext()).getObjectId();
-                        if (comment.getUserDislike() != null) {
-                            if (comment.getUserDislike().contains(userId))
-                                comment.getUserDislike().remove(userId);
-                            else
-                                comment.getUserDislike().add(userId);
-                        } else {
-                            comment.setUserDislike(new ArrayList<String>());
-                            comment.getUserDislike().add(userId);
-                        }
-                        if (comment.getUserLike() != null) {
-                            if (comment.getUserLike().contains(userId))
-                                comment.getUserLike().remove(userId);
-                        }
-                        UtilityFirebase.updateComment(comment);
+                        UtilityFirebase.updateComment(comment, UtilityGeneral.loadUser(v.getContext()).getObjectId(),false);
                     }
                 });
 

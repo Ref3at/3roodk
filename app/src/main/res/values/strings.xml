@@ -94,5 +94,9 @@
     <string name="all_offers">كل العروض</string>
     <string name="loading">جارى التحميل ...</string>
     <string name="change_logo">غير اللوجو</string>
+    <string name="new_shop">محل جديد</string>
+    <string name="categories">الأقسام</string>
+    <string name="add_mobile_number">أدخل رقم الموبايل</string>
+    <string name="new_offer">إعلان جديد</string>
 
 </resources>
