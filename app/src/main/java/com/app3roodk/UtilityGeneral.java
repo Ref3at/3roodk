@@ -79,7 +79,7 @@ public class UtilityGeneral {
     }
 
     static public String getCurrentCityEnglish(Context context) {
-        /*String city;
+        String city;
         try {
             LatLng latlng = getCurrentLonAndLat(context);
             Geocoder geo = new Geocoder(context, Locale.ENGLISH);
@@ -95,8 +95,7 @@ public class UtilityGeneral {
         } catch (Exception e) {
             city = loadCity(context);
         }
-        //return city;*/
-        City = "El-Senbellawein";
+        //return city;
         return "El-Senbellawein";
     }
 
