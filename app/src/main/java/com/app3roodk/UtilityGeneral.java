@@ -79,7 +79,7 @@ public class UtilityGeneral {
     }
 
     static public String getCurrentCityEnglish(Context context) {
-        String city;
+        /*String city;
         try {
             LatLng latlng = getCurrentLonAndLat(context);
             Geocoder geo = new Geocoder(context, Locale.ENGLISH);
@@ -95,7 +95,8 @@ public class UtilityGeneral {
         } catch (Exception e) {
             city = loadCity(context);
         }
-        //return city;
+        //return city;*/
+        City = "El-Senbellawein";
         return "El-Senbellawein";
     }
 
@@ -248,7 +249,7 @@ public class UtilityGeneral {
     }
 
     static public String getCurrentDate(Date date) {
-        return new SimpleDateFormat("yyyyMMddkkmm").format(date);
+        return new SimpleDateFormat("yyyyMMddkkmm", Locale.US).format(date);
     }
 
     static public String getCategoryEnglishName(String arCategory) {

@@ -271,9 +271,9 @@ public class CardsActivity extends AppCompatActivity {
                             }
                         });
             } else {
-                ((TextView) mNavigationView.findViewById(R.id.txtNavName)).setText("");
-                ((TextView) mNavigationView.findViewById(R.id.txtNavEmail)).setText("");
-                Glide.with(this)
+                //  ((TextView) mNavigationView.findViewById(R.id.txtNavName)).setText("");
+                //  ((TextView) mNavigationView.findViewById(R.id.txtNavEmail)).setText("");
+           /*     Glide.with(this)
                         .load(R.drawable.logo)
                         .asBitmap()
                         .into(new BitmapImageViewTarget((ImageView) mNavigationView.findViewById(R.id.imgNavProfile)) {
@@ -285,7 +285,7 @@ public class CardsActivity extends AppCompatActivity {
                                 ((ImageView) mNavigationView.findViewById(R.id.imgNavProfile)).setImageDrawable(circularBitmapDrawable);
                             }
                         });
-
+*/
             }
         } catch (Exception ex) {
             Log.e("NavShowInfo", ex.getMessage());
