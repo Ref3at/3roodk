@@ -44,7 +44,10 @@ public class UtilityGeneral {
             Location location = getLastKnownLocation(context);
             return new LatLng(location.getLatitude(), location.getLongitude());
         } catch (Exception e) {
-            return new LatLng(Double.parseDouble(loadUser(context).getLat()), Double.parseDouble(loadUser(context).getLon()));
+            try {
+                return new LatLng(Double.parseDouble(loadUser(context).getLat()), Double.parseDouble(loadUser(context).getLon()));
+            }
+            catch (Exception exx){return null;}
         }
     }
 
@@ -79,7 +82,7 @@ public class UtilityGeneral {
     }
 
     static public String getCurrentCityEnglish(Context context) {
-        String city;
+        /*String city;
         try {
             LatLng latlng = getCurrentLonAndLat(context);
             Geocoder geo = new Geocoder(context, Locale.ENGLISH);
@@ -95,7 +98,8 @@ public class UtilityGeneral {
         } catch (Exception e) {
             city = loadCity(context);
         }
-        //return city;
+        //return city;*/
+        City = "El-Senbellawein";
         return "El-Senbellawein";
     }
 
@@ -127,8 +131,15 @@ public class UtilityGeneral {
             mapsPathsIntent.putExtra("fromLat", from.latitude);
             mapsPathsIntent.putExtra("fromLng", from.longitude);
         } catch (Exception ex) {
-            mapsPathsIntent.putExtra("fromLat", loadLatLong(context).latitude);
-            mapsPathsIntent.putExtra("fromLng", loadLatLong(context).longitude);
+            try {
+                mapsPathsIntent.putExtra("fromLat", loadLatLong(context).latitude);
+                mapsPathsIntent.putExtra("fromLng", loadLatLong(context).longitude);
+            }
+            catch (Exception exx)
+            {
+                mapsPathsIntent.putExtra("fromLat",  to.latitude);
+                mapsPathsIntent.putExtra("fromLng", to.longitude);
+            }
         }
         mapsPathsIntent.putExtra("toLat", to.latitude);
         mapsPathsIntent.putExtra("toLng", to.longitude);
