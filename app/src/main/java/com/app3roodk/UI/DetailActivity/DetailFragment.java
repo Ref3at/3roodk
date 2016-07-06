@@ -123,7 +123,7 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
         init(rootView);
         fillViews();
-        initSlider(offer.getItems(),rootView);
+        initSlider(offer.getItems(), rootView);
         validateUser();
         makeFirebaseReferences();
         clickConfig();
@@ -151,6 +151,13 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
             txtShopName.setText(offer.getShopName());
             txtViews.setText(String.valueOf(offer.getViewNum()));
             txtRate.setText(String.valueOf(String.valueOf(offer.getAverageRate())));
+            if (offer.getShopInfoForFavoeites() != null) {
+                HashMap<String, String> shopInfoHashmap = new HashMap<String, String>();
+                shopInfoHashmap = ObjectConverter.fromStringToHashmapUsersRates(offer.getShopInfoForFavoeites());
+                txtAddress.setText(shopInfoHashmap.get("shopAddress"));
+                txtWorkTime.setText(shopInfoHashmap.get("shopWorkingTime"));
+                txtMobile.setText(shopInfoHashmap.get("shopContacts"));
+            }
             if (offer.getUsersRates().containsKey(UtilityGeneral.loadUser(getActivity()).getObjectId())) {
                 ratebar.setRating(Float.parseFloat(offer.getUsersRates().get(UtilityGeneral.loadUser(getActivity()).getObjectId())));
             }
@@ -163,7 +170,7 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
             @Override
             public void onClick(View v) {
                 if (edtxtComment.getText().toString().isEmpty()) {
-                    showMessage( "اكتب التعليق من فضلك اولاً");
+                    showMessage("اكتب التعليق من فضلك اولاً");
                     return;
                 }
                 final Comments comment = new Comments();
@@ -227,8 +234,8 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
                 }
 
                 HashMap<String, Object> childUpdates = new HashMap<>();
-                childUpdates.put("/usersRates/"+userId+"", String.valueOf(rating));
-                if(UtilityGeneral.isTotalAndAverageRatingChanged(offer)) {
+                childUpdates.put("/usersRates/" + userId + "", String.valueOf(rating));
+                if (UtilityGeneral.isTotalAndAverageRatingChanged(offer)) {
                     childUpdates.put("/totalRate", offer.getTotalRate());
                     childUpdates.put("/averageRate", offer.getAverageRate());
                 }
@@ -395,8 +402,8 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
                         txtWorkTime.setText(shop.getWorkingTime());
                         txtMobile.setText(shop.getContacts());
                         txtShopName.setTextColor(getActivity().getResources().getColor(R.color.colorPrimaryDark));
+                    } catch (Exception ex) {
                     }
-                    catch (Exception ex){}
                 }
 
                 @Override
@@ -406,8 +413,7 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
             UtilityFirebase.getComments(offer).addValueEventListener(postListener);
             UtilityFirebase.getOffer(offer).addValueEventListener(offerListener);
             UtilityFirebase.updateOfferUserNotificationToken(offer);
-            if(UtilityGeneral.isTotalAndAverageRatingChanged(offer))
-            {
+            if (UtilityGeneral.isTotalAndAverageRatingChanged(offer)) {
                 HashMap<String, Object> childUpdates = new HashMap<>();
                 childUpdates.put("/totalRate", offer.getTotalRate());
                 childUpdates.put("/averageRate", offer.getAverageRate());
@@ -489,7 +495,7 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
         }
     }
 
-    private void initSlider(List<Item> lstItems,View rootView) {
+    private void initSlider(List<Item> lstItems, View rootView) {
 
         for (int i = 0; i < lstItems.size(); i++) {
 
@@ -538,8 +544,9 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
             } else {
                 mSlider.startAutoCycle();
             }
+        } catch (Exception ex) {
         }
-        catch (Exception ex){};
+        ;
         timer = new Thread(updateTimerThread);
         timer.start();
         super.onResume();
@@ -555,8 +562,8 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
         }
     }
 
-    private void showMessage(String msg){
-        Snackbar.make(getActivity().findViewById(R.id.main_content), msg, Snackbar.LENGTH_LONG).show();
+    private void showMessage(String msg) {
+        Snackbar.make(getView(), msg, Snackbar.LENGTH_LONG).show();
     }
 
     @Override
@@ -670,7 +677,7 @@ class CommentsAdapter extends ArrayAdapter {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        UtilityFirebase.updateComment(comment, UtilityGeneral.loadUser(v.getContext()).getObjectId(),true);
+                        UtilityFirebase.updateComment(comment, UtilityGeneral.loadUser(v.getContext()).getObjectId(), true);
                     }
                 });
 
@@ -678,7 +685,7 @@ class CommentsAdapter extends ArrayAdapter {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        UtilityFirebase.updateComment(comment, UtilityGeneral.loadUser(v.getContext()).getObjectId(),false);
+                        UtilityFirebase.updateComment(comment, UtilityGeneral.loadUser(v.getContext()).getObjectId(), false);
                     }
                 });
 

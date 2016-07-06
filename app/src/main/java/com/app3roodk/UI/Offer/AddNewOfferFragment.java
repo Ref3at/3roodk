@@ -5,14 +5,10 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.DropBoxManager;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -28,7 +24,6 @@ import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -46,11 +41,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.weiwangcn.betterspinner.library.BetterSpinner;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -73,7 +63,6 @@ public class AddNewOfferFragment extends Fragment {
 
     ArrayList<Integer> REQUEST_CAMERA = new ArrayList<>();
     ArrayList<Integer> SELECT_FILE = new ArrayList<>();
-
 
     LinearLayout itemsContainer;
     BetterSpinner duration_spinner, category_spinner, shops_spinnner;
@@ -133,14 +122,11 @@ public class AddNewOfferFragment extends Fragment {
         inputLayoutName = (TextInputLayout) rootView.findViewById(R.id.input_layout_offername);
         inputLayoutDesc = (TextInputLayout) rootView.findViewById(R.id.input_layout_desc);
 
-
         inputName = (EditText) rootView.findViewById(R.id.input_offername);
         inputDesc = (EditText) rootView.findViewById(R.id.input_desc);
 
-
         inputName.addTextChangedListener(new MyTextWatcher(inputName));
         inputDesc.addTextChangedListener(new MyTextWatcher(inputDesc));
-
 
         duration_spinner = (BetterSpinner) rootView.findViewById(R.id.duration_spinner);
 
@@ -150,7 +136,6 @@ public class AddNewOfferFragment extends Fragment {
                 android.R.layout.simple_dropdown_item_1line, durtation_list);
 
         duration_spinner.setAdapter(adapter);
-
 
         category_spinner = (BetterSpinner) rootView.findViewById(R.id.cat_spinner);
 
@@ -185,8 +170,6 @@ public class AddNewOfferFragment extends Fragment {
                 SubmitNewOffer();
             }
         });
-
-
         return rootView;
     }
 
@@ -462,6 +445,7 @@ public class AddNewOfferFragment extends Fragment {
             mOffer.setLon(shop.getLon());
             mOffer.setCreatedAt(UtilityGeneral.getCurrentDate(new Date()));
             mOffer.setAverageRate("0");
+            mOffer.setTotalRate("0");
             mOffer.setUserId(UtilityGeneral.loadUser(getActivity()).getObjectId());
             mOffer.setCity(shop.getCity());
             mOffer.setUserNotificationToken(UtilityGeneral.loadUser(getActivity()).getNotificationToken());

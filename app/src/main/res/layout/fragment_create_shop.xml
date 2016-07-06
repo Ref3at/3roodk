@@ -5,7 +5,9 @@
     android:layout_height="match_parent"
     android:background="@color/white"
     android:padding="20dp">
-
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -20,7 +22,6 @@
                 android:id="@+id/input_shopname"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/custom_background_content"
                 android:gravity="center"
                 android:hint="@string/shop_name"
                 android:inputType="textCapWords"
@@ -40,7 +41,6 @@
                 android:id="@+id/input_workingtime"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/custom_background_content"
                 android:gravity="center"
                 android:hint="@string/shop_working_time"
                 android:inputType="textCapWords"
@@ -60,7 +60,6 @@
                 android:id="@+id/input_contacts"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/custom_background_content"
                 android:gravity="center"
                 android:hint="@string/add_mobile_number"
                 android:inputType="phone"
@@ -143,7 +142,6 @@
                 android:id="@+id/input_addressinfo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/custom_background_content"
                 android:gravity="center"
                 android:hint="@string/address_details"
                 android:inputType="textCapWords"
@@ -165,5 +163,5 @@
             android:textStyle="bold" />
 
     </LinearLayout>
-
+</ScrollView>
 </RelativeLayout>

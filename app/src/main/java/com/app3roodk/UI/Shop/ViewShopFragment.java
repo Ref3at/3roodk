@@ -5,13 +5,10 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.location.Address;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -78,7 +75,7 @@ public class ViewShopFragment extends Fragment {
     ImageButton btn_done_WorkingTime, btn_edit_WorkingTime, btn_done_AdressInfo,
             btn_edit_AdressInfo, btn_done_Contacts, btn_edit_Contacts, btn_done_logo, btn_edit_logo;
 
-    int REQUEST_CAMERA = 0, SELECT_FILE = 1, allOffersCounter;
+    int SELECT_FILE = 1, allOffersCounter;
     String mlogoId = null;
     Menu mMenu;
 
@@ -485,7 +482,6 @@ public class ViewShopFragment extends Fragment {
         });
     }
 
-
     private void editMode() {
         btn_edit_WorkingTime.setVisibility(View.VISIBLE);
         btn_edit_AdressInfo.setVisibility(View.VISIBLE);
@@ -526,39 +522,11 @@ public class ViewShopFragment extends Fragment {
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == SELECT_FILE) {
                 showMessage("جاري رفع اللوجو");
-                Uri u = data.getData();
-                onSelectFromGalleryResult(data, u);
-            } else if (requestCode == REQUEST_CAMERA) {
-                Uri u = data.getData();
+                setLogo(data.getData());
             }
         }
     }
-
-    private void onSelectFromGalleryResult(Intent data, Uri uri) {
-        Uri selectedImageUri = data.getData();
-        String[] projection = {MediaStore.MediaColumns.DATA};
-        Cursor cursor = getActivity().getContentResolver().query(selectedImageUri, projection, null, null, null);
-        int column_index = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
-        cursor.moveToFirst();
-        String selectedImagePath = cursor.getString(column_index);
-        Bitmap bm;
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile(selectedImagePath, options);
-        final int REQUIRED_SIZE = 200;
-        int scale = 1;
-        while (options.outWidth / scale / 2 >= REQUIRED_SIZE
-                && options.outHeight / scale / 2 >= REQUIRED_SIZE)
-            scale *= 2;
-        options.inSampleSize = scale;
-        options.inJustDecodeBounds = false;
-        bm = BitmapFactory.decodeFile(selectedImagePath, options);
-
-        setLogo(bm, uri);
-    }
-
-
-    private void setLogo(Bitmap thumbnail, Uri uri) {
+    private void setLogo( Uri uri) {
 
         Glide.with(getActivity()).load(uri).asBitmap().into(new BitmapImageViewTarget(imageLogo) {
             @Override

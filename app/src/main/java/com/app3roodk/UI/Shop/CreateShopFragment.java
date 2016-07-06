@@ -4,17 +4,16 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.location.Address;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -36,6 +35,8 @@ import com.app3roodk.R;
 import com.app3roodk.Schema.Shop;
 import com.app3roodk.UtilityFirebase;
 import com.app3roodk.UtilityGeneral;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -46,7 +47,7 @@ import java.util.List;
 public class CreateShopFragment extends Fragment {
 
     static public LatLng latLngShop;
-    int REQUEST_CAMERA = 0, SELECT_FILE = 1;
+    int SELECT_FILE = 1;
     String mlogoId = null;
     Shop shop;
     List<Address> addresses;
@@ -57,6 +58,8 @@ public class CreateShopFragment extends Fragment {
 
     private ImageButton addShopLogo;
     private Switch haveAlogo;
+
+    private MyImgurUploadTask myImgurUploadTask;
 
     @Nullable
     @Override
@@ -82,7 +85,6 @@ public class CreateShopFragment extends Fragment {
         inputAddressInfo = (EditText) rootView.findViewById(R.id.input_addressinfo);
         inputContacts = (EditText) rootView.findViewById(R.id.input_contacts);
 
-
         inputShopName.addTextChangedListener(new MyTextWatcher(inputShopName));
         inputWorkingTime.addTextChangedListener(new MyTextWatcher(inputWorkingTime));
         inputAddressInfo.addTextChangedListener(new MyTextWatcher(inputAddressInfo));
@@ -103,7 +105,8 @@ public class CreateShopFragment extends Fragment {
         addShopLogo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                selectLogo();
+                if (haveAlogo.isChecked())
+                    selectLogo();
             }
         });
 
@@ -117,6 +120,10 @@ public class CreateShopFragment extends Fragment {
                 } else {
                     addShopLogo.setClickable(false);
                     addShopLogo.setAlpha(0.4f);
+                    if (myImgurUploadTask != null && !myImgurUploadTask.isDone()) {
+                        myImgurUploadTask.cancel(true);
+                    }
+                    mlogoId = null;
                 }
             }
         });
@@ -198,49 +205,29 @@ public class CreateShopFragment extends Fragment {
 
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == SELECT_FILE) {
-                Uri u = data.getData();
-                onSelectFromGalleryResult(data, u);
-            } else if (requestCode == REQUEST_CAMERA) {
-                Uri u = data.getData();
+                setLogo(data.getData());
             }
         }
     }
 
-    private void onSelectFromGalleryResult(Intent data, Uri uri) {
-        Uri selectedImageUri = data.getData();
-        String[] projection = {MediaStore.MediaColumns.DATA};
+    private void setLogo(Uri uri) {
 
-        Cursor cursor = getActivity().getContentResolver().query(selectedImageUri, projection, null, null, null);
-
-        int column_index = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
-        cursor.moveToFirst();
-
-        String selectedImagePath = cursor.getString(column_index);
-
-        Bitmap bm;
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile(selectedImagePath, options);
-        final int REQUIRED_SIZE = 200;
-        int scale = 1;
-        while (options.outWidth / scale / 2 >= REQUIRED_SIZE
-                && options.outHeight / scale / 2 >= REQUIRED_SIZE)
-            scale *= 2;
-        options.inSampleSize = scale;
-        options.inJustDecodeBounds = false;
-        bm = BitmapFactory.decodeFile(selectedImagePath, options);
-
-        setLogo(bm, uri);
+        Glide.with(getActivity()).load(uri).asBitmap().into(new BitmapImageViewTarget(addShopLogo) {
+            @Override
+            protected void setResource(Bitmap resource) {
+                RoundedBitmapDrawable circularBitmapDrawable =
+                        RoundedBitmapDrawableFactory.create(getActivity().getResources(), resource);
+                circularBitmapDrawable.setCircular(true);
+                addShopLogo.setImageDrawable(circularBitmapDrawable);
+            }
+        });
+        addShopLogo.setAlpha(0.5f);
+        if (myImgurUploadTask != null && !myImgurUploadTask.isDone())
+            myImgurUploadTask.cancel(true);
+        if (myImgurUploadTask != null) mlogoId = null;
+        myImgurUploadTask = new MyImgurUploadTask(uri, addShopLogo);
+        myImgurUploadTask.execute();
     }
-
-
-    private void setLogo(Bitmap thumbnail, Uri uri) {
-
-        addShopLogo.setImageBitmap(thumbnail);
-        addShopLogo.setAlpha(0.4f);
-        new MyImgurUploadTask(uri, addShopLogo).execute();
-    }
-
 
     private void SubmitAndCreate() {
         if (!validateShopName()) {
@@ -259,8 +246,18 @@ public class CreateShopFragment extends Fragment {
             return;
         }
         if (mlogoId == null && haveAlogo.isChecked()) {
-            showMessageToast("يجب تحديد لوجو!");
+            showMessage("يجب تحديد لوجو!");
             return;
+        }
+        if (haveAlogo.isChecked()) {
+            if (!myImgurUploadTask.isDone()) {
+                showMessage("يجب الإنتظار حتي يتم رفع الصورة!");
+                return;
+            }
+            if (!myImgurUploadTask.isSuccess()) {
+                showMessage("حدث خطأ أثناء رفع الصورة");
+                return;
+            }
         }
         Create();
     }
@@ -273,21 +270,19 @@ public class CreateShopFragment extends Fragment {
         shop.setWorkingTime(inputWorkingTime.getText().toString());
         shop.setLogoId(mlogoId);
         shop.setCity(addresses.get(0).getAddressLine(2));
-        if(shop.getCity() == null ||shop.getCity().equals("null"))
+        if (shop.getCity() == null || shop.getCity().equals("null"))
             shop.setCity(addresses.get(0).getAddressLine(3));
         shop.setGovernate(addresses.get(0).getAddressLine(3));
         shop.setLon(String.valueOf(latLngShop.longitude));
         shop.setLat(String.valueOf(latLngShop.latitude));
         shop.setCreatedAt(UtilityGeneral.getCurrentDate(new Date()));
-        UtilityFirebase.createNewShop(shop,UtilityGeneral.loadUser(getActivity()).getObjectId() ,new DatabaseReference.CompletionListener() {
+        UtilityFirebase.createNewShop(shop, UtilityGeneral.loadUser(getActivity()).getObjectId(), new DatabaseReference.CompletionListener() {
             @Override
             public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                if(databaseError !=null) {
-                    showMessageToast( "حصل مشكله شوف النت ");
-                    Log.e("Frebaaase", databaseError.getMessage());
-                }
-                else
-                {
+                if (databaseError != null) {
+                    showMessageToast("حصل مشكله شوف النت ");
+                    Log.e("CreateNewShop", databaseError.getMessage());
+                } else {
                     showMessageToast("تم إضافه المحل، شكرا لك");
                     UtilityGeneral.saveShop(getActivity(), shop);
                     getActivity().onBackPressed();
@@ -333,7 +328,6 @@ public class CreateShopFragment extends Fragment {
         return true;
     }
 
-
     private Boolean validateContcats() {
 
         if (inputContacts.getText().toString().trim().isEmpty()) {
@@ -345,7 +339,6 @@ public class CreateShopFragment extends Fragment {
         }
         return true;
     }
-
 
     private void requestFocus(View view) {
         if (view.requestFocus()) {
@@ -386,22 +379,33 @@ public class CreateShopFragment extends Fragment {
             }
         }
     }
+
     private void showMessage(String msg) {
         try {
             Snackbar.make(getView(), msg, Snackbar.LENGTH_LONG).show();
+        } catch (Exception ex) {
         }
-        catch (Exception ex){}
     }
+
     private void showMessageToast(String msg) {
         try {
             Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG).show();
+        } catch (Exception ex) {
         }
-        catch (Exception ex){}
     }
 
     private class MyImgurUploadTask extends ImgurUploadTask {
+        boolean done, success;
         String mImgurUrl = null;
         ImageButton imageButton;
+
+        public boolean isDone() {
+            return done;
+        }
+
+        public boolean isSuccess() {
+            return success;
+        }
 
         public MyImgurUploadTask(Uri imageUri, ImageButton addShopLogo) {
             super(imageUri, getActivity());
@@ -411,6 +415,8 @@ public class CreateShopFragment extends Fragment {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            done = false;
+            success = false;
         }
 
         @Override
@@ -421,8 +427,12 @@ public class CreateShopFragment extends Fragment {
                 addShopLogo.setAlpha(1.0f);
                 showMessage("تم رفع الصورة بنجاح");
                 mlogoId = mImgurUrl;
+                done = true;
+                success = true;
             } else {
                 mImgurUrl = null;
+                done = true;
+                success = false;
                 showMessageToast("حصل مشكلة فى رفع الصورة");
             }
         }

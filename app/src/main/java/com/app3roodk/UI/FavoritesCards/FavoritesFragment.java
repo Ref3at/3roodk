@@ -1,6 +1,5 @@
 package com.app3roodk.UI.FavoritesCards;
 
-
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
@@ -11,15 +10,14 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.app3roodk.R;
 import com.app3roodk.Schema.Offer;
 import com.app3roodk.Schema.TestTable;
-import com.app3roodk.UI.FavoritesDetails.FavoritesDetailActivity;
+import com.app3roodk.UI.DetailActivity.DetailActivity;
+import com.app3roodk.UtilityGeneral;
 import com.bumptech.glide.Glide;
 
 import com.google.firebase.database.FirebaseDatabase;
@@ -27,7 +25,6 @@ import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-
 
 public class FavoritesFragment extends Fragment {
 
@@ -54,15 +51,14 @@ public class FavoritesFragment extends Fragment {
 
     public class FetchFavOffers extends AsyncTask<Void, Void, Void> {
 
-        RecyclerView recyclView;
+        RecyclerView recyclerView;
         public FetchFavOffers(RecyclerView recyclerView) {
-            this.recyclView = recyclerView;
+            this.recyclerView = recyclerView;
         }
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            Toast.makeText(getContext(), "Favorites Offers Loading...", Toast.LENGTH_SHORT).show();
         }
 
         @Override
@@ -78,13 +74,9 @@ public class FavoritesFragment extends Fragment {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             adapter = new ContentAdapter(lstOffers);
-            recyclView.setAdapter(adapter);
+            recyclerView.setAdapter(adapter);
             adapter.notifyDataSetChanged();
-            Toast.makeText(getContext(), "Finished loadded" + lstOffers.size(), Toast.LENGTH_SHORT).show();
-
         }
-
-
     }
 
 
@@ -128,10 +120,21 @@ public class FavoritesFragment extends Fragment {
             cardHolder.shopName.setText(lstOffers.get(position).getShopName());
             cardHolder.title.setText(lstOffers.get(position).getTitle());
             cardHolder.rate.setText(String.valueOf(lstOffers.get(position).getAverageRate()));
-
             cardHolder.discount.setText(String.format("%.0f", (1 - (Double.parseDouble(lstOffers.get(position).getItems().get(0).getPriceAfter()) / Double.parseDouble(lstOffers.get(position).getItems().get(0).getPriceBefore()))) * 100) + "%");
             fillTimer(cardHolder, position);
-           Glide.with(cardHolder.itemView.getContext()).load(lstOffers.get(position).getItems().get(0).getImagePaths().get(0)).into(cardHolder.imgCard);
+            Glide.with(cardHolder.itemView.getContext()).load(lstOffers.get(position).getItems().get(0).getImagePaths().get(0)).into(cardHolder.imgCard);
+            cardHolder.priceBefore.setText(cardHolder.offer.getItems().get(0).getPriceBefore());
+            cardHolder.priceAfter.setText(cardHolder.offer.getItems().get(0).getPriceAfter());
+            try {
+                cardHolder.distance.setText(String.valueOf(UtilityGeneral.calculateDistanceInKM(
+                        Double.parseDouble(lstOffers.get(position).getLat()),
+                        Double.parseDouble(lstOffers.get(position).getLon()),
+                        UtilityGeneral.getCurrentLonAndLat(cardHolder.itemView.getContext()).latitude,
+                        UtilityGeneral.getCurrentLonAndLat(cardHolder.itemView.getContext()).longitude)) + "km");
+                cardHolder.distance.setVisibility(View.VISIBLE);
+            } catch (Exception ex) {
+                cardHolder.distance.setVisibility(View.INVISIBLE);
+            }
         }
 
         @Override
@@ -144,14 +147,14 @@ public class FavoritesFragment extends Fragment {
 }
 
 class CardHolder extends RecyclerView.ViewHolder {
-    public TextView title, rate, distance, shopName, day, hour, minute, discount;
+    public TextView title, rate, distance, shopName, day, hour, minute, discount, priceBefore, priceAfter;
     public ImageView imgCard;
     public Offer offer;
 
-    ImageButton btnFavorite, btnShare;
+//    ImageButton btnFavorite, btnShare;
 
     public CardHolder(LayoutInflater inflater, ViewGroup parent) {
-        super(inflater.inflate(R.layout.card_item, parent, false));
+        super(inflater.inflate(R.layout.card_item_3, parent, false));
         init(itemView);
     }
 
@@ -160,18 +163,20 @@ class CardHolder extends RecyclerView.ViewHolder {
         discount = (TextView) rootView.findViewById(R.id.card_txt_discount);
         shopName = (TextView) rootView.findViewById(R.id.card_shop_name);
         distance = (TextView) rootView.findViewById(R.id.card_distance);
+        priceAfter = (TextView) rootView.findViewById(R.id.card_price_after);
+        priceBefore = (TextView) rootView.findViewById(R.id.card_price_before);
         rate = (TextView) rootView.findViewById(R.id.card_rate);
         day = (TextView) rootView.findViewById(R.id.card_txt_day);
         hour = (TextView) rootView.findViewById(R.id.card_txt_hour);
         minute = (TextView) rootView.findViewById(R.id.card_txt_minute);
         imgCard = (ImageView) rootView.findViewById(R.id.card_image);
-        btnFavorite = (ImageButton) rootView.findViewById(R.id.favorite_button);
-        btnShare = (ImageButton) rootView.findViewById(R.id.share_button2);
+        //btnFavorite = (ImageButton) rootView.findViewById(R.id.favorite_button);
+        //btnShare = (ImageButton) rootView.findViewById(R.id.share_button2);
 
         itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(v.getContext(), FavoritesDetailActivity.class);
+                Intent intent = new Intent(v.getContext(), DetailActivity.class);
                 FirebaseDatabase.getInstance().getReference("Offers").child(offer.getCity()).child(offer.getCategoryName()).child(offer.getObjectId()).child("viewNum").setValue(offer.getViewNum() + 1);
                 offer.setViewNum(offer.getViewNum() + 1);
                 intent.putExtra("offer", new Gson().toJson(offer));
@@ -179,19 +184,19 @@ class CardHolder extends RecyclerView.ViewHolder {
             }
         });
 
-        btnFavorite.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(v.getContext(), "i will add", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        btnShare.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(v.getContext(), "i will share", Toast.LENGTH_SHORT).show();
-
-            }
-        });
+//        btnFavorite.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Toast.makeText(v.getContext(), "i will add", Toast.LENGTH_SHORT).show();
+//            }
+//        });
+//
+//        btnShare.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Toast.makeText(v.getContext(), "i will share", Toast.LENGTH_SHORT).show();
+//
+//            }
+//        });
     }
 }
