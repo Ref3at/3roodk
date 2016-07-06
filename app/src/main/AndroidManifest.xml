@@ -43,7 +43,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".UI.Shop.ShopActivity" />
-        <activity android:name=".UI.Offer.OfferActivity" />
+        <activity android:name=".UI.Offer.AddNewOfferActivity" />
         <activity android:name=".MapsPathsActivity" />
         <activity android:name=".MapsShopsActivity" />
         <activity android:name=".MapsShopLocationActivity" />

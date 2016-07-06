@@ -2,13 +2,10 @@ package com.app3roodk.Schema;
 
 import java.util.ArrayList;
 
-/**
- * Created by Refaat on 6/14/2016.
- */
 public class Item {
 
-    private String PriceBefore; //*
-    private String PriceAfter; //*
+    private String PriceBefore;
+    private String PriceAfter;
 
     private ArrayList<String> ImagePaths = new ArrayList<>(); // later will be <img> //*
 

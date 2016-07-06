@@ -6,7 +6,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/white"
     android:orientation="vertical"
-    tools:context="com.app3roodk.UI.Offer.OfferActivity">
+    tools:context=".UI.Offer.AddNewOfferActivity">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appbar"

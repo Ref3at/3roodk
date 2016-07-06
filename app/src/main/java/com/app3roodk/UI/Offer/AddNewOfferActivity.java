@@ -6,7 +6,7 @@ import android.support.v7.widget.Toolbar;
 
 import com.app3roodk.R;
 
-public class OfferActivity extends AppCompatActivity {
+public class AddNewOfferActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

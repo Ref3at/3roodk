@@ -69,7 +69,7 @@
     <string name="price_after_sale">السعر بعد الخصم</string>
     <string name="offer_duration">مده العرض</string>
     <string name="choose_category">اختار القسم</string>
-    <string name="add_offer">ضيف إعلان</string>
+    <string name="add_offer">ضيف الإعلان</string>
     <string name="change_address">تغيير العنوان</string>
     <string name="shop_working_time">مواعيد عمل المحل</string>
     <string name="have_logo">لديك لوجو</string>
@@ -98,5 +98,6 @@
     <string name="categories">الأقسام</string>
     <string name="add_mobile_number">أدخل رقم الموبايل</string>
     <string name="new_offer">إعلان جديد</string>
+    <string name="add_new_item">إضافة سلعة جديدة +</string>
 
 </resources>

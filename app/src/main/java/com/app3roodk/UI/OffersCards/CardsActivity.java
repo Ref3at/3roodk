@@ -31,7 +31,7 @@ import com.app3roodk.R;
 import com.app3roodk.UI.About.AboutActivity;
 import com.app3roodk.UI.FavoritesCards.FavoritesActivity;
 import com.app3roodk.UI.Feedback.FeedbackActivity;
-import com.app3roodk.UI.Offer.OfferActivity;
+import com.app3roodk.UI.Offer.AddNewOfferActivity;
 import com.app3roodk.UI.PositioningActivity.PositioningActivity;
 import com.app3roodk.UI.Shop.ListShopsActivity;
 import com.app3roodk.UI.Shop.ShopActivity;
@@ -96,7 +96,7 @@ public class CardsActivity extends AppCompatActivity {
                     startActivity(new Intent(getBaseContext(), ShopActivity.class));
                     return;
                 }
-                startActivity(new Intent(getBaseContext(), OfferActivity.class));
+                startActivity(new Intent(getBaseContext(), AddNewOfferActivity.class));
             }
         });
         showUserInfoNavigationDrawer();
@@ -120,7 +120,7 @@ public class CardsActivity extends AppCompatActivity {
 
                             case R.id.action_add_offers:
                                 mDrawerLayout.closeDrawer(GravityCompat.END);
-                                startActivity(new Intent(CardsActivity.this, OfferActivity.class));
+                                startActivity(new Intent(CardsActivity.this, AddNewOfferActivity.class));
                                 return true;
 
                             case R.id.action_signin:

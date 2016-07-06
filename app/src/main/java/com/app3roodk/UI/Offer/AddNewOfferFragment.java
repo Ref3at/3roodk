@@ -11,9 +11,11 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.DropBoxManager;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
@@ -39,6 +41,7 @@ import com.app3roodk.Schema.Offer;
 import com.app3roodk.Schema.Shop;
 import com.app3roodk.UtilityFirebase;
 import com.app3roodk.UtilityGeneral;
+import com.bumptech.glide.Glide;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.weiwangcn.betterspinner.library.BetterSpinner;
@@ -51,26 +54,22 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 public class AddNewOfferFragment extends Fragment {
 
-  //  ArrayList<String> images_id = new ArrayList<>();
-    ArrayList<String> [] images_id_Array = new ArrayList[3];
-
-
-
+    ArrayList<String>[] images_id_Array = new ArrayList[3];
 
     ArrayList<Item> items_list = new ArrayList<>();
-    ArrayList<LinearLayout> listOfContainers = new ArrayList<>();
 
     ArrayList<String> lstShopsString;
     ArrayList<Shop> lstShops;
     Offer mOffer;
+    HashMap<String, MyImgurUploadTask> mapImageUploading;
 
     String[] durtation_list, cat_list;
-
-//    int REQUEST_CAMERA = 0, SELECT_FILE = 1;
-
 
     ArrayList<Integer> REQUEST_CAMERA = new ArrayList<>();
     ArrayList<Integer> SELECT_FILE = new ArrayList<>();
@@ -78,12 +77,11 @@ public class AddNewOfferFragment extends Fragment {
 
     LinearLayout itemsContainer;
     BetterSpinner duration_spinner, category_spinner, shops_spinnner;
-    private EditText inputName, inputDesc, inputPriceBefore, inputPriceAfter;
-    private TextInputLayout inputLayoutName, inputLayoutDesc, inputLayoutPriceBefore, inputLayoutPriceAfter;
+    private EditText inputName, inputDesc;
+    private TextInputLayout inputLayoutName, inputLayoutDesc;
     private Button publishOffer, previewOffer, addNewItem;
     private String mImgurUrl;
-    private MyImgurUploadTask mImgurUploadTask;
-
+    private Uri mFileUri = null;
 
     /**
      * returns the bytesize of the give bitmap
@@ -102,10 +100,9 @@ public class AddNewOfferFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        images_id_Array [0]=  new ArrayList<>();
-        images_id_Array [1]=  new ArrayList<>();
-        images_id_Array [2]=  new ArrayList<>();
-
+        images_id_Array[0] = new ArrayList<>();
+        images_id_Array[1] = new ArrayList<>();
+        images_id_Array[2] = new ArrayList<>();
 
         REQUEST_CAMERA.add(55);
         REQUEST_CAMERA.add(66);
@@ -115,27 +112,23 @@ public class AddNewOfferFragment extends Fragment {
         SELECT_FILE.add(28);
         SELECT_FILE.add(35);
 
-
         mOffer = new Offer();
+        mapImageUploading = new HashMap<>();
 
         View rootView = inflater.inflate(R.layout.fragment_add_new_offer, container, false);
-
         addNewItem = (Button) rootView.findViewById(R.id.add_new_item);
-
         addNewItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                if (itemsContainer.getChildCount() > 2) {
-                    Toast.makeText(getActivity(), "you need to delete another item", Toast.LENGTH_SHORT).show();
-                } else {
-                    inflateNewItem();
+                inflateNewItem(itemsContainer.getChildCount()==0);
+                if (itemsContainer.getChildCount() == 3) {
+                    addNewItem.setVisibility(View.GONE);
                 }
             }
         });
 
         itemsContainer = (LinearLayout) rootView.findViewById(R.id.items_container);
-
 
         inputLayoutName = (TextInputLayout) rootView.findViewById(R.id.input_layout_offername);
         inputLayoutDesc = (TextInputLayout) rootView.findViewById(R.id.input_layout_desc);
@@ -197,58 +190,32 @@ public class AddNewOfferFragment extends Fragment {
         return rootView;
     }
 
-    private void inflateNewItem() {
-
-
+    private void inflateNewItem(boolean firstOne) {
         LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         final View rootView = inflater.inflate(R.layout.add_offer_item, null);
-
         itemsContainer.addView(rootView);
+        if (firstOne)
+            rootView.findViewById(R.id.delete_item).setVisibility(View.GONE);
+        else
+            rootView.findViewById(R.id.delete_item).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    images_id_Array[itemsContainer.indexOfChild(rootView)].clear();
+                    itemsContainer.removeView(rootView);
+                    addNewItem.setVisibility(View.VISIBLE);
+                }
+            });
 
-
-        inputLayoutPriceBefore = (TextInputLayout) rootView.findViewById(R.id.input_layout_pricebefore);
-        inputLayoutPriceAfter = (TextInputLayout) rootView.findViewById(R.id.input_layout_priceafter);
-        inputPriceBefore = (EditText) rootView.findViewById(R.id.input_pricebefore);
-        inputPriceAfter = (EditText) rootView.findViewById(R.id.input_priceafter);
-
-        inputPriceBefore.addTextChangedListener(new MyTextWatcher(inputPriceBefore));
-        inputPriceAfter.addTextChangedListener(new MyTextWatcher(inputPriceAfter));
-
-
-
-
-        ImageButton delete_Button = (ImageButton) rootView.findViewById(R.id.delete_item);
-        delete_Button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                images_id_Array[itemsContainer.indexOfChild(rootView)].clear();
-                itemsContainer.removeView(rootView);
-
-
-
-            }
-        });
-
-
-
-
-        ImageButton imageButton = (ImageButton) rootView.findViewById(R.id.add_new_image);
-
-        imageButton.setOnClickListener(new View.OnClickListener() {
+        rootView.findViewById(R.id.add_new_image).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 LinearLayout imgsContainer = (LinearLayout) rootView.findViewById(R.id.imgscontainer);
-
-                if (imgsContainer.getChildCount() > 3) {
-                    Toast.makeText(getActivity(), "you need to delete another images", Toast.LENGTH_SHORT).show();
-                } else {
-                    selectImage(itemsContainer.indexOfChild(rootView));
+                selectImage(itemsContainer.indexOfChild(rootView));
+                if (imgsContainer.getChildCount() == 3) {
+                    rootView.findViewById(R.id.add_new_image).setVisibility(View.GONE);
                 }
-
             }
         });
-
     }
 
     private void SubmitNewOffer() {
@@ -260,13 +227,6 @@ public class AddNewOfferFragment extends Fragment {
             return;
         }
 
-        if (!validatePriceBefore()) {
-            return;
-        }
-
-        if (!validatePriceAfter()) {
-            return;
-        }
         if (!validateImagesIDs()) {
             return;
         }
@@ -285,27 +245,35 @@ public class AddNewOfferFragment extends Fragment {
     }
 
     private void prepareItems() {
-
+        boolean success = true;
+        items_list.clear();
         for (int i = 0; i < itemsContainer.getChildCount(); i++) {
-
-
-            RelativeLayout rootv = (RelativeLayout) itemsContainer.getChildAt(i);
+            RelativeLayout rootView = (RelativeLayout) itemsContainer.getChildAt(i);
             Item item = new Item();
-
-            EditText  inputPriceBefore = (EditText) rootv.findViewById(R.id.input_pricebefore);
-            EditText inputPriceAfter = (EditText) rootv.findViewById(R.id.input_priceafter);
-
+            EditText inputPriceBefore = (EditText) rootView.findViewById(R.id.input_pricebefore);
+            EditText inputPriceAfter = (EditText) rootView.findViewById(R.id.input_priceafter);
             item.setPriceBefore(inputPriceBefore.getText().toString());
             item.setPriceAfter(inputPriceAfter.getText().toString());
             item.setImagePaths(images_id_Array[i]);
-
+            if (item.getPriceAfter().isEmpty()) {
+                ((TextInputLayout) rootView.findViewById(R.id.input_layout_priceafter)).setError(getString(R.string.err_msg_priceBefore));
+                requestFocus(inputPriceBefore);
+                success = false;
+            } else {
+                ((TextInputLayout) rootView.findViewById(R.id.input_layout_priceafter)).setErrorEnabled(false);
+            }
+            if (item.getPriceBefore().isEmpty()) {
+                ((TextInputLayout) rootView.findViewById(R.id.input_layout_pricebefore)).setError(getString(R.string.err_msg_priceBefore));
+                requestFocus(inputPriceBefore);
+                success = false;
+            } else {
+                ((TextInputLayout) rootView.findViewById(R.id.input_layout_pricebefore)).setErrorEnabled(false);
+            }
 
             items_list.add(item);
         }
-
-
+        if (!success) return;
         Publish();
-
     }
 
     private Boolean validateOfferName() {
@@ -334,37 +302,16 @@ public class AddNewOfferFragment extends Fragment {
         return true;
     }
 
-    private Boolean validatePriceBefore() {
-
-        if (inputPriceBefore.getText().toString().trim().isEmpty()) {
-            inputLayoutPriceBefore.setError(getString(R.string.err_msg_priceBefore));
-            requestFocus(inputPriceBefore);
-            return false;
-        } else {
-            inputLayoutPriceBefore.setErrorEnabled(false);
-        }
-
-        return true;
-    }
-
-    private Boolean validatePriceAfter() {
-
-        if (inputPriceAfter.getText().toString().trim().isEmpty()) {
-            inputLayoutPriceAfter.setError(getString(R.string.err_msg_priceAfter));
-            requestFocus(inputPriceAfter);
-            return false;
-        } else {
-            inputLayoutPriceAfter.setErrorEnabled(false);
-        }
-
-        return true;
-    }
-
     private Boolean validateImagesIDs() {
+        for (Map.Entry<String, MyImgurUploadTask> entry : mapImageUploading.entrySet()) {
+            if (!entry.getValue().success) {
+                showMessage("يجب الإنتظار حتى يتم رفع كل الصور");
+                return false;
+            }
+        }
+        if (images_id_Array[0].size() < 1 && images_id_Array[1].size() < 1 && images_id_Array[2].size() < 1) {
 
-        if (images_id_Array[0].size() < 1 && images_id_Array[1].size() < 1&& images_id_Array[2].size() < 1) {
-
-            Toast.makeText(getActivity(), "يجب اضافه صور للعرض", Toast.LENGTH_SHORT).show();
+            showMessage("يجب إضافة صورة على الأقل لكل عرض");
             return false;
         }
         return true;
@@ -411,8 +358,6 @@ public class AddNewOfferFragment extends Fragment {
         }
     }
 
-    private Uri mFileUri = null;
-
     private void selectImage(final int i) {
 
         final CharSequence[] items = {"إلتقط صوره!", "إختار صوره",
@@ -443,123 +388,59 @@ public class AddNewOfferFragment extends Fragment {
         builder.show();
     }
 
-
-
-
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (resultCode == Activity.RESULT_OK) {
-            if (requestCode < 50) {
-                Uri u = data.getData();
-                    onSelectFromGalleryResult(data, u, requestCode);
-
-            } else if (requestCode > 50) {
-                    Uri u = data.getData();
-                    onCaptureImageResult(data, u, requestCode);}
-
+            inflateNewImage(data.getData(), requestCode);
         }
     }
 
-    private void onCaptureImageResult(Intent data, Uri uri, int requestCode) {
-        Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        thumbnail.compress(Bitmap.CompressFormat.JPEG, 90, bytes);
-
-
-        //  thumbnail.compress(Bitmap.CompressFormat.JPEG,40,bytes);
-
-        File destination = new File(Environment.getExternalStorageDirectory(),
-                System.currentTimeMillis() + ".jpg");
-
-        FileOutputStream fo;
-        try {
-            destination.createNewFile();
-            fo = new FileOutputStream(destination);
-            fo.write(bytes.toByteArray());
-            fo.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        inflateNewImage(thumbnail, uri, requestCode);
-    }
-
-    private void onSelectFromGalleryResult(Intent data, Uri uri, int requestCode) {
-        Uri selectedImageUri = data.getData();
-        String[] projection = {MediaStore.MediaColumns.DATA};
-        // Cursor cursor = managedQuery(selectedImageUri, projection, null, null, null);
-
-        Cursor cursor = getActivity().getContentResolver().query(selectedImageUri, projection, null, null, null);
-
-        int column_index = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
-        cursor.moveToFirst();
-
-        String selectedImagePath = cursor.getString(column_index);
-
-        Bitmap bm;
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile(selectedImagePath, options);
-        final int REQUIRED_SIZE = 200;
-        int scale = 1;
-        while (options.outWidth / scale / 2 >= REQUIRED_SIZE
-                && options.outHeight / scale / 2 >= REQUIRED_SIZE)
-            scale *= 2;
-        options.inSampleSize = scale;
-        options.inJustDecodeBounds = false;
-        bm = BitmapFactory.decodeFile(selectedImagePath, options);
-
-        inflateNewImage(bm, uri, requestCode);
-    }
-
-    private void inflateNewImage(Bitmap thumbnail, Uri uri, int requestCode) {
-
+    private void inflateNewImage(Uri uri, int requestCode) {
         LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        final View rootview = inflater.inflate(R.layout.image_group, null);
-        //****************************
-        int theIndex = 0;
+        final View rootImage = inflater.inflate(R.layout.image_group, null);
+        final String key = UUID.randomUUID().toString();
+        int indexOfItem;
         if (requestCode < 50) {
-            theIndex = (requestCode / 7) - 3;
+            indexOfItem = (requestCode / 7) - 3;
         } else {
-            theIndex = (requestCode / 11) - 5;
+            indexOfItem = (requestCode / 11) - 5;
         }
-        LinearLayout imgsContainer = null;
-if (itemsContainer!=null) {
-     imgsContainer = (LinearLayout) itemsContainer.getChildAt(theIndex).findViewById(R.id.imgscontainer);
-
-    imgsContainer.addView(rootview);
-}
-        final ImageView imageView = (ImageView) rootview.findViewById(R.id.theimage);
-        imageView.setImageBitmap(thumbnail);
-        imageView.setAlpha(0.5f);
-
-        ImageView imgdone = (ImageView) rootview.findViewById(R.id.img_done);
-
-        Toast.makeText(getActivity(), "uploading...", Toast.LENGTH_SHORT).show();
-
-        new MyImgurUploadTask(uri, imageView, imgdone, theIndex).execute();
-
-        ImageButton del_image = (ImageButton) rootview.findViewById(R.id.delete_img);
-        final LinearLayout finalImgsContainer = imgsContainer;
-        final int finalTheIndex = theIndex;
-        del_image.setOnClickListener(new View.OnClickListener() {
+        LinearLayout lytImagesGroupContainer = null;
+        if (itemsContainer != null) {
+            lytImagesGroupContainer = (LinearLayout) itemsContainer.getChildAt(indexOfItem).findViewById(R.id.imgscontainer);
+            lytImagesGroupContainer.addView(rootImage);
+        }
+        final ImageView imgOffer = (ImageView) rootImage.findViewById(R.id.theimage);
+        Glide.with(getActivity()).load(uri).into(imgOffer);
+        imgOffer.setAlpha(0.5f);
+        ImageView imgDone = (ImageView) rootImage.findViewById(R.id.img_done);
+        showMessage("جاري رفع الصورة");
+        mapImageUploading.put(key, new MyImgurUploadTask(uri, imgOffer, imgDone, indexOfItem));
+        mapImageUploading.get(key).execute();
+        final LinearLayout fLytImagesGroupContainer = lytImagesGroupContainer;
+        final int fIndexOfItem = indexOfItem;
+        rootImage.findViewById(R.id.delete_img).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                //**************************************************************************
-                /// error here   the id come from asyns after we delete the image
-
-                if (images_id_Array[finalTheIndex].size() > 0 && !images_id_Array[finalTheIndex].get(finalImgsContainer.indexOfChild(rootview)-1).isEmpty()) {
-                    images_id_Array[finalTheIndex].remove(finalImgsContainer.indexOfChild(rootview)-1);
-                }
-                finalImgsContainer.removeView(rootview);
+                if (!mapImageUploading.get(key).isDone())
+                    mapImageUploading.get(key).cancel(true);
+                else
+                    images_id_Array[fIndexOfItem].remove(fLytImagesGroupContainer.indexOfChild(rootImage) - 1);
+                mapImageUploading.remove(key);
+                fLytImagesGroupContainer.findViewById(R.id.add_new_image).setVisibility(View.VISIBLE);
+                fLytImagesGroupContainer.removeView(rootImage);
             }
         });
+    }
+
+    private void showMessage(String msg) {
+        try {
+            Snackbar.make(getView(), msg, Snackbar.LENGTH_LONG).show();
+        } catch (Exception ex) {
+        }
+
     }
 
     private void Publish() {
@@ -567,13 +448,7 @@ if (itemsContainer!=null) {
             mOffer.setCategoryName(UtilityGeneral.getCategoryEnglishName(category_spinner.getText().toString()));
             mOffer.setTitle(inputName.getText().toString());
             mOffer.setDesc(inputDesc.getText().toString());
-
-            //    mOffer.setPriceBefore(inputPriceBefore.getText().toString());
-            //    mOffer.setPriceAfter(inputPriceAfter.getText().toString());
             mOffer.setPeriod(duration_spinner.getText().toString());
-            //  mOffer.setImagePaths(images_id);
-
-            // new
             mOffer.setItems(items_list);
             Shop shop = null;
             for (Shop sh : lstShops)
@@ -581,12 +456,12 @@ if (itemsContainer!=null) {
                     shop = sh;
                     break;
                 }
-
             mOffer.setShopId(shop.getObjectId());
             mOffer.setShopName(shop.getName());
             mOffer.setLat(shop.getLat());
             mOffer.setLon(shop.getLon());
             mOffer.setCreatedAt(UtilityGeneral.getCurrentDate(new Date()));
+            mOffer.setAverageRate("0");
             mOffer.setUserId(UtilityGeneral.loadUser(getActivity()).getObjectId());
             mOffer.setCity(shop.getCity());
             mOffer.setUserNotificationToken(UtilityGeneral.loadUser(getActivity()).getNotificationToken());
@@ -604,10 +479,10 @@ if (itemsContainer!=null) {
                 @Override
                 public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                     if (databaseError != null) {
-                        Toast.makeText(getActivity(), "حصل مشكله شوف النت ", Toast.LENGTH_SHORT).show();
-                        Log.e("Frebaaase", databaseError.getMessage());
+                        showMessage("حصل مشكله شوف النت ");
+                        Log.e("NewOfferFailed", databaseError.getMessage());
                     } else {
-                        Toast.makeText(getActivity(), "تم إضافه العرض، شكرا لك", Toast.LENGTH_SHORT).show();
+                        showMessage("تم إضافه العرض، شكرا لك");
                         getActivity().onBackPressed();
                     }
                 }
@@ -639,62 +514,52 @@ if (itemsContainer!=null) {
                 case R.id.input_desc:
                     validateOfferDesc();
                     break;
-                case R.id.input_pricebefore:
-                    validatePriceBefore();
-                    break;
-                case R.id.input_priceafter:
-                    validatePriceAfter();
-                    break;
             }
         }
     }
 
     private class MyImgurUploadTask extends ImgurUploadTask {
         int x;
-
+        boolean done, success;
         ImageView imageView, imageViewdone;
+
+        public boolean isDone() {
+            return done;
+        }
 
         public MyImgurUploadTask(Uri imageUri, ImageView imageView, ImageView imgdn, int y) {
             super(imageUri, getActivity());
-
             this.imageView = imageView;
             this.imageViewdone = imgdn;
-            this.x = y ;
+            this.x = y;
         }
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            mImgurUploadTask = this;
             mImgurUrl = null;
-
+            success = false;
+            done = false;
         }
 
         @Override
         protected void onPostExecute(String imageId) {
             super.onPostExecute(imageId);
-            mImgurUploadTask = null;
+
             if (imageId != null) {
                 mImgurUrl = "http://i.imgur.com/" + imageId + ".jpg";
-
                 imageView.setAlpha(1.0f);
-
                 imageViewdone.setVisibility(View.VISIBLE);
-
-                Toast.makeText(getActivity(), mImgurUrl + "", Toast.LENGTH_LONG).show();
-
-
+                showMessage("تم رفع الصورة");
                 images_id_Array[x].add(mImgurUrl);
-
-
+                done = true;
+                success = true;
             } else {
                 mImgurUrl = null;
-
-                Toast.makeText(getActivity(), "imgur_upload_error", Toast.LENGTH_LONG).show();
-
-
+                done = true;
+                success = false;
+                showMessage("حدث خطأ أثناء رفع الصورة");
             }
-
         }
     }
 }

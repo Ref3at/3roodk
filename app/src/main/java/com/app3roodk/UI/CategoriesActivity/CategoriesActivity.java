@@ -26,7 +26,7 @@ import com.app3roodk.R;
 import com.app3roodk.UI.About.AboutActivity;
 import com.app3roodk.UI.FavoritesCards.FavoritesActivity;
 import com.app3roodk.UI.Feedback.FeedbackActivity;
-import com.app3roodk.UI.Offer.OfferActivity;
+import com.app3roodk.UI.Offer.AddNewOfferActivity;
 import com.app3roodk.UI.OffersCards.CardsActivity;
 import com.app3roodk.UI.PositioningActivity.PositioningActivity;
 import com.app3roodk.UI.Shop.ListShopsActivity;
@@ -97,13 +97,11 @@ public class CategoriesActivity extends AppCompatActivity {
                         // Set item in checked state
                         menuItem.setChecked(true);
 
-                        // TODO: handle navigation
-                        //Check to see which item was clicked and perform the appropriate action.
                         switch (menuItem.getItemId()) {
 
                             case R.id.action_add_offers:
                                 mDrawerLayout.closeDrawer(GravityCompat.END);
-                                startActivity(new Intent(CategoriesActivity.this, OfferActivity.class));
+                                startActivity(new Intent(CategoriesActivity.this, AddNewOfferActivity.class));
                                 return true;
 
                             case R.id.action_signin:
