@@ -76,8 +76,6 @@
         <provider
             android:name=".TestProvider"
             android:authorities="com.app3roodk.authority" />
-
-        <activity android:name=".UI.FavoritesDetails.FavoritesDetailActivity"></activity>
     </application>
 
 </manifest>

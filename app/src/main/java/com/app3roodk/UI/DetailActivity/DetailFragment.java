@@ -625,7 +625,10 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
                     android.R.drawable.star_big_off);
         }
     }
+
 }
+
+
 
 class CommentsAdapter extends ArrayAdapter {
 
@@ -672,7 +675,14 @@ class CommentsAdapter extends ArrayAdapter {
         else
             holder.DislikeNumber.setText("0");
         holder.Date.setText(comment.getReadableTime());
-
+        if(comment.getUserLike().containsKey(UtilityGeneral.loadUser(context).getObjectId()))
+            holder.btnLike.setBackgroundResource(R.drawable.likegreen);
+        else
+            holder.btnLike.setBackgroundResource(R.drawable.likegray);
+        if(comment.getUserDislike().containsKey(UtilityGeneral.loadUser(context).getObjectId()))
+            holder.btnDislike.setBackgroundResource(R.drawable.dislikered);
+        else
+            holder.btnDislike.setBackgroundResource(R.drawable.dislikegray);
         holder.btnLike.setOnClickListener(
                 new View.OnClickListener() {
                     @Override

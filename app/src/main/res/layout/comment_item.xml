@@ -2,9 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:background="#EEEEEE"
-    android:padding="10dp"
     android:orientation="vertical">
 
     <TextView
@@ -12,8 +11,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:singleLine="true"
-        android:textSize="16sp"
         android:textColor="@android:color/holo_blue_dark"
+        android:textSize="16sp"
         android:textStyle="bold"
         tools:text="الاسم" />
 
@@ -29,34 +28,21 @@
         android:textSize="16sp"
         tools:text="تعليق بلا بلا بلا بلا" />
 
-    <TextView
-        android:id="@+id/txtTime"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:singleLine="true"
-        android:gravity="right|end"
-        android:paddingEnd="10dp"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:paddingStart="10dp"
-        android:textColor="@android:color/darker_gray"
-        tools:text="19-10-2013" />
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginRight="40dp"
-        android:layout_marginEnd="40dp"
-        android:layout_marginTop="10dp"
-        android:gravity="right|end"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:paddingTop="10dp"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp">
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:singleLine="true"
             android:id="@+id/txtDisikeNumber"
-            android:gravity="right|end"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="right|end|center_vertical"
+            android:paddingRight="10dp"
+            android:singleLine="true"
             android:textColor="@android:color/holo_red_dark"
             tools:text="3" />
 
@@ -64,26 +50,40 @@
             android:id="@+id/btnDislike"
             android:layout_width="25dp"
             android:layout_height="25dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginEnd="10dp"
-            android:gravity="right|end"
-            android:background="@android:drawable/ic_menu_edit" />
+            android:layout_marginEnd="20dp"
+            android:layout_marginRight="20dp"
+            tools:background="@drawable/dislikegray"
+            android:gravity="right|end" />
 
         <TextView
             android:id="@+id/txtLikeNumber"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="right|end|center_vertical"
+            android:paddingRight="10dp"
             android:singleLine="true"
             android:textColor="@android:color/holo_green_dark"
-            android:gravity="right|end"
             tools:text="10" />
 
         <Button
             android:id="@+id/btnLike"
             android:layout_width="25dp"
             android:layout_height="25dp"
-            android:gravity="right|end"
-            android:background="@android:drawable/ic_menu_edit" />
+            tools:background="@drawable/likegray"
+            android:gravity="right|end" />
 
+
+        <TextView
+            android:id="@+id/txtTime"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="end|center_horizontal"
+            android:gravity="end|center_vertical"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:singleLine="true"
+            android:textColor="@android:color/darker_gray"
+            tools:text="19-10-2013" />
     </LinearLayout>
+
 </LinearLayout>

@@ -18,10 +18,10 @@ import com.app3roodk.Schema.Offer;
 import com.app3roodk.Schema.TestTable;
 import com.app3roodk.UI.DetailActivity.DetailActivity;
 import com.app3roodk.UtilityGeneral;
-import com.bumptech.glide.Glide;
 
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.Gson;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -122,7 +122,7 @@ public class FavoritesFragment extends Fragment {
             cardHolder.rate.setText(String.valueOf(lstOffers.get(position).getAverageRate()));
             cardHolder.discount.setText(String.format("%.0f", (1 - (Double.parseDouble(lstOffers.get(position).getItems().get(0).getPriceAfter()) / Double.parseDouble(lstOffers.get(position).getItems().get(0).getPriceBefore()))) * 100) + "%");
             fillTimer(cardHolder, position);
-            Glide.with(cardHolder.itemView.getContext()).load(lstOffers.get(position).getItems().get(0).getImagePaths().get(0)).into(cardHolder.imgCard);
+            Picasso.with(cardHolder.itemView.getContext()).load(lstOffers.get(position).getItems().get(0).getImagePaths().get(0)).into(cardHolder.imgCard);
             cardHolder.priceBefore.setText(cardHolder.offer.getItems().get(0).getPriceBefore());
             cardHolder.priceAfter.setText(cardHolder.offer.getItems().get(0).getPriceAfter());
             try {

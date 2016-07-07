@@ -3,14 +3,15 @@
     <string-array name="cat_array">
 
         <item>مطاعم</item>
-        <item>سوبر ماركت</item>
-        <item>كافيه</item>
-        <item>موبايل</item>
-        <item>كمبيوتر</item>
         <item>أدوات منزليه</item>
         <item>إكسسوار</item>
-        <item>ملابس</item>
+        <item>موبايل</item>
+        <item>كمبيوتر</item>
         <item>أحذيه</item>
+        <item>ملابس</item>
+        <item>سوبر ماركت</item>
+        <item>خدمات</item>
+
     </string-array>
 
     <string-array name="cat_array_eng">

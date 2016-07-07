@@ -244,6 +244,7 @@ hashmapUsersRates = ObjectConverter.fromHashmapToStringUsersRates(usersRates);
 
 
     public String getAverageRate() {
+        if(averageRate.equals("NaN")) averageRate ="0";
         return averageRate;
     }
 

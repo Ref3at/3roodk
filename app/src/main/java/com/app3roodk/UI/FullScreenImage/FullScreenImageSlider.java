@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.app3roodk.R;
-import com.bumptech.glide.Glide;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +52,6 @@ public class FullScreenImageSlider extends AppCompatActivity {
 
         }
 
-
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
@@ -61,10 +60,7 @@ public class FullScreenImageSlider extends AppCompatActivity {
         mViewPager = (RefaatPager) findViewById(R.id.fullscreen_container);
         assert mViewPager != null;
         mViewPager.setAdapter(mSectionsPagerAdapter);
-
-
     }
-
 
     /**
      * A placeholder fragment containing a simple view.
@@ -82,7 +78,6 @@ public class FullScreenImageSlider extends AppCompatActivity {
         public PlaceholderFragment() {
         }
 
-
         /**
          * Returns a new instance of this fragment for the given section
          * number.
@@ -98,21 +93,14 @@ public class FullScreenImageSlider extends AppCompatActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-
             Bundle arguments = getArguments();
             if (arguments != null) {
                 img_path = arguments.getString(ARG_SECTION_NUMBER);
             }
-
             View rootView = inflater.inflate(R.layout.fragment_full_screen_image_slider, container, false);
             ImageView imageView = (ImageView) rootView.findViewById(R.id.fullscreen_imageview);
-
-
-            Glide.with(getActivity()).load(img_path).into(imageView);
-
+            Picasso.with(getActivity()).load(img_path).into(imageView);
             mAttacher = new PhotoViewAttacher(imageView);
-
-
             return rootView;
         }
     }
