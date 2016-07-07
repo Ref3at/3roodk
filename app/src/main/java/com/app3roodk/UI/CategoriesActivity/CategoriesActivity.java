@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v4.view.GravityCompat;
@@ -22,6 +23,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.app3roodk.Constants;
 import com.app3roodk.R;
 import com.app3roodk.UI.About.AboutActivity;
 import com.app3roodk.UI.FavoritesCards.FavoritesActivity;
@@ -78,7 +80,7 @@ public class CategoriesActivity extends AppCompatActivity {
         initNavigationDrawer();
         if (UtilityGeneral.isRegisteredUser(getBaseContext())) {
             UtilityFirebase.updateUserNotificationToken(getBaseContext(), UtilityGeneral.loadUser(getBaseContext()), FirebaseInstanceId.getInstance().getToken());
-            UtilityFirebase.getUserShops(getBaseContext(),UtilityGeneral.loadUser(getBaseContext()).getObjectId());
+            UtilityFirebase.getUserShops(getBaseContext(), UtilityGeneral.loadUser(getBaseContext()).getObjectId());
         }
     }
 
@@ -101,7 +103,12 @@ public class CategoriesActivity extends AppCompatActivity {
 
                             case R.id.action_add_offers:
                                 mDrawerLayout.closeDrawer(GravityCompat.END);
-                                startActivity(new Intent(CategoriesActivity.this, AddNewOfferActivity.class));
+                                mDrawerLayout.closeDrawer(GravityCompat.END);
+                                if (UtilityGeneral.getNumberOfAvailableOffers(getBaseContext(), UtilityGeneral.getCurrentYearAndWeek()) <= 0) {
+                                    Snackbar.make(findViewById(android.R.id.content), "عفواً لايمكنك عمل أكثر من " + String.valueOf(Constants.NUMBER_OF_OFFERS_PER_WEEK) + " عروض فى الإسبوع", Snackbar.LENGTH_LONG).show();
+                                    hideDrawerItems();
+                                } else
+                                    startActivity(new Intent(CategoriesActivity.this, AddNewOfferActivity.class));
                                 return true;
 
                             case R.id.action_signin:
@@ -117,7 +124,6 @@ public class CategoriesActivity extends AppCompatActivity {
 
                             case R.id.action_home:
                                 mDrawerLayout.closeDrawer(GravityCompat.END);
-                                finish();
                                 return true;
 
                             case R.id.action_view_my_shop:
@@ -168,7 +174,7 @@ public class CategoriesActivity extends AppCompatActivity {
         mDrawerLayout.setDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
-
+                showUserInfoNavigationDrawer();
             }
 
             @Override
@@ -288,7 +294,11 @@ public class CategoriesActivity extends AppCompatActivity {
         try {
             FirebaseAuth auth = FirebaseAuth.getInstance();
             if (auth.getCurrentUser() != null) {
-
+                if (UtilityGeneral.isRegisteredUser(getBaseContext())&& UtilityGeneral.isShopExist(getBaseContext())) {
+                    ((TextView) mNavigationView.findViewById(R.id.txtNavNumOfOfers)).setText("يمكنك عمل " + String.valueOf(UtilityGeneral.getNumberOfAvailableOffers(getBaseContext(), UtilityGeneral.getCurrentYearAndWeek()) )+ " عروض فى  هذا الإسبوع");
+                }
+                else
+                    ((TextView) mNavigationView.findViewById(R.id.txtNavNumOfOfers)).setText("");
                 ((TextView) mNavigationView.findViewById(R.id.txtNavName)).setText(auth.getCurrentUser().getDisplayName());
                 ((TextView) mNavigationView.findViewById(R.id.txtNavEmail)).setText(auth.getCurrentUser().getEmail());
                 Glide.with(this)
@@ -304,6 +314,7 @@ public class CategoriesActivity extends AppCompatActivity {
                             }
                         });
             } else {
+                ((TextView) mNavigationView.findViewById(R.id.txtNavNumOfOfers)).setText("");
                 ((TextView) mNavigationView.findViewById(R.id.txtNavName)).setText("");
                 ((TextView) mNavigationView.findViewById(R.id.txtNavEmail)).setText("");
                 Glide.with(this)

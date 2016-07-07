@@ -21,6 +21,7 @@ public class User {
     private String planId;
     private ArrayList<String> subsCategoryIds;
     private String NotificationToken;
+    private HashMap<String,Integer> numOfOffersAvailable;
 
     // ref3t add
     private ArrayList<String> subsShopsIds;
@@ -206,5 +207,14 @@ public class User {
 
     public void setNotificationToken(String notificationToken) {
         NotificationToken = notificationToken;
+    }
+
+    public HashMap<String, Integer> getNumOfOffersAvailable() {
+        if(numOfOffersAvailable == null) numOfOffersAvailable = new HashMap<>();
+        return numOfOffersAvailable;
+    }
+
+    public void setNumOfOffersAvailable(HashMap<String, Integer> numOfOffersAvailable) {
+        this.numOfOffersAvailable = numOfOffersAvailable;
     }
 }

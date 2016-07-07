@@ -66,14 +66,37 @@ public class PositioningActivity extends AppCompatActivity {
                 user.setEmail(acct.getEmail());
                 user.setName(acct.getDisplayName());
                 user.setNotificationToken(FirebaseInstanceId.getInstance().getToken());
+
                 FirebaseDatabase database = FirebaseDatabase.getInstance();
                 DatabaseReference myRef = database.getReference("Users").child(acct.getUid());
-                myRef.setValue(user, new DatabaseReference.CompletionListener() {
+                myRef.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
-                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                        if (databaseError != null) {
-                            Toast.makeText(getBaseContext(), "حصل مشكله شوف النت ", Toast.LENGTH_SHORT).show();
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        user = dataSnapshot.getValue(User.class);
+                        if (user == null) {
+                            FirebaseUser acct = FirebaseAuth.getInstance().getCurrentUser();
+                            FirebaseDatabase database = FirebaseDatabase.getInstance();
+                            DatabaseReference myRef = database.getReference("Users").child(acct.getUid());
+                            myRef.setValue(user, new DatabaseReference.CompletionListener() {
+                                @Override
+                                public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                                    if (databaseError != null) {
+                                        Toast.makeText(getBaseContext(), "حصل مشكله شوف النت ", Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        UtilityGeneral.saveUser(getBaseContext(), user);
+                                        startActivity(new Intent(PositioningActivity.this, CategoriesActivity.class));
+                                        setLoadingVisibility(View.INVISIBLE);
+                                        stay = false;
+                                        finish();
+                                    }
+                                }
+                            });
                         } else {
+                            FirebaseUser acct = FirebaseAuth.getInstance().getCurrentUser();
+                            user.setObjectId(acct.getUid());
+                            user.setEmail(acct.getEmail());
+                            user.setName(acct.getDisplayName());
+                            user.setNotificationToken(FirebaseInstanceId.getInstance().getToken());
                             FirebaseDatabase database = FirebaseDatabase.getInstance();
                             database.getReference("Shops").child(user.getObjectId()).addListenerForSingleValueEvent(
                                     new ValueEventListener() {
@@ -99,9 +122,49 @@ public class PositioningActivity extends AppCompatActivity {
                                             Log.w("Test", "getShop:onCancelled", databaseError.toException());
                                         }
                                     });
+
                         }
                     }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
                 });
+//                myRef.setValue(user, new DatabaseReference.CompletionListener() {
+//                    @Override
+//                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+//                        if (databaseError != null) {
+//                            Toast.makeText(getBaseContext(), "حصل مشكله شوف النت ", Toast.LENGTH_SHORT).show();
+//                        } else {
+//                            FirebaseDatabase database = FirebaseDatabase.getInstance();
+//                            database.getReference("Shops").child(user.getObjectId()).addListenerForSingleValueEvent(
+//                                    new ValueEventListener() {
+//                                        @Override
+//                                        public void onDataChange(DataSnapshot dataSnapshot) {
+//                                            try {
+//                                                ArrayList<Shop> shops = new ArrayList<Shop>();
+//                                                Iterator<DataSnapshot> iterator = dataSnapshot.getChildren().iterator();
+//                                                while (iterator.hasNext())
+//                                                    shops.add(iterator.next().getValue(Shop.class));
+//                                                UtilityGeneral.saveShops(getBaseContext(), shops);
+//                                            } catch (Exception ex) {
+//                                            }
+//                                            UtilityGeneral.saveUser(getBaseContext(), user);
+//                                            startActivity(new Intent(PositioningActivity.this, CategoriesActivity.class));
+//                                            setLoadingVisibility(View.INVISIBLE);
+//                                            stay = false;
+//                                            finish();
+//                                        }
+//
+//                                        @Override
+//                                        public void onCancelled(DatabaseError databaseError) {
+//                                            Log.w("Test", "getShop:onCancelled", databaseError.toException());
+//                                        }
+//                                    });
+//                        }
+//                    }
+//                });
             } else {
                 Toast.makeText(getBaseContext(), "فشل فى تسجيل الدخول", Toast.LENGTH_LONG).show();
             }
@@ -123,7 +186,9 @@ public class PositioningActivity extends AppCompatActivity {
                     LatLng latLng = UtilityGeneral.getCurrentLonAndLat(getBaseContext());
                     user.setLat(String.valueOf(latLng.latitude));
                     user.setLon(String.valueOf(latLng.longitude));
-                }catch (Exception ex){Toast.makeText(getBaseContext(), "ممكن تفتح الخرائط على الأقل مرة", Toast.LENGTH_LONG).show();}
+                } catch (Exception ex) {
+                    Toast.makeText(getBaseContext(), "ممكن تفتح الخرائط على الأقل مرة", Toast.LENGTH_LONG).show();
+                }
                 startActivityForResult(
                         AuthUI.getInstance()
                                 .createSignInIntentBuilder()
@@ -165,10 +230,9 @@ public class PositioningActivity extends AppCompatActivity {
             try {
                 if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                         != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions( this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                             PERMISSION_TYPE);
-                }
-                else {
+                } else {
                     return true;
                 }
 
@@ -202,7 +266,7 @@ public class PositioningActivity extends AppCompatActivity {
                 }
                 return;
             }
-            case Constants.PERMISSION_MAPS_VISITOR :{
+            case Constants.PERMISSION_MAPS_VISITOR: {
                 User user = new User();
                 LatLng latLng = UtilityGeneral.getCurrentLonAndLat(getBaseContext());
                 user.setLat(String.valueOf(latLng.latitude));

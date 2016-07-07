@@ -29,6 +29,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.app3roodk.Constants;
 import com.app3roodk.Imgur.ImgurUploadTask;
 import com.app3roodk.R;
 import com.app3roodk.Schema.Item;
@@ -110,7 +111,7 @@ public class AddNewOfferFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                inflateNewItem(itemsContainer.getChildCount()==0);
+                inflateNewItem(itemsContainer.getChildCount() == 0);
                 if (itemsContainer.getChildCount() == 3) {
                     addNewItem.setVisibility(View.GONE);
                 }
@@ -428,6 +429,10 @@ public class AddNewOfferFragment extends Fragment {
 
     private void Publish() {
         try {
+            if (UtilityGeneral.getNumberOfAvailableOffers(getActivity(), UtilityGeneral.getCurrentYearAndWeek()) <= 0) {
+                showMessage( "عفواً لايمكنك عمل أكثر من " + String.valueOf(Constants.NUMBER_OF_OFFERS_PER_WEEK) + " عروض فى الإسبوع" );
+                return;
+            }
             mOffer.setCategoryName(UtilityGeneral.getCategoryEnglishName(category_spinner.getText().toString()));
             mOffer.setTitle(inputName.getText().toString());
             mOffer.setDesc(inputDesc.getText().toString());
@@ -466,8 +471,14 @@ public class AddNewOfferFragment extends Fragment {
                         showMessage("حصل مشكله شوف النت ");
                         Log.e("NewOfferFailed", databaseError.getMessage());
                     } else {
-                        showMessage("تم إضافه العرض، شكرا لك");
-                        getActivity().onBackPressed();
+
+                        UtilityFirebase.decreaseNumberOfOffersAvailable(getActivity(), new DatabaseReference.CompletionListener() {
+                            @Override
+                            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                                showMessage("تم إضافه العرض، شكرا لك");
+                                getActivity().onBackPressed();
+                            }
+                        });
                     }
                 }
             });

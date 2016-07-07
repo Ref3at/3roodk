@@ -27,6 +27,7 @@ import com.google.gson.reflect.TypeToken;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -175,7 +176,7 @@ public class UtilityGeneral {
     }
 
     static public boolean isTotalAndAverageRatingChanged(Offer offer) {
-        boolean isNew= false;
+        boolean isNew = false;
         try {
             String previousTotal = offer.getTotalRate(), previousAverage = offer.getAverageRate();
             Double average, total = 0.0;
@@ -191,9 +192,22 @@ public class UtilityGeneral {
                 offer.setAverageRate(String.format("%.1f", average));
                 isNew = true;
             }
+        } catch (Exception ex) {
+            isNew = false;
         }
-        catch (Exception ex){isNew =false;}
         return isNew;
+    }
+
+    static public int getNumberOfAvailableOffers(Context context, String yearWeek) {
+        User user = loadUser(context);
+        try {
+            if (user.getNumOfOffersAvailable().containsKey(yearWeek))
+                return user.getNumOfOffersAvailable().get(yearWeek);
+            else
+                return 4;
+        } catch (Exception ex) {
+            return 0;
+        }
     }
 
     //region Helping Functions
@@ -218,6 +232,11 @@ public class UtilityGeneral {
 
     static public String getCurrentDate(Date date) {
         return new SimpleDateFormat("yyyyMMddkkmm").format(date);
+    }
+
+    static public String getCurrentYearAndWeek() {
+        Calendar c = Calendar.getInstance();
+        return String.valueOf(c.get(Calendar.YEAR)) + String.valueOf(c.get(Calendar.WEEK_OF_YEAR));
     }
 
     static public String getCategoryEnglishName(String arCategory) {

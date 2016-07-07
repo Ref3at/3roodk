@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -120,13 +121,18 @@ public class CardsActivity extends AppCompatActivity {
 
                             case R.id.action_add_offers:
                                 mDrawerLayout.closeDrawer(GravityCompat.END);
-                                startActivity(new Intent(CardsActivity.this, AddNewOfferActivity.class));
+                                if (UtilityGeneral.getNumberOfAvailableOffers(getBaseContext(), UtilityGeneral.getCurrentYearAndWeek()) <= 0) {
+                                    Snackbar.make(findViewById(R.id.main_content), "عفواً لايمكنك عمل أكثر من " + String.valueOf(Constants.NUMBER_OF_OFFERS_PER_WEEK) + " عروض فى الإسبوع", Snackbar.LENGTH_LONG).show();
+                                    hideDrawerItems();
+                                } else
+                                    startActivity(new Intent(CardsActivity.this, AddNewOfferActivity.class));
                                 return true;
 
                             case R.id.action_signin:
                                 mDrawerLayout.closeDrawer(GravityCompat.END);
                                 PositioningActivity.stay = true;
                                 startActivity(new Intent(CardsActivity.this, PositioningActivity.class));
+                                finish();
                                 return true;
 
                             case R.id.action_new_shop:
@@ -252,7 +258,10 @@ public class CardsActivity extends AppCompatActivity {
         try {
             FirebaseAuth auth = FirebaseAuth.getInstance();
             if (auth.getCurrentUser() != null) {
-
+                if (UtilityGeneral.isRegisteredUser(getBaseContext())&& UtilityGeneral.isShopExist(getBaseContext())) {
+                    ((TextView) mNavigationView.findViewById(R.id.txtNavNumOfOfers)).setText("يمكنك عمل " + String.valueOf(UtilityGeneral.getNumberOfAvailableOffers(getBaseContext(), UtilityGeneral.getCurrentYearAndWeek())) + " عروض فى  هذا الإسبوع");
+                } else
+                    ((TextView) mNavigationView.findViewById(R.id.txtNavNumOfOfers)).setText("");
                 ((TextView) mNavigationView.findViewById(R.id.txtNavName)).setText(auth.getCurrentUser().getDisplayName());
                 ((TextView) mNavigationView.findViewById(R.id.txtNavEmail)).setText(auth.getCurrentUser().getEmail());
                 Glide.with(this)
@@ -268,6 +277,7 @@ public class CardsActivity extends AppCompatActivity {
                             }
                         });
             } else {
+                ((TextView) mNavigationView.findViewById(R.id.txtNavNumOfOfers)).setText("");
                 ((TextView) mNavigationView.findViewById(R.id.txtNavName)).setText("");
                 ((TextView) mNavigationView.findViewById(R.id.txtNavEmail)).setText("");
                 Glide.with(this)

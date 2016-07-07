@@ -9,6 +9,7 @@ public class Constants {
     public static final String KEY_SHOP = "keyshop";
     public static final String KEY_CITY = "keycity";
     public static final int RC_SIGN_IN = 123;
+    public static final int NUMBER_OF_OFFERS_PER_WEEK = 4;
 
     public static final int PERMISSION_MAPS_SIGN_IN = 13;
     public static final int PERMISSION_MAPS_VISITOR = 12;
