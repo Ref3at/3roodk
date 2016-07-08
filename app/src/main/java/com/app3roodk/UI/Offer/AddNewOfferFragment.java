@@ -106,6 +106,9 @@ public class AddNewOfferFragment extends Fragment {
         mapImageUploading = new HashMap<>();
 
         View rootView = inflater.inflate(R.layout.fragment_add_new_offer, container, false);
+
+        UtilityFirebase.updateUserNoOfAvailableOffers(getActivity(),UtilityGeneral.getCurrentYearAndWeek());
+
         addNewItem = (Button) rootView.findViewById(R.id.add_new_item);
         addNewItem.setOnClickListener(new View.OnClickListener() {
             @Override

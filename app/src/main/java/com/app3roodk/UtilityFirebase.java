@@ -110,6 +110,10 @@ public class UtilityFirebase {
         return FirebaseDatabase.getInstance().getReference("Shops").child(offer.getUserId()).child(offer.getShopId());
     }
 
+    static public DatabaseReference getUserShops(String userId) {
+        return FirebaseDatabase.getInstance().getReference("Shops").child(userId);
+    }
+
     static public void createNewShop(Shop shop, String userId, DatabaseReference.CompletionListener listener) {
         DatabaseReference myRef = FirebaseDatabase.getInstance().getReference("Shops").child(userId);
         shop.setObjectId(myRef.push().getKey());
@@ -128,7 +132,8 @@ public class UtilityFirebase {
                 Iterator<DataSnapshot> iterator = dataSnapshot.getChildren().iterator();
                 while (iterator.hasNext())
                     shops.add(iterator.next().getValue(Shop.class));
-                UtilityGeneral.saveShops(context, shops);
+                if (UtilityGeneral.isRegisteredUser(context))
+                    UtilityGeneral.saveShops(context, shops);
             }
 
             @Override
@@ -140,18 +145,49 @@ public class UtilityFirebase {
     //endregion
 
     //region Users
-    static public void updateUserNotificationToken(final Context context, final User user, String notificationToken) {
-        user.setNotificationToken(notificationToken);
-        FirebaseDatabase.getInstance().getReference("Users").child(user.getObjectId()).child("notificationToken").setValue(notificationToken, new DatabaseReference.CompletionListener() {
-            @Override
-            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                UtilityGeneral.saveUser(context, user);
-            }
-        });
-
+    static public DatabaseReference getUser(String userId) {
+        return FirebaseDatabase.getInstance().getReference("Users").child(userId);
     }
 
-    static public void decreaseNumberOfOffersAvailable(final Context context,DatabaseReference.CompletionListener listener) {
+    static public void updateUserNotificationToken(final Context context, String userId, final String notificationToken) {
+        FirebaseDatabase.getInstance().getReference("Users").child(userId).child("notificationToken").setValue(notificationToken, new DatabaseReference.CompletionListener() {
+            @Override
+            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                if (UtilityGeneral.isRegisteredUser(context)) {
+                    User user = UtilityGeneral.loadUser(context);
+                    user.setNotificationToken(notificationToken);
+                    UtilityGeneral.saveUser(context, user);
+                }
+            }
+        });
+    }
+
+    static public void updateUserNoOfAvailableOffers(final Context context, final String yearWeek) {
+        final String userId = UtilityGeneral.loadUser(context).getObjectId();
+        FirebaseDatabase.getInstance().getReference("Users").child(userId).child("numOfOffersAvailable").child(yearWeek).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.getValue() == null) return;
+                User user = UtilityGeneral.loadUser(context);
+                if (user.getNumOfOffersAvailable().containsKey(yearWeek))
+                    user.getNumOfOffersAvailable().remove(yearWeek);
+                user.getNumOfOffersAvailable().put(yearWeek, dataSnapshot.getValue(Integer.class));
+                if (UtilityGeneral.isRegisteredUser(context))
+                    UtilityGeneral.saveUser(context, user);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    static public DatabaseReference getUserNoOfAvailableOffers(final Context context, final String yearWeek) {
+        return FirebaseDatabase.getInstance().getReference("Users").child(UtilityGeneral.loadUser(context).getObjectId()).child("numOfOffersAvailable").child(yearWeek);
+    }
+
+    static public void decreaseNumberOfOffersAvailable(final Context context, DatabaseReference.CompletionListener listener) {
         User user = UtilityGeneral.loadUser(context);
         String yearWeek = UtilityGeneral.getCurrentYearAndWeek();
         int nooa;
@@ -166,8 +202,7 @@ public class UtilityFirebase {
         }
         UtilityGeneral.saveUser(context, user);
 
-        FirebaseDatabase.getInstance().getReference("Users").child(user.getObjectId()).child("numOfOffersAvailable").child(yearWeek).setValue(nooa,listener);
+        FirebaseDatabase.getInstance().getReference("Users").child(user.getObjectId()).child("numOfOffersAvailable").child(yearWeek).setValue(nooa, listener);
     }
     //endregion
-
 }

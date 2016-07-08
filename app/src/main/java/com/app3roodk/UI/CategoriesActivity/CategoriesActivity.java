@@ -1,6 +1,5 @@
 package com.app3roodk.UI.CategoriesActivity;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -25,6 +24,7 @@ import android.widget.Toast;
 
 import com.app3roodk.Constants;
 import com.app3roodk.R;
+import com.app3roodk.Schema.User;
 import com.app3roodk.UI.About.AboutActivity;
 import com.app3roodk.UI.FavoritesCards.FavoritesActivity;
 import com.app3roodk.UI.Feedback.FeedbackActivity;
@@ -41,6 +41,9 @@ import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 
 public class CategoriesActivity extends AppCompatActivity {
@@ -48,25 +51,7 @@ public class CategoriesActivity extends AppCompatActivity {
     DrawerLayout mDrawerLayout;
     NavigationView mNavigationView;
     Boolean exit = false;
-
-    public static Intent getOpenFacebookIntent(Context context) {
-
-        try {
-            context.getPackageManager().getPackageInfo("com.facebook.katana", 0);
-            return new Intent(Intent.ACTION_VIEW, Uri.parse("fb://page/583145478505894"));
-        } catch (Exception e) {
-            return new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.facebook.com/3roodk"));
-        }
-    }
-
-    private void loadCity() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                UtilityGeneral.getCurrentCityEnglish(getBaseContext());
-            }
-        }).start();
-    }
+    private ValueEventListener availableOfferListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,9 +64,90 @@ public class CategoriesActivity extends AppCompatActivity {
         loadCity();
         initNavigationDrawer();
         if (UtilityGeneral.isRegisteredUser(getBaseContext())) {
-            UtilityFirebase.updateUserNotificationToken(getBaseContext(), UtilityGeneral.loadUser(getBaseContext()), FirebaseInstanceId.getInstance().getToken());
+            UtilityFirebase.updateUserNotificationToken(getBaseContext(), UtilityGeneral.loadUser(getBaseContext()).getObjectId(), FirebaseInstanceId.getInstance().getToken());
             UtilityFirebase.getUserShops(getBaseContext(), UtilityGeneral.loadUser(getBaseContext()).getObjectId());
+            availableOfferListener = new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.getValue() == null) return;
+                    String yearWeek = UtilityGeneral.getCurrentYearAndWeek();
+                    User user = UtilityGeneral.loadUser(getBaseContext());
+                    if (user.getNumOfOffersAvailable().containsKey(yearWeek))
+                        user.getNumOfOffersAvailable().remove(yearWeek);
+                    user.getNumOfOffersAvailable().put(yearWeek, dataSnapshot.getValue(Integer.class));
+                    if (UtilityGeneral.isRegisteredUser(getBaseContext()))
+                        UtilityGeneral.saveUser(getBaseContext(), user);
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            };
+//            UtilityFirebase.updateUserNoOfAvailableOffers(getBaseContext(),UtilityGeneral.getCurrentYearAndWeek());
+            UtilityFirebase.getUserNoOfAvailableOffers(getBaseContext(),UtilityGeneral.getCurrentYearAndWeek()).addValueEventListener(availableOfferListener);
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_menu) {
+            mDrawerLayout.openDrawer(GravityCompat.END);
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (mDrawerLayout.isDrawerOpen(GravityCompat.END))
+            mDrawerLayout.closeDrawer(GravityCompat.END);
+        hideDrawerItems();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (mDrawerLayout.isDrawerOpen(GravityCompat.END))
+            mDrawerLayout.closeDrawer(GravityCompat.END);
+        else {
+            if (UtilityGeneral.isRegisteredUser(getBaseContext())) {
+                if (exit) {
+                    Intent intent = new Intent(Intent.ACTION_MAIN);
+                    intent.addCategory(Intent.CATEGORY_HOME);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                    finish();
+                } else {
+                    Toast.makeText(this, "اضغط مره كمان علشان تقفل",
+                            Toast.LENGTH_SHORT).show();
+                    exit = true;
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            exit = false;
+                        }
+                    }, 3 * 1000);
+                }
+            } else {
+                startActivity(new Intent(this, PositioningActivity.class));
+                finish();
+            }
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        try{
+            UtilityFirebase.getUserNoOfAvailableOffers(getBaseContext(),UtilityGeneral.getCurrentYearAndWeek()).removeEventListener(availableOfferListener);
+        }catch (Exception ex){}
+        super.onDestroy();
     }
 
     public void initNavigationDrawer() {
@@ -147,7 +213,7 @@ public class CategoriesActivity extends AppCompatActivity {
 
                             case R.id.action_facebookPage:
                                 mDrawerLayout.closeDrawer(GravityCompat.END);
-                                facebookIntent();
+                                openFacebook();
                                 return true;
 
                             case R.id.action_favorites:
@@ -174,7 +240,6 @@ public class CategoriesActivity extends AppCompatActivity {
         mDrawerLayout.setDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
-                showUserInfoNavigationDrawer();
             }
 
             @Override
@@ -194,27 +259,78 @@ public class CategoriesActivity extends AppCompatActivity {
         });
     }
 
-    public void facebookIntent() {
-
-        startActivity(getOpenFacebookIntent(getApplicationContext()));
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.action_menu) {
-            mDrawerLayout.openDrawer(GravityCompat.END);
+    private void hideDrawerItems() {
+        Menu nav_Menu = ((NavigationView) findViewById(R.id.nav_view)).getMenu();
+        //Visibility of Nav items
+        nav_Menu.findItem(R.id.action_home).setChecked(true);
+        if (UtilityGeneral.isRegisteredUser(getBaseContext())) {
+            nav_Menu.findItem(R.id.action_signin).setVisible(false);
+            nav_Menu.findItem(R.id.action_logout).setVisible(true);
+            if (UtilityGeneral.isShopExist(getBaseContext())) {
+                nav_Menu.findItem(R.id.action_new_shop).setVisible(false);
+                nav_Menu.findItem(R.id.action_add_offers).setVisible(true);
+                nav_Menu.findItem(R.id.action_view_my_shop).setVisible(true);
+            } else {
+                nav_Menu.findItem(R.id.action_new_shop).setVisible(true);
+                nav_Menu.findItem(R.id.action_add_offers).setVisible(false);
+                nav_Menu.findItem(R.id.action_view_my_shop).setVisible(false);
+            }
+        } else {
+            nav_Menu.findItem(R.id.action_signin).setVisible(true);
+            nav_Menu.findItem(R.id.action_logout).setVisible(false);
+            nav_Menu.findItem(R.id.action_new_shop).setVisible(false);
+            nav_Menu.findItem(R.id.action_add_offers).setVisible(false);
+            nav_Menu.findItem(R.id.action_view_my_shop).setVisible(false);
         }
-        return super.onOptionsItemSelected(item);
     }
 
-    public void gooo(View view) {
+    private void showUserInfoNavigationDrawer() {
+        //show info of the user
+        try {
+            FirebaseAuth auth = FirebaseAuth.getInstance();
+            if (auth.getCurrentUser() != null) {
+                if (UtilityGeneral.isRegisteredUser(getBaseContext()) && UtilityGeneral.isShopExist(getBaseContext())) {
+                    ((TextView) mNavigationView.findViewById(R.id.txtNavNumOfOfers)).setText("يمكنك عمل " + String.valueOf(UtilityGeneral.getNumberOfAvailableOffers(getBaseContext(), UtilityGeneral.getCurrentYearAndWeek())) + " عروض فى  هذا الإسبوع");
+                } else
+                    ((TextView) mNavigationView.findViewById(R.id.txtNavNumOfOfers)).setText("");
+                ((TextView) mNavigationView.findViewById(R.id.txtNavName)).setText(auth.getCurrentUser().getDisplayName());
+                ((TextView) mNavigationView.findViewById(R.id.txtNavEmail)).setText(auth.getCurrentUser().getEmail());
+                Glide.with(this)
+                        .load(auth.getCurrentUser().getPhotoUrl())
+                        .asBitmap()
+                        .into(new BitmapImageViewTarget((ImageView) mNavigationView.findViewById(R.id.imgNavProfile)) {
+                            @Override
+                            protected void setResource(Bitmap resource) {
+                                RoundedBitmapDrawable circularBitmapDrawable =
+                                        RoundedBitmapDrawableFactory.create(CategoriesActivity.this.getResources(), resource);
+                                circularBitmapDrawable.setCircular(true);
+                                ((ImageView) mNavigationView.findViewById(R.id.imgNavProfile)).setImageDrawable(circularBitmapDrawable);
+                            }
+                        });
+            } else {
+                ((TextView) mNavigationView.findViewById(R.id.txtNavNumOfOfers)).setText("");
+                ((TextView) mNavigationView.findViewById(R.id.txtNavName)).setText("");
+                ((TextView) mNavigationView.findViewById(R.id.txtNavEmail)).setText("");
+                Glide.with(this)
+                        .load(R.drawable.logo)
+                        .asBitmap()
+                        .into(new BitmapImageViewTarget((ImageView) mNavigationView.findViewById(R.id.imgNavProfile)) {
+                            @Override
+                            protected void setResource(Bitmap resource) {
+                                RoundedBitmapDrawable circularBitmapDrawable =
+                                        RoundedBitmapDrawableFactory.create(CategoriesActivity.this.getResources(), resource);
+                                circularBitmapDrawable.setCircular(true);
+                                ((ImageView) mNavigationView.findViewById(R.id.imgNavProfile)).setImageDrawable(circularBitmapDrawable);
+                            }
+                        });
+
+            }
+        } catch (Exception ex) {
+            Log.e("NavShowInfo", ex.getMessage());
+        }
+    }
+
+    public void goToCards(View view) {
         int x = view.getId();
         Intent i = new Intent(CategoriesActivity.this, CardsActivity.class);
         switch (x) {
@@ -261,112 +377,22 @@ public class CategoriesActivity extends AppCompatActivity {
         CategoriesActivity.this.startActivity(i);
     }
 
-    private void hideDrawerItems() {
-        Menu nav_Menu = ((NavigationView) findViewById(R.id.nav_view)).getMenu();
-        //Visibility of Nav items
-        nav_Menu.findItem(R.id.action_home).setChecked(true);
-        if (UtilityGeneral.isRegisteredUser(getBaseContext())) {
-            nav_Menu.findItem(R.id.action_signin).setVisible(false);
-            nav_Menu.findItem(R.id.action_logout).setVisible(true);
-            if (UtilityGeneral.isShopExist(getBaseContext())) {
-                nav_Menu.findItem(R.id.action_new_shop).setVisible(false);
-                nav_Menu.findItem(R.id.action_add_offers).setVisible(true);
-                nav_Menu.findItem(R.id.action_view_my_shop).setVisible(true);
-
-            } else {
-                nav_Menu.findItem(R.id.action_new_shop).setVisible(true);
-                nav_Menu.findItem(R.id.action_add_offers).setVisible(false);
-                nav_Menu.findItem(R.id.action_view_my_shop).setVisible(false);
-
+    private void loadCity() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                UtilityGeneral.getCurrentCityEnglish(getBaseContext());
             }
-        } else {
-            nav_Menu.findItem(R.id.action_signin).setVisible(true);
-            nav_Menu.findItem(R.id.action_logout).setVisible(false);
-            nav_Menu.findItem(R.id.action_new_shop).setVisible(false);
-            nav_Menu.findItem(R.id.action_add_offers).setVisible(false);
-            nav_Menu.findItem(R.id.action_view_my_shop).setVisible(false);
-
-        }
+        }).start();
     }
 
-    private void showUserInfoNavigationDrawer() {
-        //show info of the user
+    public void openFacebook() {
         try {
-            FirebaseAuth auth = FirebaseAuth.getInstance();
-            if (auth.getCurrentUser() != null) {
-                if (UtilityGeneral.isRegisteredUser(getBaseContext())&& UtilityGeneral.isShopExist(getBaseContext())) {
-                    ((TextView) mNavigationView.findViewById(R.id.txtNavNumOfOfers)).setText("يمكنك عمل " + String.valueOf(UtilityGeneral.getNumberOfAvailableOffers(getBaseContext(), UtilityGeneral.getCurrentYearAndWeek()) )+ " عروض فى  هذا الإسبوع");
-                }
-                else
-                    ((TextView) mNavigationView.findViewById(R.id.txtNavNumOfOfers)).setText("");
-                ((TextView) mNavigationView.findViewById(R.id.txtNavName)).setText(auth.getCurrentUser().getDisplayName());
-                ((TextView) mNavigationView.findViewById(R.id.txtNavEmail)).setText(auth.getCurrentUser().getEmail());
-                Glide.with(this)
-                        .load(auth.getCurrentUser().getPhotoUrl())
-                        .asBitmap()
-                        .into(new BitmapImageViewTarget((ImageView) mNavigationView.findViewById(R.id.imgNavProfile)) {
-                            @Override
-                            protected void setResource(Bitmap resource) {
-                                RoundedBitmapDrawable circularBitmapDrawable =
-                                        RoundedBitmapDrawableFactory.create(CategoriesActivity.this.getResources(), resource);
-                                circularBitmapDrawable.setCircular(true);
-                                ((ImageView) mNavigationView.findViewById(R.id.imgNavProfile)).setImageDrawable(circularBitmapDrawable);
-                            }
-                        });
-            } else {
-                ((TextView) mNavigationView.findViewById(R.id.txtNavNumOfOfers)).setText("");
-                ((TextView) mNavigationView.findViewById(R.id.txtNavName)).setText("");
-                ((TextView) mNavigationView.findViewById(R.id.txtNavEmail)).setText("");
-                Glide.with(this)
-                        .load(R.drawable.logo)
-                        .asBitmap()
-                        .into(new BitmapImageViewTarget((ImageView) mNavigationView.findViewById(R.id.imgNavProfile)) {
-                            @Override
-                            protected void setResource(Bitmap resource) {
-                                RoundedBitmapDrawable circularBitmapDrawable =
-                                        RoundedBitmapDrawableFactory.create(CategoriesActivity.this.getResources(), resource);
-                                circularBitmapDrawable.setCircular(true);
-                                ((ImageView) mNavigationView.findViewById(R.id.imgNavProfile)).setImageDrawable(circularBitmapDrawable);
-                            }
-                        });
-
-            }
-        } catch (Exception ex) {
-            Log.e("NavShowInfo", ex.getMessage());
+            getPackageManager().getPackageInfo("com.facebook.katana", 0);
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("fb://page/583145478505894")));
+        } catch (Exception e) {
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.facebook.com/3roodk")));
         }
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (mDrawerLayout.isDrawerOpen(GravityCompat.END))
-            mDrawerLayout.closeDrawer(GravityCompat.END);
-        hideDrawerItems();
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (mDrawerLayout.isDrawerOpen(GravityCompat.END))
-            mDrawerLayout.closeDrawer(GravityCompat.END);
-        else {
-            if (exit) {
-                Intent intent = new Intent(Intent.ACTION_MAIN);
-                intent.addCategory(Intent.CATEGORY_HOME);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(intent);
-                finish();
-            } else {
-                Toast.makeText(this, "اضغط مره كمان علشان تقفل",
-                        Toast.LENGTH_SHORT).show();
-                exit = true;
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        exit = false;
-                    }
-                }, 3 * 1000);
-
-            }
-        }
-    }
 }

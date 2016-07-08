@@ -21,6 +21,7 @@ import com.app3roodk.R;
 import com.app3roodk.Schema.Shop;
 import com.app3roodk.Schema.User;
 import com.app3roodk.UI.CategoriesActivity.CategoriesActivity;
+import com.app3roodk.UtilityFirebase;
 import com.app3roodk.UtilityGeneral;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.maps.model.LatLng;
@@ -29,7 +30,6 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 
@@ -66,18 +66,12 @@ public class PositioningActivity extends AppCompatActivity {
                 user.setEmail(acct.getEmail());
                 user.setName(acct.getDisplayName());
                 user.setNotificationToken(FirebaseInstanceId.getInstance().getToken());
-
-                FirebaseDatabase database = FirebaseDatabase.getInstance();
-                DatabaseReference myRef = database.getReference("Users").child(acct.getUid());
-                myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                UtilityFirebase.getUser(acct.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        user = dataSnapshot.getValue(User.class);
-                        if (user == null) {
-                            FirebaseUser acct = FirebaseAuth.getInstance().getCurrentUser();
-                            FirebaseDatabase database = FirebaseDatabase.getInstance();
-                            DatabaseReference myRef = database.getReference("Users").child(acct.getUid());
-                            myRef.setValue(user, new DatabaseReference.CompletionListener() {
+                        User temp = dataSnapshot.getValue(User.class);
+                        if (temp == null) {
+                            UtilityFirebase.getUser(user.getObjectId()).setValue(user, new DatabaseReference.CompletionListener() {
                                 @Override
                                 public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                                     if (databaseError != null) {
@@ -92,13 +86,8 @@ public class PositioningActivity extends AppCompatActivity {
                                 }
                             });
                         } else {
-                            FirebaseUser acct = FirebaseAuth.getInstance().getCurrentUser();
-                            user.setObjectId(acct.getUid());
-                            user.setEmail(acct.getEmail());
-                            user.setName(acct.getDisplayName());
-                            user.setNotificationToken(FirebaseInstanceId.getInstance().getToken());
-                            FirebaseDatabase database = FirebaseDatabase.getInstance();
-                            database.getReference("Shops").child(user.getObjectId()).addListenerForSingleValueEvent(
+                            user = temp;
+                            UtilityFirebase.getUserShops(user.getObjectId()).addListenerForSingleValueEvent(
                                     new ValueEventListener() {
                                         @Override
                                         public void onDataChange(DataSnapshot dataSnapshot) {
@@ -122,7 +111,6 @@ public class PositioningActivity extends AppCompatActivity {
                                             Log.w("Test", "getShop:onCancelled", databaseError.toException());
                                         }
                                     });
-
                         }
                     }
 
@@ -131,40 +119,6 @@ public class PositioningActivity extends AppCompatActivity {
 
                     }
                 });
-//                myRef.setValue(user, new DatabaseReference.CompletionListener() {
-//                    @Override
-//                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-//                        if (databaseError != null) {
-//                            Toast.makeText(getBaseContext(), "حصل مشكله شوف النت ", Toast.LENGTH_SHORT).show();
-//                        } else {
-//                            FirebaseDatabase database = FirebaseDatabase.getInstance();
-//                            database.getReference("Shops").child(user.getObjectId()).addListenerForSingleValueEvent(
-//                                    new ValueEventListener() {
-//                                        @Override
-//                                        public void onDataChange(DataSnapshot dataSnapshot) {
-//                                            try {
-//                                                ArrayList<Shop> shops = new ArrayList<Shop>();
-//                                                Iterator<DataSnapshot> iterator = dataSnapshot.getChildren().iterator();
-//                                                while (iterator.hasNext())
-//                                                    shops.add(iterator.next().getValue(Shop.class));
-//                                                UtilityGeneral.saveShops(getBaseContext(), shops);
-//                                            } catch (Exception ex) {
-//                                            }
-//                                            UtilityGeneral.saveUser(getBaseContext(), user);
-//                                            startActivity(new Intent(PositioningActivity.this, CategoriesActivity.class));
-//                                            setLoadingVisibility(View.INVISIBLE);
-//                                            stay = false;
-//                                            finish();
-//                                        }
-//
-//                                        @Override
-//                                        public void onCancelled(DatabaseError databaseError) {
-//                                            Log.w("Test", "getShop:onCancelled", databaseError.toException());
-//                                        }
-//                                    });
-//                        }
-//                    }
-//                });
             } else {
                 Toast.makeText(getBaseContext(), "فشل فى تسجيل الدخول", Toast.LENGTH_LONG).show();
             }
@@ -276,15 +230,12 @@ public class PositioningActivity extends AppCompatActivity {
                 finish();
                 return;
             }
-            // other 'case' lines to check for other
-            // permissions this app might request
         }
     }
-
     @Override
     protected void onResume() {
         super.onResume();
-        if (!stay && UtilityGeneral.isLocationExist(getBaseContext())) {
+        if (!stay && UtilityGeneral.isRegisteredUser(getBaseContext())) {
             startActivity(new Intent(PositioningActivity.this, CategoriesActivity.class));
             finish();
         }
