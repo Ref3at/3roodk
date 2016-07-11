@@ -11,38 +11,23 @@ import com.app3roodk.UI.Shop.ViewShopFragment;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-public class MapsShopLocationActivity extends AppCompatActivity {
+public class MapsShopLocationActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private GoogleMap map;
     private Marker marker;
-    private Button btnHere;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
-        map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
-        btnHere = (Button) findViewById(R.id.btnHere);
-        btnHere.setVisibility(View.VISIBLE);
-        if (map != null) {
-            if (CreateShopFragment.latLngShop != null) {
-                initMAPS();
-            } else {
-                initMAPS_fromEditing();
-            }
-            Toast.makeText(getBaseContext(), "اضغط ضغطه طويله علشان تختار المكان", Toast.LENGTH_LONG).show();
-        }
-        btnHere.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMapAsync(this);
+
     }
 
     private void initMAPS() {
@@ -69,6 +54,27 @@ public class MapsShopLocationActivity extends AppCompatActivity {
                 marker.remove();
                 marker = map.addMarker(new MarkerOptions().position(latLng).title("Shop").icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_account_balance_black_24dp)));
                 ViewShopFragment.latLngShop_Editing = latLng;
+            }
+        });
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        map = googleMap;
+        Button btnHere = (Button) findViewById(R.id.btnHere);
+        btnHere.setVisibility(View.VISIBLE);
+        if (map != null) {
+            if (CreateShopFragment.latLngShop != null) {
+                initMAPS();
+            } else {
+                initMAPS_fromEditing();
+            }
+            Toast.makeText(getBaseContext(), "اضغط ضغطه طويله علشان تختار المكان", Toast.LENGTH_LONG).show();
+        }
+        btnHere.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
             }
         });
     }

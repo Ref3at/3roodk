@@ -63,6 +63,7 @@ public class CategoriesActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         loadCity();
         initNavigationDrawer();
+        FirebaseAuth auth = FirebaseAuth.getInstance();
         if (UtilityGeneral.isRegisteredUser(getBaseContext())) {
             UtilityFirebase.updateUserNotificationToken(getBaseContext(), UtilityGeneral.loadUser(getBaseContext()).getObjectId(), FirebaseInstanceId.getInstance().getToken());
             UtilityFirebase.getUserShops(getBaseContext(), UtilityGeneral.loadUser(getBaseContext()).getObjectId());

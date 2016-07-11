@@ -154,9 +154,12 @@ public class UtilityFirebase {
             @Override
             public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                 if (UtilityGeneral.isRegisteredUser(context)) {
-                    User user = UtilityGeneral.loadUser(context);
-                    user.setNotificationToken(notificationToken);
-                    UtilityGeneral.saveUser(context, user);
+                    try {
+                        User user = UtilityGeneral.loadUser(context);
+                        user.setNotificationToken(notificationToken);
+                        UtilityGeneral.saveUser(context, user);
+                    }
+                    catch (Exception ex){}
                 }
             }
         });

@@ -11,6 +11,7 @@ import android.widget.Toast;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -26,7 +27,7 @@ import java.util.ArrayList;
 
 import cz.msebera.android.httpclient.Header;
 
-public class MapsPathsActivity extends AppCompatActivity {
+public class MapsPathsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private final String TAG = "MapsPathsActivity";
     private GoogleMap map;
@@ -37,13 +38,8 @@ public class MapsPathsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
-        map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
-        if (map != null) {
-            fromPlace = new LatLng(getIntent().getDoubleExtra("fromLat", 31.13), getIntent().getDoubleExtra("fromLng", 31.13));
-            toPlace = new LatLng(getIntent().getDoubleExtra("toLat", 31.13), getIntent().getDoubleExtra("toLng", 31.13));
-            initMAPS();
-            fetchDirections(fromPlace, toPlace);
-        }
+        ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMapAsync(this);
+
     }
 
     private void initMAPS() {
@@ -106,7 +102,7 @@ public class MapsPathsActivity extends AppCompatActivity {
 
     private ArrayList<LatLng> decodePoly(String encoded) {
 
-        ArrayList<LatLng> poly = new ArrayList<LatLng>();
+        ArrayList<LatLng> poly = new ArrayList<>();
         int index = 0, len = encoded.length();
         int lat = 0, lng = 0;
 
@@ -136,6 +132,17 @@ public class MapsPathsActivity extends AppCompatActivity {
         }
 
         return poly;
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        map = googleMap;
+        if (map != null) {
+            fromPlace = new LatLng(getIntent().getDoubleExtra("fromLat", 31.13), getIntent().getDoubleExtra("fromLng", 31.13));
+            toPlace = new LatLng(getIntent().getDoubleExtra("toLat", 31.13), getIntent().getDoubleExtra("toLng", 31.13));
+            initMAPS();
+            fetchDirections(fromPlace, toPlace);
+        }
     }
     //endregion
 

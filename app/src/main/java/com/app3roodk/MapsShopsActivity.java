@@ -8,6 +8,7 @@ import com.app3roodk.Schema.Shop;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
@@ -15,7 +16,7 @@ import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
 
-public class MapsShopsActivity extends AppCompatActivity {
+public class MapsShopsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private GoogleMap map;
     ArrayList<Shop> lstShops;
@@ -24,8 +25,19 @@ public class MapsShopsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
-        map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
+        ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMapAsync(this);
+
+    }
+
+    private void initMAPS() {
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(Double.parseDouble(lstShops.get(0).getLat()), Double.parseDouble(lstShops.get(0).getLon())), 13));
+        map.animateCamera(CameraUpdateFactory.zoomTo(10), 2000, null);
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
         try {
+            map = googleMap;
             lstShops = new Gson().fromJson(getIntent().getStringExtra("JsonShops"), new TypeToken<ArrayList<Shop>>() {
             }.getType());
         } catch (Exception e) {
@@ -40,11 +52,6 @@ public class MapsShopsActivity extends AppCompatActivity {
             } else
                 Toast.makeText(getBaseContext(), "No Shops", Toast.LENGTH_LONG).show();
         }
-    }
-
-    private void initMAPS() {
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(Double.parseDouble(lstShops.get(0).getLat()), Double.parseDouble(lstShops.get(0).getLon())), 13));
-        map.animateCamera(CameraUpdateFactory.zoomTo(10), 2000, null);
     }
     //endregion
 }
