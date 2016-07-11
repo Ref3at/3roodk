@@ -28,6 +28,7 @@ import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -396,6 +397,34 @@ public class UtilityGeneral {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         String city = prefs.getString(Constants.KEY_CITY, "No");
         return city;
+    }
+
+
+    static public void saveCities(Context context, String jsonCities) {
+        try {
+            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+            SharedPreferences.Editor editor = sharedPref.edit();
+            HashMap<String, Boolean> mapCities = new Gson().fromJson(jsonCities, new TypeToken<HashMap<String, Boolean>>() {
+            }.getType());
+            if (mapCities.size() == 0) return;
+            ArrayList<String> lstCities = new ArrayList<>();
+            for (Map.Entry<String, Boolean> entry : mapCities.entrySet())
+                lstCities.add(entry.getKey());
+            editor.putString(Constants.KEY_CITIES, new Gson().toJson(lstCities));
+            editor.commit();
+        } catch (Exception e) {
+        }
+    }
+
+    static public ArrayList<String> loadCities(Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        String jsonCities = prefs.getString(Constants.KEY_CITIES, "No");
+        ArrayList<String> lstCities = new ArrayList<>();
+        lstCities.add(Constants.YOUR_CITY);
+        if (jsonCities.equals("No")) return lstCities;
+        lstCities.addAll((Collection<? extends String>) new Gson().fromJson(jsonCities, new TypeToken<ArrayList<String>>() {
+        }.getType()));
+        return lstCities;
     }
 
     static public boolean isLocationExist(Context context) {

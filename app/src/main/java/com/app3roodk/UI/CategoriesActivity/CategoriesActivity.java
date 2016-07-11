@@ -18,7 +18,10 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,25 +48,36 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.loopj.android.http.TextHttpResponseHandler;
+
+import java.util.ArrayList;
+
+import cz.msebera.android.httpclient.Header;
 
 public class CategoriesActivity extends AppCompatActivity {
 
     DrawerLayout mDrawerLayout;
     NavigationView mNavigationView;
     Boolean exit = false;
+    Spinner spnCities;
+    ArrayList<String> lstCities;
+    ArrayAdapter<String> adapter;
     private ValueEventListener availableOfferListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_categories);
-
         // Adding Toolbar to Main screen
+        lstCities = UtilityGeneral.loadCities(getBaseContext());
+        adapter = new ArrayAdapter<String>(getBaseContext(), android.R.layout.simple_spinner_dropdown_item, lstCities);
+        spnCities = (Spinner) findViewById(R.id.spnCities);
+        spnCities.setAdapter(adapter);
+        FirebaseInstanceId.getInstance().getToken();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         loadCity();
         initNavigationDrawer();
-        FirebaseAuth auth = FirebaseAuth.getInstance();
         if (UtilityGeneral.isRegisteredUser(getBaseContext())) {
             UtilityFirebase.updateUserNotificationToken(getBaseContext(), UtilityGeneral.loadUser(getBaseContext()).getObjectId(), FirebaseInstanceId.getInstance().getToken());
             UtilityFirebase.getUserShops(getBaseContext(), UtilityGeneral.loadUser(getBaseContext()).getObjectId());
@@ -85,8 +99,7 @@ public class CategoriesActivity extends AppCompatActivity {
 
                 }
             };
-//            UtilityFirebase.updateUserNoOfAvailableOffers(getBaseContext(),UtilityGeneral.getCurrentYearAndWeek());
-            UtilityFirebase.getUserNoOfAvailableOffers(getBaseContext(),UtilityGeneral.getCurrentYearAndWeek()).addValueEventListener(availableOfferListener);
+            UtilityFirebase.getUserNoOfAvailableOffers(getBaseContext(), UtilityGeneral.getCurrentYearAndWeek()).addValueEventListener(availableOfferListener);
         }
     }
 
@@ -145,9 +158,10 @@ public class CategoriesActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        try{
-            UtilityFirebase.getUserNoOfAvailableOffers(getBaseContext(),UtilityGeneral.getCurrentYearAndWeek()).removeEventListener(availableOfferListener);
-        }catch (Exception ex){}
+        try {
+            UtilityFirebase.getUserNoOfAvailableOffers(getBaseContext(), UtilityGeneral.getCurrentYearAndWeek()).removeEventListener(availableOfferListener);
+        } catch (Exception ex) {
+        }
         super.onDestroy();
     }
 
@@ -334,6 +348,7 @@ public class CategoriesActivity extends AppCompatActivity {
     public void goToCards(View view) {
         int x = view.getId();
         Intent i = new Intent(CategoriesActivity.this, CardsActivity.class);
+        i.putExtra("city", lstCities.get(spnCities.getSelectedItemPosition()));
         switch (x) {
 
             case R.id.imageButton1:
@@ -379,6 +394,20 @@ public class CategoriesActivity extends AppCompatActivity {
     }
 
     private void loadCity() {
+        UtilityFirebase.getCities(new TextHttpResponseHandler() {
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+
+            }
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String responseString) {
+                UtilityGeneral.saveCities(getBaseContext(), responseString);
+                lstCities.clear();
+                lstCities.addAll(UtilityGeneral.loadCities(getBaseContext()));
+                adapter.notifyDataSetChanged();
+            }
+        });
         new Thread(new Runnable() {
             @Override
             public void run() {

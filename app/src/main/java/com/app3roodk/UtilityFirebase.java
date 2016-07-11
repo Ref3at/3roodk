@@ -12,6 +12,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.TextHttpResponseHandler;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -158,8 +160,8 @@ public class UtilityFirebase {
                         User user = UtilityGeneral.loadUser(context);
                         user.setNotificationToken(notificationToken);
                         UtilityGeneral.saveUser(context, user);
+                    } catch (Exception ex) {
                     }
-                    catch (Exception ex){}
                 }
             }
         });
@@ -208,4 +210,11 @@ public class UtilityFirebase {
         FirebaseDatabase.getInstance().getReference("Users").child(user.getObjectId()).child("numOfOffersAvailable").child(yearWeek).setValue(nooa, listener);
     }
     //endregion
+
+    //region Cities
+    static public void getCities(TextHttpResponseHandler listener) {
+        new AsyncHttpClient().get("https://project-5508893721375612998.firebaseio.com/Offers.json?shallow=true", listener);
+    }
+    //endregion
+
 }

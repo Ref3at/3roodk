@@ -60,42 +60,56 @@ public class CardsFragment extends Fragment {
 
     private void fetchOffers() {
         try {
-            if (UtilityGeneral.City == null || UtilityGeneral.City.isEmpty()) {
-                showMessage("يتم الآن تحديد المدينة");
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        City = UtilityGeneral.getCurrentCityEnglish(getActivity());
-                        try {
-                            getActivity().runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    try {
-                                        showMessage("يتم البحث عن عروض فى مدينة " + City);
-                                        UtilityFirebase.getActiveOffers(City, getActivity().getIntent().getStringExtra("name")).addValueEventListener(postListener);
-                                    } catch (Exception ex) {
-                                        Log.e("GettingOffers1", ex.getMessage());
-                                    }
-                                }
-                            });
-                        } catch (Exception ex) {
-                        }
-                    }
-                }).start();
-            } else {
-                try {
-                    City = UtilityGeneral.City;
-                    showMessage("يتم البحث عن عروض فى مدينة " + City);
-                    UtilityFirebase.getActiveOffers(City, getActivity().getIntent().getStringExtra("name")).addValueEventListener(postListener);
+            if(getActivity().getIntent().getStringExtra("city").equals(Constants.YOUR_CITY)) {
+                if (UtilityGeneral.City == null || UtilityGeneral.City.isEmpty()) {
+                    showMessage("يتم الآن تحديد المدينة");
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            UtilityGeneral.getCurrentCityEnglish(getActivity());
+                            City = UtilityGeneral.getCurrentCityEnglish(getActivity());
+                            try {
+                                getActivity().runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        try {
+                                            showMessage("يتم البحث عن عروض فى مدينة " + City);
+                                            UtilityFirebase.getActiveOffers(City, getActivity().getIntent().getStringExtra("name")).addValueEventListener(postListener);
+                                        } catch (Exception ex) {
+                                            Log.e("GettingOffers1", ex.getMessage());
+                                        }
+                                    }
+                                });
+                            } catch (Exception ex) {
+                            }
                         }
                     }).start();
-                } catch (Exception ex) {
-                    Log.e("GettingOffers2", ex.getMessage());
+                } else {
+                    try {
+                        City = UtilityGeneral.City;
+                        showMessage("يتم البحث عن عروض فى مدينة " + City);
+                        UtilityFirebase.getActiveOffers(City, getActivity().getIntent().getStringExtra("name")).addValueEventListener(postListener);
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                UtilityGeneral.getCurrentCityEnglish(getActivity());
+                            }
+                        }).start();
+                    } catch (Exception ex) {
+                        Log.e("GettingOffers2", ex.getMessage());
+                    }
                 }
+            }
+            else
+            {
+                City = getActivity().getIntent().getStringExtra("city");
+                showMessage("يتم البحث عن عروض فى مدينة " + City);
+                UtilityFirebase.getActiveOffers(City, getActivity().getIntent().getStringExtra("name")).addValueEventListener(postListener);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        UtilityGeneral.getCurrentCityEnglish(getActivity());
+                    }
+                }).start();
             }
         } catch (Exception ex) {
             Log.e("GettingOffers3", ex.getMessage());
@@ -107,6 +121,7 @@ public class CardsFragment extends Fragment {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 lstOffers.clear();
+                adapter.notifyDataSetChanged();
                 Iterator<DataSnapshot> iterator = dataSnapshot.getChildren().iterator();
                 Offer of;
                 double dateNow = Double.parseDouble(UtilityGeneral.getCurrentDate(new Date()));
