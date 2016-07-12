@@ -57,7 +57,7 @@ public class FeedbackFragment extends Fragment {
                 if (!validation()) return;
                 Feedback feedback = new Feedback();
                 feedback.setRegisteredUser(UtilityGeneral.isRegisteredUser(getActivity()));
-                if (feedback.isRegisteredUser()) {
+                if (feedback.getRegisteredUser()) {
                     feedback.setEmail(UtilityGeneral.loadUser(getActivity()).getObjectId());
                     feedback.setEmail(UtilityGeneral.loadUser(getActivity()).getEmail());
                     feedback.setName(UtilityGeneral.loadUser(getActivity()).getName());

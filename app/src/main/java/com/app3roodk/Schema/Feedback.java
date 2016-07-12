@@ -10,7 +10,7 @@ public class Feedback {
     String typePath;
     String type;
     String userId;
-    boolean RegisteredUser;
+    Boolean registeredUser;
 
     public Feedback() {
     }
@@ -71,12 +71,12 @@ public class Feedback {
         this.type = type;
     }
 
-    public boolean isRegisteredUser() {
-        return RegisteredUser;
+    public Boolean getRegisteredUser() {
+        return registeredUser;
     }
 
-    public void setRegisteredUser(boolean registeredUser) {
-        RegisteredUser = registeredUser;
+    public void setRegisteredUser(Boolean registeredUser) {
+        this.registeredUser = registeredUser;
     }
 
     public String getUserId() {

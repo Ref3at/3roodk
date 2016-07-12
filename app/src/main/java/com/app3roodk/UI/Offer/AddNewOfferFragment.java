@@ -241,7 +241,7 @@ public class AddNewOfferFragment extends Fragment {
             item.setImagePaths(images_id_Array[i]);
             if (item.getPriceAfter().isEmpty()) {
                 ((TextInputLayout) rootView.findViewById(R.id.input_layout_priceafter)).setError(getString(R.string.err_msg_priceBefore));
-                requestFocus(inputPriceBefore);
+                requestFocus(inputPriceAfter);
                 success = false;
             } else {
                 ((TextInputLayout) rootView.findViewById(R.id.input_layout_priceafter)).setErrorEnabled(false);
@@ -255,6 +255,16 @@ public class AddNewOfferFragment extends Fragment {
             }
 
             items_list.add(item);
+            try {
+                if (Double.parseDouble(item.getPriceAfter()) >= Double.parseDouble(item.getPriceBefore())) {
+                    ((TextInputLayout) rootView.findViewById(R.id.input_layout_priceafter)).setError("أدخل السعر الجديد للسلعة بعد العرض");
+                    requestFocus(inputPriceAfter);
+                    success = false;
+                } else {
+                    ((TextInputLayout) rootView.findViewById(R.id.input_layout_priceafter)).setErrorEnabled(false);
+                }
+            } catch (Exception ex) {
+            }
         }
         if (!success) return;
         Publish();
