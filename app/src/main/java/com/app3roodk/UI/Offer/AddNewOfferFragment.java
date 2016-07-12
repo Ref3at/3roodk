@@ -107,14 +107,14 @@ public class AddNewOfferFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_add_new_offer, container, false);
 
-        UtilityFirebase.updateUserNoOfAvailableOffers(getActivity(),UtilityGeneral.getCurrentYearAndWeek());
+        UtilityFirebase.updateUserNoOfAvailableOffers(getActivity(), UtilityGeneral.getCurrentYearAndWeek());
 
         addNewItem = (Button) rootView.findViewById(R.id.add_new_item);
         addNewItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                inflateNewItem(itemsContainer.getChildCount() == 0);
+                inflateNewItem();
                 if (itemsContainer.getChildCount() == 3) {
                     addNewItem.setVisibility(View.GONE);
                 }
@@ -177,21 +177,18 @@ public class AddNewOfferFragment extends Fragment {
         return rootView;
     }
 
-    private void inflateNewItem(boolean firstOne) {
+    private void inflateNewItem() {
         LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         final View rootView = inflater.inflate(R.layout.add_offer_item, null);
         itemsContainer.addView(rootView);
-        if (firstOne)
-            rootView.findViewById(R.id.delete_item).setVisibility(View.GONE);
-        else
-            rootView.findViewById(R.id.delete_item).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    images_id_Array[itemsContainer.indexOfChild(rootView)].clear();
-                    itemsContainer.removeView(rootView);
-                    addNewItem.setVisibility(View.VISIBLE);
-                }
-            });
+        rootView.findViewById(R.id.delete_item).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                images_id_Array[itemsContainer.indexOfChild(rootView)].clear();
+                itemsContainer.removeView(rootView);
+                addNewItem.setVisibility(View.VISIBLE);
+            }
+        });
 
         rootView.findViewById(R.id.add_new_image).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -433,7 +430,7 @@ public class AddNewOfferFragment extends Fragment {
     private void Publish() {
         try {
             if (UtilityGeneral.getNumberOfAvailableOffers(getActivity(), UtilityGeneral.getCurrentYearAndWeek()) <= 0) {
-                showMessage( "عفواً لايمكنك عمل أكثر من " + String.valueOf(Constants.NUMBER_OF_OFFERS_PER_WEEK) + " عروض فى الإسبوع" );
+                showMessage("عفواً لايمكنك عمل أكثر من " + String.valueOf(Constants.NUMBER_OF_OFFERS_PER_WEEK) + " عروض فى الإسبوع");
                 return;
             }
             mOffer.setCategoryName(UtilityGeneral.getCategoryEnglishName(category_spinner.getText().toString()));

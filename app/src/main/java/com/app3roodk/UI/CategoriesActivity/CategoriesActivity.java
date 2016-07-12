@@ -1,7 +1,10 @@
 package com.app3roodk.UI.CategoriesActivity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -69,13 +72,11 @@ public class CategoriesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_categories);
         // Adding Toolbar to Main screen
-        lstCities = UtilityGeneral.loadCities(getBaseContext());
-        adapter = new ArrayAdapter<String>(getBaseContext(), android.R.layout.simple_spinner_dropdown_item, lstCities);
-        spnCities = (Spinner) findViewById(R.id.spnCities);
-        spnCities.setAdapter(adapter);
         FirebaseInstanceId.getInstance().getToken();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        spnCities = (Spinner) findViewById(R.id.spnCities);
+        initSpinner();
         loadCity();
         initNavigationDrawer();
         if (UtilityGeneral.isRegisteredUser(getBaseContext())) {
@@ -393,6 +394,26 @@ public class CategoriesActivity extends AppCompatActivity {
         CategoriesActivity.this.startActivity(i);
     }
 
+    private void initSpinner() {
+        lstCities = UtilityGeneral.loadCities(getBaseContext());
+        adapter = new ArrayAdapter<>(getBaseContext(), R.layout.spinner_item, lstCities);
+        spnCities.setAdapter(adapter);
+        spnCities.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                if (i == 0)
+                    if (!((LocationManager) getSystemService(Context.LOCATION_SERVICE)).isProviderEnabled(LocationManager.GPS_PROVIDER))
+                        Toast.makeText(getBaseContext(), "افتح الـ Location او سيتم أخذ آخر مكان مسجل", Toast.LENGTH_SHORT).show();
+                ((TextView) adapterView.getChildAt(0)).setTextColor(Color.WHITE);
+                adapterView.getChildAt(0).setBackgroundColor(Color.TRANSPARENT);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+            }
+        });
+    }
+
     private void loadCity() {
         UtilityFirebase.getCities(new TextHttpResponseHandler() {
             @Override
@@ -403,9 +424,7 @@ public class CategoriesActivity extends AppCompatActivity {
             @Override
             public void onSuccess(int statusCode, Header[] headers, String responseString) {
                 UtilityGeneral.saveCities(getBaseContext(), responseString);
-                lstCities.clear();
-                lstCities.addAll(UtilityGeneral.loadCities(getBaseContext()));
-                adapter.notifyDataSetChanged();
+                initSpinner();
             }
         });
         new Thread(new Runnable() {

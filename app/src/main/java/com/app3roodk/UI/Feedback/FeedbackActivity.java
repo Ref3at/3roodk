@@ -11,5 +11,11 @@ public class FeedbackActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feedback);
+        if (savedInstanceState == null) {
+            FeedbackFragment fragment = new FeedbackFragment();
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.feedback_container, fragment)
+                    .commit();
+        }
     }
 }

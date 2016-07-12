@@ -99,5 +99,11 @@
     <string name="add_mobile_number">أدخل رقم الموبايل</string>
     <string name="new_offer">إعلان جديد</string>
     <string name="add_new_item">إضافة سلعة جديدة +</string>
+    <string name="your_opinion">رأيك يهمنا</string>
+    <string name="email">الإيميل</string>
+    <string name="name">الإسم</string>
+    <string name="send">إرسال</string>
+    <string name="title">عنوان الرسالة</string>
+    <string name="feedback_content">محتويات الرسالة</string>
 
 </resources>

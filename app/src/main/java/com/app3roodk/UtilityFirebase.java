@@ -3,6 +3,7 @@ package com.app3roodk;
 import android.content.Context;
 
 import com.app3roodk.Schema.Comments;
+import com.app3roodk.Schema.Feedback;
 import com.app3roodk.Schema.Offer;
 import com.app3roodk.Schema.Shop;
 import com.app3roodk.Schema.User;
@@ -208,6 +209,14 @@ public class UtilityFirebase {
         UtilityGeneral.saveUser(context, user);
 
         FirebaseDatabase.getInstance().getReference("Users").child(user.getObjectId()).child("numOfOffersAvailable").child(yearWeek).setValue(nooa, listener);
+    }
+    //endregion
+
+    //region feedback
+    static public void sendFeedback(Feedback feedback, DatabaseReference.CompletionListener listener) {
+        DatabaseReference myRef = FirebaseDatabase.getInstance().getReference("Feedback");
+        feedback.setObjectId(myRef.push().getKey());
+        myRef.child(feedback.getObjectId()).setValue(feedback, listener);
     }
     //endregion
 
