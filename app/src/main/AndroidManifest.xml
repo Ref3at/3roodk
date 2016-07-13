@@ -35,6 +35,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".UI.PositioningActivity.PositioningActivity" />
+        <activity android:name=".UI.IntroActivity.IntroActivity" />
         <activity android:name=".UI.CategoriesActivity.CategoriesActivity" />
         <activity android:name=".UI.DetailActivity.DetailActivity">
             <intent-filter>

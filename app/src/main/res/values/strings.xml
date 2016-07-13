@@ -105,5 +105,7 @@
     <string name="send">إرسال</string>
     <string name="title">عنوان الرسالة</string>
     <string name="feedback_content">محتويات الرسالة</string>
+    <string name="continue_">المتابعة</string>
+    <string name="into_text">لضمان أفضل آداء للبرنامج يجب تفعيل خاصية الموقع أثناء الإستخدام وعلى الاٌقل مرة واحدة الآن..\nوهذا لكي نستطيع تحديد مكانك بدقة وإحضار العروض القريبة منك.</string>
 
 </resources>
