@@ -192,8 +192,8 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
                 comment.setOfferId(offer.getObjectId());
                 comment.setCommentText(edtxtComment.getText().toString());
 
-                if (auth.getCurrentUser() != null) {
-
+                assert auth.getCurrentUser().getPhotoUrl() != null;
+                if (auth.getCurrentUser() != null || auth.getCurrentUser().getPhotoUrl() != null){
                     comment.setPhotoUrl(auth.getCurrentUser().getPhotoUrl().toString());
                 }
                 // hide keyboard
