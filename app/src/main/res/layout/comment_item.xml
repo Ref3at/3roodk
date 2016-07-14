@@ -1,89 +1,154 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/card_view"
+    style="?attr/cardStyle"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center"
+    android:layout_marginBottom="@dimen/md_keylines"
+    android:layout_marginLeft="@dimen/md_keylines"
+    android:layout_marginRight="@dimen/md_keylines"
+    android:foreground="?attr/selectableItemBackground">
+
+
+
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#EEEEEE"
-    android:orientation="vertical">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:minHeight="?android:listPreferredItemHeight"
+    android:paddingTop="@dimen/padding_normal"
+    android:layoutDirection="rtl"
+    android:paddingEnd="@dimen/padding_normal"
+    android:paddingBottom="@dimen/padding_normal"
+    android:clipToPadding="false"
+    android:foreground="?android:selectableItemBackground"
+    android:background="@drawable/comment_background"
+    android:stateListAnimator="@animator/comment_selection"
+    android:descendantFocusability="blocksDescendants"
+    android:paddingRight="@dimen/padding_normal">
+
+
+    <ImageView
+        android:id="@+id/player_avatar"
+        android:layout_width="@dimen/avatar_bounds"
+        android:layout_height="@dimen/avatar_bounds"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginEnd="@dimen/avatar_margin"
+        android:layout_marginStart="@dimen/avatar_margin"
+        android:padding="@dimen/avatar_padding"
+        android:stateListAnimator="@animator/raise"
+        android:src="@drawable/avatar_placeholder"
+        android:foreground="@drawable/avatar_ripple"
+        android:layout_alignParentLeft="true" />
+
+    <TextView
+        android:id="@+id/txtTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:textAppearance="@style/TextAppearance.CommentTimestamp"
+        tools:text="3 hours ago"
+        android:layout_alignParentRight="true" />
 
     <TextView
         android:id="@+id/txtName"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:singleLine="true"
-        android:textColor="@android:color/holo_blue_dark"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        tools:text="الاسم" />
+        android:layout_toEndOf="@id/player_avatar"
+        android:layout_toStartOf="@id/txtTime"
+        android:layout_marginEnd="@dimen/spacing_normal"
+        android:lines="1"
+        android:gravity="start"
+        android:ellipsize="end"
+        tools:text="محمد"
+        android:layout_toRightOf="@id/player_avatar"
+        android:layout_toLeftOf="@id/txtTime"
+        android:layout_marginRight="@dimen/spacing_normal" />
 
     <TextView
         android:id="@+id/txtComment"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:paddingEnd="10dp"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:paddingStart="10dp"
-        android:textColor="@android:color/black"
-        android:textSize="16sp"
-        tools:text="تعليق بلا بلا بلا بلا" />
+        android:layout_toEndOf="@id/player_avatar"
+        android:layout_below="@id/txtName"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="@dimen/spacing_micro"
+        android:textColorLink="@color/authui_colorActivated"
+        android:textColorHighlight="@color/authui_colorPrimary"
+        tools:text="Blah blah blah blah blah blah blah blah blah blah blah blah blah"
+        android:layout_toRightOf="@id/player_avatar"
+        android:layout_alignParentRight="true" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingTop="10dp"
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp">
+    <TextView
+        android:id="@+id/txtLikeNumber"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/comment_actions_height"
+        android:padding="@dimen/spacing_normal"
+        android:paddingTop="@dimen/spacing_normal"
+        android:layout_marginEnd="@dimen/comment_like_margin_adjustment"
+        android:gravity="end|center_vertical"
+        android:layout_alignParentEnd="false"
+        android:layout_below="@id/txtComment"
+        android:textColor="@color/dark_green"
+        android:text="0"
+        android:background="?android:selectableItemBackgroundBorderless"
+        tools:targetApi="lollipop"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/comment_like_margin_adjustment" />
 
-        <TextView
-            android:id="@+id/txtDisikeNumber"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="right|end|center_vertical"
-            android:paddingRight="10dp"
-            android:singleLine="true"
-            android:textColor="@android:color/holo_red_dark"
-            tools:text="3" />
-
-        <Button
-            android:id="@+id/btnDislike"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginRight="20dp"
-            tools:background="@drawable/dislikegray"
-            android:gravity="right|end" />
-
-        <TextView
-            android:id="@+id/txtLikeNumber"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="right|end|center_vertical"
-            android:paddingRight="10dp"
-            android:singleLine="true"
-            android:textColor="@android:color/holo_green_dark"
-            tools:text="10" />
-
-        <Button
-            android:id="@+id/btnLike"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            tools:background="@drawable/likegray"
-            android:gravity="right|end" />
+    <ImageButton
+        android:id="@+id/btnLike"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:padding="@dimen/spacing_normal"
+        android:layout_marginEnd="@dimen/comment_like_margin_adjustment"
+        android:layout_toStartOf="@id/txtLikeNumber"
+        android:layout_below="@id/txtComment"
+        android:src="@drawable/likegray"
+        android:background="?android:selectableItemBackgroundBorderless"
+        android:layout_marginRight="@dimen/comment_like_margin_adjustment"
+        android:layout_toLeftOf="@id/txtLikeNumber"
+        tools:targetApi="lollipop" />
 
 
-        <TextView
-            android:id="@+id/txtTime"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="end|center_horizontal"
-            android:gravity="end|center_vertical"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:singleLine="true"
-            android:textColor="@android:color/darker_gray"
-            tools:text="19-10-2013" />
-    </LinearLayout>
+    <TextView
+        android:id="@+id/txtDisikeNumber"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/comment_actions_height"
+        android:padding="@dimen/spacing_normal"
+        android:layout_toStartOf="@id/btnLike"
+        android:paddingTop="@dimen/spacing_normal"
+        android:layout_marginEnd="@dimen/comment_like_margin_adjustment"
+        android:gravity="end|center_vertical"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@id/txtComment"
+        android:textColor="@color/accent"
+        android:text="0"
+        android:background="?android:selectableItemBackgroundBorderless"
+        tools:targetApi="lollipop"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/comment_like_margin_adjustment"
+        android:layout_toLeftOf="@id/btnLike" />
 
-</LinearLayout>
+    <ImageButton
+        android:id="@+id/btnDislike"
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        android:padding="@dimen/spacing_normal"
+        android:layout_marginEnd="@dimen/comment_like_margin_adjustment"
+        android:layout_toStartOf="@id/txtDisikeNumber"
+        android:layout_below="@id/txtComment"
+        android:src="@drawable/dislikegray"
+        android:background="?android:selectableItemBackgroundBorderless"
+        android:layout_marginRight="@dimen/comment_like_margin_adjustment"
+        android:layout_toLeftOf="@id/txtLikeNumber"
+        tools:targetApi="lollipop" />
+
+
+</RelativeLayout>
+</android.support.v7.widget.CardView>

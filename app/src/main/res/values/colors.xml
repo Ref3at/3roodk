@@ -24,5 +24,13 @@
     <color name="light_black">#747474</color>
     <color name="black">#616161</color>
     <color name="google">#C6412C</color>
+    <color name="hint_disabled_dark">#43000000</color> <!-- 26% black -->
+    <color name="selected_comment_background">#ffffffff</color>
+    <color name="designer_news_story_comment_background">@android:color/transparent</color>
+    <color name="content_placeholder">#ffe0e0e0</color>
+    <color name="mid_grey">#40808080</color>
+    <color name="text_secondary_dark">#8a000000</color> <!-- 54% -->
+    <color name="dribbble">#fff06292</color> <!-- pink 300 -->
+
 
 </resources>

@@ -598,21 +598,9 @@
 
                 <ListView
                     android:id="@+id/lsvComments"
-                    android:layout_marginTop="5dp"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:paddingBottom="@dimen/padding_normal"
-                    android:clipToPadding="false"
-                    android:listSelector="@android:color/transparent"
-                    android:divider="@null"
-                    android:dividerHeight="@dimen/divider_height"
-                    android:headerDividersEnabled="false"
-                    android:footerDividersEnabled="true"
-                    android:nestedScrollingEnabled="true"
-                    android:overScrollMode="never"
-                    android:overScrollFooter="@android:color/transparent" /> <!-- http://stackoverflow.com/a/24394230 -->
-
-                    />
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

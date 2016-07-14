@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="AppTheme.Base" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
@@ -48,6 +48,35 @@
         <item name="android:progressDrawable">@drawable/ratingbar</item>
         <item name="android:minHeight">30dip</item>
         <item name="android:maxHeight">30dip</item>
+    </style>
+
+    <style name="TextAppearance.CommentTimestamp" parent="@android:style/TextAppearance.Material.Caption" tools:targetApi="lollipop">
+        <item name="android:textColor">@color/hint_disabled_dark</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:fontFeatureSettings">onum, smcp</item>
+        <item name="android:letterSpacing">0.02</item>
+    </style>
+
+
+
+    <style name="TextAppearance.CommentAuthor" parent="@android:style/TextAppearance.Material.Caption" tools:targetApi="lollipop">
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:fontFeatureSettings" tools:targetApi="lollipop">smcp, onum</item>
+        <item name="android:letterSpacing" tools:targetApi="lollipop">0.02</item>
+    </style>
+
+
+
+    <style name="Widget.Plaid" parent="android:Widget" />
+
+
+
+
+    <style name="TextAppearance.Comment" parent="@android:style/TextAppearance.Material.Body1" tools:targetApi="lollipop">
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">@color/text_secondary_dark</item>
+        <!--<item name="android:letterSpacing">0.01</item>-->
     </style>
 
 </resources>

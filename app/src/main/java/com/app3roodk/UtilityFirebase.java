@@ -226,4 +226,11 @@ public class UtilityFirebase {
     }
     //endregion
 
+
+    // region CityCategoriesOffersNo.
+    static public void getCategoriesOffersNo(String city, String cat, TextHttpResponseHandler listener) {
+        new AsyncHttpClient().get("https://project-5508893721375612998.firebaseio.com/Offers"+"/"+city+"/"+cat+".json?shallow=true", listener);
+    }
+    //endregion
+
 }

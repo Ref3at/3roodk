@@ -204,6 +204,7 @@ public class UtilityGeneral {
         try {
             if (user.getNumOfOffersAvailable().containsKey(yearWeek))
                 return user.getNumOfOffersAvailable().get(yearWeek);
+
             else
                 return 4;
         } catch (Exception ex) {

@@ -49,15 +49,24 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.loopj.android.http.TextHttpResponseHandler;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import cz.msebera.android.httpclient.Header;
 
 public class CategoriesActivity extends AppCompatActivity {
+
+    TextView t1, t2, t3, t4, t5, t6, t7, t8, t9; // for text offers no
+    View v1, v2, v3, v4, v5, v6, v7, v8, v9; // for red circle
 
     DrawerLayout mDrawerLayout;
     NavigationView mNavigationView;
@@ -71,6 +80,28 @@ public class CategoriesActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_categories);
+
+        t1 = (TextView) findViewById(R.id.t1);
+        t2 = (TextView) findViewById(R.id.t2);
+        t3 = (TextView) findViewById(R.id.t3);
+        t4 = (TextView) findViewById(R.id.t4);
+        t5 = (TextView) findViewById(R.id.t5);
+        t6 = (TextView) findViewById(R.id.t6);
+        t7 = (TextView) findViewById(R.id.t7);
+        t8 = (TextView) findViewById(R.id.t8);
+        t9 = (TextView) findViewById(R.id.t9);
+
+        v1 = findViewById(R.id.v1);
+        v2 = findViewById(R.id.v2);
+        v3 = findViewById(R.id.v3);
+        v4 = findViewById(R.id.v4);
+        v5 = findViewById(R.id.v5);
+        v6 = findViewById(R.id.v6);
+        v7 = findViewById(R.id.v7);
+        v8 = findViewById(R.id.v8);
+        v9 = findViewById(R.id.v9);
+
+
         // Adding Toolbar to Main screen
         FirebaseInstanceId.getInstance().getToken();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -401,17 +432,209 @@ public class CategoriesActivity extends AppCompatActivity {
         spnCities.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                hideViews();
                 if (i == 0)
                     if (!((LocationManager) getSystemService(Context.LOCATION_SERVICE)).isProviderEnabled(LocationManager.GPS_PROVIDER))
                         Toast.makeText(getBaseContext(), "افتح الـ Location او سيتم أخذ آخر مكان مسجل", Toast.LENGTH_SHORT).show();
                 ((TextView) adapterView.getChildAt(0)).setTextColor(Color.WHITE);
                 adapterView.getChildAt(0).setBackgroundColor(Color.TRANSPARENT);
+
+                if (i == 0) {
+                    updateOffersNumber(UtilityGeneral.getCurrentCityEnglish(getApplicationContext()));
+                } else {
+                    updateOffersNumber(lstCities.get(i));
+                }
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
             }
         });
+    }
+
+    private void updateOffersNumber(String cityName) {
+
+        UtilityFirebase.getCategoriesOffersNo(cityName, "Restaurants", new TextHttpResponseHandler() {
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+            }
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String responseString) {
+                if (responseString == null || responseString.isEmpty() || responseString.equals("null")) {
+                    return;
+                } else {
+                    HashMap<String, Boolean> mapCatOffersNo = new Gson().fromJson(responseString, new TypeToken<HashMap<String, Boolean>>() {
+                    }.getType());
+                    if (mapCatOffersNo.size() == 0) return;
+
+                    v1.setVisibility(View.VISIBLE);
+                    t1.setText(mapCatOffersNo.size());
+                    t1.setVisibility(View.VISIBLE);
+
+
+                }
+            }
+        });
+        UtilityFirebase.getCategoriesOffersNo(cityName, "Home Tools", new TextHttpResponseHandler() {
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+            }
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String responseString) {
+                if (responseString == null || responseString.isEmpty() || responseString.equals("null")) {
+                    return;
+                } else {
+                    HashMap<String, Boolean> mapCatOffersNo = new Gson().fromJson(responseString, new TypeToken<HashMap<String, Boolean>>() {
+                    }.getType());
+                    if (mapCatOffersNo.size() == 0) return;
+                    v2.setVisibility(View.VISIBLE);
+                    t2.setText(String.valueOf(mapCatOffersNo.size()));
+                    t2.setVisibility(View.VISIBLE);
+
+                }
+            }
+        });
+        UtilityFirebase.getCategoriesOffersNo(cityName, "Accessories", new TextHttpResponseHandler() {
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+            }
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String responseString) {
+                if (responseString == null || responseString.isEmpty() || responseString.equals("null")) {
+                    return;
+                } else {
+                    HashMap<String, Boolean> mapCatOffersNo = new Gson().fromJson(responseString, new TypeToken<HashMap<String, Boolean>>() {
+                    }.getType());
+                    if (mapCatOffersNo.size() == 0) return;
+                    v3.setVisibility(View.VISIBLE);
+                    t3.setText(String.valueOf(mapCatOffersNo.size()));
+                    t3.setVisibility(View.VISIBLE);
+
+                }
+            }
+        });
+        UtilityFirebase.getCategoriesOffersNo(cityName, "Mobiles", new TextHttpResponseHandler() {
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+            }
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String responseString) {
+                if (responseString == null || responseString.isEmpty() || responseString.equals("null")) {
+                    return;
+                } else {
+                    HashMap<String, Boolean> mapCatOffersNo = new Gson().fromJson(responseString, new TypeToken<HashMap<String, Boolean>>() {
+                    }.getType());
+                    if (mapCatOffersNo.size() == 0) return;
+                    v4.setVisibility(View.VISIBLE);
+                    t4.setText(String.valueOf(mapCatOffersNo.size()));
+                    t4.setVisibility(View.VISIBLE);
+
+                }
+            }
+        });
+        UtilityFirebase.getCategoriesOffersNo(cityName, "Computers", new TextHttpResponseHandler() {
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+            }
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String responseString) {
+                if (responseString == null || responseString.isEmpty() || responseString.equals("null")) {
+                    return;
+                } else {
+                    HashMap<String, Boolean> mapCatOffersNo = new Gson().fromJson(responseString, new TypeToken<HashMap<String, Boolean>>() {
+                    }.getType());
+                    if (mapCatOffersNo.size() == 0) return;
+                    v5.setVisibility(View.VISIBLE);
+                    t5.setText(String.valueOf(mapCatOffersNo.size()));
+                    t5.setVisibility(View.VISIBLE);
+
+                }
+            }
+        });
+        UtilityFirebase.getCategoriesOffersNo(cityName, "Shoes", new TextHttpResponseHandler() {
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+            }
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String responseString) {
+                if (responseString == null || responseString.isEmpty() || responseString.equals("null")) {
+                    return;
+                } else {
+                    HashMap<String, Boolean> mapCatOffersNo = new Gson().fromJson(responseString, new TypeToken<HashMap<String, Boolean>>() {
+                    }.getType());
+                    if (mapCatOffersNo.size() == 0) return;
+                    v6.setVisibility(View.VISIBLE);
+                    t6.setText(String.valueOf(mapCatOffersNo.size()));
+                    t6.setVisibility(View.VISIBLE);
+
+                }
+            }
+        });
+        UtilityFirebase.getCategoriesOffersNo(cityName, "Clothes", new TextHttpResponseHandler() {
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+            }
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String responseString) {
+                if (responseString == null || responseString.isEmpty() || responseString.equals("null")) {
+                    return;
+                } else {
+                    HashMap<String, Boolean> mapCatOffersNo = new Gson().fromJson(responseString, new TypeToken<HashMap<String, Boolean>>() {
+                    }.getType());
+                    if (mapCatOffersNo.size() == 0) return;
+                    v7.setVisibility(View.VISIBLE);
+                    t7.setText(String.valueOf(mapCatOffersNo.size()));
+                    t7.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+        UtilityFirebase.getCategoriesOffersNo(cityName, "Super market", new TextHttpResponseHandler() {
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+            }
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String responseString) {
+                if (responseString == null || responseString.isEmpty() || responseString.equals("null")) {
+                    return;
+                } else {
+                    HashMap<String, Boolean> mapCatOffersNo = new Gson().fromJson(responseString, new TypeToken<HashMap<String, Boolean>>() {
+                    }.getType());
+                    if (mapCatOffersNo.size() == 0) return;
+                    v8.setVisibility(View.VISIBLE);
+                    t8.setText(String.valueOf(mapCatOffersNo.size()));
+                    t8.setVisibility(View.VISIBLE);
+
+                }
+            }
+        });
+        UtilityFirebase.getCategoriesOffersNo(cityName, "Services", new TextHttpResponseHandler() {
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+            }
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String responseString) {
+                if (responseString == null || responseString.isEmpty() || responseString.equals("null")) {
+                    return;
+                } else {
+                    HashMap<String, Boolean> mapCatOffersNo = new Gson().fromJson(responseString, new TypeToken<HashMap<String, Boolean>>() {
+                    }.getType());
+                    if (mapCatOffersNo.size() == 0) return;
+                    v9.setVisibility(View.VISIBLE);
+                    t9.setText(String.valueOf(mapCatOffersNo.size()));
+                }
+                t9.setVisibility(View.VISIBLE);
+            }
+        });
+
     }
 
     private void loadCity() {
@@ -435,6 +658,31 @@ public class CategoriesActivity extends AppCompatActivity {
         }).start();
     }
 
+
+    void hideViews() {
+
+        v1.setVisibility(View.GONE);
+        v2.setVisibility(View.GONE);
+        v3.setVisibility(View.GONE);
+        v4.setVisibility(View.GONE);
+        v5.setVisibility(View.GONE);
+        v6.setVisibility(View.GONE);
+        v7.setVisibility(View.GONE);
+        v8.setVisibility(View.GONE);
+        v9.setVisibility(View.GONE);
+
+        t1.setVisibility(View.GONE);
+        t2.setVisibility(View.GONE);
+        t3.setVisibility(View.GONE);
+        t4.setVisibility(View.GONE);
+        t5.setVisibility(View.GONE);
+        t6.setVisibility(View.GONE);
+        t7.setVisibility(View.GONE);
+        t8.setVisibility(View.GONE);
+        t9.setVisibility(View.GONE);
+
+    }
+
     public void openFacebook() {
         try {
             getPackageManager().getPackageInfo("com.facebook.katana", 0);
@@ -443,5 +691,6 @@ public class CategoriesActivity extends AppCompatActivity {
             startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.facebook.com/3roodk")));
         }
     }
+
 
 }

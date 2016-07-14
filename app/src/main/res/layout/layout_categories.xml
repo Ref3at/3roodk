@@ -24,6 +24,7 @@
                 android:layout_weight="1"
                 android:background="@drawable/custom_background_category">
 
+
                 <ImageButton
                     android:id="@+id/imageButton1"
                     android:layout_width="wrap_content"
@@ -44,6 +45,29 @@
                     android:text="@string/resturants"
                     android:textColor="@color/dark_grey"
                     android:textSize="@dimen/abc_text_size_medium_material" />
+
+                <View
+                    android:id="@+id/v1"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_margin="8dp"
+                    android:background="@drawable/absolute_circle"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/t1"
+                    style="@android:style/Widget.Holo.Button.Borderless"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_margin="8dp"
+                    android:gravity="center"
+
+                    android:text="+9"
+                    android:textColor="#fff"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
+
             </RelativeLayout>
 
             <RelativeLayout
@@ -73,6 +97,31 @@
                     android:textColor="@color/dark_grey"
 
                     android:textSize="@dimen/abc_text_size_medium_material" />
+
+                <View
+                    android:id="@+id/v2"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_margin="8dp"
+
+                    android:background="@drawable/absolute_circle"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/t2"
+                    style="@android:style/Widget.Holo.Button.Borderless"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_margin="8dp"
+                    android:gravity="center"
+                    android:text="+9"
+                    android:textColor="#fff"
+
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
+
+
             </RelativeLayout>
 
             <RelativeLayout
@@ -80,6 +129,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@drawable/custom_background_category">
+
 
                 <ImageButton
                     android:id="@+id/imageButton3"
@@ -102,6 +152,31 @@
                     android:textColor="@color/dark_grey"
 
                     android:textSize="@dimen/abc_text_size_medium_material" />
+
+                <View
+                    android:id="@+id/v3"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+
+                    android:layout_margin="8dp"
+                    android:background="@drawable/absolute_circle"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/t3"
+                    style="@android:style/Widget.Holo.Button.Borderless"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_margin="8dp"
+                    android:gravity="center"
+                    android:text="+9"
+
+                    android:textColor="#fff"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
+
+
             </RelativeLayout>
 
         </LinearLayout>
@@ -117,6 +192,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@drawable/custom_background_category">
+
 
                 <ImageButton
                     android:id="@+id/imageButton4"
@@ -138,6 +214,31 @@
                     android:text="@string/mobile_category"
                     android:textColor="@color/dark_grey"
                     android:textSize="@dimen/abc_text_size_medium_material" />
+
+                <View
+                    android:id="@+id/v4"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_margin="8dp"
+
+                    android:background="@drawable/absolute_circle"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/t4"
+                    style="@android:style/Widget.Holo.Button.Borderless"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_margin="8dp"
+                    android:gravity="center"
+                    android:text="+9"
+                    android:textColor="#fff"
+                    android:textSize="18sp"
+
+                    android:textStyle="bold"
+                    android:visibility="gone" />
+
+
             </RelativeLayout>
 
             <RelativeLayout
@@ -145,6 +246,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@drawable/custom_background_category">
+
 
                 <ImageButton
                     android:id="@+id/imageButton5"
@@ -166,6 +268,31 @@
                     android:text="@string/computer"
                     android:textColor="@color/dark_grey"
                     android:textSize="@dimen/abc_text_size_medium_material" />
+
+                <View
+                    android:id="@+id/v5"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+
+                    android:layout_margin="8dp"
+                    android:background="@drawable/absolute_circle"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/t5"
+                    style="@android:style/Widget.Holo.Button.Borderless"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_margin="8dp"
+                    android:gravity="center"
+                    android:text="+9"
+                    android:textColor="#fff"
+
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
+
+
             </RelativeLayout>
 
             <RelativeLayout
@@ -194,6 +321,31 @@
                     android:text="@string/shoes"
                     android:textColor="@color/dark_grey"
                     android:textSize="@dimen/abc_text_size_medium_material" />
+
+                <View
+                    android:id="@+id/v6"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_margin="8dp"
+
+                    android:background="@drawable/absolute_circle"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/t6"
+                    style="@android:style/Widget.Holo.Button.Borderless"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_margin="8dp"
+
+                    android:gravity="center"
+                    android:text="+9"
+                    android:textColor="#fff"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
+
+
             </RelativeLayout>
         </LinearLayout>
 
@@ -229,6 +381,31 @@
                     android:text="@string/clothes"
                     android:textColor="@color/dark_grey"
                     android:textSize="@dimen/abc_text_size_medium_material" />
+
+                <View
+                    android:id="@+id/v7"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+
+                    android:layout_margin="8dp"
+                    android:background="@drawable/absolute_circle"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/t7"
+                    style="@android:style/Widget.Holo.Button.Borderless"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_margin="8dp"
+                    android:gravity="center"
+                    android:text="+9"
+
+                    android:textColor="#fff"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
+
+
             </RelativeLayout>
 
             <RelativeLayout
@@ -257,6 +434,31 @@
                     android:text="@string/super_market"
                     android:textColor="@color/dark_grey"
                     android:textSize="@dimen/abc_text_size_medium_material" />
+
+                <View
+                    android:id="@+id/v8"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_margin="8dp"
+
+                    android:background="@drawable/absolute_circle"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/t8"
+                    style="@android:style/Widget.Holo.Button.Borderless"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_margin="8dp"
+                    android:gravity="center"
+                    android:text="+9"
+                    android:textColor="#fff"
+
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
+
+
             </RelativeLayout>
 
             <RelativeLayout
@@ -285,6 +487,31 @@
                     android:text="@string/services"
                     android:textColor="@color/dark_grey"
                     android:textSize="@dimen/abc_text_size_medium_material" />
+
+                <View
+                    android:id="@+id/v9"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+
+                    android:layout_margin="8dp"
+                    android:background="@drawable/absolute_circle"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/t9"
+                    style="@android:style/Widget.Holo.Button.Borderless"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_margin="8dp"
+                    android:gravity="center"
+                    android:text="+9"
+
+                    android:textColor="#fff"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
+
+
             </RelativeLayout>
 
         </LinearLayout>

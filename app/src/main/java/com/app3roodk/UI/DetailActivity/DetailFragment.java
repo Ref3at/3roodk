@@ -705,7 +705,7 @@ class CommentsAdapter extends ArrayAdapter {
 
 class CommentHolder {
     public TextView Name, Comment, Date, LikeNumber, DislikeNumber;
-    public Button btnLike, btnDislike;
+    public ImageButton btnLike, btnDislike;
 
     public CommentHolder(View rootView) {
         Name = (TextView) rootView.findViewById(R.id.txtName);
@@ -713,7 +713,7 @@ class CommentHolder {
         Date = (TextView) rootView.findViewById(R.id.txtTime);
         LikeNumber = (TextView) rootView.findViewById(R.id.txtLikeNumber);
         DislikeNumber = (TextView) rootView.findViewById(R.id.txtDisikeNumber);
-        btnLike = (Button) rootView.findViewById(R.id.btnLike);
-        btnDislike = (Button) rootView.findViewById(R.id.btnDislike);
+        btnLike = (ImageButton) rootView.findViewById(R.id.btnLike);
+        btnDislike = (ImageButton) rootView.findViewById(R.id.btnDislike);
     }
 }
