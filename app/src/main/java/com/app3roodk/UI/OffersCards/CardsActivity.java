@@ -287,7 +287,7 @@ public class CardsActivity extends AppCompatActivity {
                 ((TextView) mNavigationView.findViewById(R.id.txtNavEmail)).setText(auth.getCurrentUser().getEmail());
                 if (auth.getCurrentUser().getPhotoUrl() != null)
                     Glide.with(this)
-                            .load(R.drawable.defaultavatar)
+                            .load(auth.getCurrentUser().getPhotoUrl())
                             .asBitmap()
                             .into(new BitmapImageViewTarget((ImageView) mNavigationView.findViewById(R.id.imgNavProfile)) {
                                 @Override
@@ -300,7 +300,7 @@ public class CardsActivity extends AppCompatActivity {
                             });
                 else
                     Glide.with(this)
-                            .load(auth.getCurrentUser().getPhotoUrl())
+                            .load(R.drawable.defaultavatar)
                             .asBitmap()
                             .into(new BitmapImageViewTarget((ImageView) mNavigationView.findViewById(R.id.imgNavProfile)) {
                                 @Override

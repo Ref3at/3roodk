@@ -163,7 +163,6 @@ public class CategoriesActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == Constants.RC_SIGN_IN) signingResult(resultCode);
-
     }
 
     @Override
@@ -171,6 +170,14 @@ public class CategoriesActivity extends AppCompatActivity {
         super.onResume();
         if (mDrawerLayout.isDrawerOpen(GravityCompat.END))
             mDrawerLayout.closeDrawer(GravityCompat.END);
+        try {
+            if (spnCities.getSelectedItemPosition() == 0) {
+                updateOffersNumber(UtilityGeneral.getCurrentCityEnglish(getApplicationContext()));
+            } else {
+                updateOffersNumber(lstCities.get(spnCities.getSelectedItemPosition()));
+            }
+        } catch (Exception ex) {
+        }
         hideDrawerItems();
     }
 
