@@ -1,12 +1,14 @@
 package com.app3roodk;
 
 import android.content.Context;
+import android.content.Intent;
 
 import com.app3roodk.Schema.Comments;
 import com.app3roodk.Schema.Feedback;
 import com.app3roodk.Schema.Offer;
 import com.app3roodk.Schema.Shop;
 import com.app3roodk.Schema.User;
+import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -226,6 +228,18 @@ public class UtilityFirebase {
     }
     //endregion
 
+    //region Auth
+    static public Intent getAuthIntent() {
+        return AuthUI.getInstance()
+                .createSignInIntentBuilder()
+                .setProviders(
+                        AuthUI.EMAIL_PROVIDER,
+                        AuthUI.GOOGLE_PROVIDER,
+                        AuthUI.FACEBOOK_PROVIDER)
+                .setTheme(R.style.FirbaseUITheme)
+                .build();
+    }
+    //endregion
 
     // region CityCategoriesOffersNo.
     static public void getCategoriesOffersNo(String city, String cat, TextHttpResponseHandler listener) {
