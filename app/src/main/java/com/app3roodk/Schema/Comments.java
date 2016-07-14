@@ -1,18 +1,36 @@
 package com.app3roodk.Schema;
 
+import com.google.firebase.database.Exclude;
+import com.google.firebase.database.ServerValue;
+
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 
 public class Comments {
 
     private String objectId;
-    private String time;
     private String commentText;
     private String userName;
     private String userId;
     private String offerId;
     private HashMap<String,String> userLike ;
     private HashMap<String,String> userDislike ;
+
+    private Long creationDate;
+
+    public java.util.Map<String, String> getCreationDate() {
+        return ServerValue.TIMESTAMP;
+    }
+
+    @Exclude
+    public Long getCreationDateLong() {
+        return creationDate;
+    }
+
+    public void setCreationDate(Long creationDate) {
+        this.creationDate = creationDate;
+    }
 
     public String getPhotoUrl() {
         return photoUrl;
@@ -35,19 +53,12 @@ public class Comments {
         this.objectId = objectId;
     }
 
+    @Exclude
     public String getReadableTime(){
         try {
-            return new SimpleDateFormat("dd-MM-yyyy  HH:mm").format(new SimpleDateFormat("yyyyMMddHHmm").parse(time));
+            return new SimpleDateFormat("dd-MM-yyyy  HH:mm").format(new Date(creationDate));
         }
         catch (Exception ex){return "";}
-    }
-
-    public String getTime() {
-        return time;
-    }
-
-    public void setTime(String time) {
-        this.time = time;
     }
 
     public String getCommentText() {

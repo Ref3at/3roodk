@@ -58,7 +58,6 @@ import com.loopj.android.http.TextHttpResponseHandler;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -183,7 +182,6 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
                     return;
                 }
                 final Comments comment = new Comments();
-                comment.setTime(UtilityGeneral.getCurrentDate(new Date()));
                 if (offer.getUserId().equals(UtilityGeneral.loadUser(getActivity()).getObjectId()))
                     comment.setUserName(offer.getShopName());
                 else
@@ -193,7 +191,7 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
                 comment.setCommentText(edtxtComment.getText().toString());
 
                 assert auth.getCurrentUser().getPhotoUrl() != null;
-                if (auth.getCurrentUser() != null || auth.getCurrentUser().getPhotoUrl() != null){
+                if (auth.getCurrentUser() != null && auth.getCurrentUser().getPhotoUrl() != null) {
                     comment.setPhotoUrl(auth.getCurrentUser().getPhotoUrl().toString());
                 }
                 // hide keyboard
@@ -642,7 +640,6 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
 
 }
 
-
 class CommentsAdapter extends ArrayAdapter {
 
     Context context;
@@ -678,7 +675,7 @@ class CommentsAdapter extends ArrayAdapter {
             holder.btnDislike.setEnabled(true);
         }
 
-        if (comment.getPhotoUrl() != null || !comment.getPhotoUrl().isEmpty() ) {
+        if (comment.getPhotoUrl() != null && !comment.getPhotoUrl().isEmpty()) {
             Glide.with(getContext())
                     .load(comment.getPhotoUrl())
                     .asBitmap()
@@ -691,8 +688,20 @@ class CommentsAdapter extends ArrayAdapter {
                             holder.userImage.setImageDrawable(circularBitmapDrawable);
                         }
                     });
+        } else {
+            Glide.with(getContext())
+                    .load(R.drawable.defaultavatar)
+                    .asBitmap()
+                    .into(new BitmapImageViewTarget(holder.userImage) {
+                        @Override
+                        protected void setResource(Bitmap resource) {
+                            RoundedBitmapDrawable circularBitmapDrawable =
+                                    RoundedBitmapDrawableFactory.create(getContext().getResources(), resource);
+                            circularBitmapDrawable.setCircular(true);
+                            holder.userImage.setImageDrawable(circularBitmapDrawable);
+                        }
+                    });
         }
-
 
         holder.Name.setText(comment.getUserName());
         holder.Comment.setText(comment.getCommentText());
@@ -707,13 +716,13 @@ class CommentsAdapter extends ArrayAdapter {
             holder.DislikeNumber.setText("0");
         holder.Date.setText(comment.getReadableTime());
         if (comment.getUserLike().containsKey(UtilityGeneral.loadUser(context).getObjectId()))
-        //    holder.btnLike.setBackgroundResource(R.drawable.likegreen);
+            //    holder.btnLike.setBackgroundResource(R.drawable.likegreen);
             holder.btnLike.setImageDrawable(getContext().getResources().getDrawable(R.drawable.likegreen));
         else
-         //   holder.btnLike.setBackgroundResource(R.drawable.likegray);
-        holder.btnLike.setImageDrawable(getContext().getResources().getDrawable(R.drawable.likegray));
+            //   holder.btnLike.setBackgroundResource(R.drawable.likegray);
+            holder.btnLike.setImageDrawable(getContext().getResources().getDrawable(R.drawable.likegray));
         if (comment.getUserDislike().containsKey(UtilityGeneral.loadUser(context).getObjectId()))
-         //   holder.btnDislike.setBackgroundResource(R.drawable.dislikered);
+            //   holder.btnDislike.setBackgroundResource(R.drawable.dislikered);
             holder.btnDislike.setImageDrawable(getContext().getResources().getDrawable(R.drawable.dislikered));
 
         else

@@ -142,9 +142,9 @@ public class UtilityGeneral {
         Collections.sort(lstComments, new Comparator<Comments>() {
             @Override
             public int compare(Comments o1, Comments o2) {
-                if (Double.parseDouble(o1.getTime()) >= Double.parseDouble(o2.getTime()))
+                if (o1.getCreationDateLong() >= o2.getCreationDateLong())
                     return -1;
-                if (Double.parseDouble(o1.getTime()) < Double.parseDouble(o2.getTime()))
+                if (o1.getCreationDateLong() < o2.getCreationDateLong())
                     return 1;
                 return 0;
             }
@@ -233,7 +233,7 @@ public class UtilityGeneral {
     }
 
     static public String getCurrentDate(Date date) {
-        return new SimpleDateFormat("yyyyMMddkkmm").format(date);
+        return new SimpleDateFormat("yyyyMMddkkmm",Locale.US).format(date);
     }
 
     static public String getCurrentYearAndWeek() {

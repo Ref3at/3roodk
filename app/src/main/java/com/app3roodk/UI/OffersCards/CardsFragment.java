@@ -44,7 +44,7 @@ public class CardsFragment extends Fragment {
                              Bundle savedInstanceState) {
         final RecyclerView recyclerView = (RecyclerView) inflater.inflate(
                 R.layout.cards_recycler_view, container, false);
-        lstOffers = UtilityGeneral.loadOffers(getActivity(),getActivity().getIntent().getStringExtra("name"));
+        lstOffers = UtilityGeneral.loadOffers(getActivity(), getActivity().getIntent().getStringExtra("name"));
         adapter = new ContentAdapter(lstOffers);
         recyclerView.setAdapter(adapter);
         if (lstOffers.size() > 0) {
@@ -60,7 +60,7 @@ public class CardsFragment extends Fragment {
 
     private void fetchOffers() {
         try {
-            if(getActivity().getIntent().getStringExtra("city").equals(Constants.YOUR_CITY)) {
+            if (getActivity().getIntent().getStringExtra("city").equals(Constants.YOUR_CITY)) {
                 if (UtilityGeneral.City == null || UtilityGeneral.City.isEmpty()) {
                     showMessage("يتم الآن تحديد المدينة");
                     new Thread(new Runnable() {
@@ -98,9 +98,7 @@ public class CardsFragment extends Fragment {
                         Log.e("GettingOffers2", ex.getMessage());
                     }
                 }
-            }
-            else
-            {
+            } else {
                 City = getActivity().getIntent().getStringExtra("city");
                 showMessage("يتم البحث عن عروض فى مدينة " + City);
                 UtilityFirebase.getActiveOffers(City, getActivity().getIntent().getStringExtra("name")).addValueEventListener(postListener);
@@ -132,8 +130,8 @@ public class CardsFragment extends Fragment {
                 }
                 try {
                     UtilityGeneral.saveOffers(getActivity(), getActivity().getIntent().getStringExtra("name"), lstOffers);
+                } catch (Exception ex) {
                 }
-                catch (Exception ex){}
                 sortOffers();
             }
 

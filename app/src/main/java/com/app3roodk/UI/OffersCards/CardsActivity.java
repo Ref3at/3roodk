@@ -153,7 +153,7 @@ public class CardsActivity extends AppCompatActivity {
 
                             case R.id.action_signin:
                                 mDrawerLayout.closeDrawer(GravityCompat.END);
-                               signingClick();
+                                signingClick();
                                 return true;
 
                             case R.id.action_new_shop:
@@ -279,24 +279,38 @@ public class CardsActivity extends AppCompatActivity {
         try {
             FirebaseAuth auth = FirebaseAuth.getInstance();
             if (auth.getCurrentUser() != null) {
-                if (UtilityGeneral.isRegisteredUser(getBaseContext())&& UtilityGeneral.isShopExist(getBaseContext())) {
+                if (UtilityGeneral.isRegisteredUser(getBaseContext()) && UtilityGeneral.isShopExist(getBaseContext())) {
                     ((TextView) mNavigationView.findViewById(R.id.txtNavNumOfOfers)).setText("يمكنك عمل " + String.valueOf(UtilityGeneral.getNumberOfAvailableOffers(getBaseContext(), UtilityGeneral.getCurrentYearAndWeek())) + " عروض فى  هذا الإسبوع");
                 } else
                     ((TextView) mNavigationView.findViewById(R.id.txtNavNumOfOfers)).setText("");
                 ((TextView) mNavigationView.findViewById(R.id.txtNavName)).setText(auth.getCurrentUser().getDisplayName());
                 ((TextView) mNavigationView.findViewById(R.id.txtNavEmail)).setText(auth.getCurrentUser().getEmail());
-                Glide.with(this)
-                        .load(auth.getCurrentUser().getPhotoUrl())
-                        .asBitmap()
-                        .into(new BitmapImageViewTarget((ImageView) mNavigationView.findViewById(R.id.imgNavProfile)) {
-                            @Override
-                            protected void setResource(Bitmap resource) {
-                                RoundedBitmapDrawable circularBitmapDrawable =
-                                        RoundedBitmapDrawableFactory.create(CardsActivity.this.getResources(), resource);
-                                circularBitmapDrawable.setCircular(true);
-                                ((ImageView) mNavigationView.findViewById(R.id.imgNavProfile)).setImageDrawable(circularBitmapDrawable);
-                            }
-                        });
+                if (auth.getCurrentUser().getPhotoUrl() != null)
+                    Glide.with(this)
+                            .load(R.drawable.defaultavatar)
+                            .asBitmap()
+                            .into(new BitmapImageViewTarget((ImageView) mNavigationView.findViewById(R.id.imgNavProfile)) {
+                                @Override
+                                protected void setResource(Bitmap resource) {
+                                    RoundedBitmapDrawable circularBitmapDrawable =
+                                            RoundedBitmapDrawableFactory.create(CardsActivity.this.getResources(), resource);
+                                    circularBitmapDrawable.setCircular(true);
+                                    ((ImageView) mNavigationView.findViewById(R.id.imgNavProfile)).setImageDrawable(circularBitmapDrawable);
+                                }
+                            });
+                else
+                    Glide.with(this)
+                            .load(auth.getCurrentUser().getPhotoUrl())
+                            .asBitmap()
+                            .into(new BitmapImageViewTarget((ImageView) mNavigationView.findViewById(R.id.imgNavProfile)) {
+                                @Override
+                                protected void setResource(Bitmap resource) {
+                                    RoundedBitmapDrawable circularBitmapDrawable =
+                                            RoundedBitmapDrawableFactory.create(CardsActivity.this.getResources(), resource);
+                                    circularBitmapDrawable.setCircular(true);
+                                    ((ImageView) mNavigationView.findViewById(R.id.imgNavProfile)).setImageDrawable(circularBitmapDrawable);
+                                }
+                            });
             } else {
                 ((TextView) mNavigationView.findViewById(R.id.txtNavNumOfOfers)).setText("");
                 ((TextView) mNavigationView.findViewById(R.id.txtNavName)).setText("");
@@ -322,7 +336,7 @@ public class CardsActivity extends AppCompatActivity {
 
     private void hideDrawerItems() {
         Menu nav_Menu = mNavigationView.getMenu();
-
+        nav_Menu.findItem(R.id.action_aboutapp).setVisible(false);
         //remove selections
         for (int i = 0; i < nav_Menu.size(); i++)
             nav_Menu.getItem(i).setChecked(false);

@@ -318,6 +318,7 @@ public class CategoriesActivity extends AppCompatActivity {
 
     private void hideDrawerItems() {
         Menu nav_Menu = ((NavigationView) findViewById(R.id.nav_view)).getMenu();
+        nav_Menu.findItem(R.id.action_aboutapp).setVisible(false);
         //Visibility of Nav items
         nav_Menu.findItem(R.id.action_home).setChecked(true);
         if (UtilityGeneral.isRegisteredUser(getBaseContext())) {
@@ -352,18 +353,32 @@ public class CategoriesActivity extends AppCompatActivity {
                     ((TextView) mNavigationView.findViewById(R.id.txtNavNumOfOfers)).setText("");
                 ((TextView) mNavigationView.findViewById(R.id.txtNavName)).setText(auth.getCurrentUser().getDisplayName());
                 ((TextView) mNavigationView.findViewById(R.id.txtNavEmail)).setText(auth.getCurrentUser().getEmail());
-                Glide.with(this)
-                        .load(auth.getCurrentUser().getPhotoUrl())
-                        .asBitmap()
-                        .into(new BitmapImageViewTarget((ImageView) mNavigationView.findViewById(R.id.imgNavProfile)) {
-                            @Override
-                            protected void setResource(Bitmap resource) {
-                                RoundedBitmapDrawable circularBitmapDrawable =
-                                        RoundedBitmapDrawableFactory.create(CategoriesActivity.this.getResources(), resource);
-                                circularBitmapDrawable.setCircular(true);
-                                ((ImageView) mNavigationView.findViewById(R.id.imgNavProfile)).setImageDrawable(circularBitmapDrawable);
-                            }
-                        });
+                if (auth.getCurrentUser().getPhotoUrl() != null)
+                    Glide.with(this)
+                            .load(auth.getCurrentUser().getPhotoUrl())
+                            .asBitmap()
+                            .into(new BitmapImageViewTarget((ImageView) mNavigationView.findViewById(R.id.imgNavProfile)) {
+                                @Override
+                                protected void setResource(Bitmap resource) {
+                                    RoundedBitmapDrawable circularBitmapDrawable =
+                                            RoundedBitmapDrawableFactory.create(CategoriesActivity.this.getResources(), resource);
+                                    circularBitmapDrawable.setCircular(true);
+                                    ((ImageView) mNavigationView.findViewById(R.id.imgNavProfile)).setImageDrawable(circularBitmapDrawable);
+                                }
+                            });
+                else
+                    Glide.with(this)
+                            .load(R.drawable.defaultavatar)
+                            .asBitmap()
+                            .into(new BitmapImageViewTarget((ImageView) mNavigationView.findViewById(R.id.imgNavProfile)) {
+                                @Override
+                                protected void setResource(Bitmap resource) {
+                                    RoundedBitmapDrawable circularBitmapDrawable =
+                                            RoundedBitmapDrawableFactory.create(CategoriesActivity.this.getResources(), resource);
+                                    circularBitmapDrawable.setCircular(true);
+                                    ((ImageView) mNavigationView.findViewById(R.id.imgNavProfile)).setImageDrawable(circularBitmapDrawable);
+                                }
+                            });
             } else {
                 ((TextView) mNavigationView.findViewById(R.id.txtNavNumOfOfers)).setText("");
                 ((TextView) mNavigationView.findViewById(R.id.txtNavName)).setText("");
@@ -380,7 +395,6 @@ public class CategoriesActivity extends AppCompatActivity {
                                 ((ImageView) mNavigationView.findViewById(R.id.imgNavProfile)).setImageDrawable(circularBitmapDrawable);
                             }
                         });
-
             }
         } catch (Exception ex) {
             Log.e("NavShowInfo", ex.getMessage());
@@ -671,7 +685,6 @@ public class CategoriesActivity extends AppCompatActivity {
             }
         }).start();
     }
-
 
     void hideViews() {
 
