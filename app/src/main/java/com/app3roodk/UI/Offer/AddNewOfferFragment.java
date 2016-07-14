@@ -436,6 +436,13 @@ public class AddNewOfferFragment extends Fragment {
         }
 
     }
+    private void showMessageToast(String msg) {
+        try {
+            Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG).show();
+        } catch (Exception ex) {
+        }
+
+    }
 
     private void Publish() {
         try {
@@ -555,7 +562,7 @@ public class AddNewOfferFragment extends Fragment {
                 mImgurUrl = "http://i.imgur.com/" + imageId + ".jpg";
                 imageView.setAlpha(1.0f);
                 imageViewdone.setVisibility(View.VISIBLE);
-                showMessage("تم رفع الصورة");
+                showMessageToast("تم رفع الصورة");
                 images_id_Array[x].add(mImgurUrl);
                 done = true;
                 success = true;

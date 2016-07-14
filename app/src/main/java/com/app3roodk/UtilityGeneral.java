@@ -11,6 +11,7 @@ import android.location.LocationManager;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListAdapter;
@@ -77,6 +78,7 @@ public class UtilityGeneral {
             addresses = geo.getFromLocation(latLng.latitude, latLng.longitude, 1);
 
         } catch (Exception e) {
+            Log.e("1212",e.getMessage());
         }
         return addresses;
     }

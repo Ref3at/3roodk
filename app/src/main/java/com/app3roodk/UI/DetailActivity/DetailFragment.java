@@ -47,6 +47,7 @@ import com.daimajia.slider.library.Indicators.PagerIndicator;
 import com.daimajia.slider.library.SliderLayout;
 import com.daimajia.slider.library.SliderTypes.BaseSliderView;
 import com.daimajia.slider.library.Tricks.ViewPagerEx;
+import com.github.paolorotolo.expandableheightlistview.ExpandableHeightListView;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -76,7 +77,7 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
     TextView txtViews, txtSale, txtPriceBefore, txtPriceAfter, txtDay, txtHour, txtMinute, txtDescription,
             txtShopName, txtWorkTime, txtAddress, txtMobile, txtRate;
     EditText edtxtComment;
-    ListView lsvComments;
+    ExpandableHeightListView lsvComments;
     RatingBar ratebar;
     SliderLayout mSlider;
 
@@ -182,18 +183,20 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
                     return;
                 }
                 final Comments comment = new Comments();
-                if (offer.getUserId().equals(UtilityGeneral.loadUser(getActivity()).getObjectId()))
+                if (offer.getUserId().equals(UtilityGeneral.loadUser(getActivity()).getObjectId())) {
                     comment.setUserName(offer.getShopName());
-                else
+                    comment.setPhotoUrl(UtilityGeneral.loadShop(getActivity(),offer.getShopId()).getLogoId());
+                } else {
+                    assert auth.getCurrentUser().getPhotoUrl() != null;
+                    if (auth.getCurrentUser() != null && auth.getCurrentUser().getPhotoUrl() != null) {
+                        comment.setPhotoUrl(auth.getCurrentUser().getPhotoUrl().toString());
+                    }
                     comment.setUserName(UtilityGeneral.loadUser(getActivity()).getName());
+                }
                 comment.setUserId(UtilityGeneral.loadUser(getActivity()).getObjectId());
                 comment.setOfferId(offer.getObjectId());
                 comment.setCommentText(edtxtComment.getText().toString());
 
-                assert auth.getCurrentUser().getPhotoUrl() != null;
-                if (auth.getCurrentUser() != null && auth.getCurrentUser().getPhotoUrl() != null) {
-                    comment.setPhotoUrl(auth.getCurrentUser().getPhotoUrl().toString());
-                }
                 // hide keyboard
                 InputMethodManager inputManager = (InputMethodManager)
                         getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -458,10 +461,11 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
             txtRate = (TextView) rootView.findViewById(R.id.txtRateNumber);
             edtxtComment = (EditText) rootView.findViewById(R.id.edtxtComment);
             ratebar = (RatingBar) rootView.findViewById(R.id.ratingbar);
-            lsvComments = (ListView) rootView.findViewById(R.id.lsvComments);
+            lsvComments = (ExpandableHeightListView) rootView.findViewById(R.id.lsvComments);
             lstComments = new ArrayList<>();
             adapter = new CommentsAdapter(getActivity(), R.layout.comment_item, lstComments);
             lsvComments.setAdapter(adapter);
+            lsvComments.setExpanded(true);
             offer = new Gson().fromJson(getActivity().getIntent().getStringExtra("offer"), Offer.class);
             cal = Calendar.getInstance();
             cal.set(Calendar.YEAR, Integer.parseInt(offer.getEndTime().substring(0, 4)));
@@ -481,7 +485,7 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
                         lstComments.add(iterator.next().getValue(Comments.class));
                     UtilityGeneral.sortCommentsByTime(lstComments);
                     adapter.notifyDataSetChanged();
-                    UtilityGeneral.setListViewHeightBasedOnChildren(lsvComments);
+//                    UtilityGeneral.setListViewHeightBasedOnChildren(lsvComments);
                 }
 
                 @Override

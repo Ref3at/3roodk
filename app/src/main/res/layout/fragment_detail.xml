@@ -43,7 +43,7 @@
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"
                     android:layout_alignParentTop="true"
-                    android:src="@drawable/ic_favorite_black_24dp" />
+                    tools:src="@drawable/ic_favorite_black_24dp" />
 
                 <ImageButton
                     android:id="@+id/btnShare"
@@ -53,6 +53,7 @@
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true"
                     android:layout_alignParentTop="true"
+                    android:visibility="invisible"
                     android:src="@drawable/abc_ic_menu_share_mtrl_alpha" />
 
                 <TextView
@@ -595,19 +596,14 @@
 
                 </LinearLayout>
 
-                <ListView
+                <com.github.paolorotolo.expandableheightlistview.ExpandableHeightListView
                     android:id="@+id/lsvComments"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-
-                    android:paddingBottom="@dimen/padding_normal"
                     android:clipToPadding="false"
                     android:listSelector="@android:color/transparent"
                     android:divider="@null"
                     android:dividerHeight="@dimen/divider_height"
-                    android:headerDividersEnabled="false"
-                    android:footerDividersEnabled="true"
-                    android:nestedScrollingEnabled="true"
                     android:overScrollMode="never"
                     android:overScrollFooter="@android:color/transparent" />
             </LinearLayout>
