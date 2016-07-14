@@ -442,12 +442,20 @@ public class CategoriesActivity extends AppCompatActivity {
         spnCities.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                hideViews();
                 try {
                     if (i == 0)
                         if (!((LocationManager) getSystemService(Context.LOCATION_SERVICE)).isProviderEnabled(LocationManager.GPS_PROVIDER))
                             Toast.makeText(getBaseContext(), "افتح الـ Location او سيتم أخذ آخر مكان مسجل", Toast.LENGTH_SHORT).show();
                     ((TextView) adapterView.getChildAt(0)).setTextColor(Color.WHITE);
                     adapterView.getChildAt(0).setBackgroundColor(Color.TRANSPARENT);
+
+                    if (i == 0) {
+                        updateOffersNumber(UtilityGeneral.getCurrentCityEnglish(getApplicationContext()));
+                    } else {
+                        updateOffersNumber(lstCities.get(i));
+                    }
+
                 } catch (Exception ex) {
                 }
             }
