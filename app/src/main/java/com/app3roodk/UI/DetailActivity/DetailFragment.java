@@ -4,11 +4,14 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +22,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -36,12 +40,15 @@ import com.app3roodk.UI.ImagesSliders.CustomImagesSlider;
 import com.app3roodk.UI.Shop.ViewShopActivity;
 import com.app3roodk.UtilityFirebase;
 import com.app3roodk.UtilityGeneral;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.daimajia.slider.library.Animations.DescriptionAnimation;
 import com.daimajia.slider.library.Indicators.PagerIndicator;
 import com.daimajia.slider.library.SliderLayout;
 import com.daimajia.slider.library.SliderTypes.BaseSliderView;
 import com.daimajia.slider.library.Tricks.ViewPagerEx;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -165,6 +172,8 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
         }
     }
 
+    FirebaseAuth auth = FirebaseAuth.getInstance();
+
     private void clickConfig() {
         btnComment.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -182,6 +191,11 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
                 comment.setUserId(UtilityGeneral.loadUser(getActivity()).getObjectId());
                 comment.setOfferId(offer.getObjectId());
                 comment.setCommentText(edtxtComment.getText().toString());
+
+                if (auth.getCurrentUser() != null) {
+
+                    comment.setPhotoUrl(auth.getCurrentUser().getPhotoUrl().toString());
+                }
                 // hide keyboard
                 InputMethodManager inputManager = (InputMethodManager)
                         getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -629,7 +643,6 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
 }
 
 
-
 class CommentsAdapter extends ArrayAdapter {
 
     Context context;
@@ -647,7 +660,7 @@ class CommentsAdapter extends ArrayAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View row = convertView;
-        CommentHolder holder;
+        final CommentHolder holder;
         if (row == null) {
             LayoutInflater inflater = ((Activity) context).getLayoutInflater();
             row = inflater.inflate(layoutResourceId, parent, false);
@@ -664,8 +677,26 @@ class CommentsAdapter extends ArrayAdapter {
             holder.btnLike.setEnabled(true);
             holder.btnDislike.setEnabled(true);
         }
+
+        if (comment.getPhotoUrl() != null || !comment.getPhotoUrl().isEmpty() ) {
+            Glide.with(getContext())
+                    .load(comment.getPhotoUrl())
+                    .asBitmap()
+                    .into(new BitmapImageViewTarget(holder.userImage) {
+                        @Override
+                        protected void setResource(Bitmap resource) {
+                            RoundedBitmapDrawable circularBitmapDrawable =
+                                    RoundedBitmapDrawableFactory.create(getContext().getResources(), resource);
+                            circularBitmapDrawable.setCircular(true);
+                            holder.userImage.setImageDrawable(circularBitmapDrawable);
+                        }
+                    });
+        }
+
+
         holder.Name.setText(comment.getUserName());
         holder.Comment.setText(comment.getCommentText());
+
         if (comment.getUserLike() != null)
             holder.LikeNumber.setText(String.valueOf(comment.getUserLike().size()));
         else
@@ -675,14 +706,19 @@ class CommentsAdapter extends ArrayAdapter {
         else
             holder.DislikeNumber.setText("0");
         holder.Date.setText(comment.getReadableTime());
-        if(comment.getUserLike().containsKey(UtilityGeneral.loadUser(context).getObjectId()))
-            holder.btnLike.setBackgroundResource(R.drawable.likegreen);
+        if (comment.getUserLike().containsKey(UtilityGeneral.loadUser(context).getObjectId()))
+        //    holder.btnLike.setBackgroundResource(R.drawable.likegreen);
+            holder.btnLike.setImageDrawable(getContext().getResources().getDrawable(R.drawable.likegreen));
         else
-            holder.btnLike.setBackgroundResource(R.drawable.likegray);
-        if(comment.getUserDislike().containsKey(UtilityGeneral.loadUser(context).getObjectId()))
-            holder.btnDislike.setBackgroundResource(R.drawable.dislikered);
+         //   holder.btnLike.setBackgroundResource(R.drawable.likegray);
+        holder.btnLike.setImageDrawable(getContext().getResources().getDrawable(R.drawable.likegray));
+        if (comment.getUserDislike().containsKey(UtilityGeneral.loadUser(context).getObjectId()))
+         //   holder.btnDislike.setBackgroundResource(R.drawable.dislikered);
+            holder.btnDislike.setImageDrawable(getContext().getResources().getDrawable(R.drawable.dislikered));
+
         else
-            holder.btnDislike.setBackgroundResource(R.drawable.dislikegray);
+            holder.btnDislike.setImageDrawable(getContext().getResources().getDrawable(R.drawable.dislikegray));
+        // holder.btnDislike.setBackgroundResource(R.drawable.dislikegray);
         holder.btnLike.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
@@ -706,6 +742,7 @@ class CommentsAdapter extends ArrayAdapter {
 class CommentHolder {
     public TextView Name, Comment, Date, LikeNumber, DislikeNumber;
     public ImageButton btnLike, btnDislike;
+    ImageView userImage;
 
     public CommentHolder(View rootView) {
         Name = (TextView) rootView.findViewById(R.id.txtName);
@@ -715,5 +752,7 @@ class CommentHolder {
         DislikeNumber = (TextView) rootView.findViewById(R.id.txtDisikeNumber);
         btnLike = (ImageButton) rootView.findViewById(R.id.btnLike);
         btnDislike = (ImageButton) rootView.findViewById(R.id.btnDislike);
+        userImage = (ImageView) rootView.findViewById(R.id.user_avatar);
+
     }
 }

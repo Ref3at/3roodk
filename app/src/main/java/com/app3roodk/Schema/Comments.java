@@ -14,6 +14,16 @@ public class Comments {
     private HashMap<String,String> userLike ;
     private HashMap<String,String> userDislike ;
 
+    public String getPhotoUrl() {
+        return photoUrl;
+    }
+
+    public void setPhotoUrl(String photoUrl) {
+        this.photoUrl = photoUrl;
+    }
+
+    private String photoUrl;
+
     public Comments() {
     }
 
