@@ -341,7 +341,7 @@
             android:textSize="22sp"
             android:textStyle="bold" />
 
-        <ListView
+        <com.github.paolorotolo.expandableheightlistview.ExpandableHeightListView
             android:id="@+id/lvOffers"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

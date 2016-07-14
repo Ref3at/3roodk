@@ -124,7 +124,7 @@ public class UtilityGeneral {
 
         locationB.setLatitude(latB);
         locationB.setLongitude(lngB);
-        return Math.round((locationA.distanceTo(locationB) / 1000) * 1000d) / 1000d;
+        return Math.round((locationA.distanceTo(locationB) / 1000) * 10d) / 10d;
     }
 
     static public void sortOffersByViews(ArrayList<Offer> lstOffers) {

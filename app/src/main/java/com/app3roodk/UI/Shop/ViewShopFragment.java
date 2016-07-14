@@ -27,7 +27,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.app3roodk.Imgur.ImgurUploadTask;
@@ -39,6 +38,7 @@ import com.app3roodk.UtilityFirebase;
 import com.app3roodk.UtilityGeneral;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
+import com.github.paolorotolo.expandableheightlistview.ExpandableHeightListView;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -62,7 +62,7 @@ public class ViewShopFragment extends Fragment {
     ArrayAdapter<String> adapter;
     ArrayList<String> lstOffersTitles;
     ArrayList<Offer> lstOffers;
-    ListView lvOffers;
+    ExpandableHeightListView lvOffers;
     Boolean canEdit;
 
     InputMethodManager inputManager;
@@ -114,11 +114,12 @@ public class ViewShopFragment extends Fragment {
     }
 
     private void initOffersList(View rootView) {
-        lvOffers = (ListView) rootView.findViewById(R.id.lvOffers);
+        lvOffers = (ExpandableHeightListView) rootView.findViewById(R.id.lvOffers);
         lstOffersTitles = new ArrayList<>();
         lstOffers = new ArrayList<>();
         adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, lstOffersTitles);
         lvOffers.setAdapter(adapter);
+        lvOffers.setExpanded(true);
         allOffersCounter = 0;
         String[] cats = getResources().getStringArray(R.array.cat_array_eng);
 
@@ -136,8 +137,6 @@ public class ViewShopFragment extends Fragment {
                             lstOffers.add(of);
                             lstOffersTitles.add(of.getTitle());
                             adapter.notifyDataSetChanged();
-                            UtilityGeneral.setListViewHeightBasedOnChildren(lvOffers);
-                            lvOffers.getLayoutParams().height = lvOffers.getLayoutParams().height + 100;
                         }
                     }
                     txtActiveOffersNum.setText(String.valueOf(lstOffersTitles.size()));

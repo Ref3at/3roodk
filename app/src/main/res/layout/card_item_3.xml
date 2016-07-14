@@ -43,12 +43,14 @@
 
         <LinearLayout
             android:id="@+id/lytShop"
-            android:layout_width="wrap_content"
+            android:layout_width="160dp"
             android:layout_height="63dp"
+            android:gravity="right"
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
             android:orientation="horizontal"
-            android:padding="5dp">
+            android:paddingRight="5dp"
+            android:paddingTop="5dp">
 
 
             <TextView
@@ -59,12 +61,14 @@
                 android:layout_marginRight="3dp"
                 android:gravity="right"
                 android:textColor="#000"
-                android:textSize="18sp"
+                android:singleLine="true"
+                android:lines="1"
+                android:textSize="15sp"
                 tools:text="الغرباوى" />
 
             <ImageButton
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
                 android:layout_gravity="center_vertical"
                 android:background="#00ffffff"
                 android:src="@drawable/ic_account_balance_black_24dp" />
@@ -76,6 +80,7 @@
             android:layout_width="100dp"
             android:layout_height="60dp"
             android:layout_above="@+id/clock"
+            android:layout_marginBottom="40dp"
             android:background="@drawable/circle"
             android:gravity="center" />
 
@@ -156,18 +161,18 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center"
+                android:layout_marginRight="5dp"
                 android:orientation="vertical">
 
                 <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="25dp"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
                     android:src="@drawable/ic_location_on_black_24dp" />
 
                 <TextView
                     android:id="@+id/card_distance"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:padding="5dp"
                     android:textColor="#000"
                     android:textStyle="bold"
                     tools:text="0.6 km" />
@@ -182,15 +187,14 @@
                 android:orientation="vertical">
 
                 <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="25dp"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
                     android:src="@android:drawable/btn_star_big_on" />
 
                 <TextView
                     android:id="@+id/card_rate"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:padding="5dp"
                     android:textColor="#000"
                     android:textStyle="bold"
                     tools:text="0.6" />
@@ -204,7 +208,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:orientation="horizontal"
-            android:padding="10dp">
+            android:padding="4dp">
 
 
             <LinearLayout
@@ -227,7 +231,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:textColor="#fd6363"
-                    android:textSize="26sp"
+                    android:textSize="20sp"
                     android:textStyle="bold"
                     tools:text="35" />
 
@@ -241,7 +245,7 @@
                 android:text=":"
                 android:textColor="#000"
 
-                android:textSize="25sp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
             <LinearLayout
@@ -264,9 +268,8 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:textColor="#55dc5e"
-                    android:textSize="26sp"
+                    android:textSize="20sp"
                     android:textStyle="bold"
-
                     tools:text="03" />
             </LinearLayout>
 
@@ -276,8 +279,7 @@
                 android:layout_marginTop="20dp"
                 android:text=":"
                 android:textColor="#000"
-
-                android:textSize="25sp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
             <LinearLayout
@@ -300,7 +302,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:textColor="#2035f7"
-                    android:textSize="26sp"
+                    android:textSize="20sp"
                     android:textStyle="bold"
 
                     tools:text="18" />
