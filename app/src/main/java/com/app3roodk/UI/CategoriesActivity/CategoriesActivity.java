@@ -163,13 +163,6 @@ public class CategoriesActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == Constants.RC_SIGN_IN) signingResult(resultCode);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (mDrawerLayout.isDrawerOpen(GravityCompat.END))
-            mDrawerLayout.closeDrawer(GravityCompat.END);
         try {
             if (spnCities.getSelectedItemPosition() == 0) {
                 updateOffersNumber(UtilityGeneral.getCurrentCityEnglish(getApplicationContext()));
@@ -178,6 +171,13 @@ public class CategoriesActivity extends AppCompatActivity {
             }
         } catch (Exception ex) {
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (mDrawerLayout.isDrawerOpen(GravityCompat.END))
+            mDrawerLayout.closeDrawer(GravityCompat.END);
         hideDrawerItems();
     }
 
@@ -190,7 +190,7 @@ public class CategoriesActivity extends AppCompatActivity {
                 Intent intent = new Intent(Intent.ACTION_MAIN);
                 intent.addCategory(Intent.CATEGORY_HOME);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(intent);
+                startActivityForResult(intent,222);
                 finish();
             } else {
                 Toast.makeText(this, "اضغط مره كمان علشان تقفل",
@@ -239,7 +239,7 @@ public class CategoriesActivity extends AppCompatActivity {
                                     Snackbar.make(findViewById(android.R.id.content), "عفواً لايمكنك عمل أكثر من " + String.valueOf(Constants.NUMBER_OF_OFFERS_PER_WEEK) + " عروض فى الإسبوع", Snackbar.LENGTH_LONG).show();
                                     hideDrawerItems();
                                 } else
-                                    startActivity(new Intent(CategoriesActivity.this, AddNewOfferActivity.class));
+                                    startActivityForResult(new Intent(CategoriesActivity.this, AddNewOfferActivity.class),222);
                                 return true;
 
                             case R.id.action_signin:
@@ -249,7 +249,7 @@ public class CategoriesActivity extends AppCompatActivity {
 
                             case R.id.action_new_shop:
                                 mDrawerLayout.closeDrawer(GravityCompat.END);
-                                startActivity(new Intent(CategoriesActivity.this, ShopActivity.class));
+                                startActivityForResult(new Intent(CategoriesActivity.this, ShopActivity.class),222);
                                 return true;
 
                             case R.id.action_home:
@@ -258,7 +258,7 @@ public class CategoriesActivity extends AppCompatActivity {
 
                             case R.id.action_view_my_shop:
                                 mDrawerLayout.closeDrawer(GravityCompat.END);
-                                startActivity(new Intent(CategoriesActivity.this, ListShopsActivity.class));
+                                startActivityForResult(new Intent(CategoriesActivity.this, ListShopsActivity.class),222);
                                 return true;
 
                             case R.id.action_logout:
@@ -282,17 +282,17 @@ public class CategoriesActivity extends AppCompatActivity {
 
                             case R.id.action_favorites:
                                 mDrawerLayout.closeDrawer(GravityCompat.END);
-                                startActivity(new Intent(CategoriesActivity.this, FavoritesActivity.class));
+                                startActivityForResult(new Intent(CategoriesActivity.this, FavoritesActivity.class),222);
                                 return true;
 
                             case R.id.action_feedback:
                                 mDrawerLayout.closeDrawer(GravityCompat.END);
-                                startActivity(new Intent(CategoriesActivity.this, FeedbackActivity.class));
+                                startActivityForResult(new Intent(CategoriesActivity.this, FeedbackActivity.class),222);
                                 return true;
 
                             case R.id.action_aboutapp:
                                 mDrawerLayout.closeDrawer(GravityCompat.END);
-                                startActivity(new Intent(CategoriesActivity.this, AboutActivity.class));
+                                startActivityForResult(new Intent(CategoriesActivity.this, AboutActivity.class),222);
                                 return true;
 
                             default:
@@ -453,7 +453,7 @@ public class CategoriesActivity extends AppCompatActivity {
                 i.putExtra("title", "خدمات");
                 break;
         }
-        CategoriesActivity.this.startActivity(i);
+        startActivityForResult(i,222);
     }
 
     private void initSpinner() {
@@ -720,9 +720,9 @@ public class CategoriesActivity extends AppCompatActivity {
     public void openFacebook() {
         try {
             getPackageManager().getPackageInfo("com.facebook.katana", 0);
-            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("fb://page/583145478505894")));
+            startActivityForResult(new Intent(Intent.ACTION_VIEW, Uri.parse("fb://page/583145478505894")),222);
         } catch (Exception e) {
-            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.facebook.com/3roodk")));
+            startActivityForResult(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.facebook.com/3roodk")),222);
         }
     }
 
@@ -830,7 +830,7 @@ public class CategoriesActivity extends AppCompatActivity {
         LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             Toast.makeText(getBaseContext(), "Open Location First", Toast.LENGTH_SHORT).show();
-            startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+            startActivityForResult(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS),222);
         } else {
             try {
                 if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)

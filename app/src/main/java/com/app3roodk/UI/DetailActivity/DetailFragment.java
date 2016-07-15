@@ -184,7 +184,7 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
                 final Comments comment = new Comments();
                 if (offer.getUserId().equals(UtilityGeneral.loadUser(getActivity()).getObjectId())) {
                     comment.setUserName(offer.getShopName());
-                    comment.setPhotoUrl(UtilityGeneral.loadShop(getActivity(),offer.getShopId()).getLogoId());
+                    comment.setPhotoUrl(UtilityGeneral.loadShop(getActivity(), offer.getShopId()).getLogoId());
                 } else {
                     assert auth.getCurrentUser().getPhotoUrl() != null;
                     if (auth.getCurrentUser() != null && auth.getCurrentUser().getPhotoUrl() != null) {
@@ -596,175 +596,187 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
 
     @Override
     public void onSliderClick(BaseSliderView slider) {
-        Intent i = new Intent(getActivity(), FullScreenImageSlider.class);
-        i.putStringArrayListExtra("IMAGES", offer.getItems().get(0).getImagePaths());
-        startActivity(i);
+        Intent intent = new Intent(getActivity(), FullScreenImageSlider.class);
+        ArrayList<String> lstImagePaths = new ArrayList<>();
+        for (int i = 0; i < offer.getItems().size(); i++) {
+            for (int j = 0; j < offer.getItems().get(i).getImagePaths().size(); j++) {
+                lstImagePaths.add(offer.getItems().get(i).getImagePaths().get(j));
+            }
+        }
+
+        ArrayList<String> imgs = new ArrayList<>();
+        for (int i = mSlider.getCurrentPosition(); i < lstImagePaths.size(); i++)
+            imgs.add(lstImagePaths.get(i));
+        for (int i = 0; i < mSlider.getCurrentPosition(); i++)
+            imgs.add(lstImagePaths.get(i));
+            intent.putStringArrayListExtra("IMAGES", imgs);
+            startActivity(intent);
+        }
+
+        public class FetchFromDB extends AsyncTask<ImageButton, Void, ImageButton> {
+            int numRows;
+            ImageButton ItemFav;
+
+            public FetchFromDB(ImageButton btn) {
+                this.ItemFav = btn;
+
+            }
+
+            @Override
+            protected ImageButton doInBackground(ImageButton... params) {
+                if (offer.getObjectId() != null) {
+                    if (getActivity() != null) {
+                        Cursor cursor = getActivity().getContentResolver().query(TestTable.CONTENT_URI, null
+                                , TestTable.FIELD_OBJECTID + " = ?" // selection
+                                , new String[]{offer.getObjectId()}
+                                , null);
+
+                        assert cursor != null;
+                        if (cursor != null) {
+                            this.numRows = cursor.getCount();
+
+                            cursor.close();
+                        }
+                    }
+                }  //testRows = Fav_movieTable.getRows(cursor, false);
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(ImageButton menuItem) {
+                super.onPostExecute(menuItem);
+
+
+                ItemFav.setImageResource(numRows >= 1 ?
+                        android.R.drawable.btn_star_big_on :
+                        android.R.drawable.star_big_off);
+            }
+        }
+
     }
 
-    public class FetchFromDB extends AsyncTask<ImageButton, Void, ImageButton> {
-        int numRows;
-        ImageButton ItemFav;
+    class CommentsAdapter extends ArrayAdapter {
 
-        public FetchFromDB(ImageButton btn) {
-            this.ItemFav = btn;
+        Context context;
+        int layoutResourceId;
+        ArrayList<Comments> data = null;
 
+
+        public CommentsAdapter(Context context, int layoutResourceId, ArrayList<Comments> data) {
+            super(context, layoutResourceId, data);
+            this.layoutResourceId = layoutResourceId;
+            this.context = context;
+            this.data = data;
         }
 
         @Override
-        protected ImageButton doInBackground(ImageButton... params) {
-            if (offer.getObjectId() != null) {
-                if (getActivity() != null) {
-                    Cursor cursor = getActivity().getContentResolver().query(TestTable.CONTENT_URI, null
-                            , TestTable.FIELD_OBJECTID + " = ?" // selection
-                            , new String[]{offer.getObjectId()}
-                            , null);
+        public View getView(int position, View convertView, ViewGroup parent) {
+            View row = convertView;
+            final CommentHolder holder;
+            if (row == null) {
+                LayoutInflater inflater = ((Activity) context).getLayoutInflater();
+                row = inflater.inflate(layoutResourceId, parent, false);
+                holder = new CommentHolder(row);
+                row.setTag(holder);
+            } else {
+                holder = (CommentHolder) row.getTag();
+            }
+            final Comments comment = data.get(position);
+            if (!UtilityGeneral.isRegisteredUser(row.getContext())) {
+                holder.btnLike.setEnabled(false);
+                holder.btnDislike.setEnabled(false);
+            } else {
+                holder.btnLike.setEnabled(true);
+                holder.btnDislike.setEnabled(true);
+            }
 
-                    assert cursor != null;
-                    if (cursor != null) {
-                        this.numRows = cursor.getCount();
+            if (comment.getPhotoUrl() != null && !comment.getPhotoUrl().isEmpty()) {
+                Glide.with(getContext())
+                        .load(comment.getPhotoUrl())
+                        .asBitmap()
+                        .into(new BitmapImageViewTarget(holder.userImage) {
+                            @Override
+                            protected void setResource(Bitmap resource) {
+                                RoundedBitmapDrawable circularBitmapDrawable =
+                                        RoundedBitmapDrawableFactory.create(getContext().getResources(), resource);
+                                circularBitmapDrawable.setCircular(true);
+                                holder.userImage.setImageDrawable(circularBitmapDrawable);
+                            }
+                        });
+            } else {
+                Glide.with(getContext())
+                        .load(R.drawable.defaultavatar)
+                        .asBitmap()
+                        .into(new BitmapImageViewTarget(holder.userImage) {
+                            @Override
+                            protected void setResource(Bitmap resource) {
+                                RoundedBitmapDrawable circularBitmapDrawable =
+                                        RoundedBitmapDrawableFactory.create(getContext().getResources(), resource);
+                                circularBitmapDrawable.setCircular(true);
+                                holder.userImage.setImageDrawable(circularBitmapDrawable);
+                            }
+                        });
+            }
 
-                        cursor.close();
-                    }
-                }
-            }  //testRows = Fav_movieTable.getRows(cursor, false);
-            return null;
-        }
+            holder.Name.setText(comment.getUserName());
+            holder.Comment.setText(comment.getCommentText());
 
-        @Override
-        protected void onPostExecute(ImageButton menuItem) {
-            super.onPostExecute(menuItem);
+            if (comment.getUserLike() != null)
+                holder.LikeNumber.setText(String.valueOf(comment.getUserLike().size()));
+            else
+                holder.LikeNumber.setText("0");
+            if (comment.getUserDislike() != null)
+                holder.DislikeNumber.setText(String.valueOf(comment.getUserDislike().size()));
+            else
+                holder.DislikeNumber.setText("0");
+            holder.Date.setText(comment.getReadableTime());
+            if (comment.getUserLike().containsKey(UtilityGeneral.loadUser(context).getObjectId()))
+                //    holder.btnLike.setBackgroundResource(R.drawable.likegreen);
+                holder.btnLike.setImageDrawable(getContext().getResources().getDrawable(R.drawable.likegreen));
+            else
+                //   holder.btnLike.setBackgroundResource(R.drawable.likegray);
+                holder.btnLike.setImageDrawable(getContext().getResources().getDrawable(R.drawable.likegray));
+            if (comment.getUserDislike().containsKey(UtilityGeneral.loadUser(context).getObjectId()))
+                //   holder.btnDislike.setBackgroundResource(R.drawable.dislikered);
+                holder.btnDislike.setImageDrawable(getContext().getResources().getDrawable(R.drawable.dislikered));
 
-
-            ItemFav.setImageResource(numRows >= 1 ?
-                    android.R.drawable.btn_star_big_on :
-                    android.R.drawable.star_big_off);
-        }
-    }
-
-}
-
-class CommentsAdapter extends ArrayAdapter {
-
-    Context context;
-    int layoutResourceId;
-    ArrayList<Comments> data = null;
-
-
-    public CommentsAdapter(Context context, int layoutResourceId, ArrayList<Comments> data) {
-        super(context, layoutResourceId, data);
-        this.layoutResourceId = layoutResourceId;
-        this.context = context;
-        this.data = data;
-    }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        View row = convertView;
-        final CommentHolder holder;
-        if (row == null) {
-            LayoutInflater inflater = ((Activity) context).getLayoutInflater();
-            row = inflater.inflate(layoutResourceId, parent, false);
-            holder = new CommentHolder(row);
-            row.setTag(holder);
-        } else {
-            holder = (CommentHolder) row.getTag();
-        }
-        final Comments comment = data.get(position);
-        if (!UtilityGeneral.isRegisteredUser(row.getContext())) {
-            holder.btnLike.setEnabled(false);
-            holder.btnDislike.setEnabled(false);
-        } else {
-            holder.btnLike.setEnabled(true);
-            holder.btnDislike.setEnabled(true);
-        }
-
-        if (comment.getPhotoUrl() != null && !comment.getPhotoUrl().isEmpty()) {
-            Glide.with(getContext())
-                    .load(comment.getPhotoUrl())
-                    .asBitmap()
-                    .into(new BitmapImageViewTarget(holder.userImage) {
+            else
+                holder.btnDislike.setImageDrawable(getContext().getResources().getDrawable(R.drawable.dislikegray));
+            // holder.btnDislike.setBackgroundResource(R.drawable.dislikegray);
+            holder.btnLike.setOnClickListener(
+                    new View.OnClickListener() {
                         @Override
-                        protected void setResource(Bitmap resource) {
-                            RoundedBitmapDrawable circularBitmapDrawable =
-                                    RoundedBitmapDrawableFactory.create(getContext().getResources(), resource);
-                            circularBitmapDrawable.setCircular(true);
-                            holder.userImage.setImageDrawable(circularBitmapDrawable);
+                        public void onClick(View v) {
+                            UtilityFirebase.updateComment(comment, UtilityGeneral.loadUser(v.getContext()).getObjectId(), true);
                         }
                     });
-        } else {
-            Glide.with(getContext())
-                    .load(R.drawable.defaultavatar)
-                    .asBitmap()
-                    .into(new BitmapImageViewTarget(holder.userImage) {
+
+            holder.btnDislike.setOnClickListener(
+                    new View.OnClickListener() {
                         @Override
-                        protected void setResource(Bitmap resource) {
-                            RoundedBitmapDrawable circularBitmapDrawable =
-                                    RoundedBitmapDrawableFactory.create(getContext().getResources(), resource);
-                            circularBitmapDrawable.setCircular(true);
-                            holder.userImage.setImageDrawable(circularBitmapDrawable);
+                        public void onClick(View v) {
+                            UtilityFirebase.updateComment(comment, UtilityGeneral.loadUser(v.getContext()).getObjectId(), false);
                         }
                     });
+
+            return row;
         }
-
-        holder.Name.setText(comment.getUserName());
-        holder.Comment.setText(comment.getCommentText());
-
-        if (comment.getUserLike() != null)
-            holder.LikeNumber.setText(String.valueOf(comment.getUserLike().size()));
-        else
-            holder.LikeNumber.setText("0");
-        if (comment.getUserDislike() != null)
-            holder.DislikeNumber.setText(String.valueOf(comment.getUserDislike().size()));
-        else
-            holder.DislikeNumber.setText("0");
-        holder.Date.setText(comment.getReadableTime());
-        if (comment.getUserLike().containsKey(UtilityGeneral.loadUser(context).getObjectId()))
-            //    holder.btnLike.setBackgroundResource(R.drawable.likegreen);
-            holder.btnLike.setImageDrawable(getContext().getResources().getDrawable(R.drawable.likegreen));
-        else
-            //   holder.btnLike.setBackgroundResource(R.drawable.likegray);
-            holder.btnLike.setImageDrawable(getContext().getResources().getDrawable(R.drawable.likegray));
-        if (comment.getUserDislike().containsKey(UtilityGeneral.loadUser(context).getObjectId()))
-            //   holder.btnDislike.setBackgroundResource(R.drawable.dislikered);
-            holder.btnDislike.setImageDrawable(getContext().getResources().getDrawable(R.drawable.dislikered));
-
-        else
-            holder.btnDislike.setImageDrawable(getContext().getResources().getDrawable(R.drawable.dislikegray));
-        // holder.btnDislike.setBackgroundResource(R.drawable.dislikegray);
-        holder.btnLike.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        UtilityFirebase.updateComment(comment, UtilityGeneral.loadUser(v.getContext()).getObjectId(), true);
-                    }
-                });
-
-        holder.btnDislike.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        UtilityFirebase.updateComment(comment, UtilityGeneral.loadUser(v.getContext()).getObjectId(), false);
-                    }
-                });
-
-        return row;
     }
-}
 
-class CommentHolder {
-    public TextView Name, Comment, Date, LikeNumber, DislikeNumber;
-    public ImageButton btnLike, btnDislike;
-    ImageView userImage;
+    class CommentHolder {
+        public TextView Name, Comment, Date, LikeNumber, DislikeNumber;
+        public ImageButton btnLike, btnDislike;
+        ImageView userImage;
 
-    public CommentHolder(View rootView) {
-        Name = (TextView) rootView.findViewById(R.id.txtName);
-        Comment = (TextView) rootView.findViewById(R.id.txtComment);
-        Date = (TextView) rootView.findViewById(R.id.txtTime);
-        LikeNumber = (TextView) rootView.findViewById(R.id.txtLikeNumber);
-        DislikeNumber = (TextView) rootView.findViewById(R.id.txtDisikeNumber);
-        btnLike = (ImageButton) rootView.findViewById(R.id.btnLike);
-        btnDislike = (ImageButton) rootView.findViewById(R.id.btnDislike);
-        userImage = (ImageView) rootView.findViewById(R.id.user_avatar);
+        public CommentHolder(View rootView) {
+            Name = (TextView) rootView.findViewById(R.id.txtName);
+            Comment = (TextView) rootView.findViewById(R.id.txtComment);
+            Date = (TextView) rootView.findViewById(R.id.txtTime);
+            LikeNumber = (TextView) rootView.findViewById(R.id.txtLikeNumber);
+            DislikeNumber = (TextView) rootView.findViewById(R.id.txtDisikeNumber);
+            btnLike = (ImageButton) rootView.findViewById(R.id.btnLike);
+            btnDislike = (ImageButton) rootView.findViewById(R.id.btnDislike);
+            userImage = (ImageView) rootView.findViewById(R.id.user_avatar);
 
+        }
     }
-}
