@@ -20,8 +20,7 @@
             android:id="@+id/card_image"
             android:layout_width="match_parent"
             android:layout_height="@dimen/card_image_height"
-            android:scaleType="centerCrop"
-            />
+            android:scaleType="centerCrop" />
 
         <TextView
             android:id="@+id/card_text"
@@ -40,14 +39,68 @@
             android:textStyle="bold"
             tools:text="تشكيله من الملابس المستورده" />
 
+        <LinearLayout
+            android:id="@+id/lytInfoShop"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignTop="@id/clock"
+            android:layout_toRightOf="@id/clock"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal"
+            android:paddingLeft="5dp">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginRight="5dp"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_location_on_black_24dp" />
+
+                <TextView
+                    android:id="@+id/card_distance"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#000"
+                    android:textStyle="bold"
+                    tools:text="0.6 km" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="6dp"
+                android:layout_marginRight="6dp"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@android:drawable/btn_star_big_on" />
+
+                <TextView
+                    android:id="@+id/card_rate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#000"
+                    android:textStyle="bold"
+                    tools:text="0.6" />
+            </LinearLayout>
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/lytShop"
-            android:layout_width="160dp"
+            android:layout_width="match_parent"
             android:layout_height="63dp"
-            android:gravity="right"
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
+            android:layout_toRightOf="@id/lytInfoShop"
+            android:gravity="right"
             android:orientation="horizontal"
             android:paddingRight="5dp"
             android:paddingTop="5dp">
@@ -60,9 +113,9 @@
                 android:layout_gravity="center_vertical"
                 android:layout_marginRight="3dp"
                 android:gravity="right"
-                android:textColor="#000"
-                android:singleLine="true"
                 android:lines="1"
+                android:singleLine="true"
+                android:textColor="#000"
                 android:textSize="15sp"
                 tools:text="الغرباوى" />
 
@@ -112,8 +165,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/dashed"
-                android:paddingBottom="7dp"
                 android:padding="5dp"
+                android:paddingBottom="7dp"
                 android:textColor="@color/white"
                 tools:text="99.9" />
 
@@ -148,58 +201,7 @@
         <!--android:layout_marginRight="8dp"-->
         <!--android:src="@drawable/ic_favorite_black_24dp"-->
         <!--android:tint="@color/button_grey" />-->
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_alignTop="@id/clock"
-            android:layout_toLeftOf="@id/lytShop"
-            android:layout_toRightOf="@id/clock"
-            android:gravity="center_horizontal"
-            android:orientation="horizontal">
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:layout_marginRight="5dp"
-                android:orientation="vertical">
-
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@drawable/ic_location_on_black_24dp" />
-
-                <TextView
-                    android:id="@+id/card_distance"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="#000"
-                    android:textStyle="bold"
-                    tools:text="0.6 km" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="6dp"
-                android:layout_marginRight="6dp"
-                android:gravity="center"
-                android:orientation="vertical">
-
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@android:drawable/btn_star_big_on" />
-
-                <TextView
-                    android:id="@+id/card_rate"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="#000"
-                    android:textStyle="bold"
-                    tools:text="0.6" />
-            </LinearLayout>
-        </LinearLayout>
 
 
         <LinearLayout
