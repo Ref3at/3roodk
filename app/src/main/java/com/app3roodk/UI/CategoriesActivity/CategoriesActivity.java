@@ -116,122 +116,125 @@ public class CategoriesActivity extends AppCompatActivity {
         initSpinner();
         loadCity();
         initNavigationDrawer();
+        initListener();
         if (UtilityGeneral.isRegisteredUser(getBaseContext())) {
             UtilityFirebase.updateUserNotificationToken(getBaseContext(), UtilityGeneral.loadUser(getBaseContext()).getObjectId(), FirebaseInstanceId.getInstance().getToken());
             UtilityFirebase.getUserShops(getBaseContext(), UtilityGeneral.loadUser(getBaseContext()).getObjectId());
-            availableOfferListener = new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    if (dataSnapshot.getValue() == null) return;
-                    String yearWeek = UtilityGeneral.getCurrentYearAndWeek();
-                    User user = UtilityGeneral.loadUser(getBaseContext());
-                    if (user.getNumOfOffersAvailable().containsKey(yearWeek))
-                        user.getNumOfOffersAvailable().remove(yearWeek);
-                    user.getNumOfOffersAvailable().put(yearWeek, dataSnapshot.getValue(Integer.class));
-                    if (UtilityGeneral.isRegisteredUser(getBaseContext()))
-                        UtilityGeneral.saveUser(getBaseContext(), user);
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            };
-            activeOffersListener = new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    if (dataSnapshot.getValue() == null) {
-                        hideViews();
-                        return;
-                    }
-                    int HomeTools, Accessories, Mobiles, Computers, Shoes, Clothes, SuperMarket, Services, Restaurants;
-                    HomeTools = Accessories = Mobiles = Computers = Shoes = Clothes = SuperMarket = Services = Restaurants = 0;
-                    for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
-                        switch (dataSnapshot1.getValue(ExistOffers.class).getCategory()) {
-                            case "Home Tools":
-                                HomeTools++;
-                                break;
-                            case "Accessories":
-                                Accessories++;
-                                break;
-                            case "Mobiles":
-                                Mobiles++;
-                                break;
-                            case "Computers":
-                                Computers++;
-                                break;
-                            case "Shoes":
-                                Shoes++;
-                                break;
-                            case "Clothes":
-                                Clothes++;
-                                break;
-                            case "Super market":
-                                SuperMarket++;
-                                break;
-                            case "Services":
-                                Services++;
-                                break;
-                            case "Restaurants":
-                                Restaurants++;
-                                break;
-                        }
-                    }
-                    if (Restaurants > 0) {
-                        t1.setText(String.valueOf(Restaurants));
-                        t1.setVisibility(View.VISIBLE);
-                        v1.setVisibility(View.VISIBLE);
-                    }
-                    if (HomeTools > 0) {
-                        t2.setText(String.valueOf(HomeTools));
-                        t2.setVisibility(View.VISIBLE);
-                        v2.setVisibility(View.VISIBLE);
-                    }
-                    if (Accessories > 0) {
-                        t3.setText(String.valueOf(Accessories));
-                        t3.setVisibility(View.VISIBLE);
-                        v3.setVisibility(View.VISIBLE);
-                    }
-                    if (Mobiles > 0) {
-                        t4.setText(String.valueOf(Mobiles));
-                        t4.setVisibility(View.VISIBLE);
-                        v4.setVisibility(View.VISIBLE);
-                    }
-                    if (Computers > 0) {
-                        t5.setText(String.valueOf(Computers));
-                        t5.setVisibility(View.VISIBLE);
-                        v5.setVisibility(View.VISIBLE);
-                    }
-                    if (Shoes > 0) {
-                        t6.setText(String.valueOf(Shoes));
-                        t6.setVisibility(View.VISIBLE);
-                        v6.setVisibility(View.VISIBLE);
-                    }
-                    if (Clothes > 0) {
-                        t7.setText(String.valueOf(Clothes));
-                        t7.setVisibility(View.VISIBLE);
-                        v7.setVisibility(View.VISIBLE);
-                    }
-                    if (SuperMarket > 0) {
-                        t8.setText(String.valueOf(SuperMarket));
-                        t8.setVisibility(View.VISIBLE);
-                        v8.setVisibility(View.VISIBLE);
-                    }
-                    if (Services > 0) {
-                        t9.setText(String.valueOf(Services));
-                        t9.setVisibility(View.VISIBLE);
-                        v9.setVisibility(View.VISIBLE);
-                    }
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            };
             UtilityFirebase.getUserNoOfAvailableOffers(getBaseContext(), UtilityGeneral.getCurrentYearAndWeek()).addValueEventListener(availableOfferListener);
-
         }
+    }
+
+    private void initListener() {
+        availableOfferListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.getValue() == null) return;
+                String yearWeek = UtilityGeneral.getCurrentYearAndWeek();
+                User user = UtilityGeneral.loadUser(getBaseContext());
+                if (user.getNumOfOffersAvailable().containsKey(yearWeek))
+                    user.getNumOfOffersAvailable().remove(yearWeek);
+                user.getNumOfOffersAvailable().put(yearWeek, dataSnapshot.getValue(Integer.class));
+                if (UtilityGeneral.isRegisteredUser(getBaseContext()))
+                    UtilityGeneral.saveUser(getBaseContext(), user);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+        activeOffersListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.getValue() == null) {
+                    hideViews();
+                    return;
+                }
+                int HomeTools, Accessories, Mobiles, Computers, Shoes, Clothes, SuperMarket, Services, Restaurants;
+                HomeTools = Accessories = Mobiles = Computers = Shoes = Clothes = SuperMarket = Services = Restaurants = 0;
+                for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
+                    switch (dataSnapshot1.getValue(ExistOffers.class).getCategory()) {
+                        case "Home Tools":
+                            HomeTools++;
+                            break;
+                        case "Accessories":
+                            Accessories++;
+                            break;
+                        case "Mobiles":
+                            Mobiles++;
+                            break;
+                        case "Computers":
+                            Computers++;
+                            break;
+                        case "Shoes":
+                            Shoes++;
+                            break;
+                        case "Clothes":
+                            Clothes++;
+                            break;
+                        case "Super market":
+                            SuperMarket++;
+                            break;
+                        case "Services":
+                            Services++;
+                            break;
+                        case "Restaurants":
+                            Restaurants++;
+                            break;
+                    }
+                }
+                if (Restaurants > 0) {
+                    t1.setText(String.valueOf(Restaurants));
+                    t1.setVisibility(View.VISIBLE);
+                    v1.setVisibility(View.VISIBLE);
+                }
+                if (HomeTools > 0) {
+                    t2.setText(String.valueOf(HomeTools));
+                    t2.setVisibility(View.VISIBLE);
+                    v2.setVisibility(View.VISIBLE);
+                }
+                if (Accessories > 0) {
+                    t3.setText(String.valueOf(Accessories));
+                    t3.setVisibility(View.VISIBLE);
+                    v3.setVisibility(View.VISIBLE);
+                }
+                if (Mobiles > 0) {
+                    t4.setText(String.valueOf(Mobiles));
+                    t4.setVisibility(View.VISIBLE);
+                    v4.setVisibility(View.VISIBLE);
+                }
+                if (Computers > 0) {
+                    t5.setText(String.valueOf(Computers));
+                    t5.setVisibility(View.VISIBLE);
+                    v5.setVisibility(View.VISIBLE);
+                }
+                if (Shoes > 0) {
+                    t6.setText(String.valueOf(Shoes));
+                    t6.setVisibility(View.VISIBLE);
+                    v6.setVisibility(View.VISIBLE);
+                }
+                if (Clothes > 0) {
+                    t7.setText(String.valueOf(Clothes));
+                    t7.setVisibility(View.VISIBLE);
+                    v7.setVisibility(View.VISIBLE);
+                }
+                if (SuperMarket > 0) {
+                    t8.setText(String.valueOf(SuperMarket));
+                    t8.setVisibility(View.VISIBLE);
+                    v8.setVisibility(View.VISIBLE);
+                }
+                if (Services > 0) {
+                    t9.setText(String.valueOf(Services));
+                    t9.setVisibility(View.VISIBLE);
+                    v9.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
     }
 
     @Override
@@ -301,6 +304,157 @@ public class CategoriesActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
+    public void goToCards(View view) {
+        int x = view.getId();
+        Intent i = new Intent(CategoriesActivity.this, CardsActivity.class);
+        i.putExtra("city", lstCities.get(spnCities.getSelectedItemPosition()));
+        switch (x) {
+
+            case R.id.imageButton1:
+
+                i.putExtra("title", "مطاعم");
+                i.putExtra("name", "Restaurants");
+                break;
+            case R.id.imageButton2:
+                i.putExtra("title", "أدوات منزليه");
+                i.putExtra("name", "Home Tools");
+
+                break;
+            case R.id.imageButton3:
+                i.putExtra("title", "إكسسوار");
+                i.putExtra("name", "Accessories");
+                break;
+            case R.id.imageButton4:
+                i.putExtra("title", "موبايل");
+                i.putExtra("name", "Mobiles");
+                break;
+            case R.id.imageButton5:
+                i.putExtra("title", "كمبيوتر");
+                i.putExtra("name", "Computers");
+                break;
+            case R.id.imageButton6:
+                i.putExtra("title", "أحذية");
+                i.putExtra("name", "Shoes");
+                break;
+            case R.id.imageButton7:
+                i.putExtra("title", "ملابس");
+                i.putExtra("name", "Clothes");
+                break;
+            case R.id.imageButton8:
+                i.putExtra("name", "Super market");
+                i.putExtra("title", "سوبر ماركت");
+                break;
+            case R.id.imageButton9:
+                i.putExtra("name", "Services");
+                i.putExtra("title", "خدمات");
+                break;
+        }
+        startActivityForResult(i, 222);
+    }
+
+    private void initSpinner() {
+        lstCities = UtilityGeneral.loadCities(getBaseContext());
+        adapter = new ArrayAdapter<>(getBaseContext(), R.layout.spinner_item, lstCities);
+        spnCities.setAdapter(adapter);
+        spnCities.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                try {
+                    if (i == 0)
+                        if (!((LocationManager) getSystemService(Context.LOCATION_SERVICE)).isProviderEnabled(LocationManager.GPS_PROVIDER))
+                            Toast.makeText(getBaseContext(), "افتح الـ Location او سيتم أخذ آخر مكان مسجل", Toast.LENGTH_SHORT).show();
+                    ((TextView) adapterView.getChildAt(0)).setTextColor(Color.WHITE);
+                    hideViews();
+                    adapterView.getChildAt(0).setBackgroundColor(Color.TRANSPARENT);
+                    if (trdCurrentLocationSpinner != null && trdCurrentLocationSpinner.isAlive())
+                        trdCurrentLocationSpinner.interrupt();
+                    if (i == 0) {
+                        trdCurrentLocationSpinner = new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                final String city = UtilityGeneral.getCurrentCityEnglish(getApplicationContext());
+                                CategoriesActivity.this.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        updateOffersNumber(city);
+                                    }
+                                });
+                            }
+                        });
+                        trdCurrentLocationSpinner.start();
+                    } else {
+                        updateOffersNumber(lstCities.get(i));
+                    }
+
+                } catch (Exception ex) {
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+            }
+        });
+    }
+
+    private void updateOffersNumber(String cityName) {
+
+        try {
+            UtilityFirebase.getActiveExistOffers(previousCity).removeEventListener(activeOffersListener);
+        } catch (Exception ex) {
+        }
+        try {
+            previousCity = cityName;
+            UtilityFirebase.getActiveExistOffers(previousCity).addValueEventListener(activeOffersListener);
+        } catch (Exception ex) {
+        }
+    }
+
+    private void loadCity() {
+        UtilityFirebase.getCities(new TextHttpResponseHandler() {
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+
+            }
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String responseString) {
+                UtilityGeneral.saveCities(getBaseContext(), responseString);
+                initSpinner();
+            }
+        });
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                UtilityGeneral.getCurrentCityEnglish(getBaseContext());
+            }
+        }).start();
+    }
+
+    private void hideViews() {
+
+        v1.setVisibility(View.GONE);
+        v2.setVisibility(View.GONE);
+        v3.setVisibility(View.GONE);
+        v4.setVisibility(View.GONE);
+        v5.setVisibility(View.GONE);
+        v6.setVisibility(View.GONE);
+        v7.setVisibility(View.GONE);
+        v8.setVisibility(View.GONE);
+        v9.setVisibility(View.GONE);
+
+        t1.setVisibility(View.GONE);
+        t2.setVisibility(View.GONE);
+        t3.setVisibility(View.GONE);
+        t4.setVisibility(View.GONE);
+        t5.setVisibility(View.GONE);
+        t6.setVisibility(View.GONE);
+        t7.setVisibility(View.GONE);
+        t8.setVisibility(View.GONE);
+        t9.setVisibility(View.GONE);
+
+    }
+
+    //region Navigation Drawer
     public void initNavigationDrawer() {
         // Create Navigation drawer and inlfate layout
         mNavigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -494,333 +648,6 @@ public class CategoriesActivity extends AppCompatActivity {
         }
     }
 
-    public void goToCards(View view) {
-        int x = view.getId();
-        Intent i = new Intent(CategoriesActivity.this, CardsActivity.class);
-        i.putExtra("city", lstCities.get(spnCities.getSelectedItemPosition()));
-        switch (x) {
-
-            case R.id.imageButton1:
-
-                i.putExtra("title", "مطاعم");
-                i.putExtra("name", "Restaurants");
-                break;
-            case R.id.imageButton2:
-                i.putExtra("title", "أدوات منزليه");
-                i.putExtra("name", "Home Tools");
-
-                break;
-            case R.id.imageButton3:
-                i.putExtra("title", "إكسسوار");
-                i.putExtra("name", "Accessories");
-                break;
-            case R.id.imageButton4:
-                i.putExtra("title", "موبايل");
-                i.putExtra("name", "Mobiles");
-                break;
-            case R.id.imageButton5:
-                i.putExtra("title", "كمبيوتر");
-                i.putExtra("name", "Computers");
-                break;
-            case R.id.imageButton6:
-                i.putExtra("title", "أحذية");
-                i.putExtra("name", "Shoes");
-                break;
-            case R.id.imageButton7:
-                i.putExtra("title", "ملابس");
-                i.putExtra("name", "Clothes");
-                break;
-            case R.id.imageButton8:
-                i.putExtra("name", "Super market");
-                i.putExtra("title", "سوبر ماركت");
-                break;
-            case R.id.imageButton9:
-                i.putExtra("name", "Services");
-                i.putExtra("title", "خدمات");
-                break;
-        }
-        startActivityForResult(i, 222);
-    }
-
-    private void initSpinner() {
-        lstCities = UtilityGeneral.loadCities(getBaseContext());
-        adapter = new ArrayAdapter<>(getBaseContext(), R.layout.spinner_item, lstCities);
-        spnCities.setAdapter(adapter);
-        spnCities.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                try {
-                    if (i == 0)
-                        if (!((LocationManager) getSystemService(Context.LOCATION_SERVICE)).isProviderEnabled(LocationManager.GPS_PROVIDER))
-                            Toast.makeText(getBaseContext(), "افتح الـ Location او سيتم أخذ آخر مكان مسجل", Toast.LENGTH_SHORT).show();
-                    ((TextView) adapterView.getChildAt(0)).setTextColor(Color.WHITE);
-                    hideViews();
-                    adapterView.getChildAt(0).setBackgroundColor(Color.TRANSPARENT);
-                    if (trdCurrentLocationSpinner != null && trdCurrentLocationSpinner.isAlive())
-                        trdCurrentLocationSpinner.interrupt();
-                    if (i == 0) {
-                        trdCurrentLocationSpinner = new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                final String city = UtilityGeneral.getCurrentCityEnglish(getApplicationContext());
-                                CategoriesActivity.this.runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        updateOffersNumber(city);
-                                    }
-                                });
-                            }
-                        });
-                        trdCurrentLocationSpinner.start();
-                    } else {
-                        updateOffersNumber(lstCities.get(i));
-                    }
-
-                } catch (Exception ex) {
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-            }
-        });
-    }
-
-    private void updateOffersNumber(String cityName) {
-
-        try {
-            UtilityFirebase.getActiveExistOffers(previousCity).removeEventListener(activeOffersListener);
-        } catch (Exception ex) {
-        }
-        previousCity = cityName;
-        UtilityFirebase.getActiveExistOffers(previousCity).addValueEventListener(activeOffersListener);
-//        UtilityFirebase.getCategoriesOffersNo(cityName, "Restaurants", new TextHttpResponseHandler() {
-//            @Override
-//            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-//            }
-//
-//            @Override
-//            public void onSuccess(int statusCode, Header[] headers, String responseString) {
-//                if (responseString == null || responseString.isEmpty() || responseString.equals("null")) {
-//                    return;
-//                } else {
-//                    HashMap<String, Boolean> mapCatOffersNo = new Gson().fromJson(responseString, new TypeToken<HashMap<String, Boolean>>() {
-//                    }.getType());
-//                    if (mapCatOffersNo.size() == 0) return;
-//
-//                    v1.setVisibility(View.VISIBLE);
-//                    t1.setText(mapCatOffersNo.size());
-//                    t1.setVisibility(View.VISIBLE);
-//
-//
-//                }
-//            }
-//        });
-//        UtilityFirebase.getCategoriesOffersNo(cityName, "Home Tools", new TextHttpResponseHandler() {
-//            @Override
-//            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-//            }
-//
-//            @Override
-//            public void onSuccess(int statusCode, Header[] headers, String responseString) {
-//                if (responseString == null || responseString.isEmpty() || responseString.equals("null")) {
-//                    return;
-//                } else {
-//                    HashMap<String, Boolean> mapCatOffersNo = new Gson().fromJson(responseString, new TypeToken<HashMap<String, Boolean>>() {
-//                    }.getType());
-//                    if (mapCatOffersNo.size() == 0) return;
-//                    v2.setVisibility(View.VISIBLE);
-//                    t2.setText(String.valueOf(mapCatOffersNo.size()));
-//                    t2.setVisibility(View.VISIBLE);
-//
-//                }
-//            }
-//        });
-//        UtilityFirebase.getCategoriesOffersNo(cityName, "Accessories", new TextHttpResponseHandler() {
-//            @Override
-//            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-//            }
-//
-//            @Override
-//            public void onSuccess(int statusCode, Header[] headers, String responseString) {
-//                if (responseString == null || responseString.isEmpty() || responseString.equals("null")) {
-//                    return;
-//                } else {
-//                    HashMap<String, Boolean> mapCatOffersNo = new Gson().fromJson(responseString, new TypeToken<HashMap<String, Boolean>>() {
-//                    }.getType());
-//                    if (mapCatOffersNo.size() == 0) return;
-//                    v3.setVisibility(View.VISIBLE);
-//                    t3.setText(String.valueOf(mapCatOffersNo.size()));
-//                    t3.setVisibility(View.VISIBLE);
-//
-//                }
-//            }
-//        });
-//        UtilityFirebase.getCategoriesOffersNo(cityName, "Mobiles", new TextHttpResponseHandler() {
-//            @Override
-//            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-//            }
-//
-//            @Override
-//            public void onSuccess(int statusCode, Header[] headers, String responseString) {
-//                if (responseString == null || responseString.isEmpty() || responseString.equals("null")) {
-//                    return;
-//                } else {
-//                    HashMap<String, Boolean> mapCatOffersNo = new Gson().fromJson(responseString, new TypeToken<HashMap<String, Boolean>>() {
-//                    }.getType());
-//                    if (mapCatOffersNo.size() == 0) return;
-//                    v4.setVisibility(View.VISIBLE);
-//                    t4.setText(String.valueOf(mapCatOffersNo.size()));
-//                    t4.setVisibility(View.VISIBLE);
-//
-//                }
-//            }
-//        });
-//        UtilityFirebase.getCategoriesOffersNo(cityName, "Computers", new TextHttpResponseHandler() {
-//            @Override
-//            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-//            }
-//
-//            @Override
-//            public void onSuccess(int statusCode, Header[] headers, String responseString) {
-//                if (responseString == null || responseString.isEmpty() || responseString.equals("null")) {
-//                    return;
-//                } else {
-//                    HashMap<String, Boolean> mapCatOffersNo = new Gson().fromJson(responseString, new TypeToken<HashMap<String, Boolean>>() {
-//                    }.getType());
-//                    if (mapCatOffersNo.size() == 0) return;
-//                    v5.setVisibility(View.VISIBLE);
-//                    t5.setText(String.valueOf(mapCatOffersNo.size()));
-//                    t5.setVisibility(View.VISIBLE);
-//
-//                }
-//            }
-//        });
-//        UtilityFirebase.getCategoriesOffersNo(cityName, "Shoes", new TextHttpResponseHandler() {
-//            @Override
-//            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-//            }
-//
-//            @Override
-//            public void onSuccess(int statusCode, Header[] headers, String responseString) {
-//                if (responseString == null || responseString.isEmpty() || responseString.equals("null")) {
-//                    return;
-//                } else {
-//                    HashMap<String, Boolean> mapCatOffersNo = new Gson().fromJson(responseString, new TypeToken<HashMap<String, Boolean>>() {
-//                    }.getType());
-//                    if (mapCatOffersNo.size() == 0) return;
-//                    v6.setVisibility(View.VISIBLE);
-//                    t6.setText(String.valueOf(mapCatOffersNo.size()));
-//                    t6.setVisibility(View.VISIBLE);
-//
-//                }
-//            }
-//        });
-//        UtilityFirebase.getCategoriesOffersNo(cityName, "Clothes", new TextHttpResponseHandler() {
-//            @Override
-//            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-//            }
-//
-//            @Override
-//            public void onSuccess(int statusCode, Header[] headers, String responseString) {
-//                if (responseString == null || responseString.isEmpty() || responseString.equals("null")) {
-//                    return;
-//                } else {
-//                    HashMap<String, Boolean> mapCatOffersNo = new Gson().fromJson(responseString, new TypeToken<HashMap<String, Boolean>>() {
-//                    }.getType());
-//                    if (mapCatOffersNo.size() == 0) return;
-//                    v7.setVisibility(View.VISIBLE);
-//                    t7.setText(String.valueOf(mapCatOffersNo.size()));
-//                    t7.setVisibility(View.VISIBLE);
-//                }
-//            }
-//        });
-//        UtilityFirebase.getCategoriesOffersNo(cityName, "Super market", new TextHttpResponseHandler() {
-//            @Override
-//            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-//            }
-//
-//            @Override
-//            public void onSuccess(int statusCode, Header[] headers, String responseString) {
-//                if (responseString == null || responseString.isEmpty() || responseString.equals("null")) {
-//                    return;
-//                } else {
-//                    HashMap<String, Boolean> mapCatOffersNo = new Gson().fromJson(responseString, new TypeToken<HashMap<String, Boolean>>() {
-//                    }.getType());
-//                    if (mapCatOffersNo.size() == 0) return;
-//                    v8.setVisibility(View.VISIBLE);
-//                    t8.setText(String.valueOf(mapCatOffersNo.size()));
-//                    t8.setVisibility(View.VISIBLE);
-//
-//                }
-//            }
-//        });
-//        UtilityFirebase.getCategoriesOffersNo(cityName, "Services", new TextHttpResponseHandler() {
-//            @Override
-//            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-//            }
-//
-//            @Override
-//            public void onSuccess(int statusCode, Header[] headers, String responseString) {
-//                if (responseString == null || responseString.isEmpty() || responseString.equals("null")) {
-//                    return;
-//                } else {
-//                    HashMap<String, Boolean> mapCatOffersNo = new Gson().fromJson(responseString, new TypeToken<HashMap<String, Boolean>>() {
-//                    }.getType());
-//                    if (mapCatOffersNo.size() == 0) return;
-//                    v9.setVisibility(View.VISIBLE);
-//                    t9.setText(String.valueOf(mapCatOffersNo.size()));
-//                }
-//                t9.setVisibility(View.VISIBLE);
-//            }
-//        });
-    }
-
-    private void loadCity() {
-        UtilityFirebase.getCities(new TextHttpResponseHandler() {
-            @Override
-            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-
-            }
-
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, String responseString) {
-                UtilityGeneral.saveCities(getBaseContext(), responseString);
-                initSpinner();
-            }
-        });
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                UtilityGeneral.getCurrentCityEnglish(getBaseContext());
-            }
-        }).start();
-    }
-
-    private void hideViews() {
-
-        v1.setVisibility(View.GONE);
-        v2.setVisibility(View.GONE);
-        v3.setVisibility(View.GONE);
-        v4.setVisibility(View.GONE);
-        v5.setVisibility(View.GONE);
-        v6.setVisibility(View.GONE);
-        v7.setVisibility(View.GONE);
-        v8.setVisibility(View.GONE);
-        v9.setVisibility(View.GONE);
-
-        t1.setVisibility(View.GONE);
-        t2.setVisibility(View.GONE);
-        t3.setVisibility(View.GONE);
-        t4.setVisibility(View.GONE);
-        t5.setVisibility(View.GONE);
-        t6.setVisibility(View.GONE);
-        t7.setVisibility(View.GONE);
-        t8.setVisibility(View.GONE);
-        t9.setVisibility(View.GONE);
-
-    }
-
     public void openFacebook() {
         try {
             getPackageManager().getPackageInfo("com.facebook.katana", 0);
@@ -829,6 +656,7 @@ public class CategoriesActivity extends AppCompatActivity {
             startActivityForResult(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.facebook.com/3roodk")), 222);
         }
     }
+    //endregion
 
     //region Signing
     User signingUser;
@@ -977,5 +805,4 @@ public class CategoriesActivity extends AppCompatActivity {
     }
 
     //endregion
-
 }

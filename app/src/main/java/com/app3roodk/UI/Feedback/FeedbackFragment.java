@@ -20,10 +20,11 @@ import com.google.firebase.database.DatabaseReference;
 public class FeedbackFragment extends Fragment {
 
     EditText edtxtName, edtxtEmail, edtxtTitle, edtxtContent;
-    TextInputLayout txtlytTitle, txtlytContent;
+    TextInputLayout txtlytTitle, txtlytContent, txtlytName, txtlytEmail;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_feedback, container, false);
+
         init(rootView);
         validateUser();
         clickConfig(rootView);
@@ -38,9 +39,16 @@ public class FeedbackFragment extends Fragment {
         edtxtName = (EditText) rootView.findViewById(R.id.edtxtName);
         txtlytTitle = (TextInputLayout) rootView.findViewById(R.id.txtlytTitle);
         txtlytContent = (TextInputLayout) rootView.findViewById(R.id.txtlytContent);
+        txtlytName = (TextInputLayout) rootView.findViewById(R.id.txtlytName);
+        txtlytEmail = (TextInputLayout) rootView.findViewById(R.id.txtlytEmail);
+        if (!UtilityGeneral.isRegisteredUser(getActivity()))
+            edtxtName.requestFocus();
+        else
+            edtxtTitle.requestFocus();
+
     }
 
-    private void validateUser() {
+    public void validateUser() {
         if (UtilityGeneral.isRegisteredUser(getActivity())) {
             edtxtEmail.setVisibility(View.GONE);
             edtxtName.setVisibility(View.GONE);
@@ -91,7 +99,7 @@ public class FeedbackFragment extends Fragment {
 
     private boolean validation() {
         if (edtxtTitle.getText().toString().trim().isEmpty()) {
-            txtlytTitle.setError("إدخل عنوان للرسالة");
+            txtlytTitle.setError("ادخل عنوان للرسالة");
             requestFocus(edtxtTitle);
             return false;
         } else {
@@ -99,13 +107,29 @@ public class FeedbackFragment extends Fragment {
         }
 
         if (edtxtContent.getText().toString().trim().isEmpty()) {
-            txtlytContent.setError("إدخل محتوى الرسالة");
+            txtlytContent.setError("ادخل محتوى الرسالة");
             requestFocus(edtxtContent);
             return false;
         } else {
             txtlytTitle.setErrorEnabled(false);
         }
+        if (!UtilityGeneral.isRegisteredUser(getActivity())) {
+            if (edtxtName.getText().toString().trim().isEmpty()) {
+                txtlytName.setError("ادخل الإسم");
+                requestFocus(edtxtName);
+                return false;
+            } else {
+                txtlytName.setErrorEnabled(false);
+            }
 
+            if (edtxtEmail.getText().toString().trim().isEmpty()) {
+                txtlytEmail.setError("ادخل ايميلك");
+                requestFocus(edtxtEmail);
+                return false;
+            } else {
+                txtlytEmail.setErrorEnabled(false);
+            }
+        }
         return true;
     }
 

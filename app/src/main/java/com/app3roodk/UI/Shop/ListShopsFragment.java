@@ -36,7 +36,7 @@ public class ListShopsFragment extends Fragment {
 
     private void init(View rootView) {
         lvShops = (ListView) rootView.findViewById(R.id.lstShops);
-        btnAdd = (FloatingActionButton) rootView.findViewById(R.id.fab);
+        btnAdd = (FloatingActionButton) getActivity().findViewById(R.id.fab);
         lstShopsString = new ArrayList<>();
         adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, lstShopsString);
         lvShops.setAdapter(adapter);
