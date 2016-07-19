@@ -436,6 +436,7 @@ public class AddNewOfferFragment extends Fragment {
         }
 
     }
+
     private void showMessageToast(String msg) {
         try {
             Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG).show();
@@ -488,12 +489,16 @@ public class AddNewOfferFragment extends Fragment {
                         showMessage("حصل مشكله شوف النت ");
                         Log.e("NewOfferFailed", databaseError.getMessage());
                     } else {
-
-                        UtilityFirebase.decreaseNumberOfOffersAvailable(getActivity(), new DatabaseReference.CompletionListener() {
+                        UtilityFirebase.createNewOfferExists(mOffer, new DatabaseReference.CompletionListener() {
                             @Override
                             public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                                showMessage("تم إضافه العرض، شكرا لك");
-                                getActivity().onBackPressed();
+                                UtilityFirebase.decreaseNumberOfOffersAvailable(getActivity(), new DatabaseReference.CompletionListener() {
+                                    @Override
+                                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                                        showMessage("تم إضافه العرض، شكرا لك");
+                                        getActivity().onBackPressed();
+                                    }
+                                });
                             }
                         });
                     }

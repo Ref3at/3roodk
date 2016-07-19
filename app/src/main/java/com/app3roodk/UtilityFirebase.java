@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.app3roodk.Schema.Comments;
+import com.app3roodk.Schema.ExistOffers;
 import com.app3roodk.Schema.Feedback;
 import com.app3roodk.Schema.Offer;
 import com.app3roodk.Schema.Shop;
@@ -68,10 +69,18 @@ public class UtilityFirebase {
         return FirebaseDatabase.getInstance().getReference("Offers").child(city).child(category).orderByChild("endTime").startAt(UtilityGeneral.getCurrentDate(new Date()));
     }
 
+    static public Query getActiveExistOffers(String city) {
+        return FirebaseDatabase.getInstance().getReference("OffersExist").child(city).orderByChild("endTime").startAt(UtilityGeneral.getCurrentDate(new Date()));
+    }
+
     static public void createNewOffer(Offer offer, DatabaseReference.CompletionListener listener) {
         DatabaseReference myRef = FirebaseDatabase.getInstance().getReference("Offers").child(offer.getCity()).child(offer.getCategoryName());
         offer.setObjectId(myRef.push().getKey());
         myRef.child(offer.getObjectId()).setValue(offer, listener);
+    }
+
+    static public void createNewOfferExists(Offer offer, DatabaseReference.CompletionListener listener) {
+        FirebaseDatabase.getInstance().getReference("OffersExist").child(offer.getCity()).child(offer.getObjectId()).setValue(new ExistOffers(offer.getEndTime(),offer.getCategoryName()), listener);
     }
 
     static public void increaseOfferViewsNum(Offer offer) {
