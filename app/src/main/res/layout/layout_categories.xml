@@ -51,7 +51,7 @@
                     android:layout_height="30dp"
                     android:layout_margin="8dp"
                     android:background="@drawable/absolute_circle"
-                    android:visibility="visible" />
+                    android:visibility="gone" />
 
                 <TextView
                     android:id="@+id/t1"
@@ -60,12 +60,12 @@
                     android:layout_height="30dp"
                     android:layout_margin="8dp"
                     android:gravity="center"
-
+                    android:visibility="gone"
                     android:text="0"
                     android:textColor="#fff"
                     android:textSize="18sp"
                     android:textStyle="bold"
-                    android:visibility="visible" />
+                     />
 
             </RelativeLayout>
 
@@ -103,7 +103,7 @@
                     android:layout_margin="8dp"
 
                     android:background="@drawable/absolute_circle"
-                    android:visibility="visible" />
+                    android:visibility="gone" />
 
                 <TextView
                     android:id="@+id/t2"
@@ -117,7 +117,7 @@
 
                     android:textSize="18sp"
                     android:textStyle="bold"
-                    android:visibility="visible" />
+                    android:visibility="gone" />
 
 
             </RelativeLayout>
@@ -156,7 +156,7 @@
                     android:layout_height="30dp"
                     android:layout_margin="8dp"
                     android:background="@drawable/absolute_circle"
-                    android:visibility="visible" />
+                    android:visibility="gone" />
 
                 <TextView
                     android:id="@+id/t3"
@@ -170,7 +170,7 @@
                     android:textColor="#fff"
                     android:textSize="18sp"
                     android:textStyle="bold"
-                    android:visibility="visible" />
+                    android:visibility="gone" />
             </RelativeLayout>
 
         </LinearLayout>
@@ -210,12 +210,12 @@
 
                 <View
                     android:id="@+id/v4"
+
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_margin="8dp"
-
                     android:background="@drawable/absolute_circle"
-                    android:visibility="visible" />
+                    android:visibility="gone" />
 
                 <TextView
                     android:id="@+id/t4"
@@ -227,8 +227,9 @@
                     android:text="0"
                     android:textColor="#fff"
                     android:textSize="18sp"
+                    android:visibility="gone"
                     android:textStyle="bold"
-                    android:visibility="visible" />
+                    />
             </RelativeLayout>
 
             <RelativeLayout
@@ -265,7 +266,7 @@
 
                     android:layout_margin="8dp"
                     android:background="@drawable/absolute_circle"
-                    android:visibility="visible" />
+                    android:visibility="gone" />
 
                 <TextView
                     android:id="@+id/t5"
@@ -278,7 +279,7 @@
                     android:textColor="#fff"
                     android:textSize="18sp"
                     android:textStyle="bold"
-                    android:visibility="visible" />
+                    android:visibility="gone" />
             </RelativeLayout>
 
             <RelativeLayout
@@ -314,7 +315,7 @@
                     android:layout_height="30dp"
                     android:layout_margin="8dp"
                     android:background="@drawable/absolute_circle"
-                    android:visibility="visible" />
+                    android:visibility="gone" />
 
                 <TextView
                     android:id="@+id/t6"
@@ -327,7 +328,7 @@
                     android:textColor="#fff"
                     android:textSize="18sp"
                     android:textStyle="bold"
-                    android:visibility="visible" />
+                    android:visibility="gone" />
             </RelativeLayout>
         </LinearLayout>
 
@@ -371,7 +372,7 @@
 
                     android:layout_margin="8dp"
                     android:background="@drawable/absolute_circle"
-                    android:visibility="visible" />
+                    android:visibility="gone" />
 
                 <TextView
                     android:id="@+id/t7"
@@ -384,7 +385,7 @@
                     android:textColor="#fff"
                     android:textSize="18sp"
                     android:textStyle="bold"
-                    android:visibility="visible" />
+                    android:visibility="gone" />
             </RelativeLayout>
 
             <RelativeLayout
@@ -420,7 +421,7 @@
                     android:layout_height="30dp"
                     android:layout_margin="8dp"
                     android:background="@drawable/absolute_circle"
-                    android:visibility="visible" />
+                    android:visibility="gone" />
 
                 <TextView
                     android:id="@+id/t8"
@@ -433,7 +434,7 @@
                     android:textColor="#fff"
                     android:textSize="18sp"
                     android:textStyle="bold"
-                    android:visibility="visible" />
+                    android:visibility="gone" />
 
 
             </RelativeLayout>
@@ -472,8 +473,8 @@
 
                     android:layout_margin="8dp"
                     android:background="@drawable/absolute_circle"
-                    android:visibility="visible" />
-
+                    android:visibility="gone" />
+7
                 <TextView
                     android:id="@+id/t9"
                     style="@android:style/Widget.Holo.Button.Borderless"
@@ -485,7 +486,7 @@
                     android:textColor="#fff"
                     android:textSize="18sp"
                     android:textStyle="bold"
-                    android:visibility="visible" />
+                    android:visibility="gone" />
             </RelativeLayout>
 
         </LinearLayout>
