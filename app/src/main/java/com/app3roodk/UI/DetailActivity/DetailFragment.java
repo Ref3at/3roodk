@@ -54,6 +54,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
+import com.like.LikeButton;
 import com.loopj.android.http.TextHttpResponseHandler;
 
 import java.util.ArrayList;
@@ -71,7 +72,10 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
     final static long hoursInMilli = minutesInMilli * 60;
     final static long daysInMilli = hoursInMilli * 24;
 
-    ImageButton btnFavorite, btnShare;
+    ImageButton  btnShare;
+
+    LikeButton btnFavorite;
+
     Button btnShopWay, btnComment;
     TextView txtViews, txtSale, txtPriceBefore, txtPriceAfter, txtDay, txtHour, txtMinute, txtDescription,
             txtShopName, txtWorkTime, txtAddress, txtMobile, txtRate;
@@ -323,7 +327,10 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
 
                                     @Override
                                     protected void onPostExecute(Integer rowsDeleted) {
-                                        btnFavorite.setImageResource(android.R.drawable.btn_star_big_off);
+                                       btnFavorite.setLiked(false);
+
+
+                                        // btnFavorite.setImageResource(android.R.drawable.btn_star_big_off);
                                         // if (mToast != null) {
                                         //    mToast.cancel();
                                         // }
@@ -381,7 +388,10 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
                                     @Override
                                     protected void onPostExecute(Void aVoid) {
                                         super.onPostExecute(aVoid);
-                                        btnFavorite.setImageResource(android.R.drawable.btn_star_big_on);
+                                        btnFavorite.setLiked(true);
+
+
+                                        // btnFavorite.setImageResource(android.R.drawable.btn_star_big_on);
                                         //  checked = true;
                                         showMessage("تم الإضافة إلي العروض المفضلة");
 
@@ -441,7 +451,7 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
     private void init(View rootView) {
         try {
             mSlider = (SliderLayout) rootView.findViewById(R.id.imgOffer);
-            btnFavorite = (ImageButton) rootView.findViewById(R.id.btnFavorite);
+            btnFavorite = (LikeButton) rootView.findViewById(R.id.btnFavorite);
             btnShare = (ImageButton) rootView.findViewById(R.id.btnShare);
             btnShopWay = (Button) rootView.findViewById(R.id.btnShopWay);
             btnComment = (Button) rootView.findViewById(R.id.btnComment);
@@ -615,9 +625,9 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
 
         public class FetchFromDB extends AsyncTask<ImageButton, Void, ImageButton> {
             int numRows;
-            ImageButton ItemFav;
+            LikeButton ItemFav;
 
-            public FetchFromDB(ImageButton btn) {
+            public FetchFromDB(LikeButton btn) {
                 this.ItemFav = btn;
 
             }
@@ -646,10 +656,11 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
             protected void onPostExecute(ImageButton menuItem) {
                 super.onPostExecute(menuItem);
 
+                btnFavorite.setLiked(false);
 
-                ItemFav.setImageResource(numRows >= 1 ?
-                        android.R.drawable.btn_star_big_on :
-                        android.R.drawable.star_big_off);
+                ItemFav.setLiked(numRows >= 1 ?
+                        true:
+                        false);
             }
         }
 

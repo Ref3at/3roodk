@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:custom="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -35,15 +36,21 @@
                     android:rotation="180"
                     android:layout_marginTop="230dp" />
 
-                <ImageButton
+
+                <com.like.LikeButton
                     android:id="@+id/btnFavorite"
-                    style="?android:attr/borderlessButtonStyle"
-                    android:layout_width="@dimen/cards_button_width"
-                    android:layout_height="@dimen/cards_button_height"
+                    android:elevation="5dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:icon_size="22dp"
+                    app:anim_scale_factor="3"
+                    app:icon_type="heart"
+                    app:is_enabled="true"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"
-                    android:layout_alignParentTop="true"
-                    tools:src="@drawable/ic_favorite_black_24dp" />
+                    android:layout_alignParentTop="true"/>
+
+
 
                 <ImageButton
                     android:id="@+id/btnShare"
