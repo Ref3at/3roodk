@@ -143,15 +143,15 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
         return rootView;
     }
 
-    private void validateUser() {
+    public void validateUser() {
         if (!UtilityGeneral.isRegisteredUser(getActivity())) {
             ratebar.setEnabled(false);
-            btnComment.setVisibility(View.GONE);
+            btnComment.setText("سجّل");
             edtxtComment.setText("سجل الأول علشان تعرف تعمل تعليق!");
             edtxtComment.setEnabled(false);
         } else {
             ratebar.setEnabled(true);
-            btnComment.setVisibility(View.VISIBLE);
+            btnComment.setText("أضف");
             edtxtComment.setText("");
             edtxtComment.setEnabled(true);
         }
@@ -183,61 +183,66 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
         btnComment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (edtxtComment.getText().toString().isEmpty()) {
-                    showMessage("اكتب التعليق من فضلك اولاً");
-                    return;
-                }
-                final Comments comment = new Comments();
-                if (offer.getUserId().equals(UtilityGeneral.loadUser(getActivity()).getObjectId())) {
-                    comment.setUserName(offer.getShopName());
-                    comment.setPhotoUrl(UtilityGeneral.loadShop(getActivity(), offer.getShopId()).getLogoId());
-                } else {
-                    assert auth.getCurrentUser().getPhotoUrl() != null;
-                    if (auth.getCurrentUser() != null && auth.getCurrentUser().getPhotoUrl() != null) {
-                        comment.setPhotoUrl(auth.getCurrentUser().getPhotoUrl().toString());
+                if (UtilityGeneral.isRegisteredUser(getActivity())) {
+                    if (edtxtComment.getText().toString().isEmpty()) {
+                        showMessage("اكتب التعليق من فضلك اولاً");
+                        return;
                     }
-                    comment.setUserName(UtilityGeneral.loadUser(getActivity()).getName());
-                }
-                comment.setUserId(UtilityGeneral.loadUser(getActivity()).getObjectId());
-                comment.setOfferId(offer.getObjectId());
-                comment.setCommentText(edtxtComment.getText().toString());
-
-                // hide keyboard
-                InputMethodManager inputManager = (InputMethodManager)
-                        getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-
-                inputManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(),
-                        InputMethodManager.HIDE_NOT_ALWAYS);
-                // end hide keyboard
-                UtilityFirebase.addNewComment(offer, comment, new DatabaseReference.CompletionListener() {
-                    @Override
-                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                        if (databaseError != null) {
-                            showMessage("حصل مشكله شوف النت ");
-                            Log.e("DetailFragment", "Add New Comment : " + databaseError.getMessage());
-                        } else {
-                            if (!(offer.getUserNotificationToken() == null || offer.getUserNotificationToken().isEmpty()
-                                    || offer.getShopName() == comment.getUserName())) {
-                                HashMap<String, String> mapOffer = new HashMap<>();
-                                mapOffer.put("offer", new Gson().toJson(offer));
-                                UtilityCloudMessaging.sendNotification(getActivity(), offer.getUserNotificationToken(),
-                                        UtilityCloudMessaging.COMMENT_TITLE, comment.getUserName() + UtilityCloudMessaging.COMMENT_BODY,
-                                        offer.getObjectId(), mapOffer, "OPEN_ACTIVITY_1", new TextHttpResponseHandler() {
-                                            @Override
-                                            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                                                Log.e("Send Notification err", responseString);
-                                            }
-
-                                            @Override
-                                            public void onSuccess(int statusCode, Header[] headers, String responseString) {
-                                                Log.e("Send Notification", responseString);
-                                            }
-                                        });
-                            }
-                            edtxtComment.setText("");
+                    final Comments comment = new Comments();
+                    if (offer.getUserId().equals(UtilityGeneral.loadUser(getActivity()).getObjectId())) {
+                        comment.setUserName(offer.getShopName());
+                        comment.setPhotoUrl(UtilityGeneral.loadShop(getActivity(), offer.getShopId()).getLogoId());
+                    } else {
+                        assert auth.getCurrentUser().getPhotoUrl() != null;
+                        if (auth.getCurrentUser() != null && auth.getCurrentUser().getPhotoUrl() != null) {
+                            comment.setPhotoUrl(auth.getCurrentUser().getPhotoUrl().toString());
                         }
+                        comment.setUserName(UtilityGeneral.loadUser(getActivity()).getName());
                     }
-                });
+                    comment.setUserId(UtilityGeneral.loadUser(getActivity()).getObjectId());
+                    comment.setOfferId(offer.getObjectId());
+                    comment.setCommentText(edtxtComment.getText().toString());
+
+                    // hide keyboard
+                    InputMethodManager inputManager = (InputMethodManager)
+                            getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+
+                    inputManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(),
+                            InputMethodManager.HIDE_NOT_ALWAYS);
+                    // end hide keyboard
+                    UtilityFirebase.addNewComment(offer, comment, new DatabaseReference.CompletionListener() {
+                        @Override
+                        public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                            if (databaseError != null) {
+                                showMessage("حصل مشكله شوف النت ");
+                                Log.e("DetailFragment", "Add New Comment : " + databaseError.getMessage());
+                            } else {
+                                if (!(offer.getUserNotificationToken() == null || offer.getUserNotificationToken().isEmpty()
+                                        || offer.getShopName() == comment.getUserName())) {
+                                    HashMap<String, String> mapOffer = new HashMap<>();
+                                    mapOffer.put("offer", new Gson().toJson(offer));
+                                    UtilityCloudMessaging.sendNotification(getActivity(), offer.getUserNotificationToken(),
+                                            UtilityCloudMessaging.COMMENT_TITLE, comment.getUserName() + UtilityCloudMessaging.COMMENT_BODY,
+                                            offer.getObjectId(), mapOffer, "OPEN_ACTIVITY_1", new TextHttpResponseHandler() {
+                                                @Override
+                                                public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                                                    Log.e("Send Notification err", responseString);
+                                                }
+
+                                                @Override
+                                                public void onSuccess(int statusCode, Header[] headers, String responseString) {
+                                                    Log.e("Send Notification", responseString);
+                                                }
+                                            });
+                                }
+                                edtxtComment.setText("");
+                            }
+                        }
+
+                    });
+                } else {
+                    ((DetailActivity) getActivity()).signingClick();
+                }
             }
         });
         ratebar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
@@ -702,14 +707,8 @@ class CommentsAdapter extends ArrayAdapter {
             holder = (CommentHolder) row.getTag();
         }
         final Comments comment = data.get(position);
-        if (!UtilityGeneral.isRegisteredUser(row.getContext())) {
-            holder.btnLike.setEnabled(false);
-            holder.btnDislike.setEnabled(false);
-        } else {
-            holder.btnLike.setEnabled(true);
-            holder.btnDislike.setEnabled(true);
-        }
-
+        holder.btnLike.setEnabled(true);
+        holder.btnDislike.setEnabled(true);
         if (comment.getPhotoUrl() != null && !comment.getPhotoUrl().isEmpty()) {
             Glide.with(getContext())
                     .load(comment.getPhotoUrl())
@@ -758,23 +757,26 @@ class CommentsAdapter extends ArrayAdapter {
             holder.btnLike.setLiked(false);
 
         holder.btnLike.setOnLikeListener(new OnLikeListener() {
-           @Override
-           public void liked(LikeButton likeButton) {
-               UtilityFirebase.updateComment(comment, UtilityGeneral.loadUser(getContext()).getObjectId(), true);
+            @Override
+            public void liked(LikeButton likeButton) {
+                if (UtilityGeneral.isRegisteredUser(getContext())) {
+                    UtilityFirebase.updateComment(comment, UtilityGeneral.loadUser(getContext()).getObjectId(), true, false);
+                } else {
+                    Toast.makeText(getContext(), "سجّل الأول", Toast.LENGTH_LONG).show();
+                    holder.btnLike.setLiked(false);
+                }
 
-           }
+            }
 
-           @Override
-           public void unLiked(LikeButton likeButton) {
-               Toast.makeText(getContext(),"remove like", Toast.LENGTH_SHORT ).show();
-           }
+            @Override
+            public void unLiked(LikeButton likeButton) {
+                UtilityFirebase.updateComment(comment, UtilityGeneral.loadUser(getContext()).getObjectId(), true, true);
+            }
         });
 
 
-
-
         if (comment.getUserDislike().containsKey(UtilityGeneral.loadUser(context).getObjectId()))
-         holder.btnDislike.setLiked(true);
+            holder.btnDislike.setLiked(true);
 
         else
             holder.btnDislike.setLiked(false);
@@ -782,19 +784,22 @@ class CommentsAdapter extends ArrayAdapter {
         holder.btnDislike.setOnLikeListener(new OnLikeListener() {
             @Override
             public void liked(LikeButton likeButton) {
+                if (UtilityGeneral.isRegisteredUser(getContext())) {
 
-                UtilityFirebase.updateComment(comment, UtilityGeneral.loadUser(getContext()).getObjectId(), false);
-
+                    UtilityFirebase.updateComment(comment, UtilityGeneral.loadUser(getContext()).getObjectId(), false, false);
+                } else {
+                    Toast.makeText(getContext(), "سجّل الأول", Toast.LENGTH_LONG).show();
+                    holder.btnDislike.setLiked(false);
+                }
 
             }
 
             @Override
             public void unLiked(LikeButton likeButton) {
-                Toast.makeText(getContext(),"remove Dislike", Toast.LENGTH_SHORT ).show();
+                UtilityFirebase.updateComment(comment, UtilityGeneral.loadUser(getContext()).getObjectId(), false, true);
 
             }
         });
-
 
 
         return row;

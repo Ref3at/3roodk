@@ -105,7 +105,7 @@
         app:circle_start_color="@android:color/holo_blue_bright"
         app:dots_primary_color="@android:color/holo_blue_light"
         app:dots_secondary_color="@android:color/holo_blue_dark"
-        app:icon_size="22dp"
+        app:icon_size="15dp"
         app:like_drawable="@drawable/thumb_on"
         app:unlike_drawable="@drawable/thumb_off"
         tools:targetApi="lollipop" />
@@ -132,6 +132,7 @@
         android:layout_height="40dp"
         android:layout_toRightOf="@id/txtDisikeNumber"
         android:padding="8dp"
+        app:icon_size="15dp"
         app:like_drawable="@drawable/dislikered"
         app:unlike_drawable="@drawable/dislikegray"
         tools:targetApi="lollipop"

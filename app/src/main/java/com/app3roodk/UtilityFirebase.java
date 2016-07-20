@@ -45,13 +45,23 @@ public class UtilityFirebase {
         FirebaseDatabase.getInstance().getReference("Comments").child(offerId).removeValue();
     }
 
-    static public void updateComment(Comments comment, String userId, boolean like) {
+    static public void updateComment(Comments comment, String userId, boolean like, boolean remove) {
         if (like) {
-            FirebaseDatabase.getInstance().getReference("Comments").child(comment.getOfferId()).child(comment.getObjectId()).child("userLike").child(userId).setValue("Like");
-            FirebaseDatabase.getInstance().getReference("Comments").child(comment.getOfferId()).child(comment.getObjectId()).child("userDislike").child(userId).removeValue();
+            if (!remove) {
+                FirebaseDatabase.getInstance().getReference("Comments").child(comment.getOfferId()).child(comment.getObjectId()).child("userLike").child(userId).setValue("Like");
+                FirebaseDatabase.getInstance().getReference("Comments").child(comment.getOfferId()).child(comment.getObjectId()).child("userDislike").child(userId).removeValue();
+            } else {
+                FirebaseDatabase.getInstance().getReference("Comments").child(comment.getOfferId()).child(comment.getObjectId()).child("userLike").child(userId).removeValue();
+                FirebaseDatabase.getInstance().getReference("Comments").child(comment.getOfferId()).child(comment.getObjectId()).child("userDislike").child(userId).removeValue();
+            }
         } else {
-            FirebaseDatabase.getInstance().getReference("Comments").child(comment.getOfferId()).child(comment.getObjectId()).child("userDislike").child(userId).setValue("Dislike");
-            FirebaseDatabase.getInstance().getReference("Comments").child(comment.getOfferId()).child(comment.getObjectId()).child("userLike").child(userId).removeValue();
+            if (!remove) {
+                FirebaseDatabase.getInstance().getReference("Comments").child(comment.getOfferId()).child(comment.getObjectId()).child("userDislike").child(userId).setValue("Dislike");
+                FirebaseDatabase.getInstance().getReference("Comments").child(comment.getOfferId()).child(comment.getObjectId()).child("userLike").child(userId).removeValue();
+            } else {
+                FirebaseDatabase.getInstance().getReference("Comments").child(comment.getOfferId()).child(comment.getObjectId()).child("userDislike").child(userId).removeValue();
+                FirebaseDatabase.getInstance().getReference("Comments").child(comment.getOfferId()).child(comment.getObjectId()).child("userLike").child(userId).removeValue();
+            }
         }
     }
     //endregion
@@ -80,7 +90,7 @@ public class UtilityFirebase {
     }
 
     static public void createNewOfferExists(Offer offer, DatabaseReference.CompletionListener listener) {
-        FirebaseDatabase.getInstance().getReference("OffersExist").child(offer.getCity()).child(offer.getObjectId()).setValue(new ExistOffers(offer.getEndTime(),offer.getCategoryName()), listener);
+        FirebaseDatabase.getInstance().getReference("OffersExist").child(offer.getCity()).child(offer.getObjectId()).setValue(new ExistOffers(offer.getEndTime(), offer.getCategoryName()), listener);
     }
 
     static public void increaseOfferViewsNum(Offer offer) {
@@ -98,6 +108,10 @@ public class UtilityFirebase {
 
     static public void removeOffer(Offer offer, DatabaseReference.CompletionListener listener) {
         FirebaseDatabase.getInstance().getReference("Offers").child(offer.getCity()).child(offer.getCategoryName()).child(offer.getObjectId()).removeValue(listener);
+    }
+
+    static public void removeOfferExists(Offer offer, DatabaseReference.CompletionListener listener) {
+        FirebaseDatabase.getInstance().getReference("OffersExist").child(offer.getCity()).child(offer.getObjectId()).removeValue(listener);
     }
 
     static public void updateOfferUserNotificationToken(final Offer offer) {
@@ -252,7 +266,7 @@ public class UtilityFirebase {
 
     // region CityCategoriesOffersNo.
     static public void getCategoriesOffersNo(String city, String cat, TextHttpResponseHandler listener) {
-        new AsyncHttpClient().get("https://project-5508893721375612998.firebaseio.com/Offers"+"/"+city+"/"+cat+".json?shallow=true", listener);
+        new AsyncHttpClient().get("https://project-5508893721375612998.firebaseio.com/Offers" + "/" + city + "/" + cat + ".json?shallow=true", listener);
     }
     //endregion
 

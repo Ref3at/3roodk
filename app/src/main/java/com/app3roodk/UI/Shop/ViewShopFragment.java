@@ -172,12 +172,15 @@ public class ViewShopFragment extends Fragment {
                                     UtilityFirebase.removeOffer(lstOffers.get(position),new DatabaseReference.CompletionListener() {
                                         @Override
                                         public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                                            UtilityFirebase.removeOfferComments(lstOffers.get(position).getObjectId());
-                                            lstOffersTitles.remove(position);
-                                            lstOffers.remove(position);
-                                            adapter.notifyDataSetChanged();
-                                            UtilityGeneral.setListViewHeightBasedOnChildren(lvOffers);
-                                            lvOffers.getLayoutParams().height = lvOffers.getLayoutParams().height + 100;
+                                            UtilityFirebase.removeOfferExists(lstOffers.get(position), new DatabaseReference.CompletionListener() {
+                                                @Override
+                                                public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                                                    UtilityFirebase.removeOfferComments(lstOffers.get(position).getObjectId());
+                                                    lstOffersTitles.remove(position);
+                                                    lstOffers.remove(position);
+                                                    adapter.notifyDataSetChanged();
+                                                }
+                                            });
                                         }
                                     });
                                     break;
