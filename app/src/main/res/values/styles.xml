@@ -70,8 +70,9 @@
 
     <style name="Widget.Plaid" parent="android:Widget" />
 
-
-
+    <style name="MyTabLayoutTextAppearance" parent="TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse">
+        <item name="android:textSize">18sp</item>
+    </style>
 
     <style name="TextAppearance.Comment" parent="@android:style/TextAppearance.Material.Body1" tools:targetApi="lollipop">
         <item name="android:textSize">15sp</item>

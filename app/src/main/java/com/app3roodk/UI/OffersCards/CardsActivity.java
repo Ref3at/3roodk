@@ -1,8 +1,10 @@
 package com.app3roodk.UI.OffersCards;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -13,7 +15,6 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
-import android.support.design.widget.SwipeDismissBehavior;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -67,7 +68,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class CardsActivity extends AppCompatActivity implements CardsFragment.Callback , CardsFragment.CallbackSnackBehavior {
+public class CardsActivity extends AppCompatActivity implements CardsFragment.Callback, CardsFragment.CallbackSnackBehavior {
 
     Intent mIntent;
     DrawerLayout mDrawerLayout;
@@ -110,11 +111,11 @@ public class CardsActivity extends AppCompatActivity implements CardsFragment.Ca
             @Override
             public void onClick(View v) {
                 if (!UtilityGeneral.isRegisteredUser(getBaseContext())) {
-                    signingClick();
+                    signInBuilder();
                     return;
                 }
                 if (!UtilityGeneral.isShopExist(getBaseContext())) {
-                    startActivity(new Intent(getBaseContext(), ShopActivity.class));
+                    addShopInBuilder();
                     return;
                 }
                 startActivity(new Intent(getBaseContext(), AddNewOfferActivity.class));
@@ -241,6 +242,46 @@ public class CardsActivity extends AppCompatActivity implements CardsFragment.Ca
     public void facebookIntent() {
 
         startActivity(getOpenFacebookIntent(getApplicationContext()));
+    }
+
+    private void signInBuilder() {
+        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                    case DialogInterface.BUTTON_POSITIVE:
+                        signingClick();
+                        break;
+
+                    case DialogInterface.BUTTON_NEGATIVE:
+                        break;
+                }
+            }
+        };
+        AlertDialog.Builder builder = new AlertDialog.Builder(CardsActivity.this);
+        builder.setMessage("يجب عليك تسجيل الدخول وإمتلاك محل لتتمكن من إضافة عرض")
+                .setPositiveButton("تسجيل الدخول", dialogClickListener)
+                .setNegativeButton("إلغاء", dialogClickListener).show();
+    }
+
+    private void addShopInBuilder() {
+        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                    case DialogInterface.BUTTON_POSITIVE:
+                        startActivity(new Intent(getBaseContext(), ShopActivity.class));
+                        break;
+
+                    case DialogInterface.BUTTON_NEGATIVE:
+                        break;
+                }
+            }
+        };
+        AlertDialog.Builder builder = new AlertDialog.Builder(CardsActivity.this);
+        builder.setMessage("يجب إضافة محل واحد على الأقل لتتمكن من إضافة عرض")
+                .setPositiveButton("إضافة محل", dialogClickListener)
+                .setNegativeButton("إلغاء", dialogClickListener).show();
     }
 
     @Override
@@ -544,7 +585,7 @@ public class CardsActivity extends AppCompatActivity implements CardsFragment.Ca
 
     @Override
     public void onItemSelected(RecyclerView recyclerView) {
-            fab.attachToRecyclerView(recyclerView);
+        fab.attachToRecyclerView(recyclerView);
     }
 
     @Override

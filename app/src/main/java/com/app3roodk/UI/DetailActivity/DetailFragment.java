@@ -55,6 +55,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.like.LikeButton;
+import com.like.OnLikeListener;
 import com.loopj.android.http.TextHttpResponseHandler;
 
 import java.util.ArrayList;
@@ -72,7 +73,7 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
     final static long hoursInMilli = minutesInMilli * 60;
     final static long daysInMilli = hoursInMilli * 24;
 
-    ImageButton  btnShare;
+    ImageButton btnShare;
 
     LikeButton btnFavorite;
 
@@ -281,128 +282,15 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
             }
         });
 
-        btnFavorite.setOnClickListener(new View.OnClickListener() {
+        btnFavorite.setOnLikeListener(new OnLikeListener() {
             @Override
-            public void onClick(View v) {
-                if (offer != null) {
-                    // check if offer is in favorites or not
+            public void liked(LikeButton likeButton) {
+                clickFavorite();
+            }
 
-                    new AsyncTask<Void, Void, Integer>() {
-
-                        @Override
-                        protected Integer doInBackground(Void... params) {
-
-                            Cursor cursor = getActivity().getContentResolver().query(TestTable.CONTENT_URI, null
-                                    , TestTable.FIELD_OBJECTID + " = ?" // selection
-                                    , new String[]{offer.getObjectId()}
-
-                                    , null);
-                            int numRows = 0;
-                            if (cursor != null) {
-                                numRows = cursor.getCount();
-                                cursor.close();
-                            }
-                            return numRows;
-                        }
-
-                        @Override
-                        protected void onPostExecute(Integer numRows) {
-                            // if it is in favorites
-                            if (numRows >= 1) {
-                                // delete from favorites
-                                new AsyncTask<Void, Void, Integer>() {
-                                    @Override
-                                    protected Integer doInBackground(Void... params) {
-
-                                    /*    // delete poster form storage
-                                        if (mMovie.poster_Path != null) {
-                                            new File(mMovie.poster_Path.toString()).delete();
-                                        } */
-                                        return getActivity().getContentResolver().delete(
-                                                TestTable.CONTENT_URI,
-                                                TestTable.FIELD_OBJECTID + " = ?",
-                                                new String[]{offer.getObjectId()}
-                                        );
-                                    }
-
-                                    @Override
-                                    protected void onPostExecute(Integer rowsDeleted) {
-                                       btnFavorite.setLiked(false);
-
-
-                                        // btnFavorite.setImageResource(android.R.drawable.btn_star_big_off);
-                                        // if (mToast != null) {
-                                        //    mToast.cancel();
-                                        // }
-                                        showMessage("تم الإزالة من العروض المفضلة");
-
-                                    }
-                                }.execute();
-                            }
-
-                            // if it is not in favorites
-                            else {
-                                // add to favorites
-                                new AsyncTask<Void, Void, Void>() {
-                                    String poster_loc;
-                                    String backdroploc;
-
-                                    HashMap<String, String> shopInfoHashmap = new HashMap<String, String>();
-
-
-                                    @Override
-                                    protected void onPreExecute() {
-                                        super.onPreExecute();
-                                        if (shop != null) {
-                                            shopInfoHashmap.put("shopAddress", shop.getAddress());
-                                            shopInfoHashmap.put("shopWorkingTime", shop.getWorkingTime());
-                                            shopInfoHashmap.put("shopContacts", shop.getContacts());
-
-                                            offer.setShopInfoForFavoeites(ObjectConverter.fromHashmapToStringUsersRates(shopInfoHashmap));
-                                        }
-
-
-                                        //*************************************************************************************************
-                                        //*** hna i will save the poster
-                                        //     poster_loc = downloadPoster();
-                                        //    backdroploc = downloadBackdrop();
-
-                                    }
-
-                                    @Override
-                                    protected Void doInBackground(Void... params) {
-                                        //*************************************************************************************************
-                                        //*** hna i will save the poster
-
-                                        //  mMovie.setPoster_Path(poster_loc);
-                                        //*************************************************************************************************
-                                        //*** hna i will save the backdrop
-                                        //   mMovie.setBackdrop_path(backdroploc);
-
-
-                                        getActivity().getContentResolver().insert(TestTable.CONTENT_URI, TestTable.getContentValues(offer, false));
-                                        return null;
-                                    }
-
-
-                                    @Override
-                                    protected void onPostExecute(Void aVoid) {
-                                        super.onPostExecute(aVoid);
-                                        btnFavorite.setLiked(true);
-
-
-                                        // btnFavorite.setImageResource(android.R.drawable.btn_star_big_on);
-                                        //  checked = true;
-                                        showMessage("تم الإضافة إلي العروض المفضلة");
-
-                                    }
-                                }.execute();
-                            }
-                        }
-                    }.execute();
-                }
-
-
+            @Override
+            public void unLiked(LikeButton likeButton) {
+                clickFavorite();
             }
         });
 
@@ -413,6 +301,126 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
 
             }
         });
+    }
+
+    private void clickFavorite() {
+        if (offer != null) {
+            // check if offer is in favorites or not
+
+            new AsyncTask<Void, Void, Integer>() {
+
+                @Override
+                protected Integer doInBackground(Void... params) {
+
+                    Cursor cursor = getActivity().getContentResolver().query(TestTable.CONTENT_URI, null
+                            , TestTable.FIELD_OBJECTID + " = ?" // selection
+                            , new String[]{offer.getObjectId()}
+
+                            , null);
+                    int numRows = 0;
+                    if (cursor != null) {
+                        numRows = cursor.getCount();
+                        cursor.close();
+                    }
+                    return numRows;
+                }
+
+                @Override
+                protected void onPostExecute(Integer numRows) {
+                    // if it is in favorites
+                    if (numRows >= 1) {
+                        // delete from favorites
+                        new AsyncTask<Void, Void, Integer>() {
+                            @Override
+                            protected Integer doInBackground(Void... params) {
+
+                                    /*    // delete poster form storage
+                                        if (mMovie.poster_Path != null) {
+                                            new File(mMovie.poster_Path.toString()).delete();
+                                        } */
+                                return getActivity().getContentResolver().delete(
+                                        TestTable.CONTENT_URI,
+                                        TestTable.FIELD_OBJECTID + " = ?",
+                                        new String[]{offer.getObjectId()}
+                                );
+                            }
+
+                            @Override
+                            protected void onPostExecute(Integer rowsDeleted) {
+                                btnFavorite.setLiked(false);
+
+
+                                // btnFavorite.setImageResource(android.R.drawable.btn_star_big_off);
+                                // if (mToast != null) {
+                                //    mToast.cancel();
+                                // }
+                                showMessage("تم الإزالة من العروض المفضلة");
+
+                            }
+                        }.execute();
+                    }
+
+                    // if it is not in favorites
+                    else {
+                        // add to favorites
+                        new AsyncTask<Void, Void, Void>() {
+                            String poster_loc;
+                            String backdroploc;
+
+                            HashMap<String, String> shopInfoHashmap = new HashMap<String, String>();
+
+
+                            @Override
+                            protected void onPreExecute() {
+                                super.onPreExecute();
+                                if (shop != null) {
+                                    shopInfoHashmap.put("shopAddress", shop.getAddress());
+                                    shopInfoHashmap.put("shopWorkingTime", shop.getWorkingTime());
+                                    shopInfoHashmap.put("shopContacts", shop.getContacts());
+
+                                    offer.setShopInfoForFavoeites(ObjectConverter.fromHashmapToStringUsersRates(shopInfoHashmap));
+                                }
+
+
+                                //*************************************************************************************************
+                                //*** hna i will save the poster
+                                //     poster_loc = downloadPoster();
+                                //    backdroploc = downloadBackdrop();
+
+                            }
+
+                            @Override
+                            protected Void doInBackground(Void... params) {
+                                //*************************************************************************************************
+                                //*** hna i will save the poster
+
+                                //  mMovie.setPoster_Path(poster_loc);
+                                //*************************************************************************************************
+                                //*** hna i will save the backdrop
+                                //   mMovie.setBackdrop_path(backdroploc);
+
+
+                                getActivity().getContentResolver().insert(TestTable.CONTENT_URI, TestTable.getContentValues(offer, false));
+                                return null;
+                            }
+
+
+                            @Override
+                            protected void onPostExecute(Void aVoid) {
+                                super.onPostExecute(aVoid);
+                                btnFavorite.setLiked(true);
+
+
+                                // btnFavorite.setImageResource(android.R.drawable.btn_star_big_on);
+                                //  checked = true;
+                                showMessage("تم الإضافة إلي العروض المفضلة");
+
+                            }
+                        }.execute();
+                    }
+                }
+            }.execute();
+        }
     }
 
     private void makeFirebaseReferences() {
@@ -619,175 +627,175 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
             imgs.add(lstImagePaths.get(i));
         for (int i = 0; i < mSlider.getCurrentPosition(); i++)
             imgs.add(lstImagePaths.get(i));
-            intent.putStringArrayListExtra("IMAGES", imgs);
-            startActivity(intent);
-        }
-
-        public class FetchFromDB extends AsyncTask<ImageButton, Void, ImageButton> {
-            int numRows;
-            LikeButton ItemFav;
-
-            public FetchFromDB(LikeButton btn) {
-                this.ItemFav = btn;
-
-            }
-
-            @Override
-            protected ImageButton doInBackground(ImageButton... params) {
-                if (offer.getObjectId() != null) {
-                    if (getActivity() != null) {
-                        Cursor cursor = getActivity().getContentResolver().query(TestTable.CONTENT_URI, null
-                                , TestTable.FIELD_OBJECTID + " = ?" // selection
-                                , new String[]{offer.getObjectId()}
-                                , null);
-
-                        assert cursor != null;
-                        if (cursor != null) {
-                            this.numRows = cursor.getCount();
-
-                            cursor.close();
-                        }
-                    }
-                }  //testRows = Fav_movieTable.getRows(cursor, false);
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(ImageButton menuItem) {
-                super.onPostExecute(menuItem);
-
-                btnFavorite.setLiked(false);
-
-                ItemFav.setLiked(numRows >= 1 ?
-                        true:
-                        false);
-            }
-        }
-
+        intent.putStringArrayListExtra("IMAGES", imgs);
+        startActivity(intent);
     }
 
-    class CommentsAdapter extends ArrayAdapter {
+    public class FetchFromDB extends AsyncTask<ImageButton, Void, ImageButton> {
+        int numRows;
+        LikeButton ItemFav;
 
-        Context context;
-        int layoutResourceId;
-        ArrayList<Comments> data = null;
+        public FetchFromDB(LikeButton btn) {
+            this.ItemFav = btn;
 
-
-        public CommentsAdapter(Context context, int layoutResourceId, ArrayList<Comments> data) {
-            super(context, layoutResourceId, data);
-            this.layoutResourceId = layoutResourceId;
-            this.context = context;
-            this.data = data;
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            View row = convertView;
-            final CommentHolder holder;
-            if (row == null) {
-                LayoutInflater inflater = ((Activity) context).getLayoutInflater();
-                row = inflater.inflate(layoutResourceId, parent, false);
-                holder = new CommentHolder(row);
-                row.setTag(holder);
-            } else {
-                holder = (CommentHolder) row.getTag();
-            }
-            final Comments comment = data.get(position);
-            if (!UtilityGeneral.isRegisteredUser(row.getContext())) {
-                holder.btnLike.setEnabled(false);
-                holder.btnDislike.setEnabled(false);
-            } else {
-                holder.btnLike.setEnabled(true);
-                holder.btnDislike.setEnabled(true);
-            }
+        protected ImageButton doInBackground(ImageButton... params) {
+            if (offer.getObjectId() != null) {
+                if (getActivity() != null) {
+                    Cursor cursor = getActivity().getContentResolver().query(TestTable.CONTENT_URI, null
+                            , TestTable.FIELD_OBJECTID + " = ?" // selection
+                            , new String[]{offer.getObjectId()}
+                            , null);
 
-            if (comment.getPhotoUrl() != null && !comment.getPhotoUrl().isEmpty()) {
-                Glide.with(getContext())
-                        .load(comment.getPhotoUrl())
-                        .asBitmap()
-                        .into(new BitmapImageViewTarget(holder.userImage) {
-                            @Override
-                            protected void setResource(Bitmap resource) {
-                                RoundedBitmapDrawable circularBitmapDrawable =
-                                        RoundedBitmapDrawableFactory.create(getContext().getResources(), resource);
-                                circularBitmapDrawable.setCircular(true);
-                                holder.userImage.setImageDrawable(circularBitmapDrawable);
-                            }
-                        });
-            } else {
-                Glide.with(getContext())
-                        .load(R.drawable.defaultavatar)
-                        .asBitmap()
-                        .into(new BitmapImageViewTarget(holder.userImage) {
-                            @Override
-                            protected void setResource(Bitmap resource) {
-                                RoundedBitmapDrawable circularBitmapDrawable =
-                                        RoundedBitmapDrawableFactory.create(getContext().getResources(), resource);
-                                circularBitmapDrawable.setCircular(true);
-                                holder.userImage.setImageDrawable(circularBitmapDrawable);
-                            }
-                        });
-            }
+                    assert cursor != null;
+                    if (cursor != null) {
+                        this.numRows = cursor.getCount();
 
-            holder.Name.setText(comment.getUserName());
-            holder.Comment.setText(comment.getCommentText());
+                        cursor.close();
+                    }
+                }
+            }  //testRows = Fav_movieTable.getRows(cursor, false);
+            return null;
+        }
 
-            if (comment.getUserLike() != null)
-                holder.LikeNumber.setText(String.valueOf(comment.getUserLike().size()));
-            else
-                holder.LikeNumber.setText("0");
-            if (comment.getUserDislike() != null)
-                holder.DislikeNumber.setText(String.valueOf(comment.getUserDislike().size()));
-            else
-                holder.DislikeNumber.setText("0");
-            holder.Date.setText(comment.getReadableTime());
-            if (comment.getUserLike().containsKey(UtilityGeneral.loadUser(context).getObjectId()))
-                //    holder.btnLike.setBackgroundResource(R.drawable.likegreen);
-                holder.btnLike.setImageDrawable(getContext().getResources().getDrawable(R.drawable.likegreen));
-            else
-                //   holder.btnLike.setBackgroundResource(R.drawable.likegray);
-                holder.btnLike.setImageDrawable(getContext().getResources().getDrawable(R.drawable.likegray));
-            if (comment.getUserDislike().containsKey(UtilityGeneral.loadUser(context).getObjectId()))
-                //   holder.btnDislike.setBackgroundResource(R.drawable.dislikered);
-                holder.btnDislike.setImageDrawable(getContext().getResources().getDrawable(R.drawable.dislikered));
+        @Override
+        protected void onPostExecute(ImageButton menuItem) {
+            super.onPostExecute(menuItem);
 
-            else
-                holder.btnDislike.setImageDrawable(getContext().getResources().getDrawable(R.drawable.dislikegray));
-            // holder.btnDislike.setBackgroundResource(R.drawable.dislikegray);
-            holder.btnLike.setOnClickListener(
-                    new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            UtilityFirebase.updateComment(comment, UtilityGeneral.loadUser(v.getContext()).getObjectId(), true);
-                        }
-                    });
+            btnFavorite.setLiked(false);
 
-            holder.btnDislike.setOnClickListener(
-                    new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            UtilityFirebase.updateComment(comment, UtilityGeneral.loadUser(v.getContext()).getObjectId(), false);
-                        }
-                    });
-
-            return row;
+            ItemFav.setLiked(numRows >= 1 ?
+                    true :
+                    false);
         }
     }
 
-    class CommentHolder {
-        public TextView Name, Comment, Date, LikeNumber, DislikeNumber;
-        public ImageButton btnLike, btnDislike;
-        ImageView userImage;
+}
 
-        public CommentHolder(View rootView) {
-            Name = (TextView) rootView.findViewById(R.id.txtName);
-            Comment = (TextView) rootView.findViewById(R.id.txtComment);
-            Date = (TextView) rootView.findViewById(R.id.txtTime);
-            LikeNumber = (TextView) rootView.findViewById(R.id.txtLikeNumber);
-            DislikeNumber = (TextView) rootView.findViewById(R.id.txtDisikeNumber);
-            btnLike = (ImageButton) rootView.findViewById(R.id.btnLike);
-            btnDislike = (ImageButton) rootView.findViewById(R.id.btnDislike);
-            userImage = (ImageView) rootView.findViewById(R.id.user_avatar);
+class CommentsAdapter extends ArrayAdapter {
 
-        }
+    Context context;
+    int layoutResourceId;
+    ArrayList<Comments> data = null;
+
+
+    public CommentsAdapter(Context context, int layoutResourceId, ArrayList<Comments> data) {
+        super(context, layoutResourceId, data);
+        this.layoutResourceId = layoutResourceId;
+        this.context = context;
+        this.data = data;
     }
+
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        View row = convertView;
+        final CommentHolder holder;
+        if (row == null) {
+            LayoutInflater inflater = ((Activity) context).getLayoutInflater();
+            row = inflater.inflate(layoutResourceId, parent, false);
+            holder = new CommentHolder(row);
+            row.setTag(holder);
+        } else {
+            holder = (CommentHolder) row.getTag();
+        }
+        final Comments comment = data.get(position);
+        if (!UtilityGeneral.isRegisteredUser(row.getContext())) {
+            holder.btnLike.setEnabled(false);
+            holder.btnDislike.setEnabled(false);
+        } else {
+            holder.btnLike.setEnabled(true);
+            holder.btnDislike.setEnabled(true);
+        }
+
+        if (comment.getPhotoUrl() != null && !comment.getPhotoUrl().isEmpty()) {
+            Glide.with(getContext())
+                    .load(comment.getPhotoUrl())
+                    .asBitmap()
+                    .into(new BitmapImageViewTarget(holder.userImage) {
+                        @Override
+                        protected void setResource(Bitmap resource) {
+                            RoundedBitmapDrawable circularBitmapDrawable =
+                                    RoundedBitmapDrawableFactory.create(getContext().getResources(), resource);
+                            circularBitmapDrawable.setCircular(true);
+                            holder.userImage.setImageDrawable(circularBitmapDrawable);
+                        }
+                    });
+        } else {
+            Glide.with(getContext())
+                    .load(R.drawable.defaultavatar)
+                    .asBitmap()
+                    .into(new BitmapImageViewTarget(holder.userImage) {
+                        @Override
+                        protected void setResource(Bitmap resource) {
+                            RoundedBitmapDrawable circularBitmapDrawable =
+                                    RoundedBitmapDrawableFactory.create(getContext().getResources(), resource);
+                            circularBitmapDrawable.setCircular(true);
+                            holder.userImage.setImageDrawable(circularBitmapDrawable);
+                        }
+                    });
+        }
+
+        holder.Name.setText(comment.getUserName());
+        holder.Comment.setText(comment.getCommentText());
+
+        if (comment.getUserLike() != null)
+            holder.LikeNumber.setText(String.valueOf(comment.getUserLike().size()));
+        else
+            holder.LikeNumber.setText("0");
+        if (comment.getUserDislike() != null)
+            holder.DislikeNumber.setText(String.valueOf(comment.getUserDislike().size()));
+        else
+            holder.DislikeNumber.setText("0");
+        holder.Date.setText(comment.getReadableTime());
+        if (comment.getUserLike().containsKey(UtilityGeneral.loadUser(context).getObjectId()))
+            //    holder.btnLike.setBackgroundResource(R.drawable.likegreen);
+            holder.btnLike.setImageDrawable(getContext().getResources().getDrawable(R.drawable.likegreen));
+        else
+            //   holder.btnLike.setBackgroundResource(R.drawable.likegray);
+            holder.btnLike.setImageDrawable(getContext().getResources().getDrawable(R.drawable.likegray));
+        if (comment.getUserDislike().containsKey(UtilityGeneral.loadUser(context).getObjectId()))
+            //   holder.btnDislike.setBackgroundResource(R.drawable.dislikered);
+            holder.btnDislike.setImageDrawable(getContext().getResources().getDrawable(R.drawable.dislikered));
+
+        else
+            holder.btnDislike.setImageDrawable(getContext().getResources().getDrawable(R.drawable.dislikegray));
+        // holder.btnDislike.setBackgroundResource(R.drawable.dislikegray);
+        holder.btnLike.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        UtilityFirebase.updateComment(comment, UtilityGeneral.loadUser(v.getContext()).getObjectId(), true);
+                    }
+                });
+
+        holder.btnDislike.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        UtilityFirebase.updateComment(comment, UtilityGeneral.loadUser(v.getContext()).getObjectId(), false);
+                    }
+                });
+
+        return row;
+    }
+}
+
+class CommentHolder {
+    public TextView Name, Comment, Date, LikeNumber, DislikeNumber;
+    public ImageButton btnLike, btnDislike;
+    ImageView userImage;
+
+    public CommentHolder(View rootView) {
+        Name = (TextView) rootView.findViewById(R.id.txtName);
+        Comment = (TextView) rootView.findViewById(R.id.txtComment);
+        Date = (TextView) rootView.findViewById(R.id.txtTime);
+        LikeNumber = (TextView) rootView.findViewById(R.id.txtLikeNumber);
+        DislikeNumber = (TextView) rootView.findViewById(R.id.txtDisikeNumber);
+        btnLike = (ImageButton) rootView.findViewById(R.id.btnLike);
+        btnDislike = (ImageButton) rootView.findViewById(R.id.btnDislike);
+        userImage = (ImageView) rootView.findViewById(R.id.user_avatar);
+
+    }
+}
