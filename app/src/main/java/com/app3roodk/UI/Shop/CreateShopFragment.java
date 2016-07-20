@@ -285,7 +285,10 @@ public class CreateShopFragment extends Fragment {
                 } else {
                     showMessageToast("تم إضافه المحل، شكرا لك");
                     UtilityGeneral.saveShop(getActivity(), shop);
+
                     getActivity().onBackPressed();
+                    /*Attempt to invoke virtual method 'void android.support.v4.app.FragmentActivity.onBackPressed()' on a null object reference
+                                                                   at com.app3roodk.UI.Shop.CreateShopFragment$8.onComplete(CreateShopFragment.java:288)*/
                 }
             }
         });

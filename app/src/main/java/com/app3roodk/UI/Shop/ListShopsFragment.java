@@ -2,7 +2,6 @@ package com.app3roodk.UI.Shop;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +14,7 @@ import com.app3roodk.R;
 import com.app3roodk.Schema.Shop;
 import com.app3roodk.UtilityGeneral;
 import com.google.gson.Gson;
+import com.melnykov.fab.FloatingActionButton;
 
 import java.util.ArrayList;
 
@@ -37,6 +37,10 @@ public class ListShopsFragment extends Fragment {
     private void init(View rootView) {
         lvShops = (ListView) rootView.findViewById(R.id.lstShops);
         btnAdd = (FloatingActionButton) getActivity().findViewById(R.id.fab);
+
+        btnAdd.attachToListView(lvShops);
+
+
         lstShopsString = new ArrayList<>();
         adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, lstShopsString);
         lvShops.setAdapter(adapter);
