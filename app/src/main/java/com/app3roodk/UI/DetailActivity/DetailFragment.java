@@ -25,6 +25,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.app3roodk.NotificationServices.UtilityCloudMessaging;
 import com.app3roodk.ObjectConverter;
@@ -749,34 +750,52 @@ class CommentsAdapter extends ArrayAdapter {
         else
             holder.DislikeNumber.setText("0");
         holder.Date.setText(comment.getReadableTime());
+
+
         if (comment.getUserLike().containsKey(UtilityGeneral.loadUser(context).getObjectId()))
-            //    holder.btnLike.setBackgroundResource(R.drawable.likegreen);
-            holder.btnLike.setImageDrawable(getContext().getResources().getDrawable(R.drawable.likegreen));
+            holder.btnLike.setLiked(true);
         else
-            //   holder.btnLike.setBackgroundResource(R.drawable.likegray);
-            holder.btnLike.setImageDrawable(getContext().getResources().getDrawable(R.drawable.likegray));
+            holder.btnLike.setLiked(false);
+
+        holder.btnLike.setOnLikeListener(new OnLikeListener() {
+           @Override
+           public void liked(LikeButton likeButton) {
+               UtilityFirebase.updateComment(comment, UtilityGeneral.loadUser(getContext()).getObjectId(), true);
+
+           }
+
+           @Override
+           public void unLiked(LikeButton likeButton) {
+               Toast.makeText(getContext(),"remove like", Toast.LENGTH_SHORT ).show();
+           }
+        });
+
+
+
+
         if (comment.getUserDislike().containsKey(UtilityGeneral.loadUser(context).getObjectId()))
-            //   holder.btnDislike.setBackgroundResource(R.drawable.dislikered);
-            holder.btnDislike.setImageDrawable(getContext().getResources().getDrawable(R.drawable.dislikered));
+         holder.btnDislike.setLiked(true);
 
         else
-            holder.btnDislike.setImageDrawable(getContext().getResources().getDrawable(R.drawable.dislikegray));
-        // holder.btnDislike.setBackgroundResource(R.drawable.dislikegray);
-        holder.btnLike.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        UtilityFirebase.updateComment(comment, UtilityGeneral.loadUser(v.getContext()).getObjectId(), true);
-                    }
-                });
+            holder.btnDislike.setLiked(false);
 
-        holder.btnDislike.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        UtilityFirebase.updateComment(comment, UtilityGeneral.loadUser(v.getContext()).getObjectId(), false);
-                    }
-                });
+        holder.btnDislike.setOnLikeListener(new OnLikeListener() {
+            @Override
+            public void liked(LikeButton likeButton) {
+
+                UtilityFirebase.updateComment(comment, UtilityGeneral.loadUser(getContext()).getObjectId(), false);
+
+
+            }
+
+            @Override
+            public void unLiked(LikeButton likeButton) {
+                Toast.makeText(getContext(),"remove Dislike", Toast.LENGTH_SHORT ).show();
+
+            }
+        });
+
+
 
         return row;
     }
@@ -784,7 +803,8 @@ class CommentsAdapter extends ArrayAdapter {
 
 class CommentHolder {
     public TextView Name, Comment, Date, LikeNumber, DislikeNumber;
-    public ImageButton btnLike, btnDislike;
+    public LikeButton btnLike, btnDislike;
+
     ImageView userImage;
 
     public CommentHolder(View rootView) {
@@ -793,8 +813,8 @@ class CommentHolder {
         Date = (TextView) rootView.findViewById(R.id.txtTime);
         LikeNumber = (TextView) rootView.findViewById(R.id.txtLikeNumber);
         DislikeNumber = (TextView) rootView.findViewById(R.id.txtDisikeNumber);
-        btnLike = (ImageButton) rootView.findViewById(R.id.btnLike);
-        btnDislike = (ImageButton) rootView.findViewById(R.id.btnDislike);
+        btnLike = (LikeButton) rootView.findViewById(R.id.btnLike);
+        btnDislike = (LikeButton) rootView.findViewById(R.id.btnDislike);
         userImage = (ImageView) rootView.findViewById(R.id.user_avatar);
 
     }
