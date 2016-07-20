@@ -10,9 +10,10 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.SwipeDismissBehavior;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -25,6 +26,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -59,16 +61,18 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.melnykov.fab.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class CardsActivity extends AppCompatActivity {
+public class CardsActivity extends AppCompatActivity implements CardsFragment.Callback , CardsFragment.CallbackSnackBehavior {
 
     Intent mIntent;
     DrawerLayout mDrawerLayout;
     NavigationView mNavigationView;
+    FloatingActionButton fab;
 
     public static Intent getOpenFacebookIntent(Context context) {
         try {
@@ -100,7 +104,7 @@ public class CardsActivity extends AppCompatActivity {
         // Create Navigation drawer and inlfate layout
         initNavigationDrawer();
         // Adding Floating Action Button to bottom right of main view
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab = (FloatingActionButton) findViewById(R.id.fab);
         assert fab != null;
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -536,6 +540,20 @@ public class CardsActivity extends AppCompatActivity {
                 }
             }
         }
+    }
+
+    @Override
+    public void onItemSelected(RecyclerView recyclerView) {
+            fab.attachToRecyclerView(recyclerView);
+    }
+
+    @Override
+    public void onSnackAppear() {
+        CoordinatorLayout.LayoutParams params =
+                (CoordinatorLayout.LayoutParams) fab.getLayoutParams();
+
+        params.setBehavior(new SnackBarBehavior());
+        fab.requestLayout();
     }
 
     //endregion

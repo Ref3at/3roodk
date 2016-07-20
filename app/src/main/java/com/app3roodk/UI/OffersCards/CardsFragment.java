@@ -55,8 +55,34 @@ public class CardsFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
         initListener();
         fetchOffers();
+
+        ((Callback) getActivity()).onItemSelected(recyclerView);
+
         return recyclerView;
     }
+
+    /**
+     * A callback interface that all activities containing this fragment must
+     * implement. This mechanism allows activities to be notified of item
+     * selections.
+     */
+    public interface Callback {
+
+        void onItemSelected(RecyclerView recyclerView);
+
+    }
+
+    /**
+     * A callback interface that all activities containing this fragment must
+     * implement. This mechanism allows activities to be notified of item
+     * selections.
+     */
+    public interface CallbackSnackBehavior {
+
+        void onSnackAppear();
+
+    }
+
 
     private void fetchOffers() {
         try {
@@ -218,7 +244,8 @@ public class CardsFragment extends Fragment {
     }
 
     private void showMessage(String msg) {
-        Snackbar.make(getActivity().findViewById(R.id.main_content), msg, Snackbar.LENGTH_LONG).show();
+        ((CallbackSnackBehavior) getActivity()).onSnackAppear();
+        Snackbar.make(getActivity().findViewById(R.id.fab), msg, Snackbar.LENGTH_LONG).show();
     }
 
     public void onDestroy() {
