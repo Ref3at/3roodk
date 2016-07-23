@@ -6,14 +6,19 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -38,10 +43,13 @@ import com.app3roodk.Schema.Shop;
 import com.app3roodk.UtilityFirebase;
 import com.app3roodk.UtilityGeneral;
 import com.bumptech.glide.Glide;
+import com.dd.morphingbutton.MorphingButton;
+import com.dd.morphingbutton.impl.IndeterminateProgressButton;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.weiwangcn.betterspinner.library.BetterSpinner;
 
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -50,6 +58,9 @@ import java.util.Map;
 import java.util.UUID;
 
 public class AddNewOfferFragment extends Fragment {
+
+    private int mMorphCounter1 = 1;
+
 
     ArrayList<String>[] images_id_Array = new ArrayList[3];
 
@@ -72,6 +83,9 @@ public class AddNewOfferFragment extends Fragment {
     private Button publishOffer, previewOffer, addNewItem;
     private String mImgurUrl;
     private Uri mFileUri = null;
+
+    IndeterminateProgressButton btnMorph_publishOffer;
+
 
     /**
      * returns the bytesize of the give bitmap
@@ -167,15 +181,96 @@ public class AddNewOfferFragment extends Fragment {
             }
         });
 
-        publishOffer = (Button) rootView.findViewById(R.id.btn_publishadd);
-        publishOffer.setOnClickListener(new View.OnClickListener() {
+       // publishOffer = (Button) rootView.findViewById(R.id.btn_publishadd);
+
+        btnMorph_publishOffer = (IndeterminateProgressButton) rootView.findViewById(R.id.btn_publishadd);
+        btnMorph_publishOffer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 SubmitNewOffer();
+
+
             }
         });
+        morphToSquare(btnMorph_publishOffer, 0);
+
         return rootView;
     }
+
+    private void onMorphButton1Clicked(final IndeterminateProgressButton btnMorph) {
+        if (mMorphCounter1 == 0) {
+            mMorphCounter1++;
+            morphToSquare(btnMorph, 500);
+        } else if (mMorphCounter1 == 1) {
+            mMorphCounter1 = 0;
+            simulateProgress1(btnMorph);
+
+        }
+    }
+
+    private void morphToSquare(final IndeterminateProgressButton btnMorph, int duration) {
+        MorphingButton.Params square = MorphingButton.Params.create()
+                .duration(duration)
+                .cornerRadius(10)
+                .width((int) getResources().getDimension(R.dimen.width_200))
+                .height((int) getResources().getDimension(R.dimen.height_56))
+                .color( ContextCompat.getColor(getActivity(),R.color.colorPrimary))
+                .colorPressed(ContextCompat.getColor(getActivity(),R.color.colorPrimaryDark))
+                .text("ضيف الاعلان");
+        btnMorph.morph(square);
+    }
+
+    private void morphToSuccess(final IndeterminateProgressButton btnMorph) {
+        MorphingButton.Params circle = MorphingButton.Params.create()
+                .duration(500)
+                .cornerRadius((int) getResources().getDimension(R.dimen.height_56))
+                .width((int) getResources().getDimension(R.dimen.width_120))
+                .height((int) getResources().getDimension(R.dimen.height_56))
+                .color(ContextCompat.getColor(getActivity(),R.color.primary))
+                .colorPressed(ContextCompat.getColor(getActivity(),R.color.primary_dark))
+                .text("تم إضافه العرض، شكراً لك");
+        btnMorph.morph(circle);
+
+    }
+
+    private void morphToFailure(final IndeterminateProgressButton btnMorph) {
+        MorphingButton.Params circle = MorphingButton.Params.create()
+                .duration(500)
+                .cornerRadius((int) getResources().getDimension(R.dimen.height_56))
+                .width((int) getResources().getDimension(R.dimen.width_120))
+                .height((int) getResources().getDimension(R.dimen.height_56))
+                .color(ContextCompat.getColor(getActivity(),R.color.accent))
+                .colorPressed(ContextCompat.getColor(getActivity(),R.color.accent))
+              .text("حدث مشكله فى الاتصال!");
+        btnMorph.morph(circle);
+    }
+
+
+    IndeterminateProgressButton button;
+    private void simulateProgress1(@NonNull final IndeterminateProgressButton button) {
+        this.button = button;
+
+        int progressColor1 = ContextCompat.getColor(getActivity(),R.color.holo_blue_bright);
+        int progressColor2 = ContextCompat.getColor(getActivity(),R.color.holo_green_light);
+        int progressColor3 = ContextCompat.getColor(getActivity(),R.color.holo_orange_light);
+        int progressColor4 = ContextCompat.getColor(getActivity(),R.color.holo_red_light);
+        int color = ContextCompat.getColor(getActivity(),R.color.mb_gray);
+        int progressCornerRadius = (int) getResources().getDimension(R.dimen.mb_corner_radius_4);
+        int width = (int) getResources().getDimension(R.dimen.width_200);
+        int height = (int) getResources().getDimension(R.dimen.height_8);
+        int duration = 500;
+
+        button.blockTouch(); // prevent user from clicking while button is in progress
+        Publish();
+
+
+        button.morphToProgress(color, progressCornerRadius, width, height, duration, progressColor1, progressColor2,
+                progressColor3, progressColor4);
+
+
+    }
+
+
 
     private void inflateNewItem() {
         LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -267,7 +362,9 @@ public class AddNewOfferFragment extends Fragment {
             }
         }
         if (!success) return;
-        Publish();
+
+        onMorphButton1Clicked(btnMorph_publishOffer);
+
     }
 
     private Boolean validateOfferName() {
@@ -419,7 +516,9 @@ public class AddNewOfferFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (!mapImageUploading.get(key).isDone())
-                    mapImageUploading.get(key).cancel(true);
+if (mapImageUploading.size() !=0) {
+    mapImageUploading.get(key).cancel(true);
+}
                 else
                     images_id_Array[fIndexOfItem].remove(fLytImagesGroupContainer.indexOfChild(rootImage) - 1);
                 mapImageUploading.remove(key);
@@ -482,11 +581,18 @@ public class AddNewOfferFragment extends Fragment {
                 }
             }
             mOffer.setEndTime(UtilityGeneral.getCurrentDate(cal.getTime()));
-            UtilityFirebase.createNewOffer(mOffer, new DatabaseReference.CompletionListener() {
+
+            if (UtilityGeneral.isOnline(getActivity())){
+
+                UtilityFirebase.createNewOffer(mOffer, new DatabaseReference.CompletionListener() {
                 @Override
                 public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                     if (databaseError != null) {
-                        showMessage("حصل مشكله شوف النت ");
+                      //  showMessage("حصل مشكله شوف النت ");
+
+                        morphToFailure(button);
+                        button.unblockTouch();
+
                         Log.e("NewOfferFailed", databaseError.getMessage());
                     } else {
                         UtilityFirebase.createNewOfferExists(mOffer, new DatabaseReference.CompletionListener() {
@@ -495,15 +601,30 @@ public class AddNewOfferFragment extends Fragment {
                                 UtilityFirebase.decreaseNumberOfOffersAvailable(getActivity(), new DatabaseReference.CompletionListener() {
                                     @Override
                                     public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                                        showMessage("تم إضافه العرض، شكرا لك");
-                                        getActivity().onBackPressed();
+                                      // showMessage("تم إضافه العرض، شكرا لك");
+
+                                        morphToSuccess(button);
+
+                                        Handler handler = new Handler();
+                                        handler.postDelayed(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                getActivity().onBackPressed();
+
+                                            }
+                                        }, 3000);
+
                                     }
                                 });
                             }
                         });
                     }
                 }
-            });
+            });}
+            else {
+                morphToFailure(button);
+                button.unblockTouch();
+            }
         } catch (Exception ex) {
             Log.e("AddNewOfferFrag", ex.getMessage());
         }

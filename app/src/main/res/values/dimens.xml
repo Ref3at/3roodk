@@ -58,8 +58,11 @@
     <dimen name="z_card">2dp</dimen>
 
     <dimen name="touch_raise">9dp</dimen>
-
-
+    <dimen name="width_200">200dp</dimen>
+    <dimen name="height_56">56dp</dimen>
+    <dimen name="width_120">120dp</dimen>
+    <dimen name="height_8">8dp</dimen>
+    <dimen name="mb_corner_radius_4">4dp</dimen>
 
 
 </resources>
