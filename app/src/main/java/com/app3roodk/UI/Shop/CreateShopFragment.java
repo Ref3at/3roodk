@@ -8,10 +8,13 @@ import android.graphics.Bitmap;
 import android.location.Address;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.text.Editable;
@@ -25,6 +28,7 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,6 +41,8 @@ import com.app3roodk.UtilityFirebase;
 import com.app3roodk.UtilityGeneral;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
+import com.dd.morphingbutton.MorphingButton;
+import com.dd.morphingbutton.impl.IndeterminateProgressButton;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -47,6 +53,8 @@ import java.util.List;
 
 public class CreateShopFragment extends Fragment {
 
+    private int mMorphCounter1 = 1;
+
     static public LatLng latLngShop;
     int SELECT_FILE = 1;
     String mlogoId = null;
@@ -55,7 +63,9 @@ public class CreateShopFragment extends Fragment {
     private TextView AddressFromMap;
     private EditText inputShopName, inputWorkingTime, inputAddressInfo, inputContacts;
     private TextInputLayout inputLayoutShopName, inputLayoutWorkingTime, inputLayoutAddressInfo, inputLayoutContacts;
-    private Button createShop, btnChangeLocation;
+    private Button  btnChangeLocation;
+
+    IndeterminateProgressButton createShop;
 
     private ImageButton addShopLogo;
     private Switch haveAlogo;
@@ -68,6 +78,7 @@ public class CreateShopFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_create_shop, container, false);
         initViews(rootView);
         clickConfig();
+        morphToSquare(createShop, 0);
         latLngShop = UtilityGeneral.getCurrentLonAndLat(getActivity());
         if (latLngShop == null) latLngShop = UtilityGeneral.loadLatLong(getActivity());
         return rootView;
@@ -95,7 +106,7 @@ public class CreateShopFragment extends Fragment {
         addShopLogo.setAlpha(0.5f);
         addShopLogo.setClickable(false);
 
-        createShop = (Button) rootView.findViewById(R.id.btn_create_shop);
+        createShop = (IndeterminateProgressButton) rootView.findViewById(R.id.btn_create_shop);
 
         btnChangeLocation = (Button) rootView.findViewById(R.id.btnChangeAddress);
 
@@ -143,6 +154,91 @@ public class CreateShopFragment extends Fragment {
             }
         });
     }
+
+
+
+
+
+
+    private void onMorphButton1Clicked(final IndeterminateProgressButton btnMorph) {
+        if (mMorphCounter1 == 0) {
+            mMorphCounter1++;
+            morphToSquare(btnMorph, 500);
+        } else if (mMorphCounter1 == 1) {
+            mMorphCounter1 = 0;
+            simulateProgress1(btnMorph);
+
+        }
+    }
+
+    LinearLayout.LayoutParams layoutParams;
+
+    private void morphToSquare(final IndeterminateProgressButton btnMorph, int duration) {
+        MorphingButton.Params square = MorphingButton.Params.create()
+                .duration(duration)
+                .cornerRadius(10)
+                .width(layoutParams.MATCH_PARENT)
+                .height((int) getResources().getDimension(R.dimen.height_56))
+                .color( ContextCompat.getColor(getActivity(),R.color.colorPrimary))
+                .colorPressed(ContextCompat.getColor(getActivity(),R.color.colorPrimaryDark)).text("تسجيل");
+        btnMorph.morph(square);
+    }
+
+    private void morphToSuccess(final IndeterminateProgressButton btnMorph) {
+        MorphingButton.Params circle = MorphingButton.Params.create()
+                .duration(500)
+                .cornerRadius((int) getResources().getDimension(R.dimen.height_56))
+                .width(layoutParams.MATCH_PARENT)
+                .height((int) getResources().getDimension(R.dimen.height_56))
+                .color(ContextCompat.getColor(getActivity(),R.color.primary))
+                .colorPressed(ContextCompat.getColor(getActivity(),R.color.primary_dark))
+                .text("تم تسجيل المحل شكرأ لك");
+        btnMorph.morph(circle);
+
+    }
+
+    private void morphToFailure(final IndeterminateProgressButton btnMorph) {
+        MorphingButton.Params circle = MorphingButton.Params.create()
+                .duration(500)
+                .cornerRadius((int) getResources().getDimension(R.dimen.height_56))
+                .width(layoutParams.MATCH_PARENT)
+                .height((int) getResources().getDimension(R.dimen.height_56))
+                .color(ContextCompat.getColor(getActivity(),R.color.accent))
+                .colorPressed(ContextCompat.getColor(getActivity(),R.color.accent))
+                .text("حدث مشكله فى الاتصال!");
+        btnMorph.morph(circle);
+    }
+
+
+    IndeterminateProgressButton button;
+    private void simulateProgress1(@NonNull final IndeterminateProgressButton button) {
+        this.button = button;
+
+        int progressColor1 = ContextCompat.getColor(getActivity(),R.color.holo_blue_bright);
+        int progressColor2 = ContextCompat.getColor(getActivity(),R.color.holo_green_light);
+        int progressColor3 = ContextCompat.getColor(getActivity(),R.color.holo_orange_light);
+        int progressColor4 = ContextCompat.getColor(getActivity(),R.color.holo_red_light);
+        int color = ContextCompat.getColor(getActivity(),R.color.mb_gray);
+        int progressCornerRadius = (int) getResources().getDimension(R.dimen.mb_corner_radius_4);
+        int width = (layoutParams.MATCH_PARENT);
+        int height = (int) getResources().getDimension(R.dimen.height_8);
+        int duration = 500;
+
+        button.blockTouch(); // prevent user from clicking while button is in progress
+        Create();
+
+
+        button.morphToProgress(color, progressCornerRadius, width, height, duration, progressColor1, progressColor2,
+                progressColor3, progressColor4);
+
+
+    }
+
+
+
+
+
+
 
     @Override
     public void onResume() {
@@ -260,7 +356,7 @@ public class CreateShopFragment extends Fragment {
                 return;
             }
         }
-        Create();
+        onMorphButton1Clicked(createShop);
     }
 
     private void Create() {
@@ -277,22 +373,47 @@ public class CreateShopFragment extends Fragment {
         shop.setLon(String.valueOf(latLngShop.longitude));
         shop.setLat(String.valueOf(latLngShop.latitude));
         shop.setCreatedAt(UtilityGeneral.getCurrentDate(new Date()));
+
+
+        if (UtilityGeneral.isOnline(getActivity())){
         UtilityFirebase.createNewShop(shop, UtilityGeneral.loadUser(getActivity()).getObjectId(), new DatabaseReference.CompletionListener() {
             @Override
             public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                 if (databaseError != null) {
-                    showMessageToast("حصل مشكله شوف النت ");
+                 //   showMessageToast("حصل مشكله شوف النت ");
+
+
+                    morphToFailure(button);
+                    button.unblockTouch();
+
                     Log.e("CreateNewShop", databaseError.getMessage());
                 } else {
-                    showMessageToast("تم إضافه المحل، شكرا لك");
+                  //  showMessageToast("تم إضافه المحل، شكرا لك");
                     UtilityGeneral.saveShop(getActivity(), shop);
 
-                    getActivity().onBackPressed();
+                    morphToSuccess(button);
+
+                    Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            getActivity().onBackPressed();
+
+                        }
+                    }, 3000);
+
+                //    getActivity().onBackPressed();
                     /*Attempt to invoke virtual method 'void android.support.v4.app.FragmentActivity.onBackPressed()' on a null object reference
                                                                    at com.app3roodk.UI.Shop.CreateShopFragment$8.onComplete(CreateShopFragment.java:288)*/
                 }
             }
         });
+        }
+        else
+        {
+            morphToFailure(button);
+            button.unblockTouch();
+        }
     }
 
     private Boolean validateShopName() {
