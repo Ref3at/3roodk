@@ -19,6 +19,7 @@ import com.app3roodk.Schema.Offer;
 import com.app3roodk.UI.DetailActivity.DetailActivity;
 import com.app3roodk.UtilityFirebase;
 import com.app3roodk.UtilityGeneral;
+import com.github.ybq.android.spinkit.SpinKitView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
@@ -38,13 +39,19 @@ public class CardsFragment extends Fragment {
     ContentAdapter adapter;
     ValueEventListener postListener;
     String City;
-
+    SpinKitView progress;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         final RecyclerView recyclerView = (RecyclerView) inflater.inflate(
                 R.layout.cards_recycler_view, container, false);
-        lstOffers = UtilityGeneral.loadOffers(getActivity(), getActivity().getIntent().getStringExtra("name"));
+        progress= (SpinKitView) getActivity().findViewById(R.id.progress);
+        if (!UtilityGeneral.isOnline(getActivity()))
+            lstOffers = UtilityGeneral.loadOffers(getActivity(), getActivity().getIntent().getStringExtra("name"));
+        else {
+            lstOffers = new ArrayList<>();
+            progress.setVisibility(View.VISIBLE);
+        }
         adapter = new ContentAdapter(lstOffers);
         recyclerView.setAdapter(adapter);
         if (lstOffers.size() > 0) {
@@ -92,7 +99,7 @@ public class CardsFragment extends Fragment {
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            City = UtilityGeneral.getCurrentCityEnglish(getActivity());
+                            City = UtilityGeneral.getCurrentCityArabic(getActivity());
                             try {
                                 getActivity().runOnUiThread(new Runnable() {
                                     @Override
@@ -117,7 +124,7 @@ public class CardsFragment extends Fragment {
                         new Thread(new Runnable() {
                             @Override
                             public void run() {
-                                UtilityGeneral.getCurrentCityEnglish(getActivity());
+                                UtilityGeneral.getCurrentCityArabic(getActivity());
                             }
                         }).start();
                     } catch (Exception ex) {
@@ -131,7 +138,7 @@ public class CardsFragment extends Fragment {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        UtilityGeneral.getCurrentCityEnglish(getActivity());
+                        UtilityGeneral.getCurrentCityArabic(getActivity());
                     }
                 }).start();
             }
@@ -146,6 +153,7 @@ public class CardsFragment extends Fragment {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 lstOffers.clear();
                 adapter.notifyDataSetChanged();
+                progress.setVisibility(View.INVISIBLE);
                 Iterator<DataSnapshot> iterator = dataSnapshot.getChildren().iterator();
                 Offer of;
                 double dateNow = Double.parseDouble(UtilityGeneral.getCurrentDate(new Date()));

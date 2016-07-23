@@ -257,7 +257,7 @@ public class AddNewOfferFragment extends Fragment {
             items_list.add(item);
             try {
                 if (Double.parseDouble(item.getPriceAfter()) >= Double.parseDouble(item.getPriceBefore())) {
-                    ((TextInputLayout) rootView.findViewById(R.id.input_layout_priceafter)).setError("أدخل السعر الجديد للسلعة بعد العرض");
+                    ((TextInputLayout) rootView.findViewById(R.id.input_layout_priceafter)).setError("السعر بعد الخصم يجب ان يكون اقل من السعر الأصلي للسلعة");
                     requestFocus(inputPriceAfter);
                     success = false;
                 } else {

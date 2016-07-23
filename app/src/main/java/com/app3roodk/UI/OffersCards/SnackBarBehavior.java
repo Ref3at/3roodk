@@ -8,9 +8,6 @@ import android.view.View;
 
 import com.melnykov.fab.FloatingActionButton;
 
-/**
- * Created by refaat on 7/20/16.
- */
 public class SnackBarBehavior extends CoordinatorLayout.Behavior<FloatingActionButton> {
     public SnackBarBehavior() {
     }

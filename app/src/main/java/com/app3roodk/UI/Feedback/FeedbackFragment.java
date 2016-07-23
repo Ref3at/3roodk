@@ -17,6 +17,9 @@ import com.app3roodk.UtilityGeneral;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class FeedbackFragment extends Fragment {
 
     EditText edtxtName, edtxtEmail, edtxtTitle, edtxtContent;
@@ -30,7 +33,6 @@ public class FeedbackFragment extends Fragment {
         clickConfig(rootView);
         return rootView;
     }
-
 
     private void init(View rootView) {
         edtxtTitle = (EditText) rootView.findViewById(R.id.edtxtTitle);
@@ -98,21 +100,6 @@ public class FeedbackFragment extends Fragment {
     }
 
     private boolean validation() {
-        if (edtxtTitle.getText().toString().trim().isEmpty()) {
-            txtlytTitle.setError("ادخل عنوان للرسالة");
-            requestFocus(edtxtTitle);
-            return false;
-        } else {
-            txtlytTitle.setErrorEnabled(false);
-        }
-
-        if (edtxtContent.getText().toString().trim().isEmpty()) {
-            txtlytContent.setError("ادخل محتوى الرسالة");
-            requestFocus(edtxtContent);
-            return false;
-        } else {
-            txtlytTitle.setErrorEnabled(false);
-        }
         if (!UtilityGeneral.isRegisteredUser(getActivity())) {
             if (edtxtName.getText().toString().trim().isEmpty()) {
                 txtlytName.setError("ادخل الإسم");
@@ -129,6 +116,32 @@ public class FeedbackFragment extends Fragment {
             } else {
                 txtlytEmail.setErrorEnabled(false);
             }
+
+            Matcher matcher = Pattern.compile("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$")
+                    .matcher(edtxtEmail.getText().toString().trim());
+
+            if (!matcher.matches()) {
+                txtlytEmail.setError("ادخل ايميل صحيح من فضلك");
+                requestFocus(edtxtEmail);
+                return false;
+            } else {
+                txtlytEmail.setErrorEnabled(false);
+            }
+        }
+        if (edtxtTitle.getText().toString().trim().isEmpty()) {
+            txtlytTitle.setError("ادخل عنوان للرسالة");
+            requestFocus(edtxtTitle);
+            return false;
+        } else {
+            txtlytTitle.setErrorEnabled(false);
+        }
+
+        if (edtxtContent.getText().toString().trim().isEmpty()) {
+            txtlytContent.setError("ادخل محتوى الرسالة");
+            requestFocus(edtxtContent);
+            return false;
+        } else {
+            txtlytTitle.setErrorEnabled(false);
         }
         return true;
     }

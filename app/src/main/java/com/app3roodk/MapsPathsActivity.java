@@ -1,19 +1,20 @@
 package com.app3roodk;
 
-import android.content.Context;
 import android.graphics.Color;
-import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
@@ -43,15 +44,15 @@ public class MapsPathsActivity extends AppCompatActivity implements OnMapReadyCa
     }
 
     private void initMAPS() {
-        map.addMarker(new MarkerOptions().position(toPlace).title("Shop").icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_account_balance_black_24dp)));
-        map.addMarker(new MarkerOptions().position(fromPlace).title("You are here"));
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(toPlace, 12));
-        map.animateCamera(CameraUpdateFactory.zoomTo(16), 2000, null);
-    }
-
-    static public boolean isNetworkConnected(Context context) {
-        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        return cm.getActiveNetworkInfo() != null;
+        Marker marker1= map.addMarker(new MarkerOptions().position(toPlace).title("Shop").icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_account_balance_black_24dp)));
+        Marker marker2= map.addMarker(new MarkerOptions().position(fromPlace).title("You are here"));
+        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+            builder.include(marker1.getPosition());
+        builder.include(marker2.getPosition());
+        LatLngBounds bounds = builder.build();
+        int padding = 250; // offset from edges of the map in pixels
+        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+        map.animateCamera(cu);
     }
 
     //region Get Directions
@@ -64,7 +65,7 @@ public class MapsPathsActivity extends AppCompatActivity implements OnMapReadyCa
     }
 
     private void startFetching(String url) {
-        if (!isNetworkConnected(getBaseContext())) {
+        if (!UtilityGeneral.isOnline(getBaseContext())) {
             Toast.makeText(getBaseContext(), "Please check your internet connection", Toast.LENGTH_LONG).show();
             return;
         }

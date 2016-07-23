@@ -40,6 +40,7 @@ import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.maps.model.GeocodingResult;
 
 import java.util.Date;
 import java.util.List;
@@ -50,7 +51,7 @@ public class CreateShopFragment extends Fragment {
     int SELECT_FILE = 1;
     String mlogoId = null;
     Shop shop;
-    List<Address> addresses;
+    GeocodingResult[] addresses;
     private TextView AddressFromMap;
     private EditText inputShopName, inputWorkingTime, inputAddressInfo, inputContacts;
     private TextInputLayout inputLayoutShopName, inputLayoutWorkingTime, inputLayoutAddressInfo, inputLayoutContacts;
@@ -154,20 +155,20 @@ public class CreateShopFragment extends Fragment {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    final List<Address> tempAddresses = UtilityGeneral.getCurrentGovAndCity(getActivity(), latLngShop);
+                    final GeocodingResult[] results = UtilityGeneral.getCurrentGovAndCityArabic(getActivity(), latLngShop);
                     if (getActivity() == null)
                         return;
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             try {
-                                AddressFromMap.setText(tempAddresses.get(0).getAddressLine(3) + " - " + tempAddresses.get(0).getAddressLine(2) + " - " + tempAddresses.get(0).getAddressLine(1) + " - " + tempAddresses.get(0).getAddressLine(0));
+                                AddressFromMap.setText(results[0].formattedAddress);
                             } catch (Exception ex) {
                                 Log.e("CreateShopFragment", ex.getMessage());
                             }
                         }
                     });
-                    addresses = UtilityGeneral.getCurrentGovAndCityInEnglish(getActivity(), latLngShop);
+                    addresses = UtilityGeneral.getCurrentGovAndCityArabic(getActivity(), latLngShop);
                 }
             }).start();
         } catch (Exception ex) {
@@ -269,10 +270,10 @@ public class CreateShopFragment extends Fragment {
         shop.setAddress(inputAddressInfo.getText().toString());
         shop.setWorkingTime(inputWorkingTime.getText().toString());
         shop.setLogoId(mlogoId);
-        shop.setCity(addresses.get(0).getAddressLine(2));
+        shop.setCity(UtilityGeneral.getCity(addresses));
         if (shop.getCity() == null || shop.getCity().equals("null"))
-            shop.setCity(addresses.get(0).getAddressLine(3));
-        shop.setGovernate(addresses.get(0).getAddressLine(3));
+            shop.setCity(UtilityGeneral.getGovernate(addresses));
+        shop.setGovernate(UtilityGeneral.getGovernate(addresses));
         shop.setLon(String.valueOf(latLngShop.longitude));
         shop.setLat(String.valueOf(latLngShop.latitude));
         shop.setCreatedAt(UtilityGeneral.getCurrentDate(new Date()));

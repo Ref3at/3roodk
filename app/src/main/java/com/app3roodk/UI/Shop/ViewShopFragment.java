@@ -45,8 +45,11 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
+import com.google.maps.model.GeocodingResult;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -56,11 +59,10 @@ public class ViewShopFragment extends Fragment {
     static public LatLng latLngShop;
     static public LatLng latLngShop_Editing;
     Shop shop;
-    List<Address> addresses;
-    List<Address> addressesFromEditing;
+    GeocodingResult[] addresses;
+    GeocodingResult[] addressesFromEditing;
 
-    ArrayAdapter<String> adapter;
-    ArrayList<String> lstOffersTitles;
+    CardsAapter adapter;
     ArrayList<Offer> lstOffers;
     ExpandableHeightListView lvOffers;
     Boolean canEdit;
@@ -115,16 +117,15 @@ public class ViewShopFragment extends Fragment {
 
     private void initOffersList(View rootView) {
         lvOffers = (ExpandableHeightListView) rootView.findViewById(R.id.lvOffers);
-        lstOffersTitles = new ArrayList<>();
         lstOffers = new ArrayList<>();
-        adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, lstOffersTitles);
+        adapter = new CardsAapter(getActivity(), R.layout.card_item_for_list_view, lstOffers);
         lvOffers.setAdapter(adapter);
         lvOffers.setExpanded(true);
         allOffersCounter = 0;
         String[] cats = getResources().getStringArray(R.array.cat_array_eng);
 
         for (String cat : cats) {
-            UtilityFirebase.getOffersForSpecificShop(shop,cat).addListenerForSingleValueEvent(new ValueEventListener() {
+            UtilityFirebase.getOffersForSpecificShop(shop, cat).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     Iterator<DataSnapshot> iterator = dataSnapshot.getChildren().iterator();
@@ -135,11 +136,10 @@ public class ViewShopFragment extends Fragment {
                         allOffersCounter++;
                         if (Double.parseDouble(of.getCreatedAt()) <= dateNow && Double.parseDouble(of.getEndTime()) > dateNow) {
                             lstOffers.add(of);
-                            lstOffersTitles.add(of.getTitle());
                             adapter.notifyDataSetChanged();
                         }
                     }
-                    txtActiveOffersNum.setText(String.valueOf(lstOffersTitles.size()));
+                    txtActiveOffersNum.setText(String.valueOf(lstOffers.size()));
                     txtOffersNum.setText(String.valueOf(allOffersCounter));
                 }
 
@@ -169,14 +169,13 @@ public class ViewShopFragment extends Fragment {
                         public void onClick(DialogInterface dialog, int which) {
                             switch (which) {
                                 case DialogInterface.BUTTON_POSITIVE:
-                                    UtilityFirebase.removeOffer(lstOffers.get(position),new DatabaseReference.CompletionListener() {
+                                    UtilityFirebase.removeOffer(lstOffers.get(position), new DatabaseReference.CompletionListener() {
                                         @Override
                                         public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                                             UtilityFirebase.removeOfferExists(lstOffers.get(position), new DatabaseReference.CompletionListener() {
                                                 @Override
                                                 public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                                                     UtilityFirebase.removeOfferComments(lstOffers.get(position).getObjectId());
-                                                    lstOffersTitles.remove(position);
                                                     lstOffers.remove(position);
                                                     adapter.notifyDataSetChanged();
                                                 }
@@ -192,7 +191,7 @@ public class ViewShopFragment extends Fragment {
                     };
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                    builder.setMessage("انت عايز تمسح " + lstOffersTitles.get(position)).setPositiveButton("ايوه", dialogClickListener)
+                    builder.setMessage("انت عايز تمسح " + lstOffers.get(position).getTitle()).setPositiveButton("ايوه", dialogClickListener)
                             .setNegativeButton("لا", dialogClickListener).show();
                     return true;
                 }
@@ -345,19 +344,19 @@ public class ViewShopFragment extends Fragment {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    final List<Address> tempAddresses = UtilityGeneral.getCurrentGovAndCity(getActivity(), latLngShop);
+                    final GeocodingResult[] tempAddresses = UtilityGeneral.getCurrentGovAndCityArabic(getActivity(), latLngShop);
                     if (getActivity() == null)
                         return;
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             try {
-                                AddressFromMap.setText(tempAddresses.get(0).getAddressLine(3) + " - " + tempAddresses.get(0).getAddressLine(2) + " - " + tempAddresses.get(0).getAddressLine(1) + " - " + tempAddresses.get(0).getAddressLine(0));
+                                AddressFromMap.setText(tempAddresses[0].formattedAddress);
                             } catch (Exception ex) {
                             }
                         }
                     });
-                    addresses = UtilityGeneral.getCurrentGovAndCityInEnglish(getActivity(), latLngShop);
+                    addresses = UtilityGeneral.getCurrentGovAndCityArabic(getActivity(), latLngShop);
                 }
             }).start();
         } catch (Exception ex) {
@@ -369,7 +368,7 @@ public class ViewShopFragment extends Fragment {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    addressesFromEditing = UtilityGeneral.getCurrentGovAndCityInEnglish(getActivity(), latLngShop_Editing);
+                    addressesFromEditing = UtilityGeneral.getCurrentGovAndCityArabic(getActivity(), latLngShop_Editing);
                 }
             }).start();
         } catch (Exception ex) {
@@ -471,7 +470,7 @@ public class ViewShopFragment extends Fragment {
         btn_done_WorkingTime.setVisibility(View.GONE);
         btn_edit_logo.setVisibility(View.GONE);
         showMessage("جارى التحديث");
-        UtilityFirebase.updateShop(UtilityGeneral.loadUser(getActivity()).getObjectId(),shop, new DatabaseReference.CompletionListener() {
+        UtilityFirebase.updateShop(UtilityGeneral.loadUser(getActivity()).getObjectId(), shop, new DatabaseReference.CompletionListener() {
             @Override
             public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                 if (databaseError != null) {
@@ -491,8 +490,8 @@ public class ViewShopFragment extends Fragment {
         btn_edit_logo.setVisibility(View.VISIBLE);
     }
 
-    private void showMessage(String msg){
-        Snackbar.make(getView(),msg,Snackbar.LENGTH_LONG).show();
+    private void showMessage(String msg) {
+        Snackbar.make(getView(), msg, Snackbar.LENGTH_LONG).show();
     }
 
     private void selectLogo() {
@@ -528,7 +527,8 @@ public class ViewShopFragment extends Fragment {
             }
         }
     }
-    private void setLogo( Uri uri) {
+
+    private void setLogo(Uri uri) {
 
         Glide.with(getActivity()).load(uri).asBitmap().into(new BitmapImageViewTarget(imageLogo) {
             @Override
@@ -572,4 +572,96 @@ public class ViewShopFragment extends Fragment {
         }
     }
 
+}
+
+class CardsAapter extends ArrayAdapter {
+    final static long minutesInMilli = 1000 * 60;
+    final static long hoursInMilli = minutesInMilli * 60;
+    final static long daysInMilli = hoursInMilli * 24;
+    Context mContext;
+    ArrayList<Offer> mLstOffers;
+    int mResource;
+
+    public CardsAapter(Context context, int resource, ArrayList<Offer> objects) {
+        super(context, resource, objects);
+        mContext = context;
+        mResource = resource;
+        mLstOffers = objects;
+    }
+
+    private void fillTimer(CardHolder cardHolder, int position) {
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.YEAR, Integer.parseInt(mLstOffers.get(position).getEndTime().substring(0, 4)));
+        cal.set(Calendar.MONTH, Integer.parseInt(mLstOffers.get(position).getEndTime().substring(4, 6)) - 1);
+        cal.set(Calendar.DAY_OF_MONTH, Integer.parseInt(mLstOffers.get(position).getEndTime().substring(6, 8)));
+        cal.set(Calendar.HOUR_OF_DAY, Integer.parseInt(mLstOffers.get(position).getEndTime().substring(8, 10)));
+        cal.set(Calendar.MINUTE, Integer.parseInt(mLstOffers.get(position).getEndTime().substring(10, 12)));
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        long timeInMilliseconds = cal.getTime().getTime() - System.currentTimeMillis();
+        cardHolder.day.setText(String.valueOf((int) (timeInMilliseconds / daysInMilli)));
+        timeInMilliseconds = timeInMilliseconds % daysInMilli;
+        cardHolder.hour.setText(String.valueOf((int) (timeInMilliseconds / hoursInMilli)));
+        timeInMilliseconds = timeInMilliseconds % hoursInMilli;
+        cardHolder.minute.setText(String.valueOf((int) (timeInMilliseconds / minutesInMilli)));
+    }
+
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        View row = convertView;
+        CardHolder cardHolder;
+
+        if (row == null) {
+            LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
+            row = inflater.inflate(mResource, parent, false);
+            cardHolder = new CardHolder(row);
+            row.setTag(cardHolder);
+        } else {
+            cardHolder = (CardHolder) row.getTag();
+        }
+        fillTimer(cardHolder, position);
+        cardHolder.shopName.setText(mLstOffers.get(position).getShopName());
+        cardHolder.title.setText(mLstOffers.get(position).getTitle());
+        cardHolder.rate.setText(String.valueOf(mLstOffers.get(position).getAverageRate()));
+        cardHolder.discount.setText(String.format("%.0f", (1 - (Double.parseDouble(mLstOffers.get(position).getItems().get(0).getPriceAfter()) / Double.parseDouble(mLstOffers.get(position).getItems().get(0).getPriceBefore()))) * 100) + "%");
+        fillTimer(cardHolder, position);
+        Picasso.with(mContext).load(mLstOffers.get(position).getItems().get(0).getImagePaths().get(0)).into(cardHolder.imgCard);
+        cardHolder.priceBefore.setText(mLstOffers.get(position).getItems().get(0).getPriceBefore());
+        cardHolder.priceAfter.setText(mLstOffers.get(position).getItems().get(0).getPriceAfter());
+        try {
+            cardHolder.distance.setText(String.valueOf(UtilityGeneral.calculateDistanceInKM(
+                    Double.parseDouble(mLstOffers.get(position).getLat()),
+                    Double.parseDouble(mLstOffers.get(position).getLon()),
+                    UtilityGeneral.getCurrentLonAndLat(mContext).latitude,
+                    UtilityGeneral.getCurrentLonAndLat(mContext).longitude)) + "km");
+            cardHolder.distance.setVisibility(View.VISIBLE);
+        } catch (Exception ex) {
+            cardHolder.distance.setVisibility(View.INVISIBLE);
+        }
+
+        return row;
+    }
+}
+
+class CardHolder {
+    public TextView title, rate, distance, shopName, day, hour, minute, discount, priceBefore, priceAfter;
+    public ImageView imgCard;
+
+    public CardHolder(View rootView) {
+        title = (TextView) rootView.findViewById(R.id.card_text);
+        discount = (TextView) rootView.findViewById(R.id.card_txt_discount);
+        shopName = (TextView) rootView.findViewById(R.id.card_shop_name);
+        distance = (TextView) rootView.findViewById(R.id.card_distance);
+        priceAfter = (TextView) rootView.findViewById(R.id.card_price_after);
+        priceBefore = (TextView) rootView.findViewById(R.id.card_price_before);
+        rate = (TextView) rootView.findViewById(R.id.card_rate);
+        day = (TextView) rootView.findViewById(R.id.card_txt_day);
+        hour = (TextView) rootView.findViewById(R.id.card_txt_hour);
+        minute = (TextView) rootView.findViewById(R.id.card_txt_minute);
+        imgCard = (ImageView) rootView.findViewById(R.id.card_image);
+        //btnFavorite = (ImageButton) rootView.findViewById(R.id.favorite_button);
+        //btnShare = (ImageButton) rootView.findViewById(R.id.share_button2);
+
+
+    }
 }

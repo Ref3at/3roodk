@@ -3,7 +3,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -21,11 +22,13 @@
                 android:scaleType="centerCrop"
                 android:layout_height="match_parent" />
 
-            <ProgressBar
+            <com.github.ybq.android.spinkit.SpinKitView
                 android:id="@+id/loading_bar"
+                style="@style/SpinKitView.Large.Circle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerInParent="true" />
+                android:layout_centerInParent="true"
+                app:SpinKit_Color="@color/colorAccent" />
 
             <TextView
                 android:id="@+id/description"
@@ -35,6 +38,7 @@
                 android:paddingBottom="10dp"
                 android:layout_alignBottom="@id/daimajia_slider_image"
                 android:textColor="@color/colorPrimaryDark"
+                android:visibility="gone"
                 tools:text="@string/aboutapp"/>
         </RelativeLayout>
 

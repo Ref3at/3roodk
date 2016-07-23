@@ -19,6 +19,7 @@ import com.app3roodk.Schema.User;
 import com.app3roodk.UI.CategoriesActivity.CategoriesActivity;
 import com.app3roodk.UtilityGeneral;
 import com.google.android.gms.maps.model.LatLng;
+import com.redbooth.WelcomeCoordinatorLayout;
 
 public class IntroActivity extends AppCompatActivity {
 
@@ -26,12 +27,11 @@ public class IntroActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_intro);
-        configClicks();
-    }
-
-    private void configClicks() {
-
-        findViewById(R.id.btnContinue).setOnClickListener(new View.OnClickListener() {
+        WelcomeCoordinatorLayout coordinatorLayout
+                = (WelcomeCoordinatorLayout)findViewById(R.id.coordinator);
+        coordinatorLayout.addPage(R.layout.welcome_screen_1,R.layout.welcome_screen_2,
+                R.layout.welcome_screen_3,R.layout.welcome_screen_4,R.layout.welcome_screen_5,R.layout.welcome_screen_6);
+        coordinatorLayout.findViewById(R.id.btnContinue).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!getLatLng(Constants.PERMISSION_MAPS_VISITOR)) return;

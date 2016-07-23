@@ -50,6 +50,7 @@ import com.app3roodk.UtilityGeneral;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.firebase.ui.auth.AuthUI;
+import com.github.ybq.android.spinkit.SpinKitView;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -73,14 +74,17 @@ public class CategoriesActivity extends AppCompatActivity {
 
     DrawerLayout mDrawerLayout;
     NavigationView mNavigationView;
-    Boolean exit = false;
+    Boolean exit = false, bOfferExists = false;
     Spinner spnCities;
     ArrayList<String> lstCities;
     ArrayAdapter<String> adapter;
-    private ValueEventListener availableOfferListener;
-    private ValueEventListener activeOffersListener;
+    ValueEventListener availableOfferListener;
+    ValueEventListener activeOffersListener;
     String previousCity;
     Thread trdCurrentLocationSpinner;
+    SpinKitView progress;
+    User signingUser;
+    ProgressDialog signingProgress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,6 +111,7 @@ public class CategoriesActivity extends AppCompatActivity {
         v8 = findViewById(R.id.v8);
         v9 = findViewById(R.id.v9);
 
+        progress= (SpinKitView) findViewById(R.id.progress);
 
         // Adding Toolbar to Main screen
         FirebaseInstanceId.getInstance().getToken();
@@ -146,8 +151,11 @@ public class CategoriesActivity extends AppCompatActivity {
         activeOffersListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                progress.setVisibility(View.INVISIBLE);
                 if (dataSnapshot.getValue() == null) {
                     hideViews();
+                    bOfferExists = false;
+                    Snackbar.make(findViewById(android.R.id.content), "لا يوجد عروض فى منطقتك الحاليه", Snackbar.LENGTH_LONG).show();
                     return;
                 }
                 int HomeTools, Accessories, Mobiles, Computers, Shoes, Clothes, SuperMarket, Services, Restaurants;
@@ -187,46 +195,59 @@ public class CategoriesActivity extends AppCompatActivity {
                     t1.setText(String.valueOf(Restaurants));
                     t1.setVisibility(View.VISIBLE);
                     v1.setVisibility(View.VISIBLE);
+                    bOfferExists = true;
                 }
                 if (HomeTools > 0) {
                     t2.setText(String.valueOf(HomeTools));
                     t2.setVisibility(View.VISIBLE);
                     v2.setVisibility(View.VISIBLE);
+                    bOfferExists = true;
                 }
                 if (Accessories > 0) {
                     t3.setText(String.valueOf(Accessories));
                     t3.setVisibility(View.VISIBLE);
                     v3.setVisibility(View.VISIBLE);
+                    bOfferExists = true;
                 }
                 if (Mobiles > 0) {
                     t4.setText(String.valueOf(Mobiles));
                     t4.setVisibility(View.VISIBLE);
                     v4.setVisibility(View.VISIBLE);
+                    bOfferExists = true;
                 }
                 if (Computers > 0) {
                     t5.setText(String.valueOf(Computers));
                     t5.setVisibility(View.VISIBLE);
                     v5.setVisibility(View.VISIBLE);
+                    bOfferExists = true;
                 }
                 if (Shoes > 0) {
                     t6.setText(String.valueOf(Shoes));
                     t6.setVisibility(View.VISIBLE);
                     v6.setVisibility(View.VISIBLE);
+                    bOfferExists = true;
                 }
                 if (Clothes > 0) {
                     t7.setText(String.valueOf(Clothes));
                     t7.setVisibility(View.VISIBLE);
                     v7.setVisibility(View.VISIBLE);
+                    bOfferExists = true;
                 }
                 if (SuperMarket > 0) {
                     t8.setText(String.valueOf(SuperMarket));
                     t8.setVisibility(View.VISIBLE);
                     v8.setVisibility(View.VISIBLE);
+                    bOfferExists = true;
                 }
                 if (Services > 0) {
                     t9.setText(String.valueOf(Services));
                     t9.setVisibility(View.VISIBLE);
                     v9.setVisibility(View.VISIBLE);
+                    bOfferExists = true;
+                }
+
+                if (!bOfferExists) {
+                    Snackbar.make(findViewById(android.R.id.content), "لا يوجد عروض فى منطقتك الحاليه", Snackbar.LENGTH_LONG).show();
                 }
             }
 
@@ -272,11 +293,7 @@ public class CategoriesActivity extends AppCompatActivity {
             mDrawerLayout.closeDrawer(GravityCompat.END);
         else {
             if (exit) {
-                Intent intent = new Intent(Intent.ACTION_MAIN);
-                intent.addCategory(Intent.CATEGORY_HOME);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivityForResult(intent, 222);
-                finish();
+                super.onBackPressed();
             } else {
                 Toast.makeText(this, "اضغط مره كمان علشان تقفل",
                         Toast.LENGTH_SHORT).show();
@@ -305,6 +322,10 @@ public class CategoriesActivity extends AppCompatActivity {
     }
 
     public void goToCards(View view) {
+        if (!bOfferExists) {
+            Snackbar.make(findViewById(android.R.id.content), "لا يوجد عروض فى منطقتك الحاليه", Snackbar.LENGTH_LONG).show();
+            return;
+        }
         int x = view.getId();
         Intent i = new Intent(CategoriesActivity.this, CardsActivity.class);
         i.putExtra("city", lstCities.get(spnCities.getSelectedItemPosition()));
@@ -366,16 +387,23 @@ public class CategoriesActivity extends AppCompatActivity {
                     ((TextView) adapterView.getChildAt(0)).setTextColor(Color.WHITE);
                     hideViews();
                     adapterView.getChildAt(0).setBackgroundColor(Color.TRANSPARENT);
+                    progress.setVisibility(View.VISIBLE);
                     if (trdCurrentLocationSpinner != null && trdCurrentLocationSpinner.isAlive())
                         trdCurrentLocationSpinner.interrupt();
                     if (i == 0) {
                         trdCurrentLocationSpinner = new Thread(new Runnable() {
                             @Override
                             public void run() {
-                                final String city = UtilityGeneral.getCurrentCityEnglish(getApplicationContext());
+                                final String city = UtilityGeneral.getCurrentCityArabic(getApplicationContext());
                                 CategoriesActivity.this.runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
+                                        if (city == null) {
+                                            hideViews();
+                                            bOfferExists = false;
+                                            Snackbar.make(findViewById(android.R.id.content), "لا يوجد عروض فى منطقتك الحاليه", Snackbar.LENGTH_LONG).show();
+                                            return;
+                                        }
                                         updateOffersNumber(city);
                                     }
                                 });
@@ -425,7 +453,7 @@ public class CategoriesActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                UtilityGeneral.getCurrentCityEnglish(getBaseContext());
+                UtilityGeneral.getCurrentCityArabic(getBaseContext());
             }
         }).start();
     }
@@ -656,11 +684,10 @@ public class CategoriesActivity extends AppCompatActivity {
             startActivityForResult(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.facebook.com/3roodk")), 222);
         }
     }
+
     //endregion
 
     //region Signing
-    User signingUser;
-    ProgressDialog signingProgress;
 
     private void signingClick() {
         if (!getLatLng(Constants.PERMISSION_MAPS_SIGN_IN)) return;

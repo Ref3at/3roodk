@@ -4,18 +4,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.location.Address;
-import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.util.Base64;
 import android.util.Log;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ListAdapter;
-import android.widget.ListView;
 
 import com.app3roodk.Schema.Comments;
 import com.app3roodk.Schema.Offer;
@@ -24,6 +19,10 @@ import com.app3roodk.Schema.User;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.google.maps.GeoApiContext;
+import com.google.maps.GeocodingApi;
+import com.google.maps.model.ComponentFilter;
+import com.google.maps.model.GeocodingResult;
 
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
@@ -51,16 +50,18 @@ public class UtilityGeneral {
         }
     }
 
-    static public String getCurrentCityEnglish(Context context) {
+    static public String getCurrentCityArabic(Context context) {
         String city;
         try {
             LatLng latlng = getCurrentLonAndLat(context);
-            Geocoder geo = new Geocoder(context, Locale.ENGLISH);
-            List<Address> addresses = geo.getFromLocation(latlng.latitude, latlng.longitude, 1);
-            if (addresses != null) {
-                city = addresses.get(0).getAddressLine(2);
-                if (city == null || city.equals("null"))
-                    city = addresses.get(0).getAddressLine(3);
+            com.google.maps.model.LatLng latlng2 = new com.google.maps.model.LatLng(latlng.latitude, latlng.longitude);
+            GeoApiContext context2 = new GeoApiContext().setApiKey(Constants.API_KEY_GEOCODER);
+            GeocodingResult[] results = GeocodingApi.reverseGeocode(context2, latlng2).language("ar").await();
+            if (results != null) {
+                city = getCity(results);
+                if (city == null || city.equals("null")) {
+                    city = getGovernate(results);
+                }
                 City = city;
                 saveCity(context, city);
             } else
@@ -71,27 +72,35 @@ public class UtilityGeneral {
         return city;
     }
 
-    static public List<Address> getCurrentGovAndCity(Context context, LatLng latLng) {
-        List<Address> addresses = null;
+    static public GeocodingResult[] getCurrentGovAndCityArabic(Context context, LatLng latLng) {
+        GeocodingResult[] results = null;
         try {
-            Geocoder geo = new Geocoder(context, Locale.getDefault());
-            addresses = geo.getFromLocation(latLng.latitude, latLng.longitude, 1);
+            com.google.maps.model.LatLng latlng2 = new com.google.maps.model.LatLng(latLng.latitude, latLng.longitude);
+            GeoApiContext context2 = new GeoApiContext().setApiKey(Constants.API_KEY_GEOCODER);
+            results = GeocodingApi.reverseGeocode(context2, latlng2).language("ar").await();
 
         } catch (Exception e) {
-            Log.e("1212",e.getMessage());
+            Log.e("1212", e.getMessage());
         }
-        return addresses;
+        return results;
     }
 
-    static public List<Address> getCurrentGovAndCityInEnglish(Context context, LatLng latLng) {
-        List<Address> addresses = null;
-        try {
-            Geocoder geo = new Geocoder(context, Locale.ENGLISH);
-            addresses = geo.getFromLocation(latLng.latitude, latLng.longitude, 1);
-
-        } catch (Exception e) {
+    static public String getCity(GeocodingResult[] results) {
+        String city = null;
+        if (results != null) {
+            city = results[3].formattedAddress;
+            city = city.substring(0, city.indexOf("،"));
         }
-        return addresses;
+        return city;
+    }
+
+    static public String getGovernate(GeocodingResult[] results) {
+        String governate = null;
+        if (results != null) {
+            governate = results[4].formattedAddress;
+            governate = governate.substring(0, governate.indexOf("،"));
+        }
+        return governate;
     }
 
     static public Intent DrawPathToCertainShop(Context context, LatLng from, LatLng to) {
@@ -235,7 +244,7 @@ public class UtilityGeneral {
     }
 
     static public String getCurrentDate(Date date) {
-        return new SimpleDateFormat("yyyyMMddkkmm",Locale.US).format(date);
+        return new SimpleDateFormat("yyyyMMddkkmm", Locale.US).format(date);
     }
 
     static public String getCurrentYearAndWeek() {
@@ -289,25 +298,9 @@ public class UtilityGeneral {
         return categoryName;
     }
 
-    public static void setListViewHeightBasedOnChildren(ListView listView) {
-        ListAdapter listAdapter = listView.getAdapter();
-        if (listAdapter == null)
-            return;
-
-        int desiredWidth = View.MeasureSpec.makeMeasureSpec(listView.getWidth(), View.MeasureSpec.UNSPECIFIED);
-        int totalHeight = 0;
-        View view = null;
-        for (int i = 0; i < listAdapter.getCount(); i++) {
-            view = listAdapter.getView(i, view, listView);
-            if (i == 0)
-                view.setLayoutParams(new ViewGroup.LayoutParams(desiredWidth, ViewGroup.LayoutParams.WRAP_CONTENT));
-
-            view.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
-            totalHeight += view.getMeasuredHeight();
-        }
-        ViewGroup.LayoutParams params = listView.getLayoutParams();
-        params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
-        listView.setLayoutParams(params);
+    static public boolean isOnline(Context context) {
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        return cm.getActiveNetworkInfo() != null;
     }
     //endregion
 
