@@ -388,7 +388,7 @@ public class CreateShopFragment extends Fragment {
 
                     Log.e("CreateNewShop", databaseError.getMessage());
                 } else {
-                  //  showMessageToast("تم إضافه المحل، شكرا لك");
+                    showMessageToast("تم إضافه المحل، شكرا لك");
                     UtilityGeneral.saveShop(getActivity(), shop);
 
                     morphToSuccess(button);
@@ -411,7 +411,14 @@ public class CreateShopFragment extends Fragment {
         }
         else
         {
-            morphToFailure(button);
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    morphToFailure(button);
+
+                }
+            }, 3000);
             button.unblockTouch();
         }
     }

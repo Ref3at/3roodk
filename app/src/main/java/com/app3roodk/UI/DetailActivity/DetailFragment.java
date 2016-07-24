@@ -47,6 +47,7 @@ import com.daimajia.slider.library.Indicators.PagerIndicator;
 import com.daimajia.slider.library.SliderLayout;
 import com.daimajia.slider.library.SliderTypes.BaseSliderView;
 import com.daimajia.slider.library.Tricks.ViewPagerEx;
+import com.dd.morphingbutton.impl.IndeterminateProgressButton;
 import com.github.paolorotolo.expandableheightlistview.ExpandableHeightListView;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.auth.FirebaseAuth;
@@ -78,7 +79,8 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
 
     LikeButton btnFavorite;
 
-    Button btnShopWay, btnComment;
+    Button btnShopWay,btnComment;
+
     TextView txtViews, txtSale, txtPriceBefore, txtPriceAfter, txtDay, txtHour, txtMinute, txtDescription,
             txtShopName, txtWorkTime, txtAddress, txtMobile, txtRate;
     EditText edtxtComment;
@@ -188,6 +190,8 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
                         showMessage("اكتب التعليق من فضلك اولاً");
                         return;
                     }
+
+                    btnComment.setClickable(false);
                     final Comments comment = new Comments();
                     if (offer.getUserId().equals(UtilityGeneral.loadUser(getActivity()).getObjectId())) {
                         comment.setUserName(offer.getShopName());
@@ -236,6 +240,7 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
                                             });
                                 }
                                 edtxtComment.setText("");
+                                btnComment.setClickable(true);
                             }
                         }
 
