@@ -63,6 +63,8 @@
     <dimen name="width_120">120dp</dimen>
     <dimen name="height_8">8dp</dimen>
     <dimen name="mb_corner_radius_4">4dp</dimen>
+    <dimen name="width_100">100dp</dimen>
+    <dimen name="height_48">48dp</dimen>
 
 
 </resources>

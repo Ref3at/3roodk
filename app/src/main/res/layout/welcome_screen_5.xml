@@ -9,11 +9,11 @@
         android:scaleType="centerCrop"
         android:src="@drawable/w55"/>
 
-    <Button
+    <com.dd.morphingbutton.impl.IndeterminateProgressButton
         android:id="@+id/btnContinue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
+        android:layout_margin="5dp"
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
         android:background="@drawable/custom_background_buttons"
