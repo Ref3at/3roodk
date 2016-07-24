@@ -52,6 +52,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_marginRight="5dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
                 android:gravity="center"
                 android:orientation="vertical">
 
@@ -63,9 +65,10 @@
                 <TextView
                     android:id="@+id/card_distance"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:textColor="#000"
                     android:textStyle="bold"
+                    android:gravity="bottom"
                     tools:text="0.6 km" />
             </LinearLayout>
 
@@ -75,6 +78,8 @@
                 android:layout_marginLeft="6dp"
                 android:layout_marginRight="6dp"
                 android:gravity="center"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
                 android:orientation="vertical">
 
                 <ImageView
@@ -85,8 +90,9 @@
                 <TextView
                     android:id="@+id/card_rate"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:textColor="#000"
+                    android:gravity="bottom"
                     android:textStyle="bold"
                     tools:text="0.6" />
             </LinearLayout>
@@ -119,8 +125,8 @@
                 tools:text="الغرباوى" />
 
             <ImageButton
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:layout_gravity="center_vertical"
                 android:background="#00ffffff"
                 android:src="@drawable/ic_account_balance_black_24dp" />
@@ -211,6 +217,43 @@
             android:orientation="horizontal"
             android:padding="4dp">
 
+            <LinearLayout
+                android:id="@+id/lytSeconds"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:visibility="gone"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/second"
+                    android:textColor="@color/headingColor"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/card_txt_second"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textColor="@color/headingColor"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    tools:text="35" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/txt_dots_3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text=":"
+                android:visibility="gone"
+                android:textColor="@color/headingColor"
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -238,6 +281,7 @@
             </LinearLayout>
 
             <TextView
+                android:id="@+id/txt_dots_2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
@@ -272,6 +316,7 @@
             </LinearLayout>
 
             <TextView
+                android:id="@+id/txt_dots_1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
@@ -282,6 +327,7 @@
 
             <LinearLayout
                 android:layout_width="wrap_content"
+                android:id="@+id/lytDay"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 

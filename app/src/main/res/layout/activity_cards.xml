@@ -63,7 +63,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            app:SpinKit_Color="@color/colorAccent" />
+            app:SpinKit_Color="@color/colorPrimary" />
+
+        <ImageView
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/img_no_offer"
+            style="@style/SpinKitView.Large.Circle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:src="@drawable/no_offer"
+            android:visibility="gone"/>
 
         <com.melnykov.fab.FloatingActionButton
             android:id="@+id/fab"

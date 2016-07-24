@@ -322,10 +322,6 @@ public class CategoriesActivity extends AppCompatActivity {
     }
 
     public void goToCards(View view) {
-        if (!bOfferExists) {
-            Snackbar.make(findViewById(android.R.id.content), "لا يوجد عروض فى منطقتك الحاليه", Snackbar.LENGTH_LONG).show();
-            return;
-        }
         int x = view.getId();
         Intent i = new Intent(CategoriesActivity.this, CardsActivity.class);
         i.putExtra("city", lstCities.get(spnCities.getSelectedItemPosition()));

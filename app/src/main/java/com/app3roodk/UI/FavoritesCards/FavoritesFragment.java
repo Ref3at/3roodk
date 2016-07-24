@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -11,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.app3roodk.R;
@@ -52,6 +54,7 @@ public class FavoritesFragment extends Fragment {
     public class FetchFavOffers extends AsyncTask<Void, Void, Void> {
 
         RecyclerView recyclerView;
+
         public FetchFavOffers(RecyclerView recyclerView) {
             this.recyclerView = recyclerView;
         }
@@ -81,7 +84,8 @@ public class FavoritesFragment extends Fragment {
 
 
     public static class ContentAdapter extends RecyclerView.Adapter<CardHolder> {
-        final static long minutesInMilli = 1000 * 60;
+        final static long secondsInMilli = 1000;
+        final static long minutesInMilli = secondsInMilli * 60;
         final static long hoursInMilli = minutesInMilli * 60;
         final static long daysInMilli = hoursInMilli * 24;
         ArrayList<Offer> lstOffers;
@@ -100,8 +104,8 @@ public class FavoritesFragment extends Fragment {
             cal.set(Calendar.YEAR, Integer.parseInt(lstOffers.get(position).getEndTime().substring(0, 4)));
             cal.set(Calendar.MONTH, Integer.parseInt(lstOffers.get(position).getEndTime().substring(4, 6)) - 1);
             cal.set(Calendar.DAY_OF_MONTH, Integer.parseInt(lstOffers.get(position).getEndTime().substring(6, 8)));
-            cal.set(Calendar.HOUR_OF_DAY, 0);
-            cal.set(Calendar.MINUTE, 0);
+            cal.set(Calendar.HOUR_OF_DAY, Integer.parseInt(lstOffers.get(position).getEndTime().substring(8, 10)));
+            cal.set(Calendar.MINUTE, Integer.parseInt(lstOffers.get(position).getEndTime().substring(10, 12)));
             cal.set(Calendar.SECOND, 0);
             cal.set(Calendar.MILLISECOND, 0);
             long timeInMilliseconds = cal.getTime().getTime() - System.currentTimeMillis();
@@ -110,10 +114,17 @@ public class FavoritesFragment extends Fragment {
             cardHolder.hour.setText(String.valueOf((int) (timeInMilliseconds / hoursInMilli)));
             timeInMilliseconds = timeInMilliseconds % hoursInMilli;
             cardHolder.minute.setText(String.valueOf((int) (timeInMilliseconds / minutesInMilli)));
+            timeInMilliseconds = timeInMilliseconds % minutesInMilli;
+            cardHolder.second.setText(String.valueOf((int) (timeInMilliseconds / secondsInMilli)));
+            if (cardHolder.day.getText().toString().equals("0")) {
+                cardHolder.showSeconds = true;
+            } else {
+                cardHolder.showSeconds = false;
+            }
         }
 
         @Override
-        public void onBindViewHolder(CardHolder cardHolder, int position) {
+        public void onBindViewHolder(final CardHolder cardHolder, final int position) {
 
             fillTimer(cardHolder, position);
             cardHolder.offer = lstOffers.get(position);
@@ -135,6 +146,45 @@ public class FavoritesFragment extends Fragment {
             } catch (Exception ex) {
                 cardHolder.distance.setVisibility(View.INVISIBLE);
             }
+
+            if (cardHolder.timer != null)
+                cardHolder.timer.cancel();
+            cardHolder.timer = new CountDownTimer(180000, 700) {
+                @Override
+                public void onTick(long l) {
+                    if (l % 700 != 0) {
+                        fillTimer(cardHolder, position);
+                    }
+                    if (!cardHolder.showSeconds) {
+                        cardHolder.dots3.setVisibility(View.GONE);
+                        cardHolder.lytSeconds.setVisibility(View.GONE);
+                        if (cardHolder.dots2.getVisibility() == View.INVISIBLE) {
+                            cardHolder.dots1.setVisibility(View.VISIBLE);
+                            cardHolder.dots2.setVisibility(View.VISIBLE);
+                        } else {
+                            cardHolder.dots1.setVisibility(View.INVISIBLE);
+                            cardHolder.dots2.setVisibility(View.INVISIBLE);
+                        }
+                    } else {
+                        cardHolder.dots1.setVisibility(View.GONE);
+                        cardHolder.lytDays.setVisibility(View.GONE);
+                        if (cardHolder.dots2.getVisibility() == View.INVISIBLE) {
+                            cardHolder.dots3.setVisibility(View.VISIBLE);
+                            cardHolder.dots2.setVisibility(View.VISIBLE);
+                        } else {
+                            cardHolder.dots3.setVisibility(View.INVISIBLE);
+                            cardHolder.dots2.setVisibility(View.INVISIBLE);
+                        }
+                    }
+
+                }
+
+                @Override
+                public void onFinish() {
+
+                }
+            };
+            cardHolder.timer.start();
         }
 
         @Override
@@ -147,9 +197,13 @@ public class FavoritesFragment extends Fragment {
 }
 
 class CardHolder extends RecyclerView.ViewHolder {
-    public TextView title, rate, distance, shopName, day, hour, minute, discount, priceBefore, priceAfter;
+    public TextView title, rate, distance, shopName, day, hour, minute, second, discount, priceBefore, priceAfter, dots1, dots2, dots3;
     public ImageView imgCard;
+    public LinearLayout lytSeconds, lytDays;
+    public boolean showSeconds;
+    public CountDownTimer timer;
     public Offer offer;
+
 
 //    ImageButton btnFavorite, btnShare;
 
@@ -168,8 +222,14 @@ class CardHolder extends RecyclerView.ViewHolder {
         rate = (TextView) rootView.findViewById(R.id.card_rate);
         day = (TextView) rootView.findViewById(R.id.card_txt_day);
         hour = (TextView) rootView.findViewById(R.id.card_txt_hour);
+        second = (TextView) rootView.findViewById(R.id.card_txt_second);
+        dots1 = (TextView) rootView.findViewById(R.id.txt_dots_1);
+        dots2 = (TextView) rootView.findViewById(R.id.txt_dots_2);
+        dots3 = (TextView) rootView.findViewById(R.id.txt_dots_3);
         minute = (TextView) rootView.findViewById(R.id.card_txt_minute);
         imgCard = (ImageView) rootView.findViewById(R.id.card_image);
+        lytDays = (LinearLayout) rootView.findViewById(R.id.lytDay);
+        lytSeconds = (LinearLayout) rootView.findViewById(R.id.lytSeconds);
         //btnFavorite = (ImageButton) rootView.findViewById(R.id.favorite_button);
         //btnShare = (ImageButton) rootView.findViewById(R.id.share_button2);
 

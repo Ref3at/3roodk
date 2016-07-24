@@ -28,7 +28,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                app:SpinKit_Color="@color/colorAccent" />
+                app:SpinKit_Color="@color/colorPrimary" />
 
             <TextView
                 android:id="@+id/description"

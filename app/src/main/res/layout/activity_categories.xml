@@ -57,7 +57,7 @@
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:visibility="invisible"
-                    app:SpinKit_Color="@color/colorAccent" />
+                    app:SpinKit_Color="@color/white" />
                 <Spinner
                     android:layout_gravity="right"
                     android:gravity="right"

@@ -6,9 +6,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.location.Address;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -27,6 +27,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.app3roodk.Imgur.ImgurUploadTask;
@@ -52,7 +53,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.List;
 
 public class ViewShopFragment extends Fragment {
 
@@ -575,7 +575,8 @@ public class ViewShopFragment extends Fragment {
 }
 
 class CardsAapter extends ArrayAdapter {
-    final static long minutesInMilli = 1000 * 60;
+    final static long secondsInMilli = 1000;
+    final static long minutesInMilli = secondsInMilli * 60;
     final static long hoursInMilli = minutesInMilli * 60;
     final static long daysInMilli = hoursInMilli * 24;
     Context mContext;
@@ -604,10 +605,17 @@ class CardsAapter extends ArrayAdapter {
         cardHolder.hour.setText(String.valueOf((int) (timeInMilliseconds / hoursInMilli)));
         timeInMilliseconds = timeInMilliseconds % hoursInMilli;
         cardHolder.minute.setText(String.valueOf((int) (timeInMilliseconds / minutesInMilli)));
+        timeInMilliseconds = timeInMilliseconds % minutesInMilli;
+        cardHolder.second.setText(String.valueOf((int) (timeInMilliseconds / secondsInMilli)));
+        if (cardHolder.day.getText().toString().equals("0")) {
+            cardHolder.showSeconds = true;
+        } else {
+            cardHolder.showSeconds = false;
+        }
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         View row = convertView;
         CardHolder cardHolder;
 
@@ -638,14 +646,56 @@ class CardsAapter extends ArrayAdapter {
         } catch (Exception ex) {
             cardHolder.distance.setVisibility(View.INVISIBLE);
         }
+        final CardHolder cardHolder1 = cardHolder;
 
+        if (cardHolder.timer != null)
+            cardHolder.timer.cancel();
+        cardHolder.timer  = new CountDownTimer(180000, 700) {
+            @Override
+            public void onTick(long l) {
+                if (l % 700 != 0) {
+                    fillTimer(cardHolder1, position);
+                }
+                if (!cardHolder1.showSeconds) {
+                    cardHolder1.dots3.setVisibility(View.GONE);
+                    cardHolder1.lytSeconds.setVisibility(View.GONE);
+                    if (cardHolder1.dots2.getVisibility() == View.INVISIBLE) {
+                        cardHolder1.dots1.setVisibility(View.VISIBLE);
+                        cardHolder1.dots2.setVisibility(View.VISIBLE);
+                    } else {
+                        cardHolder1.dots1.setVisibility(View.INVISIBLE);
+                        cardHolder1.dots2.setVisibility(View.INVISIBLE);
+                    }
+                } else {
+                    cardHolder1.dots1.setVisibility(View.GONE);
+                    cardHolder1.lytDays.setVisibility(View.GONE);
+                    if (cardHolder1.dots2.getVisibility() == View.INVISIBLE) {
+                        cardHolder1.dots3.setVisibility(View.VISIBLE);
+                        cardHolder1.dots2.setVisibility(View.VISIBLE);
+                    } else {
+                        cardHolder1.dots3.setVisibility(View.INVISIBLE);
+                        cardHolder1.dots2.setVisibility(View.INVISIBLE);
+                    }
+                }
+
+            }
+
+            @Override
+            public void onFinish() {
+
+            }
+        };
+        cardHolder.timer.start();
         return row;
     }
 }
 
 class CardHolder {
-    public TextView title, rate, distance, shopName, day, hour, minute, discount, priceBefore, priceAfter;
+    public TextView title, rate, distance, shopName, day, hour, minute, second, discount, priceBefore, priceAfter, dots1, dots2, dots3;
     public ImageView imgCard;
+    public LinearLayout lytSeconds, lytDays;
+    public CountDownTimer timer;
+    public boolean showSeconds;
 
     public CardHolder(View rootView) {
         title = (TextView) rootView.findViewById(R.id.card_text);
@@ -657,8 +707,14 @@ class CardHolder {
         rate = (TextView) rootView.findViewById(R.id.card_rate);
         day = (TextView) rootView.findViewById(R.id.card_txt_day);
         hour = (TextView) rootView.findViewById(R.id.card_txt_hour);
+        second = (TextView) rootView.findViewById(R.id.card_txt_second);
+        dots1 = (TextView) rootView.findViewById(R.id.txt_dots_1);
+        dots2 = (TextView) rootView.findViewById(R.id.txt_dots_2);
+        dots3 = (TextView) rootView.findViewById(R.id.txt_dots_3);
         minute = (TextView) rootView.findViewById(R.id.card_txt_minute);
         imgCard = (ImageView) rootView.findViewById(R.id.card_image);
+        lytDays = (LinearLayout) rootView.findViewById(R.id.lytDay);
+        lytSeconds = (LinearLayout) rootView.findViewById(R.id.lytSeconds);
         //btnFavorite = (ImageButton) rootView.findViewById(R.id.favorite_button);
         //btnShare = (ImageButton) rootView.findViewById(R.id.share_button2);
 

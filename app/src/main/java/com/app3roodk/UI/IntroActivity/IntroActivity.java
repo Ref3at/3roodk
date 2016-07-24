@@ -30,7 +30,7 @@ public class IntroActivity extends AppCompatActivity {
         WelcomeCoordinatorLayout coordinatorLayout
                 = (WelcomeCoordinatorLayout)findViewById(R.id.coordinator);
         coordinatorLayout.addPage(R.layout.welcome_screen_1,R.layout.welcome_screen_2,
-                R.layout.welcome_screen_3,R.layout.welcome_screen_4,R.layout.welcome_screen_5,R.layout.welcome_screen_6);
+                R.layout.welcome_screen_3,R.layout.welcome_screen_4,R.layout.welcome_screen_5);
         coordinatorLayout.findViewById(R.id.btnContinue).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -44,7 +44,7 @@ public class IntroActivity extends AppCompatActivity {
                     startActivity(new Intent(IntroActivity.this, CategoriesActivity.class));
                     finish();
                 } catch (Exception ex) {
-                    Toast.makeText(getBaseContext(), "ممكن تفتح الخرائط على الأقل مرة", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getBaseContext(),"ممكن تفتح برنامج خرائط جوجل وتعمل تحديد مكانك", Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -66,7 +66,7 @@ public class IntroActivity extends AppCompatActivity {
                 }
 
             } catch (Exception ex) {
-                Toast.makeText(getBaseContext(), "ممكن تفتح الخرائط على الأقل مرة", Toast.LENGTH_LONG).show();
+                Toast.makeText(getBaseContext(),"ممكن تفتح برنامج خرائط جوجل وتعمل تحديد مكانك", Toast.LENGTH_LONG).show();
             }
         }
         return false;
@@ -76,13 +76,16 @@ public class IntroActivity extends AppCompatActivity {
                                            @NonNull String permissions[], @NonNull int[] grantResults) {
         switch (requestCode) {
             case Constants.PERMISSION_MAPS_VISITOR: {
-                User user = new User();
-                LatLng latLng = UtilityGeneral.getCurrentLonAndLat(getBaseContext());
-                user.setLat(String.valueOf(latLng.latitude));
-                user.setLon(String.valueOf(latLng.longitude));
-                UtilityGeneral.saveUser(getBaseContext(), user);
-                startActivity(new Intent(this, CategoriesActivity.class));
-                finish();
+                try {
+                    User user = new User();
+                    LatLng latLng = UtilityGeneral.getCurrentLonAndLat(getBaseContext());
+                    user.setLat(String.valueOf(latLng.latitude));
+                    user.setLon(String.valueOf(latLng.longitude));
+                    UtilityGeneral.saveUser(getBaseContext(), user);
+                    startActivity(new Intent(this, CategoriesActivity.class));
+                    finish();
+                }
+                catch (Exception ex){}
             }
         }
     }

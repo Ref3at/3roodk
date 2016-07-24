@@ -42,11 +42,15 @@ public class UtilityGeneral {
     static public String City;
 
     static public LatLng getCurrentLonAndLat(Context context) {
+
         try {
             Location location = getLastKnownLocation(context);
             return new LatLng(location.getLatitude(), location.getLongitude());
         } catch (Exception e) {
-            return new LatLng(Double.parseDouble(loadUser(context).getLat()), Double.parseDouble(loadUser(context).getLon()));
+            try {
+                return new LatLng(Double.parseDouble(loadUser(context).getLat()), Double.parseDouble(loadUser(context).getLon()));
+            }
+            catch (Exception exx){return null;}
         }
     }
 
@@ -236,7 +240,7 @@ public class UtilityGeneral {
             if (l == null) {
                 continue;
             }
-            if (bestLocation == null || l.getAccuracy() < bestLocation.getAccuracy()) {
+            if (bestLocation == null || l.getAccuracy() > bestLocation.getAccuracy()) {
                 bestLocation = l;
             }
         }
