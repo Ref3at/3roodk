@@ -597,7 +597,7 @@ class CardsAapter extends ArrayAdapter {
         cal.set(Calendar.DAY_OF_MONTH, Integer.parseInt(mLstOffers.get(position).getEndTime().substring(6, 8)));
         cal.set(Calendar.HOUR_OF_DAY, Integer.parseInt(mLstOffers.get(position).getEndTime().substring(8, 10)));
         cal.set(Calendar.MINUTE, Integer.parseInt(mLstOffers.get(position).getEndTime().substring(10, 12)));
-        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.SECOND, 60);
         cal.set(Calendar.MILLISECOND, 0);
         long timeInMilliseconds = cal.getTime().getTime() - System.currentTimeMillis();
         cardHolder.day.setText(String.valueOf((int) (timeInMilliseconds / daysInMilli)));
@@ -650,15 +650,14 @@ class CardsAapter extends ArrayAdapter {
 
         if (cardHolder.timer != null)
             cardHolder.timer.cancel();
-        cardHolder.timer  = new CountDownTimer(180000, 700) {
+        cardHolder.timer  = new CountDownTimer(180000, 500) {
             @Override
             public void onTick(long l) {
-                if (l % 700 != 0) {
                     fillTimer(cardHolder1, position);
-                }
                 if (!cardHolder1.showSeconds) {
                     cardHolder1.dots3.setVisibility(View.GONE);
                     cardHolder1.lytSeconds.setVisibility(View.GONE);
+                    cardHolder1.lytDays.setVisibility(View.VISIBLE);
                     if (cardHolder1.dots2.getVisibility() == View.INVISIBLE) {
                         cardHolder1.dots1.setVisibility(View.VISIBLE);
                         cardHolder1.dots2.setVisibility(View.VISIBLE);
@@ -669,6 +668,7 @@ class CardsAapter extends ArrayAdapter {
                 } else {
                     cardHolder1.dots1.setVisibility(View.GONE);
                     cardHolder1.lytDays.setVisibility(View.GONE);
+                    cardHolder1.lytSeconds.setVisibility(View.VISIBLE);
                     if (cardHolder1.dots2.getVisibility() == View.INVISIBLE) {
                         cardHolder1.dots3.setVisibility(View.VISIBLE);
                         cardHolder1.dots2.setVisibility(View.VISIBLE);

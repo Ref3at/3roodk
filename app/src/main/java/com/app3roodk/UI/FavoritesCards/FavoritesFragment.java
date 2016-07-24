@@ -106,7 +106,7 @@ public class FavoritesFragment extends Fragment {
             cal.set(Calendar.DAY_OF_MONTH, Integer.parseInt(lstOffers.get(position).getEndTime().substring(6, 8)));
             cal.set(Calendar.HOUR_OF_DAY, Integer.parseInt(lstOffers.get(position).getEndTime().substring(8, 10)));
             cal.set(Calendar.MINUTE, Integer.parseInt(lstOffers.get(position).getEndTime().substring(10, 12)));
-            cal.set(Calendar.SECOND, 0);
+            cal.set(Calendar.SECOND, 60);
             cal.set(Calendar.MILLISECOND, 0);
             long timeInMilliseconds = cal.getTime().getTime() - System.currentTimeMillis();
             cardHolder.day.setText(String.valueOf((int) (timeInMilliseconds / daysInMilli)));
@@ -149,15 +149,14 @@ public class FavoritesFragment extends Fragment {
 
             if (cardHolder.timer != null)
                 cardHolder.timer.cancel();
-            cardHolder.timer = new CountDownTimer(180000, 700) {
+            cardHolder.timer = new CountDownTimer(180000, 500) {
                 @Override
                 public void onTick(long l) {
-                    if (l % 700 != 0) {
-                        fillTimer(cardHolder, position);
-                    }
+                    fillTimer(cardHolder, position);
                     if (!cardHolder.showSeconds) {
                         cardHolder.dots3.setVisibility(View.GONE);
                         cardHolder.lytSeconds.setVisibility(View.GONE);
+                        cardHolder.lytDays.setVisibility(View.VISIBLE);
                         if (cardHolder.dots2.getVisibility() == View.INVISIBLE) {
                             cardHolder.dots1.setVisibility(View.VISIBLE);
                             cardHolder.dots2.setVisibility(View.VISIBLE);
@@ -168,6 +167,7 @@ public class FavoritesFragment extends Fragment {
                     } else {
                         cardHolder.dots1.setVisibility(View.GONE);
                         cardHolder.lytDays.setVisibility(View.GONE);
+                        cardHolder.lytSeconds.setVisibility(View.VISIBLE);
                         if (cardHolder.dots2.getVisibility() == View.INVISIBLE) {
                             cardHolder.dots3.setVisibility(View.VISIBLE);
                             cardHolder.dots2.setVisibility(View.VISIBLE);

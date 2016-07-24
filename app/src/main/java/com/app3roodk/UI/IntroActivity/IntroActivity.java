@@ -185,6 +185,7 @@ public class IntroActivity extends AppCompatActivity {
                 Toast.makeText(getBaseContext(), "ممكن تفتح برنامج خرائط جوجل وتعمل تحديد مكانك", Toast.LENGTH_LONG).show();
             }
         }
+        button.unblockTouch();
         return false;
     }
 
@@ -201,6 +202,7 @@ public class IntroActivity extends AppCompatActivity {
                     startActivity(new Intent(this, CategoriesActivity.class));
                     finish();
                 } catch (Exception ex) {
+                    btn_cont.unblockTouch();
                 }
             }
         }

@@ -240,7 +240,7 @@ public class UtilityGeneral {
             if (l == null) {
                 continue;
             }
-            if (bestLocation == null || l.getAccuracy() > bestLocation.getAccuracy()) {
+            if (bestLocation == null || l.getAccuracy() < bestLocation.getAccuracy()) {
                 bestLocation = l;
             }
         }

@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -111,13 +112,14 @@ public class CategoriesActivity extends AppCompatActivity {
         v8 = findViewById(R.id.v8);
         v9 = findViewById(R.id.v9);
 
-        progress= (SpinKitView) findViewById(R.id.progress);
+        progress = (SpinKitView) findViewById(R.id.progress);
 
         // Adding Toolbar to Main screen
         FirebaseInstanceId.getInstance().getToken();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         spnCities = (Spinner) findViewById(R.id.spnCities);
+        updateUserLocation();
         initSpinner();
         loadCity();
         initNavigationDrawer();
@@ -126,6 +128,18 @@ public class CategoriesActivity extends AppCompatActivity {
             UtilityFirebase.updateUserNotificationToken(getBaseContext(), UtilityGeneral.loadUser(getBaseContext()).getObjectId(), FirebaseInstanceId.getInstance().getToken());
             UtilityFirebase.getUserShops(getBaseContext(), UtilityGeneral.loadUser(getBaseContext()).getObjectId());
             UtilityFirebase.getUserNoOfAvailableOffers(getBaseContext(), UtilityGeneral.getCurrentYearAndWeek()).addValueEventListener(availableOfferListener);
+        }
+    }
+
+    private void updateUserLocation() {
+        try {
+            User user = UtilityGeneral.loadUser(getBaseContext());
+            LatLng location = UtilityGeneral.getCurrentLonAndLat(getBaseContext());
+            if (location == null) return;
+            user.setLat(String.valueOf(location.latitude));
+            user.setLon(String.valueOf(location.longitude));
+            UtilityGeneral.saveUser(getBaseContext(), user);
+        } catch (Exception ex) {
         }
     }
 

@@ -6,8 +6,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -49,7 +47,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.weiwangcn.betterspinner.library.BetterSpinner;
 
-import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -358,6 +355,13 @@ public class AddNewOfferFragment extends Fragment {
                 } else {
                     ((TextInputLayout) rootView.findViewById(R.id.input_layout_priceafter)).setErrorEnabled(false);
                 }
+                if (Double.parseDouble(item.getPriceAfter()) <= 0) {
+                    ((TextInputLayout) rootView.findViewById(R.id.input_layout_priceafter)).setError("االسعر بعد الخصم يجب ان يكون اعلى من صفر");
+                    requestFocus(inputPriceAfter);
+                    success = false;
+                } else {
+                    ((TextInputLayout) rootView.findViewById(R.id.input_layout_priceafter)).setErrorEnabled(false);
+                }
             } catch (Exception ex) {
             }
         }
@@ -399,6 +403,10 @@ public class AddNewOfferFragment extends Fragment {
                 showMessage("يجب الإنتظار حتى يتم رفع كل الصور");
                 return false;
             }
+        }
+        if(itemsContainer.getChildCount()==0){
+            showMessage("يجب إضافة سلعة واحده على الأقل");
+            return false;
         }
         if (images_id_Array[0].size() < 1 && images_id_Array[1].size() < 1 && images_id_Array[2].size() < 1) {
 
