@@ -3,7 +3,6 @@ package com.app3roodk.Imgur;
 import android.app.Activity;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import org.json.JSONObject;
 
@@ -51,7 +50,7 @@ public class ImgurUploadTask extends AsyncTask<Void, Void, String>
         try {
             imageIn = mActivity.getContentResolver().openInputStream(mImageUri);
         } catch (FileNotFoundException e) {
-            Log.e(TAG, "could not open InputStream", e);
+//            Log.e(TAG, "could not open InputStream", e);
             return null;
         }
 
@@ -73,18 +72,18 @@ public class ImgurUploadTask extends AsyncTask<Void, Void, String>
                 responseIn = conn.getInputStream();
                 return onInput(responseIn);
             } else {
-                Log.i(TAG, "responseCode=" + conn.getResponseCode());
+//                Log.i(TAG, "responseCode=" + conn.getResponseCode());
                 responseIn = conn.getErrorStream();
                 StringBuilder sb = new StringBuilder();
                 Scanner scanner = new Scanner(responseIn);
                 while (scanner.hasNext()) {
                     sb.append(scanner.next());
                 }
-                Log.i(TAG, "error response: " + sb.toString());
+//                Log.i(TAG, "error response: " + sb.toString());
                 return null;
             }
         } catch (Exception ex) {
-            Log.e(TAG, "Error during POST", ex);
+//            Log.e(TAG, "Error during POST", ex);
             return null;
         } finally {
             try {
@@ -113,7 +112,7 @@ public class ImgurUploadTask extends AsyncTask<Void, Void, String>
         String id = root.getJSONObject("data").getString("id");
         String deletehash = root.getJSONObject("data").getString("deletehash");
 
-        Log.i(TAG, "new imgur url: http://imgur.com/" + id + " (delete hash: " + deletehash + ")");
+//        Log.i(TAG, "new imgur url: http://imgur.com/" + id + " (delete hash: " + deletehash + ")");
         return id;
     }
 

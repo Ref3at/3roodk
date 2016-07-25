@@ -10,7 +10,6 @@ import android.net.ConnectivityManager;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.util.Base64;
-import android.util.Log;
 
 import com.app3roodk.Schema.Comments;
 import com.app3roodk.Schema.Offer;
@@ -21,7 +20,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.google.maps.GeoApiContext;
 import com.google.maps.GeocodingApi;
-import com.google.maps.model.ComponentFilter;
+import com.google.maps.model.AddressType;
 import com.google.maps.model.GeocodingResult;
 
 import java.io.UnsupportedEncodingException;
@@ -49,8 +48,9 @@ public class UtilityGeneral {
         } catch (Exception e) {
             try {
                 return new LatLng(Double.parseDouble(loadUser(context).getLat()), Double.parseDouble(loadUser(context).getLon()));
+            } catch (Exception exx) {
+                return null;
             }
-            catch (Exception exx){return null;}
         }
     }
 
@@ -76,7 +76,7 @@ public class UtilityGeneral {
         return city;
     }
 
-    static public GeocodingResult[] getCurrentGovAndCityArabic(Context context, LatLng latLng) {
+    static public GeocodingResult[] getCurrentGovAndCityArabic(LatLng latLng) {
         GeocodingResult[] results = null;
         try {
             com.google.maps.model.LatLng latlng2 = new com.google.maps.model.LatLng(latLng.latitude, latLng.longitude);
@@ -84,7 +84,7 @@ public class UtilityGeneral {
             results = GeocodingApi.reverseGeocode(context2, latlng2).language("ar").await();
 
         } catch (Exception e) {
-            Log.e("1212", e.getMessage());
+//            Log.e("1212", e.getMessage());
         }
         return results;
     }
@@ -92,8 +92,25 @@ public class UtilityGeneral {
     static public String getCity(GeocodingResult[] results) {
         String city = null;
         if (results != null) {
-            city = results[3].formattedAddress;
-            city = city.substring(0, city.indexOf("،"));
+            for (GeocodingResult res : results) {
+                if (res.types[0] == AddressType.ADMINISTRATIVE_AREA_LEVEL_2) {
+                    city = res.formattedAddress;
+                    city = city.substring(0, city.indexOf("،"));
+                }
+            }
+            if (city == null)
+                for (GeocodingResult res : results) {
+                    if (res.types[0] == AddressType.ADMINISTRATIVE_AREA_LEVEL_1) {
+                        city = res.formattedAddress;
+                        city = city.substring(0, city.indexOf("،"));
+                    }
+                }
+            if (city == null)
+                for (GeocodingResult res : results) {
+                    if (res.types[0] == AddressType.COUNTRY) {
+                        city = res.formattedAddress;
+                    }
+                }
         }
         return city;
     }
@@ -101,8 +118,18 @@ public class UtilityGeneral {
     static public String getGovernate(GeocodingResult[] results) {
         String governate = null;
         if (results != null) {
-            governate = results[4].formattedAddress;
-            governate = governate.substring(0, governate.indexOf("،"));
+            for (GeocodingResult res : results) {
+                if (res.types[0] == AddressType.ADMINISTRATIVE_AREA_LEVEL_1) {
+                    governate = res.formattedAddress;
+                    governate = governate.substring(0, governate.indexOf("،"));
+                }
+            }
+            if (governate == null)
+                for (GeocodingResult res : results) {
+                    if (res.types[0] == AddressType.COUNTRY) {
+                        governate = res.formattedAddress;
+                    }
+                }
         }
         return governate;
     }
@@ -398,7 +425,6 @@ public class UtilityGeneral {
         String city = prefs.getString(Constants.KEY_CITY, "No");
         return city;
     }
-
 
     static public void saveCities(Context context, String jsonCities) {
         try {

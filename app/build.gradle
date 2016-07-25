@@ -10,8 +10,8 @@ android {
         applicationId "com.app3roodk"
         minSdkVersion 16
         targetSdkVersion 24
-        versionCode 5
-        versionName "2.3"
+        versionCode 7
+        versionName "2.5"
     }
     buildTypes {
         release {

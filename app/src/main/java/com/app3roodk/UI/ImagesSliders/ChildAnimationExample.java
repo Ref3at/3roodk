@@ -4,7 +4,6 @@ package com.app3roodk.UI.ImagesSliders;
  * Created by Refaat on 5/9/2016.
  */
 
-import android.util.Log;
 import android.view.View;
 
 import com.daimajia.androidanimations.library.attention.StandUpAnimator;
@@ -23,7 +22,7 @@ public class ChildAnimationExample implements BaseAnimationInterface {
         if (descriptionLayout != null) {
             current.findViewById(com.daimajia.slider.library.R.id.description_layout).setVisibility(View.INVISIBLE);
         }
-        Log.e(TAG, "onPrepareCurrentItemLeaveScreen called");
+//        Log.e(TAG, "onPrepareCurrentItemLeaveScreen called");
     }
 
     @Override
@@ -32,12 +31,13 @@ public class ChildAnimationExample implements BaseAnimationInterface {
         if (descriptionLayout != null) {
             next.findViewById(com.daimajia.slider.library.R.id.description_layout).setVisibility(View.INVISIBLE);
         }
-        Log.e(TAG, "onPrepareNextItemShowInScreen called");
+//        Log.e(TAG, "onPrepareNextItemShowInScreen called");
     }
 
     @Override
     public void onCurrentItemDisappear(View view) {
-        Log.e(TAG, "onCurrentItemDisappear called");
+//        Log.e(TAG, "onCurrentItemDisappear called");
+
     }
 
     @Override
@@ -53,6 +53,6 @@ public class ChildAnimationExample implements BaseAnimationInterface {
             new BounceInAnimator().animate(descriptionLayout);
             new StandUpAnimator().animate(descriptionLayout);
         }
-        Log.e(TAG, "onCurrentItemDisappear called");
+//        Log.e(TAG, "onCurrentItemDisappear called");
     }
 }

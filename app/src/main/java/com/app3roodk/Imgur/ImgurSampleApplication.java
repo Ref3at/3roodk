@@ -3,7 +3,6 @@ package com.app3roodk.Imgur;
 import android.app.Application;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.util.Log;
 
 /**
  * Created by Refaat on 5/9/2016.
@@ -25,7 +24,7 @@ public class ImgurSampleApplication extends Application {
         try {
             return context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName;
         } catch (PackageManager.NameNotFoundException e) {
-            Log.e(TAG, "Package name not found.", e);
+//            Log.e(TAG, "Package name not found.", e);
             return "1.0";
         }
     }

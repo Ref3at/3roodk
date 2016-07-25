@@ -12,7 +12,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -219,7 +218,7 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
                         public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                             if (databaseError != null) {
                                 showMessage("حصل مشكله شوف النت ");
-                                Log.e("DetailFragment", "Add New Comment : " + databaseError.getMessage());
+//                                Log.e("DetailFragment", "Add New Comment : " + databaseError.getMessage());
                             } else {
                                 if (!(offer.getUserNotificationToken() == null || offer.getUserNotificationToken().isEmpty()
                                         || offer.getShopName() == comment.getUserName())) {
@@ -230,12 +229,12 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
                                             offer.getObjectId(), mapOffer, "OPEN_ACTIVITY_1", new TextHttpResponseHandler() {
                                                 @Override
                                                 public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                                                    Log.e("Send Notification err", responseString);
+//                                                    Log.e("Send Notification err", responseString);
                                                 }
 
                                                 @Override
                                                 public void onSuccess(int statusCode, Header[] headers, String responseString) {
-                                                    Log.e("Send Notification", responseString);
+//                                                    Log.e("Send Notification", responseString);
                                                 }
                                             });
                                 }
@@ -616,7 +615,8 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
 
     @Override
     public void onPageSelected(int position) {
-        Log.d("Slider", "Page Changed: " + position);
+
+//        Log.d("Slider", "Page Changed: " + position);
     }
 
     @Override

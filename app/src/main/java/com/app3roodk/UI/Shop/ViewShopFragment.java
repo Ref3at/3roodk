@@ -344,7 +344,7 @@ public class ViewShopFragment extends Fragment {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    final GeocodingResult[] tempAddresses = UtilityGeneral.getCurrentGovAndCityArabic(getActivity(), latLngShop);
+                    final GeocodingResult[] tempAddresses = UtilityGeneral.getCurrentGovAndCityArabic(latLngShop);
                     if (getActivity() == null)
                         return;
                     getActivity().runOnUiThread(new Runnable() {
@@ -356,7 +356,7 @@ public class ViewShopFragment extends Fragment {
                             }
                         }
                     });
-                    addresses = UtilityGeneral.getCurrentGovAndCityArabic(getActivity(), latLngShop);
+                    addresses = UtilityGeneral.getCurrentGovAndCityArabic( latLngShop);
                 }
             }).start();
         } catch (Exception ex) {
@@ -368,7 +368,7 @@ public class ViewShopFragment extends Fragment {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    addressesFromEditing = UtilityGeneral.getCurrentGovAndCityArabic(getActivity(), latLngShop_Editing);
+                    addressesFromEditing = UtilityGeneral.getCurrentGovAndCityArabic( latLngShop_Editing);
                 }
             }).start();
         } catch (Exception ex) {
@@ -378,7 +378,7 @@ public class ViewShopFragment extends Fragment {
     private void fillViews() {
 
         if (shop.getLogoId() == null) {
-            Glide.with(getActivity()).load(R.drawable.logo).asBitmap().into(new BitmapImageViewTarget(imageLogo) {
+            Glide.with(getActivity()).load(R.drawable.defaultavatar).asBitmap().into(new BitmapImageViewTarget(imageLogo) {
                 @Override
                 protected void setResource(Bitmap resource) {
                     RoundedBitmapDrawable circularBitmapDrawable =

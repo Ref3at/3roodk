@@ -3,7 +3,6 @@ package com.app3roodk;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -95,7 +94,7 @@ public class MapsPathsActivity extends AppCompatActivity implements OnMapReadyCa
                             .geodesic(true)
                     );
                 } catch (JSONException e) {
-                    Log.e(TAG, e.getMessage());
+//                    Log.e(TAG, e.getMessage());
                 }
             }
         });

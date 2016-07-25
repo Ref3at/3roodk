@@ -19,7 +19,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -601,7 +600,7 @@ if (mapImageUploading.size() !=0) {
                         morphToFailure(button);
                         button.unblockTouch();
 
-                        Log.e("NewOfferFailed", databaseError.getMessage());
+//                        Log.e("NewOfferFailed", databaseError.getMessage());
                     } else {
                         UtilityFirebase.createNewOfferExists(mOffer, new DatabaseReference.CompletionListener() {
                             @Override
@@ -634,7 +633,7 @@ if (mapImageUploading.size() !=0) {
                 button.unblockTouch();
             }
         } catch (Exception ex) {
-            Log.e("AddNewOfferFrag", ex.getMessage());
+//            Log.e("AddNewOfferFrag", ex.getMessage());
         }
     }
 

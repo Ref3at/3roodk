@@ -5,7 +5,6 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.location.Address;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -19,7 +18,6 @@ import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,7 +47,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.maps.model.GeocodingResult;
 
 import java.util.Date;
-import java.util.List;
 
 public class CreateShopFragment extends Fragment {
 
@@ -251,7 +248,7 @@ public class CreateShopFragment extends Fragment {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    final GeocodingResult[] results = UtilityGeneral.getCurrentGovAndCityArabic(getActivity(), latLngShop);
+                    final GeocodingResult[] results = UtilityGeneral.getCurrentGovAndCityArabic(latLngShop);
                     if (getActivity() == null)
                         return;
                     getActivity().runOnUiThread(new Runnable() {
@@ -260,11 +257,11 @@ public class CreateShopFragment extends Fragment {
                             try {
                                 AddressFromMap.setText(results[0].formattedAddress);
                             } catch (Exception ex) {
-                                Log.e("CreateShopFragment", ex.getMessage());
+//                                Log.e("CreateShopFragment", ex.getMessage());
                             }
                         }
                     });
-                    addresses = UtilityGeneral.getCurrentGovAndCityArabic(getActivity(), latLngShop);
+                    addresses = UtilityGeneral.getCurrentGovAndCityArabic(latLngShop);
                 }
             }).start();
         } catch (Exception ex) {
@@ -386,7 +383,7 @@ public class CreateShopFragment extends Fragment {
                     morphToFailure(button);
                     button.unblockTouch();
 
-                    Log.e("CreateNewShop", databaseError.getMessage());
+//                    Log.e("CreateNewShop", databaseError.getMessage());
                 } else {
                     showMessageToast("تم إضافه المحل، شكرا لك");
                     UtilityGeneral.saveShop(getActivity(), shop);

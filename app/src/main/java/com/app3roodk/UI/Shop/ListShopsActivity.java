@@ -20,7 +20,6 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -303,7 +302,7 @@ public class ListShopsActivity extends AppCompatActivity {
                         });
             }
         } catch (Exception ex) {
-            Log.e("NavShowInfo", ex.getMessage());
+//            Log.e("NavShowInfo", ex.getMessage());
         }
     }
 
@@ -396,7 +395,7 @@ public class ListShopsActivity extends AppCompatActivity {
 
                                         @Override
                                         public void onCancelled(DatabaseError databaseError) {
-                                            Log.w("Test", "getShop:onCancelled", databaseError.toException());
+//                                            Log.w("Test", "getShop:onCancelled", databaseError.toException());
                                             setLoadingVisibility(View.GONE);
                                         }
                                     });
@@ -413,7 +412,7 @@ public class ListShopsActivity extends AppCompatActivity {
                 setLoadingVisibility(View.GONE);
             }
         } catch (Exception ex) {
-            Log.e("signingResult", ex.getMessage());
+//            Log.e("signingResult", ex.getMessage());
         }
     }
 

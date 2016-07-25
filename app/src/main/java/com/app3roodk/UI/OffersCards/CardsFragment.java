@@ -7,7 +7,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -116,7 +115,7 @@ public class CardsFragment extends Fragment {
                                             showMessage("يتم البحث عن عروض فى مدينة " + City);
                                             UtilityFirebase.getActiveOffers(City, getActivity().getIntent().getStringExtra("name")).addValueEventListener(postListener);
                                         } catch (Exception ex) {
-                                            Log.e("GettingOffers1", ex.getMessage());
+//                                            Log.e("GettingOffers1", ex.getMessage());
                                         }
                                     }
                                 });
@@ -136,7 +135,7 @@ public class CardsFragment extends Fragment {
                             }
                         }).start();
                     } catch (Exception ex) {
-                        Log.e("GettingOffers2", ex.getMessage());
+//                        Log.e("GettingOffers2", ex.getMessage());
                     }
                 }
             } else {
@@ -151,7 +150,7 @@ public class CardsFragment extends Fragment {
                 }).start();
             }
         } catch (Exception ex) {
-            Log.e("GettingOffers3", ex.getMessage());
+//            Log.e("GettingOffers3", ex.getMessage());
         }
     }
 

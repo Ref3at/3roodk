@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -23,7 +22,6 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -91,7 +89,10 @@ public class CategoriesActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_categories);
-
+        // Adding Toolbar to Main screen
+        FirebaseInstanceId.getInstance().getToken();
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         t1 = (TextView) findViewById(R.id.t1);
         t2 = (TextView) findViewById(R.id.t2);
         t3 = (TextView) findViewById(R.id.t3);
@@ -113,11 +114,6 @@ public class CategoriesActivity extends AppCompatActivity {
         v9 = findViewById(R.id.v9);
 
         progress = (SpinKitView) findViewById(R.id.progress);
-
-        // Adding Toolbar to Main screen
-        FirebaseInstanceId.getInstance().getToken();
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
         spnCities = (Spinner) findViewById(R.id.spnCities);
         updateUserLocation();
         initSpinner();
@@ -456,8 +452,11 @@ public class CategoriesActivity extends AppCompatActivity {
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, String responseString) {
-                UtilityGeneral.saveCities(getBaseContext(), responseString);
-                initSpinner();
+                try {
+                    UtilityGeneral.saveCities(getBaseContext(), responseString);
+                    initSpinner();
+                }
+                catch (Exception ex){}
             }
         });
         new Thread(new Runnable() {
@@ -682,7 +681,7 @@ public class CategoriesActivity extends AppCompatActivity {
                         });
             }
         } catch (Exception ex) {
-            Log.e("NavShowInfo", ex.getMessage());
+//            Log.e("NavShowInfo", ex.getMessage());
         }
     }
 
@@ -773,7 +772,7 @@ public class CategoriesActivity extends AppCompatActivity {
 
                                         @Override
                                         public void onCancelled(DatabaseError databaseError) {
-                                            Log.w("Test", "getShop:onCancelled", databaseError.toException());
+//                                            Log.w("Test", "getShop:onCancelled", databaseError.toException());
                                             setLoadingVisibility(View.GONE);
                                         }
                                     });
@@ -790,7 +789,7 @@ public class CategoriesActivity extends AppCompatActivity {
                 setLoadingVisibility(View.GONE);
             }
         } catch (Exception ex) {
-            Log.e("signingResult", ex.getMessage());
+//            Log.e("signingResult", ex.getMessage());
         }
     }
 
