@@ -63,6 +63,7 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.loopj.android.http.TextHttpResponseHandler;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -171,34 +172,38 @@ public class CategoriesActivity extends AppCompatActivity {
                 int HomeTools, Accessories, Mobiles, Computers, Shoes, Clothes, SuperMarket, Services, Restaurants;
                 HomeTools = Accessories = Mobiles = Computers = Shoes = Clothes = SuperMarket = Services = Restaurants = 0;
                 for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
-                    switch (dataSnapshot1.getValue(ExistOffers.class).getCategory()) {
-                        case "Home Tools":
-                            HomeTools++;
-                            break;
-                        case "Accessories":
-                            Accessories++;
-                            break;
-                        case "Mobiles":
-                            Mobiles++;
-                            break;
-                        case "Computers":
-                            Computers++;
-                            break;
-                        case "Shoes":
-                            Shoes++;
-                            break;
-                        case "Clothes":
-                            Clothes++;
-                            break;
-                        case "Super market":
-                            SuperMarket++;
-                            break;
-                        case "Services":
-                            Services++;
-                            break;
-                        case "Restaurants":
-                            Restaurants++;
-                            break;
+                    try {
+                        if (Double.parseDouble(dataSnapshot1.getValue(ExistOffers.class).getCreateTime()) <= Double.parseDouble(UtilityGeneral.getCurrentDate(new Date())))
+                            switch (dataSnapshot1.getValue(ExistOffers.class).getCategory()) {
+                                case "Home Tools":
+                                    HomeTools++;
+                                    break;
+                                case "Accessories":
+                                    Accessories++;
+                                    break;
+                                case "Mobiles":
+                                    Mobiles++;
+                                    break;
+                                case "Computers":
+                                    Computers++;
+                                    break;
+                                case "Shoes":
+                                    Shoes++;
+                                    break;
+                                case "Clothes":
+                                    Clothes++;
+                                    break;
+                                case "Super market":
+                                    SuperMarket++;
+                                    break;
+                                case "Services":
+                                    Services++;
+                                    break;
+                                case "Restaurants":
+                                    Restaurants++;
+                                    break;
+                            }
+                    } catch (Exception ex) {
                     }
                 }
                 if (Restaurants > 0) {
@@ -455,8 +460,8 @@ public class CategoriesActivity extends AppCompatActivity {
                 try {
                     UtilityGeneral.saveCities(getBaseContext(), responseString);
                     initSpinner();
+                } catch (Exception ex) {
                 }
-                catch (Exception ex){}
             }
         });
         new Thread(new Runnable() {

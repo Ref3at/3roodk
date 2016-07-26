@@ -90,7 +90,7 @@ public class UtilityFirebase {
     }
 
     static public void createNewOfferExists(Offer offer, DatabaseReference.CompletionListener listener) {
-        FirebaseDatabase.getInstance().getReference("OffersExist").child(offer.getCity()).child(offer.getObjectId()).setValue(new ExistOffers(offer.getEndTime(), offer.getCategoryName()), listener);
+        FirebaseDatabase.getInstance().getReference("OffersExist").child(offer.getCity()).child(offer.getObjectId()).setValue(new ExistOffers(offer.getEndTime(), offer.getCategoryName(),offer.getCreatedAt()), listener);
     }
 
     static public void increaseOfferViewsNum(Offer offer) {

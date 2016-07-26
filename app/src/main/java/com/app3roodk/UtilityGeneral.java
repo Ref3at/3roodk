@@ -275,7 +275,7 @@ public class UtilityGeneral {
     }
 
     static public String getCurrentDate(Date date) {
-        return new SimpleDateFormat("yyyyMMddkkmm", Locale.US).format(date);
+        return new SimpleDateFormat("yyyyMMddHHmm", Locale.US).format(date);
     }
 
     static public String getCurrentYearAndWeek() {

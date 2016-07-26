@@ -35,6 +35,7 @@ import com.app3roodk.UI.About.AboutActivity;
 import com.app3roodk.UI.CategoriesActivity.CategoriesActivity;
 import com.app3roodk.UI.Feedback.FeedbackActivity;
 import com.app3roodk.UI.Offer.AddNewOfferActivity;
+import com.app3roodk.UI.Shop.ListShopsActivity;
 import com.app3roodk.UI.Shop.ShopActivity;
 import com.app3roodk.UtilityFirebase;
 import com.app3roodk.UtilityGeneral;
@@ -155,7 +156,7 @@ public class FavoritesActivity extends AppCompatActivity {
 
                             case R.id.action_view_my_shop:
                                 mDrawerLayout.closeDrawer(GravityCompat.END);
-                                startActivityForResult(new Intent(FavoritesActivity.this, FavoritesActivity.class), 222);
+                                startActivityForResult(new Intent(FavoritesActivity.this, ListShopsActivity.class), 222);
                                 return true;
 
                             case R.id.action_logout:
