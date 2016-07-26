@@ -12,6 +12,9 @@ android {
         targetSdkVersion 24
         versionCode 8
         versionName "2.6"
+        // Enabling multidex support.
+        multiDexEnabled true
+
     }
     buildTypes {
         release {
@@ -71,6 +74,8 @@ dependencies {
     compile 'com.redbooth:WelcomeCoordinator:1.0.1'
     compile 'com.github.ybq:Android-SpinKit:1.0.4'
     compile 'com.github.dmytrodanylyk:android-morphing-button:98a4986e56' // commit hash
+    compile 'com.android.support:multidex:1.0.0'
+
 
 }
 
