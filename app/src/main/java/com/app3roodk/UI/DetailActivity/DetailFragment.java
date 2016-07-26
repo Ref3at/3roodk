@@ -470,6 +470,7 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
         try {
             mSlider = (SliderLayout) rootView.findViewById(R.id.imgOffer);
             btnFavorite = (LikeButton) rootView.findViewById(R.id.btnFavorite);
+            btnFavorite.bringToFront();
             btnShare = (ImageButton) rootView.findViewById(R.id.btnShare);
             btnShopWay = (Button) rootView.findViewById(R.id.btnShopWay);
             btnComment = (Button) rootView.findViewById(R.id.btnComment);
