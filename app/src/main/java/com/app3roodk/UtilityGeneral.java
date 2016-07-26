@@ -448,8 +448,11 @@ public class UtilityGeneral {
         ArrayList<String> lstCities = new ArrayList<>();
         lstCities.add(Constants.YOUR_CITY);
         if (jsonCities.equals("No")) return lstCities;
+        lstCities.clear();
         lstCities.addAll((Collection<? extends String>) new Gson().fromJson(jsonCities, new TypeToken<ArrayList<String>>() {
         }.getType()));
+        Collections.sort(lstCities);
+        lstCities.add(0, Constants.YOUR_CITY);
         return lstCities;
     }
 
