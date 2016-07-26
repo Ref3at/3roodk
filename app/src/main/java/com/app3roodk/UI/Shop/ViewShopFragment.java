@@ -653,31 +653,36 @@ class CardsAapter extends ArrayAdapter {
         cardHolder.timer  = new CountDownTimer(180000, 500) {
             @Override
             public void onTick(long l) {
+                try {
                     fillTimer(cardHolder1, position);
-                if (!cardHolder1.showSeconds) {
-                    cardHolder1.dots3.setVisibility(View.GONE);
-                    cardHolder1.lytSeconds.setVisibility(View.GONE);
-                    cardHolder1.lytDays.setVisibility(View.VISIBLE);
-                    if (cardHolder1.dots2.getVisibility() == View.INVISIBLE) {
-                        cardHolder1.dots1.setVisibility(View.VISIBLE);
-                        cardHolder1.dots2.setVisibility(View.VISIBLE);
+                    if (!cardHolder1.showSeconds) {
+                        cardHolder1.dots3.setVisibility(View.GONE);
+                        cardHolder1.lytSeconds.setVisibility(View.GONE);
+                        cardHolder1.lytDays.setVisibility(View.VISIBLE);
+                        if (cardHolder1.dots2.getVisibility() == View.INVISIBLE) {
+                            cardHolder1.dots1.setVisibility(View.VISIBLE);
+                            cardHolder1.dots2.setVisibility(View.VISIBLE);
+                        } else {
+                            cardHolder1.dots1.setVisibility(View.INVISIBLE);
+                            cardHolder1.dots2.setVisibility(View.INVISIBLE);
+                        }
                     } else {
-                        cardHolder1.dots1.setVisibility(View.INVISIBLE);
-                        cardHolder1.dots2.setVisibility(View.INVISIBLE);
-                    }
-                } else {
-                    cardHolder1.dots1.setVisibility(View.GONE);
-                    cardHolder1.lytDays.setVisibility(View.GONE);
-                    cardHolder1.lytSeconds.setVisibility(View.VISIBLE);
-                    if (cardHolder1.dots2.getVisibility() == View.INVISIBLE) {
-                        cardHolder1.dots3.setVisibility(View.VISIBLE);
-                        cardHolder1.dots2.setVisibility(View.VISIBLE);
-                    } else {
-                        cardHolder1.dots3.setVisibility(View.INVISIBLE);
-                        cardHolder1.dots2.setVisibility(View.INVISIBLE);
+                        cardHolder1.dots1.setVisibility(View.GONE);
+                        cardHolder1.lytDays.setVisibility(View.GONE);
+                        cardHolder1.lytSeconds.setVisibility(View.VISIBLE);
+                        if (cardHolder1.dots2.getVisibility() == View.INVISIBLE) {
+                            cardHolder1.dots3.setVisibility(View.VISIBLE);
+                            cardHolder1.dots2.setVisibility(View.VISIBLE);
+                        } else {
+                            cardHolder1.dots3.setVisibility(View.INVISIBLE);
+                            cardHolder1.dots2.setVisibility(View.INVISIBLE);
+                        }
                     }
                 }
-
+                catch(Exception ex)
+                {
+                    cardHolder1.timer.cancel();
+                }
             }
 
             @Override

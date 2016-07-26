@@ -268,29 +268,35 @@ public class CardsFragment extends Fragment {
             cardHolder.timer = new CountDownTimer(180000, 500) {
                 @Override
                 public void onTick(long l) {
-                    fillTimer(cardHolder, position);
-                    if (!cardHolder.showSeconds) {
-                        cardHolder.dots3.setVisibility(View.GONE);
-                        cardHolder.lytSeconds.setVisibility(View.GONE);
-                        cardHolder.lytDays.setVisibility(View.VISIBLE);
-                        if (cardHolder.dots2.getVisibility() == View.INVISIBLE) {
-                            cardHolder.dots1.setVisibility(View.VISIBLE);
-                            cardHolder.dots2.setVisibility(View.VISIBLE);
+                    try {
+                        fillTimer(cardHolder, position);
+                        if (!cardHolder.showSeconds) {
+                            cardHolder.dots3.setVisibility(View.GONE);
+                            cardHolder.lytSeconds.setVisibility(View.GONE);
+                            cardHolder.lytDays.setVisibility(View.VISIBLE);
+                            if (cardHolder.dots2.getVisibility() == View.INVISIBLE) {
+                                cardHolder.dots1.setVisibility(View.VISIBLE);
+                                cardHolder.dots2.setVisibility(View.VISIBLE);
+                            } else {
+                                cardHolder.dots1.setVisibility(View.INVISIBLE);
+                                cardHolder.dots2.setVisibility(View.INVISIBLE);
+                            }
                         } else {
-                            cardHolder.dots1.setVisibility(View.INVISIBLE);
-                            cardHolder.dots2.setVisibility(View.INVISIBLE);
+                            cardHolder.dots1.setVisibility(View.GONE);
+                            cardHolder.lytDays.setVisibility(View.GONE);
+                            cardHolder.lytSeconds.setVisibility(View.VISIBLE);
+                            if (cardHolder.dots2.getVisibility() == View.INVISIBLE) {
+                                cardHolder.dots3.setVisibility(View.VISIBLE);
+                                cardHolder.dots2.setVisibility(View.VISIBLE);
+                            } else {
+                                cardHolder.dots3.setVisibility(View.INVISIBLE);
+                                cardHolder.dots2.setVisibility(View.INVISIBLE);
+                            }
                         }
-                    } else {
-                        cardHolder.dots1.setVisibility(View.GONE);
-                        cardHolder.lytDays.setVisibility(View.GONE);
-                        cardHolder.lytSeconds.setVisibility(View.VISIBLE);
-                        if (cardHolder.dots2.getVisibility() == View.INVISIBLE) {
-                            cardHolder.dots3.setVisibility(View.VISIBLE);
-                            cardHolder.dots2.setVisibility(View.VISIBLE);
-                        } else {
-                            cardHolder.dots3.setVisibility(View.INVISIBLE);
-                            cardHolder.dots2.setVisibility(View.INVISIBLE);
-                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        cardHolder.timer.cancel();
                     }
 
                 }
