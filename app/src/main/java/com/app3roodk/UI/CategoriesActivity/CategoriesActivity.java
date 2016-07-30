@@ -113,7 +113,11 @@ public class CategoriesActivity extends AppCompatActivity {
         v7 = findViewById(R.id.v7);
         v8 = findViewById(R.id.v8);
         v9 = findViewById(R.id.v9);
-
+        try {
+            if (!UtilityGeneral.mGoogleApiClient.isConnected() && !UtilityGeneral.mGoogleApiClient.isConnecting())
+                UtilityGeneral.mGoogleApiClient.connect();
+        } catch (Exception ex) {
+        }
         progress = (SpinKitView) findViewById(R.id.progress);
         spnCities = (Spinner) findViewById(R.id.spnCities);
         updateUserLocation();
@@ -331,6 +335,10 @@ public class CategoriesActivity extends AppCompatActivity {
         }
         try {
             UtilityFirebase.getActiveExistOffers(previousCity).removeEventListener(activeOffersListener);
+        } catch (Exception ex) {
+        }
+        try {
+            UtilityGeneral.mGoogleApiClient.disconnect();
         } catch (Exception ex) {
         }
         super.onDestroy();

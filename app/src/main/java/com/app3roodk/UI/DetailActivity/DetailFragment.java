@@ -275,9 +275,7 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
         btnShopWay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(UtilityGeneral.DrawPathToCertainShop(
-                        getContext(), UtilityGeneral.getCurrentLonAndLat(getContext()),
-                        new LatLng(Double.parseDouble(offer.getLat()), Double.parseDouble(offer.getLon()))));
+                startActivity(UtilityGeneral.DrawPathToCertainShop(offer.getLat(),offer.getLon()));
             }
         });
 

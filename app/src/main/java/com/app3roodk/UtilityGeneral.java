@@ -7,7 +7,11 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
+import android.net.Uri;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.util.Base64;
 
@@ -15,6 +19,9 @@ import com.app3roodk.Schema.Comments;
 import com.app3roodk.Schema.Offer;
 import com.app3roodk.Schema.Shop;
 import com.app3roodk.Schema.User;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -40,10 +47,33 @@ public class UtilityGeneral {
 
     static public String City;
 
-    static public LatLng getCurrentLonAndLat(Context context) {
+    static public GoogleApiClient mGoogleApiClient;
 
+    static public void initGoogleApiClient(final Context context) {
+        if (mGoogleApiClient == null) {
+            mGoogleApiClient = new GoogleApiClient.Builder(context)
+                    .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
+                        @Override
+                        public void onConnected(@Nullable Bundle bundle) {
+                        }
+
+                        @Override
+                        public void onConnectionSuspended(int i) {
+                        }
+                    })
+                    .addOnConnectionFailedListener(new GoogleApiClient.OnConnectionFailedListener() {
+                        @Override
+                        public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+                        }
+                    })
+                    .addApi(LocationServices.API)
+                    .build();
+        }
+    }
+
+    static public LatLng getCurrentLonAndLat(Context context) {
         try {
-            Location location = getLastKnownLocation(context);
+            Location location = getLocation(context);
             return new LatLng(location.getLatitude(), location.getLongitude());
         } catch (Exception e) {
             try {
@@ -51,6 +81,20 @@ public class UtilityGeneral {
             } catch (Exception exx) {
                 return null;
             }
+        }
+    }
+
+    static private Location getLocation(Context context) {
+        if (!mGoogleApiClient.isConnected() && !mGoogleApiClient.isConnecting())
+            mGoogleApiClient.connect();
+        if (ActivityCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+            return null;
+        }
+        try {
+            return LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        } catch (Exception ex) {
+            return null;
         }
     }
 
@@ -134,7 +178,12 @@ public class UtilityGeneral {
         return governate;
     }
 
-    static public Intent DrawPathToCertainShop(Context context, LatLng from, LatLng to) {
+    static public Intent DrawPathToCertainShop(String lat, String lon) {
+        return new Intent(Intent.ACTION_VIEW,
+                Uri.parse("http://maps.google.com/maps?daddr=" + lat + "," + lon));
+    }
+
+    static public Intent DrawPathToCertainShopOurMap(Context context, LatLng from, LatLng to) {
         Intent mapsPathsIntent = new Intent(context, MapsPathsActivity.class);
         try {
             mapsPathsIntent.putExtra("fromLat", from.latitude);

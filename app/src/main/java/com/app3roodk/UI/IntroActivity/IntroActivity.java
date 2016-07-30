@@ -34,6 +34,11 @@ public class IntroActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_intro);
+        try {
+            if (!UtilityGeneral.mGoogleApiClient.isConnected() && !UtilityGeneral.mGoogleApiClient.isConnecting())
+                UtilityGeneral.mGoogleApiClient.connect();
+        } catch (Exception ex) {
+        }
         WelcomeCoordinatorLayout coordinatorLayout
                 = (WelcomeCoordinatorLayout) findViewById(R.id.coordinator);
         coordinatorLayout.addPage(R.layout.welcome_screen_1, R.layout.welcome_screen_2,
@@ -144,7 +149,7 @@ public class IntroActivity extends AppCompatActivity {
                     finish();
 
                 }
-            }, 1000);
+            }, 700);
 
 
         } catch (Exception ex) {

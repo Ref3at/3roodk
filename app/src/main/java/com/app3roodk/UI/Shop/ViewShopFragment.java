@@ -326,8 +326,7 @@ public class ViewShopFragment extends Fragment {
         btnShopWay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(UtilityGeneral.DrawPathToCertainShop(
-                        getContext(), UtilityGeneral.getCurrentLonAndLat(getContext()), latLngShop));
+                startActivity(UtilityGeneral.DrawPathToCertainShop(String.valueOf(latLngShop.latitude), String.valueOf(latLngShop.longitude)));
             }
         });
     }
@@ -356,7 +355,7 @@ public class ViewShopFragment extends Fragment {
                             }
                         }
                     });
-                    addresses = UtilityGeneral.getCurrentGovAndCityArabic( latLngShop);
+                    addresses = UtilityGeneral.getCurrentGovAndCityArabic(latLngShop);
                 }
             }).start();
         } catch (Exception ex) {
@@ -368,7 +367,7 @@ public class ViewShopFragment extends Fragment {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    addressesFromEditing = UtilityGeneral.getCurrentGovAndCityArabic( latLngShop_Editing);
+                    addressesFromEditing = UtilityGeneral.getCurrentGovAndCityArabic(latLngShop_Editing);
                 }
             }).start();
         } catch (Exception ex) {
@@ -650,7 +649,7 @@ class CardsAapter extends ArrayAdapter {
 
         if (cardHolder.timer != null)
             cardHolder.timer.cancel();
-        cardHolder.timer  = new CountDownTimer(180000, 500) {
+        cardHolder.timer = new CountDownTimer(180000, 500) {
             @Override
             public void onTick(long l) {
                 try {
@@ -678,9 +677,7 @@ class CardsAapter extends ArrayAdapter {
                             cardHolder1.dots2.setVisibility(View.INVISIBLE);
                         }
                     }
-                }
-                catch(Exception ex)
-                {
+                } catch (Exception ex) {
                     cardHolder1.timer.cancel();
                 }
             }
