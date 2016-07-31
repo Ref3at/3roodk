@@ -663,5 +663,19 @@ public class UtilityGeneral {
         editor.remove(Constants.KEY_SHOP);
         editor.commit();
     }
+
+    public static boolean isCodeValid(String input, String pin) {
+
+        int inputNo = Integer.parseInt(String.valueOf(input));
+        int pinNo = Integer.parseInt(String.valueOf(pin));
+
+        if (inputNo == pinNo){
+
+            return  true;
+        }else {
+            return false;
+        }
+
+    }
     //endregion
 }

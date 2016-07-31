@@ -1,0 +1,90 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <TextView
+        android:text="عزيزي التاجر "
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:textColor="#fff"
+        android:textStyle="bold"
+        android:textSize="26sp"
+        android:gravity="center_horizontal|center_vertical"
+        android:scaleType="center"
+        android:background="#FFFFBB33"
+        android:contentDescription="@string/app_name" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:textSize="22sp"
+        android:textColor="#5299fc"
+        android:gravity="center_horizontal"
+        android:text="@string/dialog_msg"/>
+
+
+
+    <EditText
+        android:id="@+id/etxt_code"
+        android:inputType="number"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"
+        android:layout_marginBottom="4dp"
+        android:gravity="center_horizontal"
+        android:hint="أدخل الكود" />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:text="01001349907"
+            android:gravity="center_horizontal|center_vertical"
+            android:layout_height="match_parent" />
+
+    <Button
+
+        android:id="@+id/btn_call"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:text="إتصل الان "
+        android:backgroundTint="#a8f778" />
+
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+
+        <Button
+            android:id="@+id/btn_dialog_cancel"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="إلغاء"
+            android:backgroundTint="#fff099" />
+        <Button
+            android:id="@+id/btn_dialog_done"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="تم"
+            android:backgroundTint="#48abf1" />
+
+
+
+    </LinearLayout>
+</LinearLayout>

@@ -47,8 +47,10 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".UI.Shop.ShopActivity" />
-        <activity android:name=".UI.Offer.AddNewOfferActivity" />
+        <activity android:name=".UI.Shop.ShopActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".UI.Offer.AddNewOfferActivity"
+            android:screenOrientation="portrait"/>
         <activity android:name=".MapsPathsActivity" />
         <activity android:name=".MapsShopsActivity" />
         <activity android:name=".MapsShopLocationActivity" />

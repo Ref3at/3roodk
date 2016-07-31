@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -29,6 +30,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.app3roodk.Imgur.ImgurUploadTask;
 import com.app3roodk.R;
@@ -41,9 +43,12 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.github.paolorotolo.expandableheightlistview.ExpandableHeightListView;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.google.maps.model.GeocodingResult;
@@ -72,7 +77,7 @@ public class ViewShopFragment extends Fragment {
     TextView txtShopName, txtWorkingTime, AddressFromMap, txtAdressInfo, txtContacts, txtOffersNum, txtActiveOffersNum;
     EditText e_txtWorkingTime, e_txtAdressInfo, e_txtContacts;
     ImageView imageLogo;
-    Button btnChangeLogo, btnShopWay;
+    Button btnChangeLogo, btnShopWay, activateBtn;
 
     ImageButton btn_done_WorkingTime, btn_edit_WorkingTime, btn_done_AdressInfo,
             btn_edit_AdressInfo, btn_done_Contacts, btn_edit_Contacts, btn_done_logo, btn_edit_logo;
@@ -110,7 +115,7 @@ public class ViewShopFragment extends Fragment {
 
         init(rootView);
         fillViews();
-        btnsActions();
+        btnsActions(rootView);
 
         return rootView;
     }
@@ -199,7 +204,7 @@ public class ViewShopFragment extends Fragment {
         }
     }
 
-    private void btnsActions() {
+    private void btnsActions(final View root) {
 
 
         btn_edit_WorkingTime.setOnClickListener(new View.OnClickListener() {
@@ -329,6 +334,95 @@ public class ViewShopFragment extends Fragment {
                 startActivity(UtilityGeneral.DrawPathToCertainShop(String.valueOf(latLngShop.latitude), String.valueOf(latLngShop.longitude)));
             }
         });
+
+        activateBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                // Get the layout inflater
+                LayoutInflater inflater = getActivity().getLayoutInflater();
+
+                final View viewinflater = inflater.inflate(R.layout.code_dialog_layout, null);
+
+                builder.setView(viewinflater);
+                final AlertDialog alert = builder.create();
+                alert.show();
+
+                final EditText etxtCode = (EditText)  viewinflater.findViewById(R.id.etxt_code);
+
+                Button buttonCall= (Button) viewinflater.findViewById(R.id.btn_call);
+                buttonCall.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + "01001349907"));
+                        startActivity(intent);
+
+
+                    }
+                });
+
+
+                Button buttonCancel= (Button) viewinflater.findViewById(R.id.btn_dialog_cancel);
+                buttonCancel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                     alert.dismiss();
+
+                    }
+                });
+
+
+                Button buttonDone= (Button) viewinflater.findViewById(R.id.btn_dialog_done);
+                buttonDone.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        if (etxtCode.getText().toString().length()==0) {
+                            Toast.makeText(getActivity(), "من فضلك أدخل الكود أولاً!", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
+                        if (UtilityGeneral.isCodeValid(etxtCode.getText().toString(),shop.getPinCode().toString()))
+                        {
+                            FirebaseDatabase database = FirebaseDatabase.getInstance();
+                            DatabaseReference myRef = database.getReference("Shops")
+                                    .child(UtilityGeneral.loadUser(getContext()).getObjectId())
+                                    .child(shop.getObjectId())
+                                    .child("shopActive");
+
+                            myRef.setValue(true).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()){
+                                    Toast.makeText(getActivity(), "تم تفعيل المحل شكراً لك!", Toast.LENGTH_SHORT).show();
+                                    activateBtn.setVisibility(View.GONE);
+                                    alert.dismiss();
+                                    shop.setShopActive(true);
+                                    UtilityGeneral.saveShop(getContext(),shop);
+
+
+
+
+                                }else {
+                                    Toast.makeText(getActivity(), "لديك مشكله فى اتصال الانترنت، يرجى إعاده المحاوله", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+
+
+                        }else {
+                            Toast.makeText(getActivity(), "من فضلك أدخل كود صحيح وأعد المحاوله مره أخرى!", Toast.LENGTH_SHORT).show();
+
+                        }
+
+
+
+                    }
+                });
+                            }
+        });
     }
 
     @Override
@@ -401,10 +495,15 @@ public class ViewShopFragment extends Fragment {
         txtWorkingTime.setText(shop.getWorkingTime());
         txtAdressInfo.setText(shop.getAddress());
         txtContacts.setText(shop.getContacts());
+
+        if (canEdit && !shop.isShopActive()){
+            activateBtn.setVisibility(View.VISIBLE);
+        }
     }
 
     private void init(View rootView) {
         // View Views
+        activateBtn = (Button) rootView.findViewById(R.id.btn_activationError);
         imageLogo = (ImageView) rootView.findViewById(R.id.v_logo);
         txtShopName = (TextView) getActivity().findViewById(R.id.toolbarTitle);
         txtWorkingTime = (TextView) rootView.findViewById(R.id.v_workingtime);

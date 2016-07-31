@@ -18,6 +18,10 @@ public class Shop {
     private String subscribedNum;
     private String workingTime; //*
 
+    private boolean shopActive;
+
+    private String pinCode;
+
     public Shop() {
     }
 
@@ -160,5 +164,21 @@ public class Shop {
 
     public void setContacts(String contacts) {
         this.contacts = contacts;
+    }
+
+    public boolean isShopActive() {
+        return shopActive;
+    }
+
+    public void setShopActive(boolean shopActive) {
+        this.shopActive = shopActive;
+    }
+
+    public String getPinCode() {
+        return pinCode;
+    }
+
+    public void setPinCode(String pinCode) {
+        this.pinCode = pinCode;
     }
 }

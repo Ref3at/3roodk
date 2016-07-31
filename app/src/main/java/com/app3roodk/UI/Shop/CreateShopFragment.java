@@ -370,6 +370,17 @@ public class CreateShopFragment extends Fragment {
         shop.setLon(String.valueOf(latLngShop.longitude));
         shop.setLat(String.valueOf(latLngShop.latitude));
         shop.setCreatedAt(UtilityGeneral.getCurrentDate(new Date()));
+        shop.setShopActive(false);
+
+        // generate pin code
+        StringBuffer code = new StringBuffer("");
+        code.append(UtilityGeneral.getCurrentDate(new Date()).charAt(7));
+        code.append(inputShopName.getText().toString().length());
+        code.append(UtilityGeneral.getCurrentDate(new Date()).charAt(10));
+        code.append(UtilityGeneral.getCurrentDate(new Date()).charAt(11));
+
+
+        shop.setPinCode(code.substring(0,3));
 
 
         if (UtilityGeneral.isOnline(getActivity())){

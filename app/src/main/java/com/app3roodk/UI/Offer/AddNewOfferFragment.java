@@ -29,6 +29,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.app3roodk.Constants;
@@ -37,6 +38,7 @@ import com.app3roodk.R;
 import com.app3roodk.Schema.Item;
 import com.app3roodk.Schema.Offer;
 import com.app3roodk.Schema.Shop;
+import com.app3roodk.UI.Shop.ListShopsActivity;
 import com.app3roodk.UtilityFirebase;
 import com.app3roodk.UtilityGeneral;
 import com.bumptech.glide.Glide;
@@ -54,6 +56,8 @@ import java.util.Map;
 import java.util.UUID;
 
 public class AddNewOfferFragment extends Fragment {
+
+    TextView txt_InactiveShops;
 
     private int mMorphCounter1 = 1;
 
@@ -119,6 +123,8 @@ public class AddNewOfferFragment extends Fragment {
 
         UtilityFirebase.updateUserNoOfAvailableOffers(getActivity(), UtilityGeneral.getCurrentYearAndWeek());
 
+        txt_InactiveShops = (TextView) rootView.findViewById(R.id.txt_inactive_shops);
+
         addNewItem = (Button) rootView.findViewById(R.id.add_new_item);
         addNewItem.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -163,11 +169,57 @@ public class AddNewOfferFragment extends Fragment {
         shops_spinnner = (BetterSpinner) rootView.findViewById(R.id.shop_spinner);
         lstShopsString = new ArrayList<>();
         lstShops = UtilityGeneral.loadShopsList(getActivity());
-        for (Shop shop : lstShops)
+        for (Shop shop : lstShops) {
+
+        if(!shop.isShopActive()) {
+            lstShopsString.add(shop.getName()+ " (غير مُفعل!)");
+        }else {
             lstShopsString.add(shop.getName());
+
+        }
+
+        }
         ArrayAdapter<String> adapter3 = new ArrayAdapter<>(getActivity(),
                 android.R.layout.simple_dropdown_item_1line, lstShopsString);
         shops_spinnner.setAdapter(adapter3);
+
+
+        StringBuffer inactiveShopsMsg = new StringBuffer("لا تستطيع اضافه عروض لمحلات ( ");
+
+        int x = 0;
+        for (Shop shop : lstShops) {
+
+            if (!shop.isShopActive()) {
+                if (x != 0) {
+                    inactiveShopsMsg.append(" ," + shop.getName());
+                } else {
+                    inactiveShopsMsg.append(shop.getName()+" ");
+                }
+                x++;
+            }
+
+        }
+
+        inactiveShopsMsg.append(") ");
+
+        inactiveShopsMsg.append("\n من فضلك أذهب للتفعيل");
+
+
+        txt_InactiveShops.setText(inactiveShopsMsg);
+
+        if (x > 0) {
+            txt_InactiveShops.setVisibility(View.VISIBLE);
+        }
+
+
+        txt_InactiveShops.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+               startActivity(new Intent(getActivity(), ListShopsActivity.class));
+            }
+        });
+
 
         previewOffer = (Button) rootView.findViewById(R.id.btn_previewadd);
         previewOffer.setOnClickListener(new View.OnClickListener() {
@@ -177,7 +229,7 @@ public class AddNewOfferFragment extends Fragment {
             }
         });
 
-       // publishOffer = (Button) rootView.findViewById(R.id.btn_publishadd);
+        // publishOffer = (Button) rootView.findViewById(R.id.btn_publishadd);
 
         btnMorph_publishOffer = (IndeterminateProgressButton) rootView.findViewById(R.id.btn_publishadd);
         btnMorph_publishOffer.setOnClickListener(new View.OnClickListener() {
@@ -210,8 +262,8 @@ public class AddNewOfferFragment extends Fragment {
                 .cornerRadius(10)
                 .width((int) getResources().getDimension(R.dimen.width_200))
                 .height((int) getResources().getDimension(R.dimen.height_56))
-                .color( ContextCompat.getColor(getActivity(),R.color.colorPrimary))
-                .colorPressed(ContextCompat.getColor(getActivity(),R.color.colorPrimaryDark))
+                .color(ContextCompat.getColor(getActivity(), R.color.colorPrimary))
+                .colorPressed(ContextCompat.getColor(getActivity(), R.color.colorPrimaryDark))
                 .text("ضيف الاعلان");
         btnMorph.morph(square);
     }
@@ -222,8 +274,8 @@ public class AddNewOfferFragment extends Fragment {
                 .cornerRadius((int) getResources().getDimension(R.dimen.height_56))
                 .width((int) getResources().getDimension(R.dimen.width_120))
                 .height((int) getResources().getDimension(R.dimen.height_56))
-                .color(ContextCompat.getColor(getActivity(),R.color.primary))
-                .colorPressed(ContextCompat.getColor(getActivity(),R.color.primary_dark))
+                .color(ContextCompat.getColor(getActivity(), R.color.primary))
+                .colorPressed(ContextCompat.getColor(getActivity(), R.color.primary_dark))
                 .text("تم إضافه العرض، شكراً لك");
         btnMorph.morph(circle);
 
@@ -235,22 +287,23 @@ public class AddNewOfferFragment extends Fragment {
                 .cornerRadius((int) getResources().getDimension(R.dimen.height_56))
                 .width((int) getResources().getDimension(R.dimen.width_120))
                 .height((int) getResources().getDimension(R.dimen.height_56))
-                .color(ContextCompat.getColor(getActivity(),R.color.accent))
-                .colorPressed(ContextCompat.getColor(getActivity(),R.color.accent))
-              .text("حدث مشكله فى الاتصال!");
+                .color(ContextCompat.getColor(getActivity(), R.color.accent))
+                .colorPressed(ContextCompat.getColor(getActivity(), R.color.accent))
+                .text("حدث مشكله فى الاتصال!");
         btnMorph.morph(circle);
     }
 
 
     IndeterminateProgressButton button;
+
     private void simulateProgress1(@NonNull final IndeterminateProgressButton button) {
         this.button = button;
 
-        int progressColor1 = ContextCompat.getColor(getActivity(),R.color.holo_blue_bright);
-        int progressColor2 = ContextCompat.getColor(getActivity(),R.color.holo_green_light);
-        int progressColor3 = ContextCompat.getColor(getActivity(),R.color.holo_orange_light);
-        int progressColor4 = ContextCompat.getColor(getActivity(),R.color.holo_red_light);
-        int color = ContextCompat.getColor(getActivity(),R.color.mb_gray);
+        int progressColor1 = ContextCompat.getColor(getActivity(), R.color.holo_blue_bright);
+        int progressColor2 = ContextCompat.getColor(getActivity(), R.color.holo_green_light);
+        int progressColor3 = ContextCompat.getColor(getActivity(), R.color.holo_orange_light);
+        int progressColor4 = ContextCompat.getColor(getActivity(), R.color.holo_red_light);
+        int color = ContextCompat.getColor(getActivity(), R.color.mb_gray);
         int progressCornerRadius = (int) getResources().getDimension(R.dimen.mb_corner_radius_4);
         int width = (int) getResources().getDimension(R.dimen.width_200);
         int height = (int) getResources().getDimension(R.dimen.height_8);
@@ -265,7 +318,6 @@ public class AddNewOfferFragment extends Fragment {
 
 
     }
-
 
 
     private void inflateNewItem() {
@@ -350,7 +402,8 @@ public class AddNewOfferFragment extends Fragment {
                 if (Double.parseDouble(item.getPriceAfter()) >= Double.parseDouble(item.getPriceBefore())) {
                     ((TextInputLayout) rootView.findViewById(R.id.input_layout_priceafter)).setError("السعر بعد الخصم يجب ان يكون اقل من السعر الأصلي للسلعة");
                     requestFocus(inputPriceAfter);
-                    success = false; return;
+                    success = false;
+                    return;
                 } else {
                     ((TextInputLayout) rootView.findViewById(R.id.input_layout_priceafter)).setErrorEnabled(false);
                 }
@@ -403,7 +456,7 @@ public class AddNewOfferFragment extends Fragment {
                 return false;
             }
         }
-        if(itemsContainer.getChildCount()==0){
+        if (itemsContainer.getChildCount() == 0) {
             showMessage("يجب إضافة سلعة واحده على الأقل");
             return false;
         }
@@ -523,11 +576,10 @@ public class AddNewOfferFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (!mapImageUploading.get(key).isDone())
-if (mapImageUploading.size() !=0) {
-    mapImageUploading.get(key).cancel(true);
-}
-                else
-                    images_id_Array[fIndexOfItem].remove(fLytImagesGroupContainer.indexOfChild(rootImage) - 1);
+                    if (mapImageUploading.size() != 0) {
+                        mapImageUploading.get(key).cancel(true);
+                    } else
+                        images_id_Array[fIndexOfItem].remove(fLytImagesGroupContainer.indexOfChild(rootImage) - 1);
                 mapImageUploading.remove(key);
                 fLytImagesGroupContainer.findViewById(R.id.add_new_image).setVisibility(View.VISIBLE);
                 fLytImagesGroupContainer.removeView(rootImage);
@@ -568,6 +620,16 @@ if (mapImageUploading.size() !=0) {
                     shop = sh;
                     break;
                 }
+
+            if (shop == null){
+
+                goToActivateShopDialog();
+                morphToSquare(button, 500);
+                button.unblockTouch();
+                mMorphCounter1 = 1;
+
+                return;}
+
             mOffer.setShopId(shop.getObjectId());
             mOffer.setShopName(shop.getName());
             mOffer.setLat(shop.getLat());
@@ -589,52 +651,76 @@ if (mapImageUploading.size() !=0) {
             }
             mOffer.setEndTime(UtilityGeneral.getCurrentDate(cal.getTime()));
 
-            if (UtilityGeneral.isOnline(getActivity())){
+            if (UtilityGeneral.isOnline(getActivity())) {
 
                 UtilityFirebase.createNewOffer(mOffer, new DatabaseReference.CompletionListener() {
-                @Override
-                public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                    if (databaseError != null) {
-                      //  showMessage("حصل مشكله شوف النت ");
+                    @Override
+                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                        if (databaseError != null) {
+                            //  showMessage("حصل مشكله شوف النت ");
 
-                        morphToFailure(button);
-                        button.unblockTouch();
+                            morphToFailure(button);
+                            button.unblockTouch();
 
 //                        Log.e("NewOfferFailed", databaseError.getMessage());
-                    } else {
-                        UtilityFirebase.createNewOfferExists(mOffer, new DatabaseReference.CompletionListener() {
-                            @Override
-                            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                                UtilityFirebase.decreaseNumberOfOffersAvailable(getActivity(), new DatabaseReference.CompletionListener() {
-                                    @Override
-                                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                                      // showMessage("تم إضافه العرض، شكرا لك");
+                        } else {
+                            UtilityFirebase.createNewOfferExists(mOffer, new DatabaseReference.CompletionListener() {
+                                @Override
+                                public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                                    UtilityFirebase.decreaseNumberOfOffersAvailable(getActivity(), new DatabaseReference.CompletionListener() {
+                                        @Override
+                                        public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                                            // showMessage("تم إضافه العرض، شكرا لك");
 
-                                        morphToSuccess(button);
+                                            morphToSuccess(button);
 
-                                        Handler handler = new Handler();
-                                        handler.postDelayed(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                getActivity().onBackPressed();
+                                            Handler handler = new Handler();
+                                            handler.postDelayed(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    getActivity().onBackPressed();
 
-                                            }
-                                        }, 3000);
+                                                }
+                                            }, 3000);
 
-                                    }
-                                });
-                            }
-                        });
+                                        }
+                                    });
+                                }
+                            });
+                        }
                     }
-                }
-            });}
-            else {
+                });
+            } else {
                 morphToFailure(button);
                 button.unblockTouch();
             }
         } catch (Exception ex) {
 //            Log.e("AddNewOfferFrag", ex.getMessage());
         }
+    }
+
+    private void goToActivateShopDialog() {
+
+        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                    case DialogInterface.BUTTON_POSITIVE:
+                        startActivity(new Intent(getActivity(), ListShopsActivity.class));
+
+
+                        break;
+
+                    case DialogInterface.BUTTON_NEGATIVE:
+                        break;
+                }
+            }
+        };
+
+        String shopNameFromSpinner = shops_spinnner.getText().toString();
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setMessage("لا يمكن إضافه عرض لمحل غير مفعل، إذهب لتفعيل محل " + shopNameFromSpinner.substring(0,shopNameFromSpinner.indexOf("(")) +"!" ).setPositiveButton("تفعيل", dialogClickListener)
+                .setNegativeButton("رجوع", dialogClickListener).show();
     }
 
     private class MyTextWatcher implements TextWatcher {
