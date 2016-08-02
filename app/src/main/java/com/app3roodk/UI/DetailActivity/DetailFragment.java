@@ -34,6 +34,7 @@ import com.app3roodk.Schema.Item;
 import com.app3roodk.Schema.Offer;
 import com.app3roodk.Schema.Shop;
 import com.app3roodk.Schema.TestTable;
+import com.app3roodk.UI.FavoritesCards.FavoritesFragment;
 import com.app3roodk.UI.FullScreenImage.FullScreenImageSlider;
 import com.app3roodk.UI.ImagesSliders.CustomImagesSlider;
 import com.app3roodk.UI.Shop.ViewShopActivity;

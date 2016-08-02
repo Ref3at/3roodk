@@ -10,7 +10,8 @@
         android:layout_width="50dp"
         android:focusable="false"
         android:background="@android:drawable/ic_delete"
-        android:layout_height="50dp" />
+        android:layout_height="50dp"
+        android:visibility="gone"/>
 
     <Button
         android:id="@+id/btn_activate"

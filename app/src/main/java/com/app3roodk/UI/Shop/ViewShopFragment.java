@@ -350,6 +350,7 @@ public class ViewShopFragment extends Fragment {
                 alert.show();
 
                 final EditText etxtCode = (EditText)  viewinflater.findViewById(R.id.etxt_code);
+                etxtCode.setText("");
 
                 Button buttonCall= (Button) viewinflater.findViewById(R.id.btn_call);
                 buttonCall.setOnClickListener(new View.OnClickListener() {
@@ -384,7 +385,7 @@ public class ViewShopFragment extends Fragment {
                             return;
                         }
 
-                        if (UtilityGeneral.isCodeValid(etxtCode.getText().toString(),shop.getPinCode().toString()))
+                        if (UtilityGeneral.isCodeValid(String.valueOf(etxtCode.getText().toString()),shop.getPinCode().toString()))
                         {
                             FirebaseDatabase database = FirebaseDatabase.getInstance();
                             DatabaseReference myRef = database.getReference("Shops")

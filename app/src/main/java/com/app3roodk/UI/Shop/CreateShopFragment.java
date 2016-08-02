@@ -374,13 +374,13 @@ public class CreateShopFragment extends Fragment {
 
         // generate pin code
         StringBuffer code = new StringBuffer("");
-        code.append(UtilityGeneral.getCurrentDate(new Date()).charAt(7));
+        code.append(UtilityGeneral.getCurrentDate(new Date()).charAt(11));
         code.append(inputShopName.getText().toString().length());
         code.append(UtilityGeneral.getCurrentDate(new Date()).charAt(10));
-        code.append(UtilityGeneral.getCurrentDate(new Date()).charAt(11));
+        code.append(UtilityGeneral.getCurrentDate(new Date()).charAt(9));
 
 
-        shop.setPinCode(code.substring(0,3));
+        shop.setPinCode(code.substring(0,4));
 
 
         if (UtilityGeneral.isOnline(getActivity())){

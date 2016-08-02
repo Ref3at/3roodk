@@ -33,6 +33,7 @@ public class FavoritesFragment extends Fragment {
     ArrayList<Offer> lstOffers;
     ContentAdapter adapter;
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
