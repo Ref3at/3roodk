@@ -7,6 +7,7 @@ import com.app3roodk.Schema.Comments;
 import com.app3roodk.Schema.ExistOffers;
 import com.app3roodk.Schema.Feedback;
 import com.app3roodk.Schema.Offer;
+import com.app3roodk.Schema.Replies;
 import com.app3roodk.Schema.Shop;
 import com.app3roodk.Schema.User;
 import com.firebase.ui.auth.AuthUI;
@@ -26,6 +27,41 @@ import java.util.Iterator;
 
 public class UtilityFirebase {
 
+    //region Replies
+    static public void addNewReplay(Offer offer, Replies replies, DatabaseReference.CompletionListener listener) {
+        DatabaseReference myRef = FirebaseDatabase.getInstance().getReference("Replies").child(offer.getObjectId());
+        replies.setObjectId(myRef.push().getKey());
+        myRef.child(replies.getObjectId()).setValue(replies, listener);
+    }
+    static public DatabaseReference getReplies(Offer offer) {
+        return FirebaseDatabase.getInstance().getReference("Replies").child(offer.getObjectId());
+    }
+
+    static public void updateReplies(Replies replies, String userId, boolean like, boolean remove) {
+        if (like) {
+            if (!remove) {
+                FirebaseDatabase.getInstance().getReference("Replies").child(replies.getOfferId()).child(replies.getObjectId()).child("userLike").child(userId).setValue("Like");
+                FirebaseDatabase.getInstance().getReference("Replies").child(replies.getOfferId()).child(replies.getObjectId()).child("userDislike").child(userId).removeValue();
+            } else {
+                FirebaseDatabase.getInstance().getReference("Replies").child(replies.getOfferId()).child(replies.getObjectId()).child("userLike").child(userId).removeValue();
+                FirebaseDatabase.getInstance().getReference("Replies").child(replies.getOfferId()).child(replies.getObjectId()).child("userDislike").child(userId).removeValue();
+            }
+        } else {
+            if (!remove) {
+                FirebaseDatabase.getInstance().getReference("Replies").child(replies.getOfferId()).child(replies.getObjectId()).child("userDislike").child(userId).setValue("Dislike");
+                FirebaseDatabase.getInstance().getReference("Replies").child(replies.getOfferId()).child(replies.getObjectId()).child("userLike").child(userId).removeValue();
+            } else {
+                FirebaseDatabase.getInstance().getReference("Replies").child(replies.getOfferId()).child(replies.getObjectId()).child("userDislike").child(userId).removeValue();
+                FirebaseDatabase.getInstance().getReference("Replies").child(replies.getOfferId()).child(replies.getObjectId()).child("userLike").child(userId).removeValue();
+            }
+        }
+    }
+
+    static public void removeOfferCommentsReplies(String offerId) {
+        FirebaseDatabase.getInstance().getReference("Replies").child(offerId).removeValue();
+    }
+    //endregion
+
     //region Comments
     static public DatabaseReference getComments(String offerId) {
         return FirebaseDatabase.getInstance().getReference("Comments").child(offerId);
@@ -43,6 +79,7 @@ public class UtilityFirebase {
 
     static public void removeOfferComments(String offerId) {
         FirebaseDatabase.getInstance().getReference("Comments").child(offerId).removeValue();
+        removeOfferCommentsReplies(offerId);
     }
 
     static public void updateComment(Comments comment, String userId, boolean like, boolean remove) {

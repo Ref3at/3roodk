@@ -53,13 +53,13 @@
                 <View
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/circle_white"
                     android:layout_alignBottom="@id/btnFavorite"
-                    android:layout_margin="12dp"
-                    android:elevation="4dp"
                     android:layout_alignLeft="@id/btnFavorite"
                     android:layout_alignRight="@id/btnFavorite"
-                    android:layout_alignTop="@id/btnFavorite" />
+                    android:layout_alignTop="@id/btnFavorite"
+                    android:layout_margin="12dp"
+                    android:background="@drawable/circle_white"
+                    android:elevation="4dp" />
 
                 <ImageButton
                     android:id="@+id/btnShare"
@@ -582,6 +582,47 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/lytReplay"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    android:gravity="center_horizontal"
+                    android:orientation="horizontal"
+                    android:paddingLeft="10dp"
+                    android:background="@color/com_facebook_button_border_color_focused"
+                    android:paddingRight="10dp"
+                    android:visibility="gone"
+                    android:paddingTop="5dp">
+                    <Button
+                        android:id="@+id/btnDeleteReplay"
+                        android:layout_width="40dp"
+                        android:layout_height="50dp"
+                        android:background="@drawable/custom_background_buttons"
+                        android:textColor="@color/white"
+                        android:layout_marginRight="30dp"
+                        android:text="X"/>
+
+                    <TextView
+                        android:id="@+id/txtReplayName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="right"
+                        android:gravity="center_vertical"
+                        android:textSize="23sp"
+                        tools:text="sadasd" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="right"
+                        android:gravity="center_vertical"
+                        android:text="يتم الآن الرد على "
+                        android:textSize="23sp" />
+
+
+                </LinearLayout>
+
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="end"
@@ -617,6 +658,7 @@
                     android:clipToPadding="false"
                     android:divider="@null"
                     android:dividerHeight="@dimen/divider_height"
+                    android:focusable="false"
                     android:listSelector="@android:color/transparent"
                     android:overScrollFooter="@android:color/transparent"
                     android:overScrollMode="never" />

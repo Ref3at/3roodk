@@ -16,6 +16,7 @@ public class UtilityCloudMessaging {
 
     static public String COMMENT_TITLE = "3roodk";
     static public String COMMENT_BODY = " commented on your offer";
+    static public String REPLAY_BODY = " replied on your comment";
 
     static public void sendNotification(Context context, String sendToToken, String title, String body, String tag, HashMap<String, String> data,String clickAction ,TextHttpResponseHandler handler) {
         AsyncHttpClient client = new AsyncHttpClient();

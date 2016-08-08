@@ -110,4 +110,6 @@
     <string name="second">ثانية</string>
     <string name="dialog_msg">لكى تتمكن من إنشاء محل وإضافه عروضك يجب الاتصال اولاً بفريق العمل للحصول على الكود المطلوب، شكراً لك!</string>
     <string name="inActive">(غير مُفعل)</string>
+    <string name="replay_comment">الرد على هذا التعليق</string>
+    <string name="replay">رد</string>
 </resources>

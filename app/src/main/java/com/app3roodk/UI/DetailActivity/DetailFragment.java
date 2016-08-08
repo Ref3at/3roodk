@@ -22,6 +22,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,9 +33,9 @@ import com.app3roodk.R;
 import com.app3roodk.Schema.Comments;
 import com.app3roodk.Schema.Item;
 import com.app3roodk.Schema.Offer;
+import com.app3roodk.Schema.Replies;
 import com.app3roodk.Schema.Shop;
 import com.app3roodk.Schema.TestTable;
-import com.app3roodk.UI.FavoritesCards.FavoritesFragment;
 import com.app3roodk.UI.FullScreenImage.FullScreenImageSlider;
 import com.app3roodk.UI.ImagesSliders.CustomImagesSlider;
 import com.app3roodk.UI.Shop.ViewShopActivity;
@@ -47,9 +48,7 @@ import com.daimajia.slider.library.Indicators.PagerIndicator;
 import com.daimajia.slider.library.SliderLayout;
 import com.daimajia.slider.library.SliderTypes.BaseSliderView;
 import com.daimajia.slider.library.Tricks.ViewPagerEx;
-import com.dd.morphingbutton.impl.IndeterminateProgressButton;
 import com.github.paolorotolo.expandableheightlistview.ExpandableHeightListView;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -79,10 +78,10 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
 
     LikeButton btnFavorite;
 
-    Button btnShopWay,btnComment;
+    Button btnShopWay, btnComment,btnCloseReplay;
 
     TextView txtViews, txtSale, txtPriceBefore, txtPriceAfter, txtDay, txtHour, txtMinute, txtDescription,
-            txtShopName, txtWorkTime, txtAddress, txtMobile, txtRate;
+            txtShopName, txtWorkTime, txtAddress, txtMobile, txtRate, txtReplayName;
     EditText edtxtComment;
     ExpandableHeightListView lsvComments;
     RatingBar ratebar;
@@ -96,11 +95,15 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
 
     CommentsAdapter adapter;
     ArrayList<Comments> lstComments;
+    ArrayList<Replies> lstReplies;
+    LinearLayout lytReplay;
 
-    Offer offer;
+    public Offer offer;
+    boolean isReplay;
+    Comments commentToReplay;
     Shop shop;
 
-    ValueEventListener postListener, offerListener;
+    ValueEventListener postListener, offerListener, repliesListener;
     //endregion
 
     Runnable updateTimerThread = new Runnable() {
@@ -129,6 +132,7 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        isReplay = false;
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
     }
 
@@ -190,64 +194,21 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
                         showMessage("اكتب التعليق من فضلك اولاً");
                         return;
                     }
+                    if(isReplay)
+                        makeReplay();
+                    else
+                        makeComment();
 
-                    btnComment.setClickable(false);
-                    final Comments comment = new Comments();
-                    if (offer.getUserId().equals(UtilityGeneral.loadUser(getActivity()).getObjectId())) {
-                        comment.setUserName(offer.getShopName());
-                        comment.setPhotoUrl(UtilityGeneral.loadShop(getActivity(), offer.getShopId()).getLogoId());
-                    } else {
-                        assert auth.getCurrentUser().getPhotoUrl() != null;
-                        if (auth.getCurrentUser() != null && auth.getCurrentUser().getPhotoUrl() != null) {
-                            comment.setPhotoUrl(auth.getCurrentUser().getPhotoUrl().toString());
-                        }
-                        comment.setUserName(UtilityGeneral.loadUser(getActivity()).getName());
-                    }
-                    comment.setUserId(UtilityGeneral.loadUser(getActivity()).getObjectId());
-                    comment.setOfferId(offer.getObjectId());
-                    comment.setCommentText(edtxtComment.getText().toString());
-
-                    // hide keyboard
-                    InputMethodManager inputManager = (InputMethodManager)
-                            getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-
-                    inputManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(),
-                            InputMethodManager.HIDE_NOT_ALWAYS);
-                    // end hide keyboard
-                    UtilityFirebase.addNewComment(offer, comment, new DatabaseReference.CompletionListener() {
-                        @Override
-                        public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                            if (databaseError != null) {
-                                showMessage("حصل مشكله شوف النت ");
-//                                Log.e("DetailFragment", "Add New Comment : " + databaseError.getMessage());
-                            } else {
-                                if (!(offer.getUserNotificationToken() == null || offer.getUserNotificationToken().isEmpty()
-                                        || offer.getShopName() == comment.getUserName())) {
-                                    HashMap<String, String> mapOffer = new HashMap<>();
-                                    mapOffer.put("offer", new Gson().toJson(offer));
-                                    UtilityCloudMessaging.sendNotification(getActivity(), offer.getUserNotificationToken(),
-                                            UtilityCloudMessaging.COMMENT_TITLE, comment.getUserName() + UtilityCloudMessaging.COMMENT_BODY,
-                                            offer.getObjectId(), mapOffer, "OPEN_ACTIVITY_1", new TextHttpResponseHandler() {
-                                                @Override
-                                                public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-//                                                    Log.e("Send Notification err", responseString);
-                                                }
-
-                                                @Override
-                                                public void onSuccess(int statusCode, Header[] headers, String responseString) {
-//                                                    Log.e("Send Notification", responseString);
-                                                }
-                                            });
-                                }
-                                edtxtComment.setText("");
-                                btnComment.setClickable(true);
-                            }
-                        }
-
-                    });
                 } else {
                     ((DetailActivity) getActivity()).signingClick();
                 }
+            }
+        });
+        btnCloseReplay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                isReplay =false;
+                lytReplay.setVisibility(View.GONE);
             }
         });
         ratebar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
@@ -276,7 +237,7 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
         btnShopWay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(UtilityGeneral.DrawPathToCertainShop(offer.getLat(),offer.getLon()));
+                startActivity(UtilityGeneral.DrawPathToCertainShop(offer.getLat(), offer.getLon()));
             }
         });
 
@@ -309,6 +270,118 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
                 showMessage("I'll share");
 
             }
+        });
+    }
+
+    private void makeComment() {
+        btnComment.setClickable(false);
+        final Comments comment = new Comments();
+        if (offer.getUserId().equals(UtilityGeneral.loadUser(getActivity()).getObjectId())) {
+            comment.setUserName(offer.getShopName());
+            comment.setPhotoUrl(UtilityGeneral.loadShop(getActivity(), offer.getShopId()).getLogoId());
+        } else {
+            assert auth.getCurrentUser().getPhotoUrl() != null;
+            if (auth.getCurrentUser() != null && auth.getCurrentUser().getPhotoUrl() != null) {
+                comment.setPhotoUrl(auth.getCurrentUser().getPhotoUrl().toString());
+            }
+            comment.setUserName(UtilityGeneral.loadUser(getActivity()).getName());
+        }
+        comment.setUserId(UtilityGeneral.loadUser(getActivity()).getObjectId());
+        comment.setOfferId(offer.getObjectId());
+        comment.setCommentText(edtxtComment.getText().toString());
+
+        // hide keyboard
+        InputMethodManager inputManager = (InputMethodManager)
+                getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+
+        inputManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(),
+                InputMethodManager.HIDE_NOT_ALWAYS);
+        // end hide keyboard
+        UtilityFirebase.addNewComment(offer, comment, new DatabaseReference.CompletionListener() {
+            @Override
+            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                if (databaseError != null) {
+                    showMessage("حصل مشكله شوف النت ");
+//                                Log.e("DetailFragment", "Add New Comment : " + databaseError.getMessage());
+                } else {
+                    if (!(offer.getUserNotificationToken() == null || offer.getUserNotificationToken().isEmpty()
+                            || offer.getShopName() == comment.getUserName())) {
+                        HashMap<String, String> mapOffer = new HashMap<>();
+                        mapOffer.put("offer", new Gson().toJson(offer));
+                        UtilityCloudMessaging.sendNotification(getActivity(), offer.getUserNotificationToken(),
+                                UtilityCloudMessaging.COMMENT_TITLE, comment.getUserName() + UtilityCloudMessaging.COMMENT_BODY,
+                                offer.getObjectId(), mapOffer, "OPEN_ACTIVITY_1", new TextHttpResponseHandler() {
+                                    @Override
+                                    public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+//                                                    Log.e("Send Notification err", responseString);
+                                    }
+
+                                    @Override
+                                    public void onSuccess(int statusCode, Header[] headers, String responseString) {
+//                                                    Log.e("Send Notification", responseString);
+                                    }
+                                });
+                    }
+                    edtxtComment.setText("");
+                    btnComment.setClickable(true);
+                }
+            }
+
+        });
+    }
+
+    private void makeReplay() {
+
+
+        btnComment.setClickable(false);
+        final Replies replies = new Replies();
+        if (offer.getUserId().equals(UtilityGeneral.loadUser(getContext()).getObjectId())) {
+            replies.setUserName(offer.getShopName());
+            replies.setPhotoUrl(UtilityGeneral.loadShop(getContext(), offer.getShopId()).getLogoId());
+        } else {
+            assert auth.getCurrentUser().getPhotoUrl() != null;
+            if (auth.getCurrentUser() != null && auth.getCurrentUser().getPhotoUrl() != null) {
+                replies.setPhotoUrl(auth.getCurrentUser().getPhotoUrl().toString());
+            }
+            replies.setUserName(UtilityGeneral.loadUser(getContext()).getName());
+        }
+        replies.setParentCommentId(commentToReplay.getObjectId());
+        replies.setUserId(UtilityGeneral.loadUser(getContext()).getObjectId());
+        replies.setOfferId(offer.getObjectId());
+        replies.setCommentText(edtxtComment.getText().toString());
+
+        UtilityFirebase.addNewReplay(offer, replies, new DatabaseReference.CompletionListener() {
+            @Override
+            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                if (databaseError != null) {
+                    showMessage("حصل مشكله شوف النت ");
+//                                Log.e("DetailFragment", "Add New Comment : " + databaseError.getMessage());
+                } else {
+                    if (!(commentToReplay.getUserNotificationToken() == null || commentToReplay.getUserNotificationToken().isEmpty()
+                            || commentToReplay.getUserId() == replies.getUserId())) {
+                        HashMap<String, String> mapOffer = new HashMap<>();
+                        mapOffer.put("offer", new Gson().toJson(offer));
+                        UtilityCloudMessaging.sendNotification(getContext(), commentToReplay.getUserNotificationToken(),
+                                UtilityCloudMessaging.COMMENT_TITLE, replies.getUserName() + UtilityCloudMessaging.REPLAY_BODY,
+                                offer.getObjectId(), mapOffer, "OPEN_ACTIVITY_1", new TextHttpResponseHandler() {
+                                    @Override
+                                    public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+//                                                    Log.e("Send Notification err", responseString);
+                                    }
+
+                                    @Override
+                                    public void onSuccess(int statusCode, Header[] headers, String responseString) {
+//                                                    Log.e("Send Notification", responseString);
+                                    }
+                                });
+                    }
+                    edtxtComment.setText("");
+                    btnComment.setClickable(true);
+                    isReplay = false;
+                    lytReplay.setVisibility(View.GONE);
+                }
+            }
+
         });
     }
 
@@ -453,6 +526,7 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
             });
             UtilityFirebase.getComments(offer).addValueEventListener(postListener);
             UtilityFirebase.getOffer(offer).addValueEventListener(offerListener);
+            UtilityFirebase.getReplies(offer).addValueEventListener(repliesListener);
             UtilityFirebase.updateOfferUserNotificationToken(offer);
             if (UtilityGeneral.isTotalAndAverageRatingChanged(offer)) {
                 HashMap<String, Object> childUpdates = new HashMap<>();
@@ -473,6 +547,7 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
             btnShare = (ImageButton) rootView.findViewById(R.id.btnShare);
             btnShopWay = (Button) rootView.findViewById(R.id.btnShopWay);
             btnComment = (Button) rootView.findViewById(R.id.btnComment);
+            btnCloseReplay = (Button) rootView.findViewById(R.id.btnDeleteReplay);
             txtViews = (TextView) rootView.findViewById(R.id.txtViews);
             txtSale = (TextView) rootView.findViewById(R.id.txtSale);
             txtPriceBefore = (TextView) rootView.findViewById(R.id.txtPriceBefore);
@@ -485,14 +560,18 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
             txtWorkTime = (TextView) rootView.findViewById(R.id.txtWorkTime);
             txtAddress = (TextView) rootView.findViewById(R.id.txtAddress);
             txtMobile = (TextView) rootView.findViewById(R.id.txtMobile);
+            txtReplayName = (TextView) rootView.findViewById(R.id.txtReplayName);
             txtRate = (TextView) rootView.findViewById(R.id.txtRateNumber);
             edtxtComment = (EditText) rootView.findViewById(R.id.edtxtComment);
             ratebar = (RatingBar) rootView.findViewById(R.id.ratingbar);
+            lytReplay = (LinearLayout) rootView.findViewById(R.id.lytReplay);
             lsvComments = (ExpandableHeightListView) rootView.findViewById(R.id.lsvComments);
             lstComments = new ArrayList<>();
+            lstReplies = new ArrayList<>();
             adapter = new CommentsAdapter(getActivity(), R.layout.comment_item, lstComments);
             lsvComments.setAdapter(adapter);
             lsvComments.setExpanded(true);
+            lsvComments.setItemsCanFocus(true);
             offer = new Gson().fromJson(getActivity().getIntent().getStringExtra("offer"), Offer.class);
             cal = Calendar.getInstance();
             cal.set(Calendar.YEAR, Integer.parseInt(offer.getEndTime().substring(0, 4)));
@@ -511,8 +590,7 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
                     while (iterator.hasNext())
                         lstComments.add(iterator.next().getValue(Comments.class));
                     UtilityGeneral.sortCommentsByTime(lstComments);
-                    adapter.notifyDataSetChanged();
-//                    UtilityGeneral.setListViewHeightBasedOnChildren(lsvComments);
+                    syncCommentsAndReplies();
                 }
 
                 @Override
@@ -524,6 +602,21 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     offer = dataSnapshot.getValue(Offer.class);
                     fillViews();
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                }
+            };
+            repliesListener = new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    lstReplies.clear();
+                    Iterator<DataSnapshot> iterator = dataSnapshot.getChildren().iterator();
+                    while (iterator.hasNext())
+                        lstReplies.add(iterator.next().getValue(Replies.class));
+                    UtilityGeneral.sortRepliesByTime(lstReplies);
+                    syncCommentsAndReplies();
                 }
 
                 @Override
@@ -571,6 +664,21 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
         mSlider.addOnPageChangeListener(this);
     }
 
+    private void syncCommentsAndReplies() {
+        try {
+            for (int i = 0; i < lstReplies.size(); i++) {
+                for (int j = 0; j < lstComments.size(); j++) {
+                    if (i == 0) lstComments.get(j).getLstReplies().clear();
+                    if (lstReplies.get(i).getParentCommentId().equals(lstComments.get(j).getObjectId())) {
+                        lstComments.get(j).getLstReplies().add(lstReplies.get(i));
+                    }
+                }
+            }
+        } catch (Exception ex) {
+        }
+        adapter.notifyDataSetChanged();
+    }
+
     @Override
     public void onStop() {
         mSlider.stopAutoCycle();
@@ -600,6 +708,7 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
         super.onDestroy();
         try {
             UtilityFirebase.getComments(offer).removeEventListener(postListener);
+            UtilityFirebase.getReplies(offer).removeEventListener(repliesListener);
             UtilityFirebase.getOffer(offer).removeEventListener(offerListener);
         } catch (Exception ex) {
         }
@@ -683,149 +792,324 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
         }
     }
 
-}
 
-class CommentsAdapter extends ArrayAdapter {
+    class CommentsAdapter extends ArrayAdapter {
 
-    Context context;
-    int layoutResourceId;
-    ArrayList<Comments> data = null;
+        Context context;
+        int layoutResourceId;
 
+        ArrayList<Comments> data = null;
 
-    public CommentsAdapter(Context context, int layoutResourceId, ArrayList<Comments> data) {
-        super(context, layoutResourceId, data);
-        this.layoutResourceId = layoutResourceId;
-        this.context = context;
-        this.data = data;
-    }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        View row = convertView;
-        final CommentHolder holder;
-        if (row == null) {
-            LayoutInflater inflater = ((Activity) context).getLayoutInflater();
-            row = inflater.inflate(layoutResourceId, parent, false);
-            holder = new CommentHolder(row);
-            row.setTag(holder);
-        } else {
-            holder = (CommentHolder) row.getTag();
-        }
-        final Comments comment = data.get(position);
-        holder.btnLike.setEnabled(true);
-        holder.btnDislike.setEnabled(true);
-        if (comment.getPhotoUrl() != null && !comment.getPhotoUrl().isEmpty()) {
-            Glide.with(getContext())
-                    .load(comment.getPhotoUrl())
-                    .asBitmap()
-                    .into(new BitmapImageViewTarget(holder.userImage) {
-                        @Override
-                        protected void setResource(Bitmap resource) {
-                            RoundedBitmapDrawable circularBitmapDrawable =
-                                    RoundedBitmapDrawableFactory.create(getContext().getResources(), resource);
-                            circularBitmapDrawable.setCircular(true);
-                            holder.userImage.setImageDrawable(circularBitmapDrawable);
-                        }
-                    });
-        } else {
-            Glide.with(getContext())
-                    .load(R.drawable.defaultavatar)
-                    .asBitmap()
-                    .into(new BitmapImageViewTarget(holder.userImage) {
-                        @Override
-                        protected void setResource(Bitmap resource) {
-                            RoundedBitmapDrawable circularBitmapDrawable =
-                                    RoundedBitmapDrawableFactory.create(getContext().getResources(), resource);
-                            circularBitmapDrawable.setCircular(true);
-                            holder.userImage.setImageDrawable(circularBitmapDrawable);
-                        }
-                    });
+        public CommentsAdapter(Context context, int layoutResourceId, ArrayList<Comments> data) {
+            super(context, layoutResourceId, data);
+            this.layoutResourceId = layoutResourceId;
+            this.context = context;
+            this.data = data;
         }
 
-        holder.Name.setText(comment.getUserName());
-        holder.Comment.setText(comment.getCommentText());
+        @Override
+        public View getView(int position, final View convertView, final ViewGroup parent) {
+            View row = convertView;
+            final CommentHolder holder;
+            if (row == null) {
+                LayoutInflater inflater = ((Activity) context).getLayoutInflater();
+                row = inflater.inflate(layoutResourceId, parent, false);
+                holder = new CommentHolder(row);
+                row.setTag(holder);
+            } else {
+                holder = (CommentHolder) row.getTag();
+            }
+            final Comments comment = data.get(position);
+            holder.btnLike.setEnabled(true);
+            holder.btnDislike.setEnabled(true);
+            if (comment.getPhotoUrl() != null && !comment.getPhotoUrl().isEmpty()) {
+                Glide.with(getContext())
+                        .load(comment.getPhotoUrl())
+                        .asBitmap()
+                        .into(new BitmapImageViewTarget(holder.userImage) {
+                            @Override
+                            protected void setResource(Bitmap resource) {
+                                RoundedBitmapDrawable circularBitmapDrawable =
+                                        RoundedBitmapDrawableFactory.create(getContext().getResources(), resource);
+                                circularBitmapDrawable.setCircular(true);
+                                holder.userImage.setImageDrawable(circularBitmapDrawable);
+                            }
+                        });
+            } else {
+                Glide.with(getContext())
+                        .load(R.drawable.defaultavatar)
+                        .asBitmap()
+                        .into(new BitmapImageViewTarget(holder.userImage) {
+                            @Override
+                            protected void setResource(Bitmap resource) {
+                                RoundedBitmapDrawable circularBitmapDrawable =
+                                        RoundedBitmapDrawableFactory.create(getContext().getResources(), resource);
+                                circularBitmapDrawable.setCircular(true);
+                                holder.userImage.setImageDrawable(circularBitmapDrawable);
+                            }
+                        });
+            }
 
-        if (comment.getUserLike() != null)
-            holder.LikeNumber.setText(String.valueOf(comment.getUserLike().size()));
-        else
-            holder.LikeNumber.setText("0");
-        if (comment.getUserDislike() != null)
-            holder.DislikeNumber.setText(String.valueOf(comment.getUserDislike().size()));
-        else
-            holder.DislikeNumber.setText("0");
-        holder.Date.setText(comment.getReadableTime());
+            holder.Name.setText(comment.getUserName());
+            holder.Comment.setText(comment.getCommentText());
+
+            if (comment.getUserLike() != null)
+                holder.LikeNumber.setText(String.valueOf(comment.getUserLike().size()));
+            else
+                holder.LikeNumber.setText("0");
+            if (comment.getUserDislike() != null)
+                holder.DislikeNumber.setText(String.valueOf(comment.getUserDislike().size()));
+            else
+                holder.DislikeNumber.setText("0");
+            holder.Date.setText(comment.getReadableTime());
 
 
-        if (comment.getUserLike().containsKey(UtilityGeneral.loadUser(context).getObjectId()))
-            holder.btnLike.setLiked(true);
-        else
-            holder.btnLike.setLiked(false);
+            if (comment.getUserLike().containsKey(UtilityGeneral.loadUser(context).getObjectId()))
+                holder.btnLike.setLiked(true);
+            else
+                holder.btnLike.setLiked(false);
 
-        holder.btnLike.setOnLikeListener(new OnLikeListener() {
-            @Override
-            public void liked(LikeButton likeButton) {
-                if (UtilityGeneral.isRegisteredUser(getContext())) {
-                    UtilityFirebase.updateComment(comment, UtilityGeneral.loadUser(getContext()).getObjectId(), true, false);
-                } else {
-                    Toast.makeText(getContext(), "سجّل الأول", Toast.LENGTH_LONG).show();
-                    holder.btnLike.setLiked(false);
+            holder.btnLike.setOnLikeListener(new OnLikeListener() {
+                @Override
+                public void liked(LikeButton likeButton) {
+                    if (UtilityGeneral.isRegisteredUser(getContext())) {
+                        UtilityFirebase.updateComment(comment, UtilityGeneral.loadUser(getContext()).getObjectId(), true, false);
+                    } else {
+                        Toast.makeText(getContext(), "سجّل الأول", Toast.LENGTH_LONG).show();
+                        holder.btnLike.setLiked(false);
+                    }
+
                 }
 
-            }
-
-            @Override
-            public void unLiked(LikeButton likeButton) {
-                UtilityFirebase.updateComment(comment, UtilityGeneral.loadUser(getContext()).getObjectId(), true, true);
-            }
-        });
+                @Override
+                public void unLiked(LikeButton likeButton) {
+                    UtilityFirebase.updateComment(comment, UtilityGeneral.loadUser(getContext()).getObjectId(), true, true);
+                }
+            });
 
 
-        if (comment.getUserDislike().containsKey(UtilityGeneral.loadUser(context).getObjectId()))
-            holder.btnDislike.setLiked(true);
+            if (comment.getUserDislike().containsKey(UtilityGeneral.loadUser(context).getObjectId()))
+                holder.btnDislike.setLiked(true);
 
-        else
-            holder.btnDislike.setLiked(false);
+            else
+                holder.btnDislike.setLiked(false);
 
-        holder.btnDislike.setOnLikeListener(new OnLikeListener() {
-            @Override
-            public void liked(LikeButton likeButton) {
-                if (UtilityGeneral.isRegisteredUser(getContext())) {
+            holder.btnDislike.setOnLikeListener(new OnLikeListener() {
+                @Override
+                public void liked(LikeButton likeButton) {
+                    if (UtilityGeneral.isRegisteredUser(getContext())) {
 
-                    UtilityFirebase.updateComment(comment, UtilityGeneral.loadUser(getContext()).getObjectId(), false, false);
-                } else {
-                    Toast.makeText(getContext(), "سجّل الأول", Toast.LENGTH_LONG).show();
-                    holder.btnDislike.setLiked(false);
+                        UtilityFirebase.updateComment(comment, UtilityGeneral.loadUser(getContext()).getObjectId(), false, false);
+                    } else {
+                        Toast.makeText(getContext(), "سجّل الأول", Toast.LENGTH_LONG).show();
+                        holder.btnDislike.setLiked(false);
+                    }
+
                 }
 
-            }
+                @Override
+                public void unLiked(LikeButton likeButton) {
+                    UtilityFirebase.updateComment(comment, UtilityGeneral.loadUser(getContext()).getObjectId(), false, true);
 
-            @Override
-            public void unLiked(LikeButton likeButton) {
-                UtilityFirebase.updateComment(comment, UtilityGeneral.loadUser(getContext()).getObjectId(), false, true);
+                }
+            });
 
-            }
-        });
+            holder.setAdapter(getContext(), comment.getLstReplies());
+            holder.btnReplay.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (UtilityGeneral.isRegisteredUser(getContext())) {
+                        isReplay = true;
+                        commentToReplay = comment;
+                        edtxtComment.requestFocus();
+                        lytReplay.setVisibility(View.VISIBLE);
+                        txtReplayName.setText(comment.getUserName());
+                    } else {
+                        showMessage("يجب عليك التسجيل اولاً");
+                    }
+                }
+            });
+            return row;
+        }
 
-
-        return row;
+        private void showMessage(String msg) {
+            Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
+        }
     }
-}
 
-class CommentHolder {
-    public TextView Name, Comment, Date, LikeNumber, DislikeNumber;
-    public LikeButton btnLike, btnDislike;
+    class CommentHolder {
+        public TextView Name, Comment, Date, LikeNumber, DislikeNumber;
+        public LikeButton btnLike, btnDislike;
+        public Button btnReplay;
+        public ExpandableHeightListView lsvReplies;
+        public ReplayAdapter adapter;
+        public Offer offer;
+        ImageView userImage;
 
-    ImageView userImage;
+        public CommentHolder(View rootView) {
+            Name = (TextView) rootView.findViewById(R.id.txtName);
+            Comment = (TextView) rootView.findViewById(R.id.txtComment);
+            Date = (TextView) rootView.findViewById(R.id.txtTime);
+            LikeNumber = (TextView) rootView.findViewById(R.id.txtLikeNumber);
+            DislikeNumber = (TextView) rootView.findViewById(R.id.txtDisikeNumber);
+            btnLike = (LikeButton) rootView.findViewById(R.id.btnLike);
+            btnDislike = (LikeButton) rootView.findViewById(R.id.btnDislike);
+            userImage = (ImageView) rootView.findViewById(R.id.user_avatar);
+            btnReplay = (Button) rootView.findViewById(R.id.btnReplay);
+            lsvReplies = (ExpandableHeightListView) rootView.findViewById(R.id.lsvRepliesComments);
 
-    public CommentHolder(View rootView) {
-        Name = (TextView) rootView.findViewById(R.id.txtName);
-        Comment = (TextView) rootView.findViewById(R.id.txtComment);
-        Date = (TextView) rootView.findViewById(R.id.txtTime);
-        LikeNumber = (TextView) rootView.findViewById(R.id.txtLikeNumber);
-        DislikeNumber = (TextView) rootView.findViewById(R.id.txtDisikeNumber);
-        btnLike = (LikeButton) rootView.findViewById(R.id.btnLike);
-        btnDislike = (LikeButton) rootView.findViewById(R.id.btnDislike);
-        userImage = (ImageView) rootView.findViewById(R.id.user_avatar);
+        }
 
+        public void setAdapter(Context context, ArrayList<Replies> lstReplies) {
+            try {
+                adapter = new ReplayAdapter(context, R.layout.replay_item, lstReplies);
+                lsvReplies.setAdapter(adapter);
+                lsvReplies.setExpanded(true);
+            } catch (Exception ex) {
+            }
+        }
+
+    }
+
+    class ReplayAdapter extends ArrayAdapter {
+
+        Context context;
+        int layoutResourceId;
+        ArrayList<Replies> data = null;
+
+
+        public ReplayAdapter(Context context, int layoutResourceId, ArrayList<Replies> data) {
+            super(context, layoutResourceId, data);
+            this.layoutResourceId = layoutResourceId;
+            this.context = context;
+            this.data = data;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            View row = convertView;
+            final ReplayHolder holder;
+            if (row == null) {
+                LayoutInflater inflater = ((Activity) context).getLayoutInflater();
+                row = inflater.inflate(layoutResourceId, parent, false);
+                holder = new ReplayHolder(row);
+                row.setTag(holder);
+            } else {
+                holder = (ReplayHolder) row.getTag();
+            }
+            final Replies replay = data.get(position);
+            holder.btnLike.setEnabled(true);
+            holder.btnDislike.setEnabled(true);
+            if (replay.getPhotoUrl() != null && !replay.getPhotoUrl().isEmpty()) {
+                Glide.with(getContext())
+                        .load(replay.getPhotoUrl())
+                        .asBitmap()
+                        .into(new BitmapImageViewTarget(holder.userImage) {
+                            @Override
+                            protected void setResource(Bitmap resource) {
+                                RoundedBitmapDrawable circularBitmapDrawable =
+                                        RoundedBitmapDrawableFactory.create(getContext().getResources(), resource);
+                                circularBitmapDrawable.setCircular(true);
+                                holder.userImage.setImageDrawable(circularBitmapDrawable);
+                            }
+                        });
+            } else {
+                Glide.with(getContext())
+                        .load(R.drawable.defaultavatar)
+                        .asBitmap()
+                        .into(new BitmapImageViewTarget(holder.userImage) {
+                            @Override
+                            protected void setResource(Bitmap resource) {
+                                RoundedBitmapDrawable circularBitmapDrawable =
+                                        RoundedBitmapDrawableFactory.create(getContext().getResources(), resource);
+                                circularBitmapDrawable.setCircular(true);
+                                holder.userImage.setImageDrawable(circularBitmapDrawable);
+                            }
+                        });
+            }
+
+            holder.Name.setText(replay.getUserName());
+            holder.Comment.setText(replay.getCommentText());
+
+            if (replay.getUserLike() != null)
+                holder.LikeNumber.setText(String.valueOf(replay.getUserLike().size()));
+            else
+                holder.LikeNumber.setText("0");
+            if (replay.getUserDislike() != null)
+                holder.DislikeNumber.setText(String.valueOf(replay.getUserDislike().size()));
+            else
+                holder.DislikeNumber.setText("0");
+            holder.Date.setText(replay.getReadableTime());
+
+
+            if (replay.getUserLike().containsKey(UtilityGeneral.loadUser(context).getObjectId()))
+                holder.btnLike.setLiked(true);
+            else
+                holder.btnLike.setLiked(false);
+
+            holder.btnLike.setOnLikeListener(new OnLikeListener() {
+                @Override
+                public void liked(LikeButton likeButton) {
+                    if (UtilityGeneral.isRegisteredUser(getContext())) {
+                        UtilityFirebase.updateReplies(replay, UtilityGeneral.loadUser(getContext()).getObjectId(), true, false);
+                    } else {
+                        Toast.makeText(getContext(), "سجّل الأول", Toast.LENGTH_LONG).show();
+                        holder.btnLike.setLiked(false);
+                    }
+
+                }
+
+                @Override
+                public void unLiked(LikeButton likeButton) {
+                    UtilityFirebase.updateReplies(replay, UtilityGeneral.loadUser(getContext()).getObjectId(), true, true);
+                }
+            });
+
+
+            if (replay.getUserDislike().containsKey(UtilityGeneral.loadUser(context).getObjectId()))
+                holder.btnDislike.setLiked(true);
+
+            else
+                holder.btnDislike.setLiked(false);
+
+            holder.btnDislike.setOnLikeListener(new OnLikeListener() {
+                @Override
+                public void liked(LikeButton likeButton) {
+                    if (UtilityGeneral.isRegisteredUser(getContext())) {
+
+                        UtilityFirebase.updateReplies(replay, UtilityGeneral.loadUser(getContext()).getObjectId(), false, false);
+                    } else {
+                        Toast.makeText(getContext(), "سجّل الأول", Toast.LENGTH_LONG).show();
+                        holder.btnDislike.setLiked(false);
+                    }
+
+                }
+
+                @Override
+                public void unLiked(LikeButton likeButton) {
+                    UtilityFirebase.updateReplies(replay, UtilityGeneral.loadUser(getContext()).getObjectId(), false, true);
+
+                }
+            });
+            return row;
+        }
+    }
+
+    class ReplayHolder {
+        public TextView Name, Comment, Date, LikeNumber, DislikeNumber;
+        public LikeButton btnLike, btnDislike;
+
+        ImageView userImage;
+
+        public ReplayHolder(View rootView) {
+            Name = (TextView) rootView.findViewById(R.id.txtName);
+            Comment = (TextView) rootView.findViewById(R.id.txtComment);
+            Date = (TextView) rootView.findViewById(R.id.txtTime);
+            LikeNumber = (TextView) rootView.findViewById(R.id.txtLikeNumber);
+            DislikeNumber = (TextView) rootView.findViewById(R.id.txtDisikeNumber);
+            btnLike = (LikeButton) rootView.findViewById(R.id.btnLike);
+            btnDislike = (LikeButton) rootView.findViewById(R.id.btnDislike);
+            userImage = (ImageView) rootView.findViewById(R.id.user_avatar);
+        }
     }
 }

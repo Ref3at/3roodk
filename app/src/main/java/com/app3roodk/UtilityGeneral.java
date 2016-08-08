@@ -17,6 +17,7 @@ import android.util.Base64;
 
 import com.app3roodk.Schema.Comments;
 import com.app3roodk.Schema.Offer;
+import com.app3roodk.Schema.Replies;
 import com.app3roodk.Schema.Shop;
 import com.app3roodk.Schema.User;
 import com.google.android.gms.common.ConnectionResult;
@@ -229,6 +230,18 @@ public class UtilityGeneral {
         });
     }
 
+    static public void sortRepliesByTime(ArrayList<Replies> lstReplies) {
+        Collections.sort(lstReplies, new Comparator<Replies>() {
+            @Override
+            public int compare(Replies o1, Replies o2) {
+                if (o1.getCreationDateLong() >= o2.getCreationDateLong())
+                    return -1;
+                if (o1.getCreationDateLong() < o2.getCreationDateLong())
+                    return 1;
+                return 0;
+            }
+        });
+    }
     static public void sortCommentsByTime(ArrayList<Comments> lstComments) {
         Collections.sort(lstComments, new Comparator<Comments>() {
             @Override

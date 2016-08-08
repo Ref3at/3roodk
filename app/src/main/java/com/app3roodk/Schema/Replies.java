@@ -4,23 +4,19 @@ import com.google.firebase.database.Exclude;
 import com.google.firebase.database.ServerValue;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
-public class Comments {
+public class Replies {
 
     private String objectId;
     private String commentText;
     private String userName;
     private String userId;
-    private String userNotificationToken;
+    private String parentCommentId;
     private String offerId;
     private HashMap<String,String> userLike ;
     private HashMap<String,String> userDislike ;
-
-    @Exclude
-    private ArrayList<Replies> lstReplies;
 
     private Long creationDate;
 
@@ -47,7 +43,7 @@ public class Comments {
 
     private String photoUrl;
 
-    public Comments() {
+    public Replies() {
     }
 
     public String getObjectId() {
@@ -116,21 +112,11 @@ public class Comments {
         this.offerId = offerId;
     }
 
-    @Exclude
-    public ArrayList<Replies> getLstReplies() {
-        if(lstReplies == null)
-            lstReplies = new ArrayList<>();
-        return lstReplies;
-    }
-    public void setLstReplies(ArrayList<Replies> lstReplies) {
-        this.lstReplies = lstReplies;
+    public String getParentCommentId() {
+        return parentCommentId;
     }
 
-    public String getUserNotificationToken() {
-        return userNotificationToken;
-    }
-
-    public void setUserNotificationToken(String userNotificationToken) {
-        this.userNotificationToken = userNotificationToken;
+    public void setParentCommentId(String parentCommentId) {
+        this.parentCommentId = parentCommentId;
     }
 }
