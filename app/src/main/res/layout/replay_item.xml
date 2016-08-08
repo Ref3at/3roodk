@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/card_view"
+    style="?attr/cardStyle"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center"
+    android:layout_marginBottom="@dimen/md_keylines"
+    android:layout_marginLeft="@dimen/md_keylines"
+    android:layout_marginRight="@dimen/md_keylines">
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clipToPadding="false"
+    android:descendantFocusability="blocksDescendants"
+    android:foreground="?android:selectableItemBackground"
+    android:minHeight="?android:listPreferredItemHeight"
+    android:paddingBottom="@dimen/padding_normal"
+    android:paddingLeft="@dimen/padding_normal"
+    android:paddingRight="@dimen/padding_normal"
+    android:paddingTop="@dimen/padding_normal"
+    android:stateListAnimator="@animator/comment_selection">
+
+
+    <ImageView
+        android:id="@+id/user_avatar"
+        android:layout_width="@dimen/avatar_bounds"
+        android:layout_height="@dimen/avatar_bounds"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginEnd="@dimen/avatar_margin"
+        android:layout_marginStart="@dimen/avatar_margin"
+        android:foreground="@drawable/avatar_ripple"
+        android:padding="@dimen/avatar_padding"
+        android:src="@drawable/avatar_placeholder"
+        android:stateListAnimator="@animator/raise" />
+
+    <TextView
+        android:id="@+id/txtTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:textAppearance="@style/TextAppearance.CommentTimestamp"
+        tools:text="3 hours ago" />
+
+    <TextView
+        android:id="@+id/txtName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/spacing_normal"
+        android:layout_marginRight="@dimen/spacing_normal"
+        android:layout_toLeftOf="@id/user_avatar"
+        android:layout_toRightOf="@id/txtTime"
+        android:ellipsize="end"
+        android:textStyle="bold"
+        android:gravity="right"
+        android:lines="1"
+        tools:text="hazem madkour" />
+
+    <TextView
+        android:id="@+id/txtComment"
+        android:layout_width="0dp"
+        android:padding="5dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/txtName"
+        android:layout_marginTop="@dimen/spacing_micro"
+        android:layout_toLeftOf="@id/user_avatar"
+        android:textColorHighlight="@color/authui_colorPrimary"
+        android:textColorLink="@color/authui_colorActivated"
+        tools:text="Blah blah blah blah blah blah blah blah blah blah blah blah blah" />
+
+    <TextView
+        android:id="@+id/txtLikeNumber"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/comment_actions_height"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/txtComment"
+        android:layout_marginEnd="@dimen/comment_like_margin_adjustment"
+        android:layout_marginRight="@dimen/comment_like_margin_adjustment"
+        android:gravity="end|center_vertical"
+        android:padding="@dimen/spacing_normal"
+        android:paddingTop="@dimen/spacing_normal"
+        android:text="0"
+        android:textColor="@color/dark_green"
+        tools:targetApi="lollipop" />
+
+    <com.like.LikeButton
+        android:id="@+id/btnLike"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_below="@id/txtComment"
+        android:layout_marginEnd="@dimen/comment_like_margin_adjustment"
+        android:layout_marginRight="@dimen/comment_like_margin_adjustment"
+        android:layout_toRightOf="@id/txtLikeNumber"
+        android:padding="8dp"
+        app:circle_end_color="@android:color/holo_blue_dark"
+        app:circle_start_color="@android:color/holo_blue_bright"
+        app:dots_primary_color="@android:color/holo_blue_light"
+        app:dots_secondary_color="@android:color/holo_blue_dark"
+        app:icon_size="15dp"
+        app:like_drawable="@drawable/thumb_on"
+        app:unlike_drawable="@drawable/thumb_off"
+        tools:targetApi="lollipop" />
+
+
+    <TextView
+        android:id="@+id/txtDisikeNumber"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/comment_actions_height"
+        android:layout_below="@id/txtComment"
+        android:layout_toRightOf="@id/btnLike"
+        android:layout_marginRight="@dimen/comment_like_margin_adjustment"
+        android:gravity="end|center_vertical"
+        android:padding="@dimen/spacing_normal"
+        android:paddingTop="@dimen/spacing_normal"
+        android:text="0"
+        android:textColor="@color/accent"
+        tools:targetApi="lollipop" />
+
+    <com.like.LikeButton
+        android:id="@+id/btnDislike"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_toRightOf="@id/txtDisikeNumber"
+        android:padding="8dp"
+        app:icon_size="15dp"
+        app:like_drawable="@drawable/dislikered"
+        app:unlike_drawable="@drawable/dislikegray"
+        tools:targetApi="lollipop"
+        android:layout_below="@+id/txtComment" />
+
+
+</RelativeLayout>
+</android.support.v7.widget.CardView>
