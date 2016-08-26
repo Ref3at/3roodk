@@ -171,6 +171,62 @@
                     android:text="@string/choose_shop" />
             </LinearLayout>
 
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <Switch
+                    android:id="@+id/facebook_switch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="نشر على الفيس بوك "
+                    android:padding="10dp"
+                    android:switchPadding="10dp"
+                    android:gravity="center_horizontal|center_vertical"
+                    android:layout_gravity="center_horizontal"
+                    />
+
+
+                <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:orientation="horizontal"
+android:visibility="gone"
+                    android:id="@+id/radio_group"
+                    >
+
+                    <RadioButton android:id="@+id/radio_gif"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:drawablePadding="10dp"
+                        android:layout_height="wrap_content"
+                        android:text="Gif"
+                        />
+
+                    <RadioButton android:id="@+id/radio_image"
+                        android:layout_width="0dp"
+                        android:drawablePadding="10dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:text="one image"
+                      />
+
+                </RadioGroup>
+
+
+
+
+
+
+
+
+            </LinearLayout>
+
+
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="48dp"

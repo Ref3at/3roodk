@@ -69,6 +69,17 @@
         <activity android:name=".UI.Shop.ListShopsActivity" />
         <activity android:name=".UI.About.AboutActivity" />
 
+
+
+        <activity
+            android:theme="@style/AppThemeForCrop"
+            android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
+           />
+
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="275139032860396" />
+
         <service android:name=".NotificationServices.MessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />

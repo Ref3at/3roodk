@@ -2,11 +2,13 @@ package com.app3roodk.UI.Offer;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -25,10 +27,15 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,50 +49,77 @@ import com.app3roodk.UI.Shop.ListShopsActivity;
 import com.app3roodk.UtilityFirebase;
 import com.app3roodk.UtilityGeneral;
 import com.bumptech.glide.Glide;
+import com.cloudinary.Cloudinary;
+import com.cloudinary.Transformation;
+import com.cloudinary.utils.ObjectUtils;
 import com.dd.morphingbutton.MorphingButton;
 import com.dd.morphingbutton.impl.IndeterminateProgressButton;
+import com.facebook.AccessToken;
+import com.facebook.AccessTokenSource;
+import com.facebook.FacebookSdk;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.HttpMethod;
+import com.facebook.appevents.AppEventsLogger;
+import com.github.ybq.android.spinkit.SpinKitView;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
 import com.weiwangcn.betterspinner.library.BetterSpinner;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
 public class AddNewOfferFragment extends Fragment {
 
+
+    Uploadclass imageForFacebookPost;
+    String gifTag = null;
+    String gifUrl = null;
+
+    Switch fbSwitch;
+
+    HashMap<Integer, UiItem> mapOfItems;
+
+    List<String> framesId;
+
+    Uri priceUri, lastFrameUri;
+
+    Boolean initCode = true;
+    int rc;
+    boolean postGif = false;
+    boolean postImage = false;
+    Cloudinary cloudinary;
     TextView txt_InactiveShops;
 
-    private int mMorphCounter1 = 1;
-
-
-    ArrayList<String>[] images_id_Array = new ArrayList[3];
-
+    //********************
     ArrayList<Item> items_list = new ArrayList<>();
-
     ArrayList<String> lstShopsString;
     ArrayList<Shop> lstShops;
     Offer mOffer;
-    HashMap<String, MyImgurUploadTask> mapImageUploading;
-
     String[] durtation_list, cat_list;
-
-    ArrayList<Integer> REQUEST_CAMERA = new ArrayList<>();
-    ArrayList<Integer> SELECT_FILE = new ArrayList<>();
-
     LinearLayout itemsContainer;
     BetterSpinner duration_spinner, category_spinner, shops_spinnner;
+    IndeterminateProgressButton btnMorph_publishOffer;
+    IndeterminateProgressButton button;
+    private String m_Text = "";
+    private int mMorphCounter1 = 1;
     private EditText inputName, inputDesc;
     private TextInputLayout inputLayoutName, inputLayoutDesc;
     private Button publishOffer, previewOffer, addNewItem;
     private String mImgurUrl;
     private Uri mFileUri = null;
-
-    IndeterminateProgressButton btnMorph_publishOffer;
-
 
     /**
      * returns the bytesize of the give bitmap
@@ -100,30 +134,140 @@ public class AddNewOfferFragment extends Fragment {
         }
     }
 
+    static public String getCurrentDate(Date date) {
+        return new SimpleDateFormat("yyyyMMddHHmmssSSS", Locale.US).format(date);
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        FacebookSdk.sdkInitialize(getActivity());
+
+        Map config = new HashMap();
+        config.put("cloud_name", "app3roodk");
+        config.put("api_key", "936844595166333");
+        config.put("api_secret", "vnIDUi3QVRk-a_wnJjFkGDslxvM");
+        cloudinary = new Cloudinary(config);
+
+
+        lastFrameUri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE +
+                "://" + getResources().getResourcePackageName(R.drawable.lastframe)
+                + '/' + getResources().getResourceTypeName(R.drawable.lastframe) + '/' + getResources().getResourceEntryName(R.drawable.lastframe));
+
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        AppEventsLogger.activateApp(getActivity(), "275139032860396");
+
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        images_id_Array[0] = new ArrayList<>();
-        images_id_Array[1] = new ArrayList<>();
-        images_id_Array[2] = new ArrayList<>();
-
-        REQUEST_CAMERA.add(55);
-        REQUEST_CAMERA.add(66);
-        REQUEST_CAMERA.add(77);
-
-        SELECT_FILE.add(21);
-        SELECT_FILE.add(28);
-        SELECT_FILE.add(35);
-
         mOffer = new Offer();
-        mapImageUploading = new HashMap<>();
 
         View rootView = inflater.inflate(R.layout.fragment_add_new_offer, container, false);
 
         UtilityFirebase.updateUserNoOfAvailableOffers(getActivity(), UtilityGeneral.getCurrentYearAndWeek());
 
         txt_InactiveShops = (TextView) rootView.findViewById(R.id.txt_inactive_shops);
+
+
+        final RadioGroup radioGroup = (RadioGroup) rootView.findViewById(R.id.radio_group);
+
+        final RadioButton radioGif = (RadioButton) rootView.findViewById(R.id.radio_gif);
+
+        radioGif.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                postGif = true;
+                postImage = false;
+                imageForFacebookPost = null;
+                for (UiItem item : mapOfItems.values()) {
+
+                    for (Uploadclass uploadclass : item.imagesMap.values()) {
+
+
+                        uploadclass.radioBox.setVisibility(View.INVISIBLE);
+                        uploadclass.facebookImage.setVisibility(View.INVISIBLE);
+
+                    }
+
+                }
+            }
+        });
+
+        RadioButton radioImage = (RadioButton) rootView.findViewById(R.id.radio_image);
+
+        radioImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                postImage = true;
+                postGif = false;
+                Toast.makeText(getActivity(), "من فضلك حدد صوره للبوست", Toast.LENGTH_LONG).show();
+
+
+                boolean requstfocusForFirstItem = true;
+                for (UiItem item : mapOfItems.values()) {
+
+                    if (requstfocusForFirstItem) {
+                        item.getRootV().requestFocus();
+                        requstfocusForFirstItem = false;
+                    }
+                    for (Uploadclass uploadclass : item.imagesMap.values()) {
+                        uploadclass.radioBox.setVisibility(View.VISIBLE);
+
+                    }
+
+                }
+
+
+            }
+        });
+
+        fbSwitch = (Switch) rootView.findViewById(R.id.facebook_switch);
+
+        fbSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                if (isChecked) {
+                    radioGroup.setVisibility(View.VISIBLE);
+                    radioGif.setChecked(true);
+                    postGif = true;
+                    // The toggle is enabled
+                } else {
+                    // The toggle is disabled
+                    radioGroup.setVisibility(View.GONE);
+                    postGif = false;
+                    postImage = false;
+
+                    for (UiItem item : mapOfItems.values()) {
+
+
+                        for (Uploadclass uploadclass : item.imagesMap.values()) {
+                            uploadclass.radioBox.setVisibility(View.INVISIBLE);
+                            uploadclass.facebookImage.setVisibility(View.INVISIBLE);
+
+                        }
+
+                    }
+
+                }
+            }
+        });
+
+
+        framesId = new ArrayList<>();
+
+        mapOfItems = new HashMap<>();
+
+        gifTag = UUID.randomUUID().toString();
+
 
         addNewItem = (Button) rootView.findViewById(R.id.add_new_item);
         addNewItem.setOnClickListener(new View.OnClickListener() {
@@ -171,12 +315,12 @@ public class AddNewOfferFragment extends Fragment {
         lstShops = UtilityGeneral.loadShopsList(getActivity());
         for (Shop shop : lstShops) {
 
-        if(!shop.isShopActive()) {
-            lstShopsString.add(shop.getName()+ " (غير مُفعل!)");
-        }else {
-            lstShopsString.add(shop.getName());
+            if (!shop.isShopActive()) {
+                lstShopsString.add(shop.getName() + " (غير مُفعل!)");
+            } else {
+                lstShopsString.add(shop.getName());
 
-        }
+            }
 
         }
         ArrayAdapter<String> adapter3 = new ArrayAdapter<>(getActivity(),
@@ -193,7 +337,7 @@ public class AddNewOfferFragment extends Fragment {
                 if (x != 0) {
                     inactiveShopsMsg.append(" ," + shop.getName());
                 } else {
-                    inactiveShopsMsg.append(shop.getName()+" ");
+                    inactiveShopsMsg.append(shop.getName() + " ");
                 }
                 x++;
             }
@@ -216,7 +360,7 @@ public class AddNewOfferFragment extends Fragment {
 
             @Override
             public void onClick(View v) {
-               startActivity(new Intent(getActivity(), ListShopsActivity.class));
+                startActivity(new Intent(getActivity(), ListShopsActivity.class));
             }
         });
 
@@ -235,7 +379,14 @@ public class AddNewOfferFragment extends Fragment {
         btnMorph_publishOffer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+
+                if (UtilityGeneral.getNumberOfAvailableOffers(getActivity(), UtilityGeneral.getCurrentYearAndWeek()) <= 0) {
+                    showMessage("عفواً لايمكنك عمل أكثر من " + String.valueOf(Constants.NUMBER_OF_OFFERS_PER_WEEK) + " عروض فى الإسبوع");
+                    return;
+                }else
                 SubmitNewOffer();
+
 
 
             }
@@ -293,9 +444,6 @@ public class AddNewOfferFragment extends Fragment {
         btnMorph.morph(circle);
     }
 
-
-    IndeterminateProgressButton button;
-
     private void simulateProgress1(@NonNull final IndeterminateProgressButton button) {
         this.button = button;
 
@@ -310,7 +458,14 @@ public class AddNewOfferFragment extends Fragment {
         int duration = 500;
 
         button.blockTouch(); // prevent user from clicking while button is in progress
-        Publish();
+
+        try {
+            publishtoServer();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+
 
 
         button.morphToProgress(color, progressCornerRadius, width, height, duration, progressColor1, progressColor2,
@@ -319,15 +474,128 @@ public class AddNewOfferFragment extends Fragment {
 
     }
 
-
     private void inflateNewItem() {
-        LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        final LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         final View rootView = inflater.inflate(R.layout.add_offer_item, null);
         itemsContainer.addView(rootView);
+
+        final LinearLayout theView = (LinearLayout) rootView.findViewById(R.id.the_view);
+
+        final TextView txtAfter = (TextView) rootView.findViewById(R.id.txtb);
+        final TextView txtbefore = (TextView) rootView.findViewById(R.id.txtA);
+        final TextView txtprecent = (TextView) rootView.findViewById(R.id.txtpr);
+        final View dash = (View) rootView.findViewById(R.id.dash);
+
+
+        final EditText inputPriceBefore = (EditText) rootView.findViewById(R.id.input_pricebefore);
+        final EditText inputPriceAfter = (EditText) rootView.findViewById(R.id.input_priceafter);
+
+        inputPriceAfter.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+                if (!editable.toString().isEmpty()) {
+                    theView.setVisibility(View.VISIBLE);
+                    txtAfter.setText(editable.toString());
+
+                    if (!inputPriceBefore.getText().toString().isEmpty()) {
+                        String A = inputPriceAfter.getText().toString();
+                        String B = inputPriceBefore.getText().toString();
+
+
+                        String x = String.format("%.0f", (1 - (Double.parseDouble(A)) / (Double.parseDouble(B))) * 100) + "%";
+                        txtprecent.setText(x);
+                    } else {
+                        txtprecent.setText("");
+                    }
+                } else {
+                    txtAfter.setText("");
+                    if (txtAfter.getText().equals("") && txtbefore.getText().equals("")) {
+                        theView.setVisibility(View.INVISIBLE);
+                    }
+
+
+                }
+
+
+            }
+        });
+
+
+        inputPriceBefore.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if (!editable.toString().isEmpty()) {
+                    theView.setVisibility(View.VISIBLE);
+                    txtbefore.setText(editable.toString());
+                    dash.setVisibility(View.VISIBLE);
+
+                    if (!inputPriceAfter.getText().toString().isEmpty()) {
+                        //   cardHolder.discount.setText(String.format("%.0f", (1 - (Double.parseDouble(lstOffers.get(position).getItems().get(0).getPriceAfter()) / Double.parseDouble(lstOffers.get(position).getItems().get(0).getPriceBefore()))) * 100) + "%");
+
+                        String A = inputPriceAfter.getText().toString();
+                        String B = inputPriceBefore.getText().toString();
+
+
+                        String x = String.format("%.0f", (1 - (Double.parseDouble(A)) / (Double.parseDouble(B))) * 100) + "%";
+                        txtprecent.setText(x);
+                    } else {
+                        txtprecent.setText("");
+                    }
+                } else {
+                    txtbefore.setText("");
+                    dash.setVisibility(View.GONE);
+                    if (txtAfter.getText().equals("") && txtbefore.getText().equals("")) {
+                        theView.setVisibility(View.INVISIBLE);
+                    }
+
+                }
+            }
+        });
+
+
+        final UiItem item = new UiItem();
+        item.setUniqueNo(Integer.parseInt(getCurrentDate(new Date()).substring(12, 16)));
+        item.setRootV(rootView);
+        mapOfItems.put(item.getUniqueNo(), item);
+
         rootView.findViewById(R.id.delete_item).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                images_id_Array[itemsContainer.indexOfChild(rootView)].clear();
+
+                for (final Uploadclass uploadclass : mapOfItems.get(item.getUniqueNo()).imagesMap.values()) {
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                cloudinary.uploader().destroy(uploadclass.getPublic_id(), ObjectUtils.emptyMap());
+                                mapOfItems.get(item.getUniqueNo()).imagesMap.remove(uploadclass.getUniqueKey());
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }).start();
+                }
                 itemsContainer.removeView(rootView);
                 addNewItem.setVisibility(View.VISIBLE);
             }
@@ -336,14 +604,11 @@ public class AddNewOfferFragment extends Fragment {
         rootView.findViewById(R.id.add_new_image).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                LinearLayout imgsContainer = (LinearLayout) rootView.findViewById(R.id.imgscontainer);
-                selectImage(itemsContainer.indexOfChild(rootView));
-                if (imgsContainer.getChildCount() == 3) {
-                    rootView.findViewById(R.id.add_new_image).setVisibility(View.GONE);
-                }
+                selectImage(item.getUniqueNo());
             }
         });
     }
+
 
     private void SubmitNewOffer() {
         if (!validateOfferName()) {
@@ -374,49 +639,60 @@ public class AddNewOfferFragment extends Fragment {
     private void prepareItems() {
         boolean success = true;
         items_list.clear();
-        for (int i = 0; i < itemsContainer.getChildCount(); i++) {
-            RelativeLayout rootView = (RelativeLayout) itemsContainer.getChildAt(i);
+
+
+        for (UiItem uiItem : mapOfItems.values()) {
             Item item = new Item();
-            EditText inputPriceBefore = (EditText) rootView.findViewById(R.id.input_pricebefore);
-            EditText inputPriceAfter = (EditText) rootView.findViewById(R.id.input_priceafter);
+
+            EditText inputPriceBefore = (EditText) uiItem.getRootV().findViewById(R.id.input_pricebefore);
+            EditText inputPriceAfter = (EditText) uiItem.getRootV().findViewById(R.id.input_priceafter);
             item.setPriceBefore(inputPriceBefore.getText().toString());
             item.setPriceAfter(inputPriceAfter.getText().toString());
-            item.setImagePaths(images_id_Array[i]);
+
             if (item.getPriceAfter().isEmpty()) {
-                ((TextInputLayout) rootView.findViewById(R.id.input_layout_priceafter)).setError(getString(R.string.err_msg_priceBefore));
+                ((TextInputLayout) uiItem.getRootV().findViewById(R.id.input_layout_priceafter)).setError(getString(R.string.err_msg_priceBefore));
                 requestFocus(inputPriceAfter);
                 success = false;
             } else {
-                ((TextInputLayout) rootView.findViewById(R.id.input_layout_priceafter)).setErrorEnabled(false);
+                ((TextInputLayout) uiItem.getRootV().findViewById(R.id.input_layout_priceafter)).setErrorEnabled(false);
             }
             if (item.getPriceBefore().isEmpty()) {
-                ((TextInputLayout) rootView.findViewById(R.id.input_layout_pricebefore)).setError(getString(R.string.err_msg_priceBefore));
+                ((TextInputLayout) uiItem.getRootV().findViewById(R.id.input_layout_pricebefore)).setError(getString(R.string.err_msg_priceBefore));
                 requestFocus(inputPriceBefore);
                 success = false;
             } else {
-                ((TextInputLayout) rootView.findViewById(R.id.input_layout_pricebefore)).setErrorEnabled(false);
+                ((TextInputLayout) uiItem.getRootV().findViewById(R.id.input_layout_pricebefore)).setErrorEnabled(false);
             }
 
-            items_list.add(item);
             try {
                 if (Double.parseDouble(item.getPriceAfter()) >= Double.parseDouble(item.getPriceBefore())) {
-                    ((TextInputLayout) rootView.findViewById(R.id.input_layout_priceafter)).setError("السعر بعد الخصم يجب ان يكون اقل من السعر الأصلي للسلعة");
+                    ((TextInputLayout) uiItem.getRootV().findViewById(R.id.input_layout_priceafter)).setError("السعر بعد الخصم يجب ان يكون اقل من السعر الأصلي للسلعة");
                     requestFocus(inputPriceAfter);
                     success = false;
                     return;
                 } else {
-                    ((TextInputLayout) rootView.findViewById(R.id.input_layout_priceafter)).setErrorEnabled(false);
+                    ((TextInputLayout) uiItem.getRootV().findViewById(R.id.input_layout_priceafter)).setErrorEnabled(false);
                 }
                 if (Double.parseDouble(item.getPriceAfter()) <= 0) {
-                    ((TextInputLayout) rootView.findViewById(R.id.input_layout_priceafter)).setError("االسعر بعد الخصم يجب ان يكون اعلى من صفر");
+                    ((TextInputLayout) uiItem.getRootV().findViewById(R.id.input_layout_priceafter)).setError("االسعر بعد الخصم يجب ان يكون اعلى من صفر");
                     requestFocus(inputPriceAfter);
                     success = false;
                 } else {
-                    ((TextInputLayout) rootView.findViewById(R.id.input_layout_priceafter)).setErrorEnabled(false);
+                    ((TextInputLayout) uiItem.getRootV().findViewById(R.id.input_layout_priceafter)).setErrorEnabled(false);
                 }
             } catch (Exception ex) {
             }
+
+            ArrayList<String> imagesURLs = new ArrayList<>();
+            for (final Uploadclass uploadclass : uiItem.imagesMap.values()) {
+                imagesURLs.add(uploadclass.getUrl());
+            }
+
+            item.setImagePaths(imagesURLs);
+
+            items_list.add(item);
         }
+
         if (!success) return;
 
         onMorphButton1Clicked(btnMorph_publishOffer);
@@ -450,21 +726,26 @@ public class AddNewOfferFragment extends Fragment {
     }
 
     private Boolean validateImagesIDs() {
-        for (Map.Entry<String, MyImgurUploadTask> entry : mapImageUploading.entrySet()) {
+        /*for (Map.Entry<String, MyImgurUploadTask> entry : mapImageUploading.entrySet()) {
             if (!entry.getValue().success) {
                 showMessage("يجب الإنتظار حتى يتم رفع كل الصور");
                 return false;
             }
-        }
+        }*/
         if (itemsContainer.getChildCount() == 0) {
             showMessage("يجب إضافة سلعة واحده على الأقل");
             return false;
         }
-        if (images_id_Array[0].size() < 1 && images_id_Array[1].size() < 1 && images_id_Array[2].size() < 1) {
 
-            showMessage("يجب إضافة صورة على الأقل لكل عرض");
-            return false;
+        for (UiItem item : mapOfItems.values()) {
+
+            if (item.imagesMap.size() == 0) {
+                showMessage("يجب إضافة صورة على الأقل لكل عرض");
+                return false;
+
+            }
         }
+
         return true;
 
     }
@@ -522,7 +803,7 @@ public class AddNewOfferFragment extends Fragment {
                 if (items[item].equals("إلتقط صوره!")) {
                     Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                     intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, mFileUri);
-                    startActivityForResult(intent, REQUEST_CAMERA.get(i));
+                    startActivityForResult(intent, i);
                 } else if (items[item].equals("إختار صوره")) {
                     Intent intent = new Intent(
                             Intent.ACTION_PICK,
@@ -530,7 +811,7 @@ public class AddNewOfferFragment extends Fragment {
                     intent.setType("image/*");
                     startActivityForResult(
                             Intent.createChooser(intent, "إختار صوره"),
-                            SELECT_FILE.get(i));
+                            i);
                 } else if (items[item].equals("إلغاء")) {
                     dialog.dismiss();
                 }
@@ -542,49 +823,305 @@ public class AddNewOfferFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
+        if (initCode) { // this boolean for passing the requestCode through cropActivity without change
+            rc = requestCode;
+            initCode = false;
+        }
         if (resultCode == Activity.RESULT_OK) {
-            inflateNewImage(data.getData(), requestCode);
+
+            if (requestCode != CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+                CropImage.activity(data.getData())
+                        .setGuidelines(CropImageView.Guidelines.ON)
+                        .setActivityTitle("3roodk").setAutoZoomEnabled(true)
+                        .setAspectRatio(540, 400).setFixAspectRatio(true).setOutputCompressQuality(50)
+                        .start(getContext(), this);
+                //.start(getActivity());
+            } else {
+
+                CropImage.ActivityResult result = CropImage.getActivityResult(data);
+                Uri resultUri = result.getUri();
+                inflateNewImage(resultUri, rc);
+
+            }
+
         }
     }
 
-    private void inflateNewImage(Uri uri, int requestCode) {
+
+    private void inflateNewImage(final Uri uri, int requestCode) {
+        initCode = true;
         LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         final View rootImage = inflater.inflate(R.layout.image_group, null);
-        final String key = UUID.randomUUID().toString();
-        int indexOfItem;
-        if (requestCode < 50) {
-            indexOfItem = (requestCode / 7) - 3;
-        } else {
-            indexOfItem = (requestCode / 11) - 5;
-        }
+
+        // final String key = UUID.randomUUID().toString();
+        final UiItem item = mapOfItems.get(requestCode);
+
         LinearLayout lytImagesGroupContainer = null;
+        ImageButton item_delete_btn = null;
         if (itemsContainer != null) {
-            lytImagesGroupContainer = (LinearLayout) itemsContainer.getChildAt(indexOfItem).findViewById(R.id.imgscontainer);
-            lytImagesGroupContainer.addView(rootImage);
+            lytImagesGroupContainer = (LinearLayout) mapOfItems.get(requestCode).getRootV().findViewById(R.id.imgscontainer);
+            lytImagesGroupContainer.addView(rootImage, lytImagesGroupContainer.getChildCount() - 1);
+            item_delete_btn = (ImageButton) mapOfItems.get(requestCode).getRootV().findViewById(R.id.delete_item);
         }
+
+        if (lytImagesGroupContainer.getChildCount() == 4) {
+            item.getRootV().findViewById(R.id.add_new_image).setVisibility(View.GONE);
+        }
+
         final ImageView imgOffer = (ImageView) rootImage.findViewById(R.id.theimage);
-        Glide.with(getActivity()).load(uri).into(imgOffer);
+        Glide.with(this).load(uri).into(imgOffer);
         imgOffer.setAlpha(0.5f);
-        ImageView imgDone = (ImageView) rootImage.findViewById(R.id.img_done);
-        showMessage("جاري رفع الصورة");
-        mapImageUploading.put(key, new MyImgurUploadTask(uri, imgOffer, imgDone, indexOfItem));
-        mapImageUploading.get(key).execute();
+        final ImageView imgDone = (ImageView) rootImage.findViewById(R.id.img_done);
+        final ImageButton del_image = (ImageButton) rootImage.findViewById(R.id.delete_img);
+        final ImageButton img_refresh = (ImageButton) rootImage.findViewById(R.id.img_refresh);
+        final SpinKitView progress = (SpinKitView) rootImage.findViewById(R.id.progress);
+        progress.setVisibility(View.VISIBLE);
+
+        final ImageView facebookImageView = (ImageView) rootImage.findViewById(R.id.facebook_image);
+        final RadioButton radioBox = (RadioButton) rootImage.findViewById(R.id.checkbox_facebookimage);
+
+        //showMessageToast("جاري رفع الصورة");
+
+
+        final ImageButton finalItem_delete_btn = item_delete_btn;
+
+        final Uploadclass[] uploadImage = {new Uploadclass(uri, imgOffer, imgDone, del_image, img_refresh, progress, item_delete_btn, radioBox, facebookImageView)};
+        uploadImage[0].setUniqueKey(UUID.randomUUID().toString());
+        uploadImage[0].setParentItem(item);
+        item.imagesMap.put(uploadImage[0].getUniqueKey(), uploadImage[0]);
+        item.imagesMap.get(uploadImage[0].getUniqueKey()).execute();
+        if (item_delete_btn != null) {
+            item_delete_btn.setVisibility(View.GONE);
+        }
+
+        final ImageButton finalItem_delete_btn1 = item_delete_btn;
+        img_refresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (finalItem_delete_btn != null) {
+                    finalItem_delete_btn.setVisibility(View.GONE);
+                }
+                del_image.setVisibility(View.GONE);
+                img_refresh.setVisibility(View.GONE);
+                item.imagesMap.remove(uploadImage[0].getUniqueKey());
+                uploadImage[0] = new Uploadclass(uri, imgOffer, imgDone, del_image, img_refresh, progress, finalItem_delete_btn1, radioBox, facebookImageView);
+                uploadImage[0].setParentItem(item);
+                item.imagesMap.put(uploadImage[0].getUniqueKey(), uploadImage[0]);
+                item.imagesMap.get(uploadImage[0].getUniqueKey()).execute();
+                progress.setVisibility(View.VISIBLE);
+            }
+        });
         final LinearLayout fLytImagesGroupContainer = lytImagesGroupContainer;
-        final int fIndexOfItem = indexOfItem;
-        rootImage.findViewById(R.id.delete_img).setOnClickListener(new View.OnClickListener() {
+        del_image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!mapImageUploading.get(key).isDone())
-                    if (mapImageUploading.size() != 0) {
-                        mapImageUploading.get(key).cancel(true);
-                    } else
-                        images_id_Array[fIndexOfItem].remove(fLytImagesGroupContainer.indexOfChild(rootImage) - 1);
-                mapImageUploading.remove(key);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            cloudinary.uploader().destroy(
+                                    item.imagesMap.get(uploadImage[0].getUniqueKey()).getPublic_id(), ObjectUtils.emptyMap());
+                            item.imagesMap.remove(uploadImage[0].getUniqueKey());
+                        } catch (IOException e) {
+
+                            e.printStackTrace();
+                        }
+                    }
+                }).start();
                 fLytImagesGroupContainer.findViewById(R.id.add_new_image).setVisibility(View.VISIBLE);
                 fLytImagesGroupContainer.removeView(rootImage);
             }
         });
+
+        radioBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+
+                if (isChecked) {
+
+                    showDialdForImagePost(facebookImageView, radioBox, uploadImage[0]);
+
+
+                    // The toggle is enabled
+                } else {
+                    // The toggle is disabled
+
+                }
+
+            }
+        });
+    }
+
+    private void showDialdForImagePost(final ImageView imageView, final RadioButton radioButton, final Uploadclass uploadclass) {
+
+        new AlertDialog.Builder(getActivity())
+                .setTitle("تحديد صوره للبوست")
+                .setMessage("هل تريد اختيار هذه الصوره للنشر على الفيس بوك ؟")
+                .setPositiveButton("موافق", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // continue with delete
+
+                        hideCheckBoxes(imageView);
+
+                        imageForFacebookPost = uploadclass;
+                        postImage = true;
+                        postGif = false;
+
+                    }
+                })
+                .setNegativeButton("إعاده إختيار", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        radioButton.setChecked(false);
+                        imageForFacebookPost = null;
+                        // do nothing
+                    }
+                })
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
+    }
+
+    private void hideCheckBoxes(ImageView imageView) {
+        imageView.setVisibility(View.VISIBLE);
+        for (UiItem item : mapOfItems.values()) {
+
+            for (Uploadclass uploadclass : item.imagesMap.values()) {
+
+                uploadclass.radioBox.setVisibility(View.INVISIBLE);
+                uploadclass.radioBox.setChecked(false);
+
+
+            }
+
+
+        }
+
+    }
+
+
+
+    private Bitmap ConvertToBitmap(LinearLayout theView) {
+        theView.setDrawingCacheEnabled(true);
+        theView.buildDrawingCache();
+        Bitmap map = theView.getDrawingCache();
+
+        return map;
+    }
+
+    public Uri getImageUri(Context inContext, Bitmap inImage) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        Bitmap bitmap = Bitmap.createScaledBitmap(inImage, 151, 86, false);
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), bitmap, "Title", null);
+        return Uri.parse(path);
+    }
+
+    public void createGif() {
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+
+                // cloudinary.url().type("multi").imageTag("bank");
+
+
+                try {
+
+                    Transformation transformation = new Transformation();
+                    transformation.delay(1600);
+                    Map delay = new HashMap();
+                    delay.put("transformation", transformation);
+                    gifUrl = (String) cloudinary.uploader().multi(gifTag, delay).get("url");
+                    if (gifUrl != null) {
+                        deleteFrames();
+                        String param = "link";
+                        postFacebok(param, gifUrl);
+
+                    }
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+
+            }
+        }).start();
+        //       pub.setVisibility(View.VISIBLE);
+    }
+
+    void deleteFrames() {
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                for (String public_id : framesId) {
+
+                    try {
+                        cloudinary.uploader().destroy(public_id, ObjectUtils.emptyMap());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+        }).start();
+    }
+
+
+
+
+    public void postFacebok(String param, String value) {
+
+
+        String pass;
+        if (param.equals("url"))
+            pass = "photos";
+        else
+            pass = "feed";
+
+
+        String token = "EAAD6PMxRRuwBABAPSQhUEGE5BnQ1E6pzJotCeU7Hpk7R5DTH0R7kEOHMC9oAZCqwwzmEZAOzqYFHMi0lhSiuEwv15SwmSkzvOrZBwuR1ygsYwkiadpa1VwlZAJaJMGZB00XBuTiV9Khcluzvg4haqZAnQwdxZA2fZCKFVWQqycH4eAZDZD";
+        String applicationId = "275139032860396";
+        String userId = "1579805665655253";
+        Collection<String> permissions = null;
+        Collection<String> declinedPermissions = null;
+        AccessTokenSource accessTokenSource = null;
+        Date expirationTime = null;
+        Date lastRefreshTime = null;
+
+
+        AccessToken accessToken = new AccessToken(token, applicationId, userId, permissions, declinedPermissions, accessTokenSource, expirationTime, lastRefreshTime);
+
+
+        String pgeId = "1591626347747816";
+        Bundle params = new Bundle();
+        params.putString(param, value);
+        params.putString("message", "poooooooost" + getCurrentDate(new Date()));
+        //    params.putString("scheduled_publish_time","1476983634");
+
+
+
+        /* make the API call */
+
+        new GraphRequest(
+                accessToken,
+                "/" + pgeId + "/" + pass,
+                params,
+                HttpMethod.POST,
+                new GraphRequest.Callback() {
+                    public void onCompleted(GraphResponse response) {
+            /* handle the result */
+                        String xx = response.toString();
+//                            postID = (String) response.getJSONObject().get("id");
+                        //   showMsg("Done");
+                        showMessage(xx);
+
+
+                    }
+                }
+        ).executeAsync();
+
+
     }
 
     private void showMessage(String msg) {
@@ -603,12 +1140,139 @@ public class AddNewOfferFragment extends Fragment {
 
     }
 
+    public void publishtoServer() throws InterruptedException {
+
+        if (postGif) { // prepare for posting gif
+            int i = 1;
+            int itemNo = 0;
+            int imageNo = 0;
+
+            for (UiItem item : mapOfItems.values()) {
+
+                LinearLayout priceView = (LinearLayout) item.getRootV().findViewById(R.id.the_view);
+                Bitmap bitmap = ConvertToBitmap(priceView);
+                final Uri priceUri = getImageUri(getActivity(), bitmap);
+
+                for (final Uploadclass uploadclass : item.imagesMap.values()) {
+
+                    final int finalItemNo = itemNo;
+                    final int finalImageNo = imageNo;
+
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Transformation transformation = null;
+                            transformation = new Transformation().height(400).crop("scale")
+                                    .gravity("south_east").underlay(uploadclass.getPublic_id()).chain()
+                                    .gravity("north_west").height(80).overlay("3roodk_Logo_etnsc5").crop("scale");
+                        /*
+                                    (String) cloudinary.uploader().upload(
+                                            getApplicationContext().getContentResolver().openInputStream(priceUri),
+                                            ObjectUtils.emptyMap()).get("public_id")*/
+                            try {
+                                String frameId = (String) cloudinary.uploader().upload(
+                                        getActivity().getApplicationContext().getContentResolver().openInputStream(priceUri),
+                                        //               ObjectUtils.asMap("public_id", "frame"+getCurrentDate(new Date()).substring(12, 16),"transformation", transformation, "tags", gifTag)).get("public_id");
+                                        ObjectUtils.asMap("public_id", "frame-" + String.valueOf(finalItemNo) + "-" + String.valueOf(finalImageNo), "transformation", transformation, "tags", gifTag)).get("public_id");
+                                framesId.add(frameId);
+                                getActivity().getContentResolver().delete(priceUri, null, null);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+
+                        }
+                    }).start();
+                    imageNo++;
+                }
+
+                if (i++ == mapOfItems.size()) {
+
+
+                    final Handler handler1 = new Handler();
+                    handler1.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    try {
+                                        Transformation transformation = new Transformation();
+                                        transformation.width(540).height(400);
+                                        String lastFrameId = (String) cloudinary.uploader().upload(
+                                                getActivity().getApplicationContext().getContentResolver().openInputStream(lastFrameUri),
+                                                ObjectUtils.asMap("transformation", transformation, "public_id", "zframe", "tags", gifTag)).get("public_id");
+                                        framesId.add(lastFrameId);
+                                        createGif();
+                                        Publish();
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+
+                                }
+                            }).start();
+
+                        }
+                    }, 5000);
+
+
+                }
+
+                itemNo++;
+            }
+
+        } else if (postImage && imageForFacebookPost != null) {
+
+            LinearLayout priceView = (LinearLayout) imageForFacebookPost.getParentItem().getRootV().findViewById(R.id.the_view);
+            Bitmap bitmap = ConvertToBitmap(priceView);
+            final Uri priceUri = getImageUri(getActivity(), bitmap);
+
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+
+                    Transformation transformation = null;
+                    transformation = new Transformation().height(400).width(540).crop("scale")
+                            .gravity("south_east").underlay(imageForFacebookPost.getPublic_id()).chain()
+                            .gravity("north_west").height(80).overlay("3roodk_Logo_etnsc5").crop("scale");
+                        /*
+                                    (String) cloudinary.uploader().upload(
+                                            getApplicationContext().getContentResolver().openInputStream(priceUri),
+                                            ObjectUtils.emptyMap()).get("public_id")*/
+                    try {
+                        String frameUrl = (String) cloudinary.uploader().upload(
+                                getActivity().getContentResolver().openInputStream(priceUri),
+                                //               ObjectUtils.asMap("public_id", "frame"+getCurrentDate(new Date()).substring(12, 16),"transformation", transformation, "tags", gifTag)).get("public_id");
+                                //  ObjectUtils.asMap("public_id", "frame-" + String.valueOf(finalItemNo) + "-" + String.valueOf(finalImageNo), "transformation", transformation, "tags", gifTag)).get("public_id");
+                                ObjectUtils.asMap("transformation", transformation)).get("url");
+                        getActivity().getContentResolver().delete(priceUri, null, null);
+                        String param = "url";
+                        postFacebok(param, frameUrl);
+                        Publish();
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }).start();
+
+
+            //prepare for posting photo
+
+
+        } else if (fbSwitch.isChecked()) {
+            if (imageForFacebookPost == null)
+                Toast.makeText(getActivity(), "من فضلك قم بتحديد صوره للبوست!", Toast.LENGTH_SHORT).show();
+        }else
+            Publish();
+
+
+    }
+
     private void Publish() {
         try {
-            if (UtilityGeneral.getNumberOfAvailableOffers(getActivity(), UtilityGeneral.getCurrentYearAndWeek()) <= 0) {
-                showMessage("عفواً لايمكنك عمل أكثر من " + String.valueOf(Constants.NUMBER_OF_OFFERS_PER_WEEK) + " عروض فى الإسبوع");
-                return;
-            }
+
             mOffer.setCategoryName(UtilityGeneral.getCategoryEnglishName(category_spinner.getText().toString()));
             mOffer.setTitle(inputName.getText().toString());
             mOffer.setDesc(inputDesc.getText().toString());
@@ -621,14 +1285,15 @@ public class AddNewOfferFragment extends Fragment {
                     break;
                 }
 
-            if (shop == null){
+            if (shop == null) {
 
                 goToActivateShopDialog();
                 morphToSquare(button, 500);
                 button.unblockTouch();
                 mMorphCounter1 = 1;
 
-                return;}
+                return;
+            }
 
             mOffer.setShopId(shop.getObjectId());
             mOffer.setShopName(shop.getName());
@@ -673,7 +1338,6 @@ public class AddNewOfferFragment extends Fragment {
                                             // showMessage("تم إضافه العرض، شكرا لك");
 
                                             morphToSuccess(button);
-
                                             Handler handler = new Handler();
                                             handler.postDelayed(new Runnable() {
                                                 @Override
@@ -681,7 +1345,7 @@ public class AddNewOfferFragment extends Fragment {
                                                     getActivity().onBackPressed();
 
                                                 }
-                                            }, 3000);
+                                            }, 5000);
 
                                         }
                                     });
@@ -719,8 +1383,141 @@ public class AddNewOfferFragment extends Fragment {
 
         String shopNameFromSpinner = shops_spinnner.getText().toString();
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setMessage("لا يمكن إضافه عرض لمحل غير مفعل، إذهب لتفعيل محل " + shopNameFromSpinner.substring(0,shopNameFromSpinner.indexOf("(")) +"!" ).setPositiveButton("تفعيل", dialogClickListener)
+        builder.setMessage("لا يمكن إضافه عرض لمحل غير مفعل، إذهب لتفعيل محل " + shopNameFromSpinner.substring(0, shopNameFromSpinner.indexOf("(")) + "!").setPositiveButton("تفعيل", dialogClickListener)
                 .setNegativeButton("رجوع", dialogClickListener).show();
+    }
+
+    class UiItem {
+        HashMap<String, Uploadclass> imagesMap = new HashMap<>();
+        private int uniqueNo;
+        private View rootV;
+
+        public int getUniqueNo() {
+            return uniqueNo;
+        }
+
+        public void setUniqueNo(int uniqueNo) {
+            this.uniqueNo = uniqueNo;
+        }
+
+        public View getRootV() {
+            return rootV;
+        }
+
+        public void setRootV(View rootV) {
+            this.rootV = rootV;
+        }
+    }
+
+    class Uploadclass extends AsyncTask<Void, Void, HashMap> {
+        ImageView facebookImage;
+        RadioButton radioBox;
+        boolean done, success;
+        ImageView imageView, imageViewdone;
+        Uri uri;
+        SpinKitView progress;
+        ImageButton delete_item;
+        ImageButton imgdel, imgRefresh;
+        private String public_id;
+        private String Url;
+        private String uniqueKey;
+        private UiItem parentItem;
+
+        public Uploadclass(Uri imageUri, ImageView imageView, ImageView imgdn, ImageButton del, ImageButton ref, SpinKitView progress, ImageButton deleteItem, RadioButton rb, ImageView fbImage) {
+            this.imageView = imageView;
+            this.imageViewdone = imgdn;
+            this.uri = imageUri;
+            this.imgdel = del;
+            this.imgRefresh = ref;
+            this.progress = progress;
+            this.delete_item = deleteItem;
+            this.radioBox = rb;
+            this.facebookImage = fbImage;
+        }
+
+        public UiItem getParentItem() {
+            return parentItem;
+        }
+
+        public void setParentItem(UiItem parentItem) {
+            this.parentItem = parentItem;
+        }
+
+        public boolean isDone() {
+            return done;
+        }
+
+        public String getUniqueKey() {
+            return uniqueKey;
+        }
+
+        public void setUniqueKey(String uniqueKey) {
+            this.uniqueKey = uniqueKey;
+        }
+
+        public String getUrl() {
+            return Url;
+        }
+
+        public void setUrl(String url) {
+            Url = url;
+        }
+
+        public String getPublic_id() {
+            return public_id;
+        }
+
+        public void setPublic_id(String public_id) {
+            this.public_id = public_id;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            Url = null;
+            success = false;
+            done = false;
+        }
+
+        @Override
+        protected HashMap doInBackground(Void... voids) {
+            HashMap uploadResult = null;
+            try {
+                uploadResult = (HashMap) cloudinary.uploader().upload(getActivity().getContentResolver()
+                        .openInputStream(uri), ObjectUtils.emptyMap());
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return uploadResult;
+        }
+
+        @Override
+        protected void onPostExecute(HashMap response) {
+            super.onPostExecute(response);
+
+            progress.setVisibility(View.GONE);
+            imgdel.setVisibility(View.VISIBLE);
+            delete_item.setVisibility(View.VISIBLE);
+
+            if (response != null && response.get("url") != null) {
+                Url = (String) response.get("url");
+                public_id = (String) response.get("public_id");
+
+                imageView.setAlpha(1.0f);
+                imageViewdone.setVisibility(View.VISIBLE);
+                imgdel.setVisibility(View.VISIBLE);
+                showMessageToast("تم رفع الصورة");
+                done = true;
+                success = true;
+            } else {
+                Url = null;
+                done = true;
+                success = false;
+                imgRefresh.setVisibility(View.VISIBLE);
+                showMessageToast("حدث خطأ أثناء رفع الصورة");
+            }
+        }
     }
 
     private class MyTextWatcher implements TextWatcher {
@@ -749,48 +1546,5 @@ public class AddNewOfferFragment extends Fragment {
         }
     }
 
-    private class MyImgurUploadTask extends ImgurUploadTask {
-        int x;
-        boolean done, success;
-        ImageView imageView, imageViewdone;
 
-        public boolean isDone() {
-            return done;
-        }
-
-        public MyImgurUploadTask(Uri imageUri, ImageView imageView, ImageView imgdn, int y) {
-            super(imageUri, getActivity());
-            this.imageView = imageView;
-            this.imageViewdone = imgdn;
-            this.x = y;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            mImgurUrl = null;
-            success = false;
-            done = false;
-        }
-
-        @Override
-        protected void onPostExecute(String imageId) {
-            super.onPostExecute(imageId);
-
-            if (imageId != null) {
-                mImgurUrl = "http://i.imgur.com/" + imageId + ".jpg";
-                imageView.setAlpha(1.0f);
-                imageViewdone.setVisibility(View.VISIBLE);
-                showMessageToast("تم رفع الصورة");
-                images_id_Array[x].add(mImgurUrl);
-                done = true;
-                success = true;
-            } else {
-                mImgurUrl = null;
-                done = true;
-                success = false;
-                showMessage("حدث خطأ أثناء رفع الصورة");
-            }
-        }
-    }
 }
