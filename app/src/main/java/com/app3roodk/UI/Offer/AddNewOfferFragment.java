@@ -833,7 +833,10 @@ public class AddNewOfferFragment extends Fragment {
                 CropImage.activity(data.getData())
                         .setGuidelines(CropImageView.Guidelines.ON)
                         .setActivityTitle("3roodk").setAutoZoomEnabled(true)
-                        .setAspectRatio(540, 400).setFixAspectRatio(true).setOutputCompressQuality(50)
+                        .setAspectRatio(540, 400).setFixAspectRatio(true)
+                       // .setOutputCompressQuality(50)
+                        //.setScaleType(CropImageView.ScaleType.FIT_CENTER)
+                       // .setMaxCropResultSize(810,600)
                         .start(getContext(), this);
                 //.start(getActivity());
             } else {
@@ -1009,7 +1012,7 @@ public class AddNewOfferFragment extends Fragment {
 
     public Uri getImageUri(Context inContext, Bitmap inImage) {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        Bitmap bitmap = Bitmap.createScaledBitmap(inImage, 151, 86, false);
+        Bitmap bitmap = Bitmap.createBitmap(inImage);  // Bitmap.createScaledBitmap(inImage, 151, 86, false);
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, bytes);
         String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), bitmap, "Title", null);
         return Uri.parse(path);
@@ -1028,7 +1031,7 @@ public class AddNewOfferFragment extends Fragment {
                 try {
 
                     Transformation transformation = new Transformation();
-                    transformation.delay(1600);
+                    transformation.delay(1600).quality("auto");
                     Map delay = new HashMap();
                     delay.put("transformation", transformation);
                     gifUrl = (String) cloudinary.uploader().multi(gifTag, delay).get("url");
@@ -1162,9 +1165,9 @@ public class AddNewOfferFragment extends Fragment {
                         @Override
                         public void run() {
                             Transformation transformation = null;
-                            transformation = new Transformation().height(400).crop("scale")
+                            transformation = new Transformation().height(400).crop("scale").quality("auto")
                                     .gravity("south_east").underlay(uploadclass.getPublic_id()).chain()
-                                    .gravity("north_west").height(80).overlay("3roodk_Logo_etnsc5").crop("scale");
+                                    .gravity("north_west").height(80).overlay("3roodk_Logo_etnsc5").quality("auto").crop("scale");
                         /*
                                     (String) cloudinary.uploader().upload(
                                             getApplicationContext().getContentResolver().openInputStream(priceUri),
@@ -1198,7 +1201,7 @@ public class AddNewOfferFragment extends Fragment {
                                 public void run() {
                                     try {
                                         Transformation transformation = new Transformation();
-                                        transformation.width(540).height(400);
+                                        transformation.width(540).height(400).quality("auto");
                                         String lastFrameId = (String) cloudinary.uploader().upload(
                                                 getActivity().getApplicationContext().getContentResolver().openInputStream(lastFrameUri),
                                                 ObjectUtils.asMap("transformation", transformation, "public_id", "zframe", "tags", gifTag)).get("public_id");
@@ -1232,9 +1235,9 @@ public class AddNewOfferFragment extends Fragment {
                 public void run() {
 
                     Transformation transformation = null;
-                    transformation = new Transformation().height(400).width(540).crop("scale")
+                    transformation = new Transformation().height(400).width(540).crop("scale").quality("auto")
                             .gravity("south_east").underlay(imageForFacebookPost.getPublic_id()).chain()
-                            .gravity("north_west").height(80).overlay("3roodk_Logo_etnsc5").crop("scale");
+                            .gravity("north_west").height(80).overlay("3roodk_Logo_etnsc5").crop("scale").quality("auto");
                         /*
                                     (String) cloudinary.uploader().upload(
                                             getApplicationContext().getContentResolver().openInputStream(priceUri),
@@ -1483,8 +1486,12 @@ public class AddNewOfferFragment extends Fragment {
         protected HashMap doInBackground(Void... voids) {
             HashMap uploadResult = null;
             try {
+
+                Transformation transformation = new Transformation();
+                transformation.width(540).height(400).crop("scale").quality("auto");
+
                 uploadResult = (HashMap) cloudinary.uploader().upload(getActivity().getContentResolver()
-                        .openInputStream(uri), ObjectUtils.emptyMap());
+                        .openInputStream(uri), ObjectUtils.asMap("transformation",transformation));
 
             } catch (IOException e) {
                 e.printStackTrace();

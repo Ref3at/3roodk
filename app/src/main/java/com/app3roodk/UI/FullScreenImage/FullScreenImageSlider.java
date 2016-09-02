@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.app3roodk.R;
+import com.bumptech.glide.Glide;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -100,6 +101,7 @@ public class FullScreenImageSlider extends AppCompatActivity {
             View rootView = inflater.inflate(R.layout.fragment_full_screen_image_slider, container, false);
             ImageView imageView = (ImageView) rootView.findViewById(R.id.fullscreen_imageview);
             Picasso.with(getActivity()).load(img_path).into(imageView);
+   //         Glide.with(getActivity()).load(img_path).asBitmap().into(imageView);
             mAttacher = new PhotoViewAttacher(imageView);
             return rootView;
         }

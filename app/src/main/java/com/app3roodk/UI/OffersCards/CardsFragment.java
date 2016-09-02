@@ -1,6 +1,7 @@
 package com.app3roodk.UI.OffersCards;
 
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.design.widget.Snackbar;
@@ -20,6 +21,7 @@ import com.app3roodk.Schema.Offer;
 import com.app3roodk.UI.DetailActivity.DetailActivity;
 import com.app3roodk.UtilityFirebase;
 import com.app3roodk.UtilityGeneral;
+import com.bumptech.glide.Glide;
 import com.github.ybq.android.spinkit.SpinKitView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -48,6 +50,9 @@ public class CardsFragment extends Fragment {
                              Bundle savedInstanceState) {
         final RecyclerView recyclerView = (RecyclerView) inflater.inflate(
                 R.layout.cards_recycler_view, container, false);
+
+        recyclerView.clearAnimation();
+
         progress = (SpinKitView) getActivity().findViewById(R.id.progress);
         imgNoOffer = (ImageView) getActivity().findViewById(R.id.img_no_offer);
         if (!UtilityGeneral.isOnline(getActivity()))
@@ -249,7 +254,17 @@ public class CardsFragment extends Fragment {
             cardHolder.title.setText(lstOffers.get(position).getTitle());
             cardHolder.rate.setText(String.valueOf(lstOffers.get(position).getAverageRate()));
             cardHolder.discount.setText(String.format("%.0f", (1 - (Double.parseDouble(lstOffers.get(position).getItems().get(0).getPriceAfter()) / Double.parseDouble(lstOffers.get(position).getItems().get(0).getPriceBefore()))) * 100) + "%");
-            Picasso.with(cardHolder.itemView.getContext()).load(lstOffers.get(position).getItems().get(0).getImagePaths().get(0)).into(cardHolder.imgCard);
+
+
+
+
+            Glide.with(cardHolder.itemView.getContext()).load(lstOffers.get(position).getItems().get(0).getImagePaths().get(0)).into(cardHolder.imgCard);
+            // Picasso.with(cardHolder.itemView.getContext()).load(lstOffers.get(position).getItems().get(0).getImagePaths().get(0)).into(cardHolder.imgCard);
+
+
+
+
+
             cardHolder.priceBefore.setText(cardHolder.offer.getItems().get(0).getPriceBefore());
             cardHolder.priceAfter.setText(cardHolder.offer.getItems().get(0).getPriceAfter());
             try {

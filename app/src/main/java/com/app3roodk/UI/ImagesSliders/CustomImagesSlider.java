@@ -7,7 +7,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.app3roodk.R;
+import com.bumptech.glide.DrawableTypeRequest;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestManager;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.daimajia.slider.library.SliderTypes.BaseSliderView;
+
+import java.io.File;
 
 /**
  * Created by Refaat on 6/22/2016.
