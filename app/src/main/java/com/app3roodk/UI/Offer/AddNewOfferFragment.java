@@ -726,12 +726,23 @@ public class AddNewOfferFragment extends Fragment {
     }
 
     private Boolean validateImagesIDs() {
-        /*for (Map.Entry<String, MyImgurUploadTask> entry : mapImageUploading.entrySet()) {
-            if (!entry.getValue().success) {
-                showMessage("يجب الإنتظار حتى يتم رفع كل الصور");
-                return false;
+
+
+        for (UiItem item : mapOfItems.values()) {
+
+            for (Uploadclass uploadclass : item.imagesMap.values()) {
+
+                if (!uploadclass.success) {
+                    showMessage("يجب الإنتظار حتى يتم رفع كل الصور");
+                    return false;
+                }
+
+
             }
-        }*/
+
+
+        }
+
         if (itemsContainer.getChildCount() == 0) {
             showMessage("يجب إضافة سلعة واحده على الأقل");
             return false;
