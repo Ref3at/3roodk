@@ -12,6 +12,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -286,6 +287,7 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
             }
             comment.setUserName(UtilityGeneral.loadUser(getActivity()).getName());
         }
+        comment.setUserNotificationToken(UtilityGeneral.loadUser(getActivity()).getNotificationToken());
         comment.setUserId(UtilityGeneral.loadUser(getActivity()).getObjectId());
         comment.setOfferId(offer.getObjectId());
         comment.setCommentText(edtxtComment.getText().toString());
@@ -358,7 +360,7 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
 //                                Log.e("DetailFragment", "Add New Comment : " + databaseError.getMessage());
                 } else {
                     if (!(commentToReplay.getUserNotificationToken() == null || commentToReplay.getUserNotificationToken().isEmpty()
-                            || commentToReplay.getUserId() == replies.getUserId())) {
+                            || commentToReplay.getUserId().equals(replies.getUserId()))) {
                         HashMap<String, String> mapOffer = new HashMap<>();
                         mapOffer.put("offer", new Gson().toJson(offer));
                         UtilityCloudMessaging.sendNotification(getContext(), commentToReplay.getUserNotificationToken(),
@@ -366,12 +368,12 @@ public class DetailFragment extends Fragment implements BaseSliderView.OnSliderC
                                 offer.getObjectId(), mapOffer, "OPEN_ACTIVITY_1", new TextHttpResponseHandler() {
                                     @Override
                                     public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-//                                                    Log.e("Send Notification err", responseString);
+                                                    Log.e("Send Notification err", responseString);
                                     }
 
                                     @Override
                                     public void onSuccess(int statusCode, Header[] headers, String responseString) {
-//                                                    Log.e("Send Notification", responseString);
+                                                    Log.e("Send Notification", responseString);
                                     }
                                 });
                     }

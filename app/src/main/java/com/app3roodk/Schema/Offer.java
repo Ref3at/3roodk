@@ -1,8 +1,7 @@
 package com.app3roodk.Schema;
 
-import android.content.ClipData;
-
 import com.app3roodk.ObjectConverter;
+import com.google.firebase.database.Exclude;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -82,7 +81,7 @@ public class Offer {
     @SimpleSQLColumn("hashmapUsersRates")
     private String hashmapUsersRates;
 
-
+    @Exclude
     @SimpleSQLColumn("arrayListItems")
     private String arrayListItems;
 
@@ -121,7 +120,7 @@ hashmapUsersRates = ObjectConverter.fromHashmapToStringUsersRates(usersRates);
         this.hashmapUsersRates = hashmapUsersRates;
         usersRates=ObjectConverter.fromStringToHashmapUsersRates(hashmapUsersRates);
     }
-
+    @Exclude
     public String getArrayListItems() {
      //  if (Items.size()>0&& arrayListItems.toString().length()==0) {
            arrayListItems = ObjectConverter.fromArraylistToStringItems(Items);
