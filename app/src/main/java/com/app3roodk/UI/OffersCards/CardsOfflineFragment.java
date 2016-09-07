@@ -1,7 +1,6 @@
 package com.app3roodk.UI.OffersCards;
 
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.design.widget.Snackbar;
@@ -28,14 +27,13 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 
-public class CardsFragment extends Fragment {
+public class CardsOfflineFragment extends Fragment {
 
     public int fragmentType;
     ArrayList<Offer> lstOffers;
@@ -205,7 +203,7 @@ public class CardsFragment extends Fragment {
         adapter.notifyDataSetChanged();
     }
 
-    public static class ContentAdapter extends RecyclerView.Adapter<CardHolder> {
+    public class ContentAdapter extends RecyclerView.Adapter<CardHolder> {
         final static long secondsInMilli = 1000;
         final static long minutesInMilli = secondsInMilli * 60;
         final static long hoursInMilli = minutesInMilli * 60;
@@ -256,13 +254,8 @@ public class CardsFragment extends Fragment {
             cardHolder.discount.setText(String.format("%.0f", (1 - (Double.parseDouble(lstOffers.get(position).getItems().get(0).getPriceAfter()) / Double.parseDouble(lstOffers.get(position).getItems().get(0).getPriceBefore()))) * 100) + "%");
 
 
-
-
             Glide.with(cardHolder.itemView.getContext()).load(lstOffers.get(position).getItems().get(0).getImagePaths().get(0)).into(cardHolder.imgCard);
             // Picasso.with(cardHolder.itemView.getContext()).load(lstOffers.get(position).getItems().get(0).getImagePaths().get(0)).into(cardHolder.imgCard);
-
-
-
 
 
             cardHolder.priceBefore.setText(cardHolder.offer.getItems().get(0).getPriceBefore());
@@ -308,9 +301,7 @@ public class CardsFragment extends Fragment {
                                 cardHolder.dots2.setVisibility(View.INVISIBLE);
                             }
                         }
-                    }
-                    catch (Exception ex)
-                    {
+                    } catch (Exception ex) {
                         cardHolder.timer.cancel();
                     }
 
@@ -342,56 +333,57 @@ public class CardsFragment extends Fragment {
         }
         super.onDestroy();
     }
-}
 
-class CardHolder extends RecyclerView.ViewHolder {
-    public TextView title, rate, distance, shopName, day, hour, minute, second, discount,
-            priceBefore, priceAfter, dots1, dots2, dots3;
-    public ImageView imgCard;
-    public LinearLayout lytSeconds, lytDays;
-    public Offer offer;
-    public CountDownTimer timer;
-    public boolean showSeconds;
+
+    class CardHolder extends RecyclerView.ViewHolder {
+        public TextView title, rate, distance, shopName, day, hour, minute, second, discount,
+                priceBefore, priceAfter, dots1, dots2, dots3;
+        public ImageView imgCard;
+        public LinearLayout lytSeconds, lytDays;
+        public Offer offer;
+        public CountDownTimer timer;
+        public boolean showSeconds;
 
 //    ImageButton btnFavorite, btnShare;
 
-    public CardHolder(LayoutInflater inflater, ViewGroup parent) {
-        super(inflater.inflate(R.layout.card_item_3, parent, false));
-        init(itemView);
-    }
+        public CardHolder(LayoutInflater inflater, ViewGroup parent) {
+            super(inflater.inflate(R.layout.card_item_offline, parent, false));
+            init(itemView);
+        }
 
-    public void init(View rootView) {
-        title = (TextView) rootView.findViewById(R.id.card_text);
-        discount = (TextView) rootView.findViewById(R.id.card_txt_discount);
-        shopName = (TextView) rootView.findViewById(R.id.card_shop_name);
-        distance = (TextView) rootView.findViewById(R.id.card_distance);
-        priceAfter = (TextView) rootView.findViewById(R.id.card_price_after);
-        priceBefore = (TextView) rootView.findViewById(R.id.card_price_before);
-        rate = (TextView) rootView.findViewById(R.id.card_rate);
-        day = (TextView) rootView.findViewById(R.id.card_txt_day);
-        hour = (TextView) rootView.findViewById(R.id.card_txt_hour);
-        second = (TextView) rootView.findViewById(R.id.card_txt_second);
-        dots1 = (TextView) rootView.findViewById(R.id.txt_dots_1);
-        dots2 = (TextView) rootView.findViewById(R.id.txt_dots_2);
-        dots3 = (TextView) rootView.findViewById(R.id.txt_dots_3);
-        minute = (TextView) rootView.findViewById(R.id.card_txt_minute);
-        imgCard = (ImageView) rootView.findViewById(R.id.card_image);
-        lytDays = (LinearLayout) rootView.findViewById(R.id.lytDay);
-        lytSeconds = (LinearLayout) rootView.findViewById(R.id.lytSeconds);
+        public void init(View rootView) {
+            title = (TextView) rootView.findViewById(R.id.card_text);
+            discount = (TextView) rootView.findViewById(R.id.card_txt_discount);
+            shopName = (TextView) rootView.findViewById(R.id.card_shop_name);
+            distance = (TextView) rootView.findViewById(R.id.card_distance);
+            priceAfter = (TextView) rootView.findViewById(R.id.card_price_after);
+            priceBefore = (TextView) rootView.findViewById(R.id.card_price_before);
+            rate = (TextView) rootView.findViewById(R.id.card_rate);
+            day = (TextView) rootView.findViewById(R.id.card_txt_day);
+            hour = (TextView) rootView.findViewById(R.id.card_txt_hour);
+            second = (TextView) rootView.findViewById(R.id.card_txt_second);
+            dots1 = (TextView) rootView.findViewById(R.id.txt_dots_1);
+            dots2 = (TextView) rootView.findViewById(R.id.txt_dots_2);
+            dots3 = (TextView) rootView.findViewById(R.id.txt_dots_3);
+            minute = (TextView) rootView.findViewById(R.id.card_txt_minute);
+            imgCard = (ImageView) rootView.findViewById(R.id.card_image);
+            lytDays = (LinearLayout) rootView.findViewById(R.id.lytDay);
+            lytSeconds = (LinearLayout) rootView.findViewById(R.id.lytSeconds);
 
-        //btnFavorite = (ImageButton) rootView.findViewById(R.id.favorite_button);
-        //btnShare = (ImageButton) rootView.findViewById(R.id.share_button2);
+            //btnFavorite = (ImageButton) rootView.findViewById(R.id.favorite_button);
+            //btnShare = (ImageButton) rootView.findViewById(R.id.share_button2);
 
-        itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(v.getContext(), DetailActivity.class);
-                FirebaseDatabase.getInstance().getReference("Offers").child(offer.getCity()).child(offer.getCategoryName()).child(offer.getObjectId()).child("viewNum").setValue(offer.getViewNum() + 1);
-                offer.setViewNum(offer.getViewNum() + 1);
-                intent.putExtra("offer", new Gson().toJson(offer));
-                v.getContext().startActivity(intent);
-            }
-        });
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(v.getContext(), DetailActivity.class);
+                    FirebaseDatabase.getInstance().getReference("Offers").child(offer.getCity()).child(offer.getCategoryName()).child(offer.getObjectId()).child("viewNum").setValue(offer.getViewNum() + 1);
+                    offer.setViewNum(offer.getViewNum() + 1);
+                    intent.putExtra("offer", new Gson().toJson(offer));
+                    intent.putExtra("online",false);
+                    v.getContext().startActivity(intent);
+                }
+            });
 
 //        btnFavorite.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -407,5 +399,6 @@ class CardHolder extends RecyclerView.ViewHolder {
 //
 //            }
 //        });
+        }
     }
 }

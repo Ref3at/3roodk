@@ -112,8 +112,16 @@ public class UtilityFirebase {
         return FirebaseDatabase.getInstance().getReference("Offers").child(offer.getCity()).child(offer.getCategoryName()).child(offer.getObjectId());
     }
 
+    static public DatabaseReference getActiveOffersOnline(String category) {
+        return FirebaseDatabase.getInstance().getReference("OffersOnline").child(category);
+    }
+
     static public Query getActiveOffers(String city, String category) {
         return FirebaseDatabase.getInstance().getReference("Offers").child(city).child(category).orderByChild("endTime").startAt(UtilityGeneral.getCurrentDate(new Date()));
+    }
+
+    static public DatabaseReference getActiveExistOffersOnline() {
+        return FirebaseDatabase.getInstance().getReference("OffersExistOnline");
     }
 
     static public Query getActiveExistOffers(String city) {
@@ -252,6 +260,7 @@ public class UtilityFirebase {
     }
 
     static public DatabaseReference getUserNoOfAvailableOffers(final Context context, final String yearWeek) {
+        if(!UtilityGeneral.isRegisteredUser(context)) return null;
         return FirebaseDatabase.getInstance().getReference("Users").child(UtilityGeneral.loadUser(context).getObjectId()).child("numOfOffersAvailable").child(yearWeek);
     }
 

@@ -112,4 +112,6 @@
     <string name="inActive">(غير مُفعل)</string>
     <string name="replay_comment">الرد على هذا التعليق</string>
     <string name="replay">رد</string>
+    <string name="go_to_offer">اذهب للعرض</string>
+    <string name="detail_and_payment">الشراء والتفاصيل</string>
 </resources>

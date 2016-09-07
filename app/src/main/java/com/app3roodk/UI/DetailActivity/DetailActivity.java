@@ -36,17 +36,24 @@ import java.util.ArrayList;
 
 public class DetailActivity extends AppCompatActivity {
 
-    DetailFragment mFragment;
+    DetailOfflineFragment mFragment;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
         if (savedInstanceState == null) {
-            mFragment = new DetailFragment();
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.detail_content, mFragment)
-                    .commit();
+            if (getIntent().getExtras().getBoolean("online")) {
+                DetailOnlineFragment fragment = new DetailOnlineFragment();
+                getSupportFragmentManager().beginTransaction()
+                        .add(R.id.detail_content, fragment)
+                        .commit();
+            } else {
+                mFragment = new DetailOfflineFragment();
+                getSupportFragmentManager().beginTransaction()
+                        .add(R.id.detail_content, mFragment)
+                        .commit();
+            }
         }
     }
 
@@ -85,7 +92,8 @@ public class DetailActivity extends AppCompatActivity {
             if (!(signingProgress != null && signingProgress.isShowing()))
                 showSigningProgressDialog();
         } else if (visibility == View.GONE) {
-            mFragment.validateUser();
+            if (mFragment != null)
+                mFragment.validateUser();
             if (signingProgress.isShowing()) signingProgress.dismiss();
 
         }

@@ -214,7 +214,7 @@ class CardHolder extends RecyclerView.ViewHolder {
 //    ImageButton btnFavorite, btnShare;
 
     public CardHolder(LayoutInflater inflater, ViewGroup parent) {
-        super(inflater.inflate(R.layout.card_item_3, parent, false));
+        super(inflater.inflate(R.layout.card_item_offline, parent, false));
         init(itemView);
     }
 

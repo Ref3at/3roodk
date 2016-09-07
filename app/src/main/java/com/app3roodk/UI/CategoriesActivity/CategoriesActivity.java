@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -14,34 +13,34 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.app3roodk.Constants;
 import com.app3roodk.R;
-import com.app3roodk.Schema.ExistOffers;
 import com.app3roodk.Schema.Shop;
 import com.app3roodk.Schema.User;
 import com.app3roodk.UI.About.AboutActivity;
 import com.app3roodk.UI.FavoritesCards.FavoritesActivity;
 import com.app3roodk.UI.Feedback.FeedbackActivity;
 import com.app3roodk.UI.Offer.AddNewOfferActivity;
-import com.app3roodk.UI.OffersCards.CardsActivity;
 import com.app3roodk.UI.Shop.ListShopsActivity;
 import com.app3roodk.UI.Shop.ShopActivity;
 import com.app3roodk.UtilityFirebase;
@@ -49,7 +48,6 @@ import com.app3roodk.UtilityGeneral;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.firebase.ui.auth.AuthUI;
-import com.github.ybq.android.spinkit.SpinKitView;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -60,29 +58,15 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
-import com.loopj.android.http.TextHttpResponseHandler;
 
 import java.util.ArrayList;
-import java.util.Date;
-
-import cz.msebera.android.httpclient.Header;
+import java.util.List;
 
 public class CategoriesActivity extends AppCompatActivity {
 
-    TextView t1, t2, t3, t4, t5, t6, t7, t8, t9; // for text offers no
-    View v1, v2, v3, v4, v5, v6, v7, v8, v9; // for red circle
-
     DrawerLayout mDrawerLayout;
     NavigationView mNavigationView;
-    Boolean exit = false, bOfferExists = false;
-    Spinner spnCities;
-    ArrayList<String> lstCities;
-    ArrayAdapter<String> adapter;
-    ValueEventListener availableOfferListener;
-    ValueEventListener activeOffersListener;
-    String previousCity;
-    Thread trdCurrentLocationSpinner;
-    SpinKitView progress;
+    Boolean exit = false;
     User signingUser;
     ProgressDialog signingProgress;
 
@@ -94,187 +78,13 @@ public class CategoriesActivity extends AppCompatActivity {
         FirebaseInstanceId.getInstance().getToken();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        t1 = (TextView) findViewById(R.id.t1);
-        t2 = (TextView) findViewById(R.id.t2);
-        t3 = (TextView) findViewById(R.id.t3);
-        t4 = (TextView) findViewById(R.id.t4);
-        t5 = (TextView) findViewById(R.id.t5);
-        t6 = (TextView) findViewById(R.id.t6);
-        t7 = (TextView) findViewById(R.id.t7);
-        t8 = (TextView) findViewById(R.id.t8);
-        t9 = (TextView) findViewById(R.id.t9);
-
-        v1 = findViewById(R.id.v1);
-        v2 = findViewById(R.id.v2);
-        v3 = findViewById(R.id.v3);
-        v4 = findViewById(R.id.v4);
-        v5 = findViewById(R.id.v5);
-        v6 = findViewById(R.id.v6);
-        v7 = findViewById(R.id.v7);
-        v8 = findViewById(R.id.v8);
-        v9 = findViewById(R.id.v9);
-        try {
-            if (!UtilityGeneral.mGoogleApiClient.isConnected() && !UtilityGeneral.mGoogleApiClient.isConnecting())
-                UtilityGeneral.mGoogleApiClient.connect();
-        } catch (Exception ex) {
-        }
-        progress = (SpinKitView) findViewById(R.id.progress);
-        spnCities = (Spinner) findViewById(R.id.spnCities);
-        updateUserLocation();
-        initSpinner();
-        loadCity();
         initNavigationDrawer();
-        initListener();
-        if (UtilityGeneral.isRegisteredUser(getBaseContext())) {
-            UtilityFirebase.updateUserNotificationToken(getBaseContext(), UtilityGeneral.loadUser(getBaseContext()).getObjectId(), FirebaseInstanceId.getInstance().getToken());
-            UtilityFirebase.getUserShops(getBaseContext(), UtilityGeneral.loadUser(getBaseContext()).getObjectId());
-            UtilityFirebase.getUserNoOfAvailableOffers(getBaseContext(), UtilityGeneral.getCurrentYearAndWeek()).addValueEventListener(availableOfferListener);
-        }
-    }
-
-    private void updateUserLocation() {
-        try {
-            User user = UtilityGeneral.loadUser(getBaseContext());
-            LatLng location = UtilityGeneral.getCurrentLonAndLat(getBaseContext());
-            if (location == null) return;
-            user.setLat(String.valueOf(location.latitude));
-            user.setLon(String.valueOf(location.longitude));
-            UtilityGeneral.saveUser(getBaseContext(), user);
-        } catch (Exception ex) {
-        }
-    }
-
-    private void initListener() {
-        availableOfferListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.getValue() == null) return;
-                String yearWeek = UtilityGeneral.getCurrentYearAndWeek();
-                User user = UtilityGeneral.loadUser(getBaseContext());
-                if (user.getNumOfOffersAvailable().containsKey(yearWeek))
-                    user.getNumOfOffersAvailable().remove(yearWeek);
-                user.getNumOfOffersAvailable().put(yearWeek, dataSnapshot.getValue(Integer.class));
-                if (UtilityGeneral.isRegisteredUser(getBaseContext()))
-                    UtilityGeneral.saveUser(getBaseContext(), user);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        };
-        activeOffersListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                progress.setVisibility(View.INVISIBLE);
-                if (dataSnapshot.getValue() == null) {
-                    hideViews();
-                    bOfferExists = false;
-                    Snackbar.make(findViewById(android.R.id.content), "لا يوجد عروض فى منطقتك الحاليه", Snackbar.LENGTH_LONG).show();
-                    return;
-                }
-                int HomeTools, Accessories, Mobiles, Computers, Shoes, Clothes, SuperMarket, Services, Restaurants;
-                HomeTools = Accessories = Mobiles = Computers = Shoes = Clothes = SuperMarket = Services = Restaurants = 0;
-                for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
-                    try {
-                        if (Double.parseDouble(dataSnapshot1.getValue(ExistOffers.class).getCreateTime()) <= Double.parseDouble(UtilityGeneral.getCurrentDate(new Date())))
-                            switch (dataSnapshot1.getValue(ExistOffers.class).getCategory()) {
-                                case "Home Tools":
-                                    HomeTools++;
-                                    break;
-                                case "Accessories":
-                                    Accessories++;
-                                    break;
-                                case "Mobiles":
-                                    Mobiles++;
-                                    break;
-                                case "Computers":
-                                    Computers++;
-                                    break;
-                                case "Shoes":
-                                    Shoes++;
-                                    break;
-                                case "Clothes":
-                                    Clothes++;
-                                    break;
-                                case "Super market":
-                                    SuperMarket++;
-                                    break;
-                                case "Services":
-                                    Services++;
-                                    break;
-                                case "Restaurants":
-                                    Restaurants++;
-                                    break;
-                            }
-                    } catch (Exception ex) {
-                    }
-                }
-                if (Restaurants > 0) {
-                    t1.setText(String.valueOf(Restaurants));
-                    t1.setVisibility(View.VISIBLE);
-                    v1.setVisibility(View.VISIBLE);
-                    bOfferExists = true;
-                }
-                if (HomeTools > 0) {
-                    t2.setText(String.valueOf(HomeTools));
-                    t2.setVisibility(View.VISIBLE);
-                    v2.setVisibility(View.VISIBLE);
-                    bOfferExists = true;
-                }
-                if (Accessories > 0) {
-                    t3.setText(String.valueOf(Accessories));
-                    t3.setVisibility(View.VISIBLE);
-                    v3.setVisibility(View.VISIBLE);
-                    bOfferExists = true;
-                }
-                if (Mobiles > 0) {
-                    t4.setText(String.valueOf(Mobiles));
-                    t4.setVisibility(View.VISIBLE);
-                    v4.setVisibility(View.VISIBLE);
-                    bOfferExists = true;
-                }
-                if (Computers > 0) {
-                    t5.setText(String.valueOf(Computers));
-                    t5.setVisibility(View.VISIBLE);
-                    v5.setVisibility(View.VISIBLE);
-                    bOfferExists = true;
-                }
-                if (Shoes > 0) {
-                    t6.setText(String.valueOf(Shoes));
-                    t6.setVisibility(View.VISIBLE);
-                    v6.setVisibility(View.VISIBLE);
-                    bOfferExists = true;
-                }
-                if (Clothes > 0) {
-                    t7.setText(String.valueOf(Clothes));
-                    t7.setVisibility(View.VISIBLE);
-                    v7.setVisibility(View.VISIBLE);
-                    bOfferExists = true;
-                }
-                if (SuperMarket > 0) {
-                    t8.setText(String.valueOf(SuperMarket));
-                    t8.setVisibility(View.VISIBLE);
-                    v8.setVisibility(View.VISIBLE);
-                    bOfferExists = true;
-                }
-                if (Services > 0) {
-                    t9.setText(String.valueOf(Services));
-                    t9.setVisibility(View.VISIBLE);
-                    v9.setVisibility(View.VISIBLE);
-                    bOfferExists = true;
-                }
-
-                if (!bOfferExists) {
-                    Snackbar.make(findViewById(android.R.id.content), "لا يوجد عروض فى منطقتك الحاليه", Snackbar.LENGTH_LONG).show();
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        };
+        ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
+        setupViewPager(viewPager);
+        // Set Tabs inside Toolbar
+        TabLayout tabs = (TabLayout) findViewById(R.id.tabs);
+        tabs.setupWithViewPager(viewPager);
+        tabs.getTabAt(1).select();
     }
 
     @Override
@@ -327,181 +137,23 @@ public class CategoriesActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onDestroy() {
-        try {
-            UtilityFirebase.getUserNoOfAvailableOffers(getBaseContext(), UtilityGeneral.getCurrentYearAndWeek()).removeEventListener(availableOfferListener);
-        } catch (Exception ex) {
+    private void setupViewPager(ViewPager viewPager) {
+        Adapter adapter = new Adapter(getSupportFragmentManager());
+        Bundle arguments2 = new Bundle();
+        CategoriesOnlineFragment fragment2 = new CategoriesOnlineFragment();
+        if (!fragment2.isAdded()) {
+            fragment2.setArguments(arguments2);
+
         }
-        try {
-            UtilityFirebase.getActiveExistOffers(previousCity).removeEventListener(activeOffersListener);
-        } catch (Exception ex) {
+        adapter.addFragment(fragment2, "اونلاين");
+        Bundle arguments1 = new Bundle();
+        CategoriesOfflineFragment fragment1 = new CategoriesOfflineFragment();
+        if (!fragment1.isAdded()) {
+            fragment1.setArguments(arguments1);
         }
-        try {
-            UtilityGeneral.mGoogleApiClient.disconnect();
-        } catch (Exception ex) {
-        }
-        super.onDestroy();
-    }
+        adapter.addFragment(fragment1, "محلي");
 
-    public void goToCards(View view) {
-        int x = view.getId();
-        Intent i = new Intent(CategoriesActivity.this, CardsActivity.class);
-        i.putExtra("city", lstCities.get(spnCities.getSelectedItemPosition()));
-        switch (x) {
-
-            case R.id.imageButton1:
-
-                i.putExtra("title", "مطاعم");
-                i.putExtra("name", "Restaurants");
-                break;
-            case R.id.imageButton2:
-                i.putExtra("title", "أدوات منزليه");
-                i.putExtra("name", "Home Tools");
-
-                break;
-            case R.id.imageButton3:
-                i.putExtra("title", "إكسسوار");
-                i.putExtra("name", "Accessories");
-                break;
-            case R.id.imageButton4:
-                i.putExtra("title", "موبايل");
-                i.putExtra("name", "Mobiles");
-                break;
-            case R.id.imageButton5:
-                i.putExtra("title", "كمبيوتر");
-                i.putExtra("name", "Computers");
-                break;
-            case R.id.imageButton6:
-                i.putExtra("title", "أحذية");
-                i.putExtra("name", "Shoes");
-                break;
-            case R.id.imageButton7:
-                i.putExtra("title", "ملابس");
-                i.putExtra("name", "Clothes");
-                break;
-            case R.id.imageButton8:
-                i.putExtra("name", "Super market");
-                i.putExtra("title", "سوبر ماركت");
-                break;
-            case R.id.imageButton9:
-                i.putExtra("name", "Services");
-                i.putExtra("title", "خدمات");
-                break;
-        }
-        startActivityForResult(i, 222);
-    }
-
-    private void initSpinner() {
-        lstCities = UtilityGeneral.loadCities(getBaseContext());
-        adapter = new ArrayAdapter<>(getBaseContext(), R.layout.spinner_item, lstCities);
-        spnCities.setAdapter(adapter);
-        spnCities.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                try {
-                    if (i == 0)
-                        if (!((LocationManager) getSystemService(Context.LOCATION_SERVICE)).isProviderEnabled(LocationManager.GPS_PROVIDER))
-                            Toast.makeText(getBaseContext(), "افتح الـ Location او سيتم أخذ آخر مكان مسجل", Toast.LENGTH_SHORT).show();
-                    ((TextView) adapterView.getChildAt(0)).setTextColor(Color.WHITE);
-                    hideViews();
-                    adapterView.getChildAt(0).setBackgroundColor(Color.TRANSPARENT);
-                    progress.setVisibility(View.VISIBLE);
-                    if (trdCurrentLocationSpinner != null && trdCurrentLocationSpinner.isAlive())
-                        trdCurrentLocationSpinner.interrupt();
-                    if (i == 0) {
-                        trdCurrentLocationSpinner = new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                final String city = UtilityGeneral.getCurrentCityArabic(getApplicationContext());
-                                CategoriesActivity.this.runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        if (city == null) {
-                                            hideViews();
-                                            bOfferExists = false;
-                                            Snackbar.make(findViewById(android.R.id.content), "لا يوجد عروض فى منطقتك الحاليه", Snackbar.LENGTH_LONG).show();
-                                            return;
-                                        }
-                                        updateOffersNumber(city);
-                                    }
-                                });
-                            }
-                        });
-                        trdCurrentLocationSpinner.start();
-                    } else {
-                        updateOffersNumber(lstCities.get(i));
-                    }
-
-                } catch (Exception ex) {
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-            }
-        });
-    }
-
-    private void updateOffersNumber(String cityName) {
-
-        try {
-            UtilityFirebase.getActiveExistOffers(previousCity).removeEventListener(activeOffersListener);
-        } catch (Exception ex) {
-        }
-        try {
-            previousCity = cityName;
-            UtilityFirebase.getActiveExistOffers(previousCity).addValueEventListener(activeOffersListener);
-        } catch (Exception ex) {
-        }
-    }
-
-    private void loadCity() {
-        UtilityFirebase.getCities(new TextHttpResponseHandler() {
-            @Override
-            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-
-            }
-
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, String responseString) {
-                try {
-                    UtilityGeneral.saveCities(getBaseContext(), responseString);
-                    initSpinner();
-                } catch (Exception ex) {
-                }
-            }
-        });
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                UtilityGeneral.getCurrentCityArabic(getBaseContext());
-            }
-        }).start();
-    }
-
-    private void hideViews() {
-
-        v1.setVisibility(View.GONE);
-        v2.setVisibility(View.GONE);
-        v3.setVisibility(View.GONE);
-        v4.setVisibility(View.GONE);
-        v5.setVisibility(View.GONE);
-        v6.setVisibility(View.GONE);
-        v7.setVisibility(View.GONE);
-        v8.setVisibility(View.GONE);
-        v9.setVisibility(View.GONE);
-
-        t1.setVisibility(View.GONE);
-        t2.setVisibility(View.GONE);
-        t3.setVisibility(View.GONE);
-        t4.setVisibility(View.GONE);
-        t5.setVisibility(View.GONE);
-        t6.setVisibility(View.GONE);
-        t7.setVisibility(View.GONE);
-        t8.setVisibility(View.GONE);
-        t9.setVisibility(View.GONE);
-
+        viewPager.setAdapter(adapter);
     }
 
     //region Navigation Drawer
@@ -854,4 +506,35 @@ public class CategoriesActivity extends AppCompatActivity {
     }
 
     //endregion
+
+    static class Adapter extends FragmentPagerAdapter {
+        private final List<Fragment> mFragmentList = new ArrayList<>();
+        private final List<String> mFragmentTitleList = new ArrayList<>();
+
+        public Adapter(FragmentManager manager) {
+            super(manager);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            return mFragmentList.get(position);
+        }
+
+        @Override
+        public int getCount() {
+            return mFragmentList.size();
+        }
+
+        public void addFragment(Fragment fragment, String title) {
+            mFragmentList.add(fragment);
+            mFragmentTitleList.add(title);
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return mFragmentTitleList.get(position);
+        }
+
+    }
+
 }

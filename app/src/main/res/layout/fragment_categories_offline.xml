@@ -1,14 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    tools:context="com.app3roodk.UI.CategoriesActivity.CategoriesActivity">
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/lytCity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:orientation="horizontal">
+
+            <com.github.ybq.android.spinkit.SpinKitView
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/progress"
+                style="@style/SpinKitView.Circle"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:visibility="invisible"
+                app:SpinKit_Color="@color/colorPrimary" />
+            <Spinner
+                android:layout_gravity="right"
+                android:gravity="right"
+                android:id="@+id/spnCities"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -30,7 +54,6 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
                     android:background="@android:color/transparent"
-                    android:onClick="goToCards"
                     android:padding="10dp"
                     android:scaleType="centerInside"
                     android:src="@drawable/c1" />
@@ -81,7 +104,6 @@
                     android:layout_height="match_parent"
                     android:layout_margin="5dp"
                     android:background="@android:color/transparent"
-                    android:onClick="goToCards"
                     android:padding="10dp"
                     android:scaleType="centerInside"
                     android:src="@drawable/c2" />
@@ -135,7 +157,6 @@
                     android:layout_height="match_parent"
                     android:layout_margin="5dp"
                     android:background="@android:color/transparent"
-                    android:onClick="goToCards"
                     android:padding="10dp"
                     android:scaleType="centerInside"
                     android:src="@drawable/c3" />
@@ -193,7 +214,6 @@
                     android:layout_height="match_parent"
                     android:layout_margin="5dp"
                     android:background="@android:color/transparent"
-                    android:onClick="goToCards"
                     android:padding="10dp"
                     android:scaleType="centerInside"
                     android:src="@drawable/c4" />
@@ -244,7 +264,6 @@
                     android:layout_height="match_parent"
                     android:layout_margin="5dp"
                     android:background="@android:color/transparent"
-                    android:onClick="goToCards"
                     android:padding="10dp"
                     android:scaleType="centerInside"
                     android:src="@drawable/c5" />
@@ -294,7 +313,6 @@
                     android:layout_height="match_parent"
                     android:layout_margin="5dp"
                     android:background="@android:color/transparent"
-                    android:onClick="goToCards"
                     android:padding="10dp"
                     android:scaleType="centerInside"
                     android:src="@drawable/c6" />
@@ -350,7 +368,6 @@
                     android:layout_height="match_parent"
                     android:layout_margin="5dp"
                     android:background="@android:color/transparent"
-                    android:onClick="goToCards"
                     android:padding="10dp"
                     android:scaleType="centerInside"
                     android:src="@drawable/c7" />
@@ -400,7 +417,6 @@
                     android:layout_height="match_parent"
                     android:layout_margin="5dp"
                     android:background="@android:color/transparent"
-                    android:onClick="goToCards"
                     android:padding="10dp"
                     android:scaleType="centerInside"
                     android:src="@drawable/c8" />
@@ -451,7 +467,6 @@
                     android:layout_height="match_parent"
                     android:layout_margin="5dp"
                     android:background="@android:color/transparent"
-                    android:onClick="goToCards"
                     android:padding="10dp"
                     android:scaleType="centerInside"
                     android:src="@drawable/c9" />
@@ -501,10 +516,6 @@
             android:textColor="@color/colorPrimaryDark"
             android:textSize="30sp"
             android:textStyle="bold" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="60dp"/>
     </LinearLayout>
 
-</ScrollView>
+</android.support.v4.widget.NestedScrollView>

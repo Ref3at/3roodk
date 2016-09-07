@@ -68,7 +68,7 @@ import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
 
-public class DetailFragment extends Fragment implements BaseSliderView.OnSliderClickListener, ViewPagerEx.OnPageChangeListener {
+public class DetailOfflineFragment extends Fragment implements BaseSliderView.OnSliderClickListener, ViewPagerEx.OnPageChangeListener {
 
     //region Member Variables
     final static long minutesInMilli = 1000 * 60;
