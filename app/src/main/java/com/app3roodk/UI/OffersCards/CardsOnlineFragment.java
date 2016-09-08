@@ -53,7 +53,7 @@ public class CardsOnlineFragment extends Fragment {
         progress = (SpinKitView) getActivity().findViewById(R.id.progress);
         imgNoOffer = (ImageView) getActivity().findViewById(R.id.img_no_offer);
         if (!UtilityGeneral.isOnline(getActivity()))
-            lstOffers = UtilityGeneral.loadOffers(getActivity(), getActivity().getIntent().getStringExtra("name"));
+            lstOffers = UtilityGeneral.loadOffersOnline(getActivity(), getActivity().getIntent().getStringExtra("name"));
         else {
             lstOffers = new ArrayList<>();
             progress.setVisibility(View.VISIBLE);
@@ -122,7 +122,7 @@ public class CardsOnlineFragment extends Fragment {
                         lstOffers.add(of);
                 }
                 try {
-                    UtilityGeneral.saveOffers(getActivity(), getActivity().getIntent().getStringExtra("name"), lstOffers);
+                    UtilityGeneral.saveOffersOnline(getActivity(), getActivity().getIntent().getStringExtra("name"), lstOffers);
                 } catch (Exception ex) {
                 }
                 sortOffers();

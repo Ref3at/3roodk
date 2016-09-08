@@ -425,11 +425,36 @@ public class UtilityGeneral {
         } catch (Exception ex) {
         }
     }
+    static public void saveOffersOnline(Context context, String key, ArrayList<Offer> lstOffers) {
+        try {
+            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+            SharedPreferences.Editor editor = sharedPref.edit();
+            String offersJson = new Gson().toJson(lstOffers);
+            editor.putString("keyonline" + key, offersJson);
+            editor.commit();
+        } catch (Exception ex) {
+        }
+    }
 
     static public ArrayList<Offer> loadOffers(Context context, String key) {
         ArrayList<Offer> lstOffers = null;
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         String OffersJson = prefs.getString("key" + key, "");
+        if (OffersJson.equals("")) return new ArrayList<>();
+        else {
+            try {
+                lstOffers = new Gson().fromJson(OffersJson, new TypeToken<ArrayList<Offer>>() {
+                }.getType());
+                return lstOffers;
+            } catch (Exception e) {
+                return new ArrayList<>();
+            }
+        }
+    }
+    static public ArrayList<Offer> loadOffersOnline(Context context, String key) {
+        ArrayList<Offer> lstOffers = null;
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        String OffersJson = prefs.getString("keyonline" + key, "");
         if (OffersJson.equals("")) return new ArrayList<>();
         else {
             try {
