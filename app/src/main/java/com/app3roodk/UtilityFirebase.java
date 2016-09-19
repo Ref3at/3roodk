@@ -116,6 +116,10 @@ public class UtilityFirebase {
         return FirebaseDatabase.getInstance().getReference("OffersOnline").child(category);
     }
 
+    static public Query getHyperOffers(String city) {
+        return FirebaseDatabase.getInstance().getReference("OffersHyper").child(city).orderByChild("endTime").startAt(UtilityGeneral.getCurrentDate(new Date()));
+    }
+
     static public Query getActiveOffers(String city, String category) {
         return FirebaseDatabase.getInstance().getReference("Offers").child(city).child(category).orderByChild("endTime").startAt(UtilityGeneral.getCurrentDate(new Date()));
     }

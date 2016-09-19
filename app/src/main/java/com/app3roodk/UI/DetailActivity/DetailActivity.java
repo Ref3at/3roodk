@@ -43,15 +43,20 @@ public class DetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
         if (savedInstanceState == null) {
-            if (getIntent().getExtras().getBoolean("online")) {
+            if (getIntent().getExtras().getInt("details") == Constants.DETAILS_ONLINE) {
                 DetailOnlineFragment fragment = new DetailOnlineFragment();
                 getSupportFragmentManager().beginTransaction()
                         .add(R.id.detail_content, fragment)
                         .commit();
-            } else {
+            } else if (getIntent().getExtras().getInt("details") == Constants.DETAILS_OFFLINE_SHOPS) {
                 mFragment = new DetailOfflineFragment();
                 getSupportFragmentManager().beginTransaction()
                         .add(R.id.detail_content, mFragment)
+                        .commit();
+            } else {
+                DetailOfflineHyperFragment fragment = new DetailOfflineHyperFragment();
+                getSupportFragmentManager().beginTransaction()
+                        .add(R.id.detail_content, fragment)
                         .commit();
             }
         }

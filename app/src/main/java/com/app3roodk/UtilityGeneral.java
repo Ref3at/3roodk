@@ -242,6 +242,7 @@ public class UtilityGeneral {
             }
         });
     }
+
     static public void sortCommentsByTime(ArrayList<Comments> lstComments) {
         Collections.sort(lstComments, new Comparator<Comments>() {
             @Override
@@ -425,6 +426,7 @@ public class UtilityGeneral {
         } catch (Exception ex) {
         }
     }
+
     static public void saveOffersOnline(Context context, String key, ArrayList<Offer> lstOffers) {
         try {
             SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
@@ -451,6 +453,7 @@ public class UtilityGeneral {
             }
         }
     }
+
     static public ArrayList<Offer> loadOffersOnline(Context context, String key) {
         ArrayList<Offer> lstOffers = null;
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -508,9 +511,21 @@ public class UtilityGeneral {
     }
 
     static public String loadCity(Context context) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        String city = prefs.getString(Constants.KEY_CITY, "No");
-        return city;
+        return PreferenceManager.getDefaultSharedPreferences(context).getString(Constants.KEY_CITY, "No");
+    }
+
+    static public void saveSpinnerCity(Context context, String city) {
+        try {
+            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+            SharedPreferences.Editor editor = sharedPref.edit();
+            editor.putString(Constants.KEY_CITY_SPINNER, city);
+            editor.commit();
+        } catch (Exception e) {
+        }
+    }
+
+    static public String loadSpinnerCity(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context).getString(Constants.KEY_CITY_SPINNER, "No");
     }
 
     static public void saveCities(Context context, String jsonCities) {
@@ -707,10 +722,10 @@ public class UtilityGeneral {
         int inputNo = Integer.parseInt(String.valueOf(input));
         int pinNo = Integer.parseInt(String.valueOf(pin));
 
-        if (inputNo == pinNo){
+        if (inputNo == pinNo) {
 
-            return  true;
-        }else {
+            return true;
+        } else {
             return false;
         }
 

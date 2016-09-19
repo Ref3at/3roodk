@@ -8,6 +8,7 @@ public class Constants {
     public static final String KEY_USER = "keyuser";
     public static final String KEY_SHOP = "keyshop";
     public static final String KEY_CITY = "keycity";
+    public static final String KEY_CITY_SPINNER = "keycityspinner";
     public static final String KEY_CITIES = "keycities";
     public static final String YOUR_CITY = "إختار مدينة";
     public static final int RC_SIGN_IN = 123;
@@ -28,4 +29,8 @@ public class Constants {
     public static final int FRAGMENT_NEWEST = 123;
     public static final int FRAGMENT_MOST_VIEWED = 133;
     public static final int FRAGMENT_BEST_SALE = 143;
+
+    public static final int DETAILS_ONLINE = 13;
+    public static final int DETAILS_OFFLINE_SHOPS = 12;
+    public static final int DETAILS_OFFLINE_HYPERS = 15;
 }

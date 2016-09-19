@@ -65,6 +65,7 @@
     <dimen name="mb_corner_radius_4">4dp</dimen>
     <dimen name="width_100">100dp</dimen>
     <dimen name="height_48">48dp</dimen>
+    <dimen name="common_navigator_height">45dp</dimen>
 
 
 </resources>

@@ -243,7 +243,7 @@ public class CardsOnlineFragment extends Fragment {
                     FirebaseDatabase.getInstance().getReference("OffersOnline").child(offer.getCategoryName()).child(offer.getObjectId()).child("viewNum").setValue(offer.getViewNum() + 1);
                     offer.setViewNum(offer.getViewNum() + 1);
                     intent.putExtra("offer", new Gson().toJson(offer));
-                    intent.putExtra("online",true);
+                    intent.putExtra("details",Constants.DETAILS_ONLINE);
                     v.getContext().startActivity(intent);
                 }
             });

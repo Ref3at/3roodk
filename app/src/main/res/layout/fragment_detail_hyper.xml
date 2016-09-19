@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="right|end">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <com.daimajia.slider.library.SliderLayout
+                    android:id="@+id/imgOffer"
+                    android:layout_width="match_parent"
+                    android:layout_height="500dp"
+                    android:layout_alignParentTop="true"
+                    custom:indicator_visibility="visible" />
+
+                <com.daimajia.slider.library.Indicators.PagerIndicator
+                    android:id="@+id/custom_indicator"
+                    android:layout_width="wrap_content"
+                    android:layout_height="20dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="430dp"
+                    android:rotation="180" />
+
+
+                <com.like.LikeButton
+                    android:id="@+id/btnFavorite"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:elevation="5dp"
+                    app:anim_scale_factor="3"
+                    app:icon_size="22dp"
+                    app:icon_type="heart"
+                    android:visibility="invisible"
+                    app:is_enabled="true" />
+
+                <View
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@id/btnFavorite"
+                    android:layout_alignLeft="@id/btnFavorite"
+                    android:layout_alignRight="@id/btnFavorite"
+                    android:layout_alignTop="@id/btnFavorite"
+                    android:layout_margin="12dp"
+                    android:visibility="invisible"
+                    android:background="@drawable/circle_white"
+                    android:elevation="4dp" />
+
+                <ImageButton
+                    android:id="@+id/btnShare"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:layout_width="@dimen/cards_button_width"
+                    android:layout_height="@dimen/cards_button_height"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentTop="true"
+                    android:src="@drawable/abc_ic_menu_share_mtrl_alpha"
+                    android:visibility="invisible" />
+
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/txtDesc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="3"
+                    android:gravity="center"
+                    android:textSize="20sp"
+                    tools:text="تتتتتتتتتتتت" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:paddingTop="5dp">
+
+                    <TextView
+                        android:id="@+id/txtViews"
+                        android:layout_width="70dp"
+                        android:layout_height="40dp"
+                        android:background="@android:drawable/editbox_background_normal"
+                        android:drawableEnd="@drawable/view"
+                        android:drawableRight="@drawable/view"
+                        android:gravity="center"
+                        tools:text="100" />
+
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:gravity="center"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="3">
+
+
+                        <View
+                            android:id="@+id/viewDay"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:layout_alignParentEnd="true"
+                            android:layout_alignParentRight="true"
+                            android:layout_below="@id/txtTimeLeft"
+                            android:layout_marginBottom="10dp"
+                            android:layout_marginEnd="30dp"
+                            android:layout_marginRight="30dp"
+                            android:background="@drawable/custom_background_content" />
+
+                        <View
+                            android:id="@+id/viewHour"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:layout_alignTop="@id/viewDay"
+                            android:layout_marginEnd="10dp"
+                            android:layout_marginRight="10dp"
+                            android:layout_toLeftOf="@+id/viewDay"
+                            android:layout_toStartOf="@+id/viewDay"
+                            android:background="@drawable/custom_background_content" />
+
+                        <View
+                            android:id="@+id/viewMin"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:layout_alignTop="@id/viewHour"
+                            android:layout_marginEnd="10dp"
+                            android:layout_marginRight="10dp"
+                            android:layout_toLeftOf="@+id/viewHour"
+                            android:layout_toStartOf="@+id/viewHour"
+                            android:background="@drawable/custom_background_content" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignEnd="@id/viewDay"
+                            android:layout_alignLeft="@id/viewDay"
+                            android:layout_alignRight="@id/viewDay"
+                            android:layout_alignStart="@id/viewDay"
+                            android:layout_alignTop="@id/viewDay"
+                            android:gravity="center"
+                            android:text="@string/day"
+                            android:textColor="@color/colorPrimaryDark" />
+
+                        <TextView
+                            android:id="@+id/txtDay"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignBottom="@id/viewDay"
+                            android:layout_alignEnd="@id/viewDay"
+                            android:layout_alignLeft="@id/viewDay"
+                            android:layout_alignRight="@id/viewDay"
+                            android:layout_alignStart="@id/viewDay"
+                            android:gravity="center"
+                            android:text="00" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignEnd="@id/viewHour"
+                            android:layout_alignLeft="@id/viewHour"
+                            android:layout_alignRight="@id/viewHour"
+                            android:layout_alignStart="@id/viewHour"
+                            android:layout_alignTop="@id/viewHour"
+                            android:gravity="center"
+                            android:text="@string/hour"
+                            android:textColor="@color/colorPrimaryDark" />
+
+                        <TextView
+                            android:id="@+id/txtHour"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignBottom="@id/viewHour"
+                            android:layout_alignEnd="@id/viewHour"
+                            android:layout_alignLeft="@id/viewHour"
+                            android:layout_alignRight="@id/viewHour"
+                            android:layout_alignStart="@id/viewHour"
+                            android:gravity="center"
+                            android:text="00" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignEnd="@id/viewMin"
+                            android:layout_alignLeft="@id/viewMin"
+                            android:layout_alignRight="@id/viewMin"
+                            android:layout_alignStart="@id/viewMin"
+                            android:layout_alignTop="@id/viewMin"
+                            android:gravity="center"
+                            android:text="@string/minute"
+                            android:textColor="@color/colorPrimaryDark" />
+
+                        <TextView
+                            android:id="@+id/txtMinute"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignBottom="@id/viewMin"
+                            android:layout_alignEnd="@id/viewMin"
+                            android:layout_alignLeft="@id/viewMin"
+                            android:layout_alignRight="@id/viewMin"
+                            android:layout_alignStart="@id/viewMin"
+                            android:gravity="center"
+                            android:text="00" />
+                    </RelativeLayout>
+
+                    <TextView
+                        android:drawableTop="@drawable/ic_location_on_black_24dp"
+                        android:id="@+id/txtDistance"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="#000"
+                        android:textStyle="bold"
+                        android:gravity="bottom"
+                        tools:text="0.6 km" />
+
+                </LinearLayout>
+
+
+                <Button
+                    android:id="@+id/btnShopWay"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:textSize="20sp"
+                    android:background="@drawable/custom_background_buttons"
+                    android:text="@string/see_way"
+                    android:textColor="@color/white" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

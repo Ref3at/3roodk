@@ -380,7 +380,7 @@ public class CardsOfflineFragment extends Fragment {
                     FirebaseDatabase.getInstance().getReference("Offers").child(offer.getCity()).child(offer.getCategoryName()).child(offer.getObjectId()).child("viewNum").setValue(offer.getViewNum() + 1);
                     offer.setViewNum(offer.getViewNum() + 1);
                     intent.putExtra("offer", new Gson().toJson(offer));
-                    intent.putExtra("online",false);
+                    intent.putExtra("details",Constants.DETAILS_OFFLINE_SHOPS);
                     v.getContext().startActivity(intent);
                 }
             });
