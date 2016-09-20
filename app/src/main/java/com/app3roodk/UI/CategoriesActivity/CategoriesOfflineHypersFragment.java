@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -23,7 +24,7 @@ import com.app3roodk.UI.DetailActivity.DetailActivity;
 import com.app3roodk.UtilityFirebase;
 import com.app3roodk.UtilityGeneral;
 import com.bumptech.glide.Glide;
-import com.etsy.android.grid.StaggeredGridView;
+import com.github.paolorotolo.expandableheightlistview.ExpandableHeightGridView;
 import com.github.ybq.android.spinkit.SpinKitView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -38,7 +39,7 @@ import java.util.Iterator;
 public class CategoriesOfflineHypersFragment extends Fragment {
 
     SpinKitView progress;
-    StaggeredGridView gridView;
+    ExpandableHeightGridView gridView;
     ValueEventListener OfferListener;
     private SampleAdapter adapter;
     String CityChoose;
@@ -56,21 +57,22 @@ public class CategoriesOfflineHypersFragment extends Fragment {
         try {
             if (!UtilityGeneral.mGoogleApiClient.isConnected() && !UtilityGeneral.mGoogleApiClient.isConnecting())
                 UtilityGeneral.mGoogleApiClient.connect();
-        } catch (Exception ex) {
+        } catch (Exception ignored) {
         }
         progress = (SpinKitView) rootView.findViewById(R.id.progress);
-        gridView = (StaggeredGridView) rootView.findViewById(R.id.grid_view);
+        gridView = (ExpandableHeightGridView) rootView.findViewById(R.id.grid_view);
         lstOffers = new ArrayList<>();
         adapter = new SampleAdapter(getActivity(), R.layout.item_hyper, lstOffers);
         gridView.setAdapter(adapter);
+        gridView.setExpanded(true);
         clickConfig();
         initListener();
         getOffers();
     }
 
-
     private void showMessage(String msg) {
-        Snackbar.make(getActivity().findViewById(android.R.id.content), msg, Snackbar.LENGTH_LONG).show();
+        if(isAdded() && !isDetached() && isVisible())
+            Snackbar.make(getActivity().findViewById(android.R.id.content), msg, Snackbar.LENGTH_LONG).show();
     }
 
     private void initListener() {
@@ -124,7 +126,7 @@ public class CategoriesOfflineHypersFragment extends Fragment {
             if (i == 0)
                 if (!((LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE)).isProviderEnabled(LocationManager.GPS_PROVIDER))
                     Toast.makeText(getActivity().getBaseContext(), "افتح الـ Location او سيتم أخذ آخر مكان مسجل", Toast.LENGTH_SHORT).show();
-            progress.setVisibility(View.VISIBLE);
+
             if (trdCurrentLocationSpinner != null && trdCurrentLocationSpinner.isAlive())
                 trdCurrentLocationSpinner.interrupt();
             if (i == 0) {
@@ -151,19 +153,20 @@ public class CategoriesOfflineHypersFragment extends Fragment {
             }
 
         } catch (Exception ex) {
-            Log.e("erooor", ex.getMessage().toString());
+            Log.e("erooor", ex.getMessage());
         }
     }
 
     private void getOffers() {
         if (CityChoose == null) {
             CityChoose = UtilityGeneral.loadSpinnerCity(getActivity());
-            if(CityChoose.equals("No")) return;
+            if (CityChoose.equals("No")) return;
         }
         try {
             qrHyperOffers.removeEventListener(OfferListener);
-        } catch (Exception ex) {
+        } catch (Exception ignored) {
         }
+        progress.setVisibility(View.VISIBLE);
         qrHyperOffers = UtilityFirebase.getHyperOffers(CityChoose);
         qrHyperOffers.addValueEventListener(OfferListener);
 
@@ -173,7 +176,7 @@ public class CategoriesOfflineHypersFragment extends Fragment {
     public void onDestroy() {
         try {
             qrHyperOffers.removeEventListener(OfferListener);
-        } catch (Exception ex) {
+        } catch (Exception ignored) {
         }
         super.onDestroy();
     }
@@ -184,16 +187,17 @@ public class CategoriesOfflineHypersFragment extends Fragment {
         private ArrayList<OfferMgallat> lstOffers;
 
 
-        public SampleAdapter(Context context, int textViewResourceId,
-                             ArrayList<OfferMgallat> objects) {
+        SampleAdapter(Context context, int textViewResourceId,
+                      ArrayList<OfferMgallat> objects) {
             super(context, textViewResourceId);
             this.mLayoutInflater = LayoutInflater.from(context);
             this.lstOffers = objects;
         }
 
+        @NonNull
         @Override
         public View getView(int position, View convertView,
-                            ViewGroup parent) {
+                            @NonNull ViewGroup parent) {
 
             ViewHolder holder;
             if (convertView == null) {
@@ -218,7 +222,7 @@ public class CategoriesOfflineHypersFragment extends Fragment {
             ImageView imgView;
             TextView txtView;
 
-            public ViewHolder(View rootView) {
+            ViewHolder(View rootView) {
                 imgView = (ImageView) rootView.findViewById(R.id.imgLogo);
                 txtView = (TextView) rootView.findViewById(R.id.txttitle);
             }

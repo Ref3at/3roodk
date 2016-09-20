@@ -1,35 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_height="match_parent">
 
-    <LinearLayout
+    <ImageView
+        android:id="@+id/daimajia_slider_image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:scaleType="fitCenter" />
 
+    <com.github.ybq.android.spinkit.SpinKitView
+        android:id="@+id/loading_bar"
+        style="@style/SpinKitView.Large.Circle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        app:SpinKit_Color="@color/colorPrimary" />
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="500dp">
-
-            <ImageView
-                android:id="@+id/daimajia_slider_image"
-                android:layout_width="match_parent"
-                android:scaleType="fitCenter"
-                android:layout_height="match_parent" />
-
-            <com.github.ybq.android.spinkit.SpinKitView
-                android:id="@+id/loading_bar"
-                style="@style/SpinKitView.Large.Circle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                app:SpinKit_Color="@color/colorPrimary" />
-
-        </RelativeLayout>
-
-    </LinearLayout>
 </RelativeLayout>

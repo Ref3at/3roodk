@@ -103,7 +103,8 @@ public class CategoriesOfflineShopsFragment extends Fragment {
     }
 
     private void showMessage(String msg) {
-        Snackbar.make(getActivity().findViewById(android.R.id.content), msg, Snackbar.LENGTH_LONG).show();
+        if (isAdded() && !isDetached() && isVisible())
+            Snackbar.make(getActivity().findViewById(android.R.id.content), msg, Snackbar.LENGTH_LONG).show();
     }
 
     private void initListener() {
@@ -259,11 +260,11 @@ public class CategoriesOfflineShopsFragment extends Fragment {
     }
 
     public void goToCards(View view) {
-        if(CityChoose == null) return;
+        if (CityChoose == null) return;
         int x = view.getId();
         Intent i = new Intent(getActivity(), CardsActivity.class);
         i.putExtra("city", CityChoose);
-        i.putExtra("online",false);
+        i.putExtra("online", false);
         switch (x) {
 
             case R.id.imageButton1:
@@ -308,6 +309,10 @@ public class CategoriesOfflineShopsFragment extends Fragment {
         startActivityForResult(i, 222);
     }
 
+    public void showMessageIfOfferNotExists(){
+        if (!bOfferExists)
+            showMessage("لا يوجد عروض فى منطقتك الحاليه");
+    }
     @Override
     public void onDestroy() {
         try {
@@ -325,7 +330,7 @@ public class CategoriesOfflineShopsFragment extends Fragment {
         super.onDestroy();
     }
 
-    public void changeCities(int i , ArrayList<String> lstCities) {
+    public void changeCities(int i, ArrayList<String> lstCities) {
         try {
             if (i == 0)
                 if (!((LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE)).isProviderEnabled(LocationManager.GPS_PROVIDER))
@@ -369,13 +374,19 @@ public class CategoriesOfflineShopsFragment extends Fragment {
 
         try {
             UtilityFirebase.getActiveExistOffers(previousCity).removeEventListener(activeOffersListener);
-        } catch (Exception ex) {
+        } catch (Exception ignored) {
         }
         try {
             previousCity = cityName;
+            bOfferExists =true;
             UtilityFirebase.getActiveExistOffers(previousCity).addValueEventListener(activeOffersListener);
-        } catch (Exception ex) {
+        } catch (Exception ignored) {
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
     }
 
     private void loadCity() {
