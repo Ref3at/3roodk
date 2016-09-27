@@ -43,7 +43,7 @@ public class CategoriesOfflineFragment extends Fragment {
     ArrayAdapter<String> adapter;
     SpinKitView progress;
 
-    private static final String[] CHANNELS = new String[]{ "هايبرات","محلات"};
+    private static final String[] CHANNELS = new String[]{"هايبرات", "محلات"};
     private ArrayList<Fragment> mFragments = new ArrayList<>();
     private FragmentContainerHelper mFragmentContainerHelper = new FragmentContainerHelper();
     private CategoriesOfflineShopsFragment mShopsFragment;
@@ -55,9 +55,8 @@ public class CategoriesOfflineFragment extends Fragment {
         init(rootView);
         initFragments();
         initMagicIndicator1(rootView);
-
-        mFragmentContainerHelper.handlePageSelected(1, false);
-        switchPages(1);
+        mFragmentContainerHelper.handlePageSelected(0, false);
+        switchPages(0);
         return rootView;
     }
 
@@ -78,7 +77,7 @@ public class CategoriesOfflineFragment extends Fragment {
         if (fragment.isAdded()) {
             fragmentTransaction.show(fragment);
         } else {
-            fragmentTransaction.add(R.id.fragment_container, fragment);
+            fragmentTransaction.replace(R.id.fragment_container, fragment);
         }
         fragmentTransaction.commitAllowingStateLoss();
     }
@@ -177,9 +176,9 @@ public class CategoriesOfflineFragment extends Fragment {
         spnCities.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                UtilityGeneral.saveSpinnerCity(getActivity(),lstCities.get(i));
-                mShopsFragment.changeCities(i,lstCities);
-                mHypersFragment.changeCities(i,lstCities);
+                UtilityGeneral.saveSpinnerCity(getActivity(), lstCities.get(i));
+                mShopsFragment.changeCities(i, lstCities);
+                mHypersFragment.changeCities(i, lstCities);
             }
 
             @Override
@@ -187,11 +186,9 @@ public class CategoriesOfflineFragment extends Fragment {
             }
         });
         String choosedCity = UtilityGeneral.loadSpinnerCity(getActivity());
-        if(!choosedCity.equals("No"))
-        {
-            for(int i = 0 ; i<lstCities.size();i++)
-                if(lstCities.get(i).equals(choosedCity))
-                {
+        if (!choosedCity.equals("No")) {
+            for (int i = 0; i < lstCities.size(); i++)
+                if (lstCities.get(i).equals(choosedCity)) {
                     spnCities.setSelection(i);
                     break;
                 }

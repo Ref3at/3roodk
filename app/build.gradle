@@ -10,8 +10,8 @@ android {
         applicationId "com.app3roodk"
         minSdkVersion 16
         targetSdkVersion 24
-        versionCode 12
-        versionName "0.8.1"
+        versionCode 15
+        versionName "0.8.2"
         // Enabling multidex support.
         multiDexEnabled true
 

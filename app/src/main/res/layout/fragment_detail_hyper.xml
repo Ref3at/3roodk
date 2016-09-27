@@ -24,7 +24,7 @@
                 <com.daimajia.slider.library.SliderLayout
                     android:id="@+id/imgOffer"
                     android:layout_width="match_parent"
-                    android:layout_height="500dp"
+                    android:layout_height="450dp"
                     android:layout_alignParentTop="true"
                     custom:indicator_visibility="visible" />
 
@@ -33,7 +33,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="20dp"
                     android:layout_centerHorizontal="true"
-                    android:layout_marginTop="430dp"
+                    android:layout_marginTop="400dp"
+                    custom:selected_color="@color/colorPrimaryDark"
+                    custom:unselected_color="@color/grey"
                     android:rotation="180" />
 
 
