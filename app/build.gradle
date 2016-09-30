@@ -74,15 +74,12 @@ dependencies {
     compile 'com.redbooth:WelcomeCoordinator:1.0.1'
     compile 'com.github.ybq:Android-SpinKit:1.0.4'
     compile 'com.github.dmytrodanylyk:android-morphing-button:98a4986e56' // commit hash
-    compile 'com.android.support:multidex:1.0.0'
+    compile 'com.android.support:multidex:1.0.1'
     compile 'com.cloudinary:cloudinary-android:1.2.2'
     compile 'com.cloudinary:cloudinary-core:1.2.2'
     compile 'com.theartofdev.edmodo:android-image-cropper:2.2.+'
-
     compile 'com.github.hackware1993:MagicIndicator:1.4.0'
     compile 'com.etsy.android.grid:library:1.0.5'
-
-
 }
 
 apply plugin: 'com.google.gms.google-services'
