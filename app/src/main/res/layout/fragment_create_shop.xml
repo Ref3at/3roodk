@@ -70,6 +70,33 @@
         </android.support.design.widget.TextInputLayout>
 
 
+        <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/radio_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="10dp"
+            android:visibility="gone">
+
+            <RadioButton
+                android:id="@+id/radio_shop"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawablePadding="10dp"
+                android:text="shop" />
+
+            <RadioButton
+                android:id="@+id/radio_hyper"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawablePadding="10dp"
+                android:text="hyper" />
+
+        </RadioGroup>
+
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -156,13 +183,13 @@
             android:id="@+id/btn_create_shop"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:layout_marginTop="5dp"
             android:background="@drawable/custom_background_buttons"
             android:text="@string/user_register"
             android:textColor="@color/white"
             android:textSize="24sp"
-            android:textStyle="bold"
-        android:layout_gravity="center"/>
+            android:textStyle="bold" />
 
 
 

@@ -1,8 +1,7 @@
-package com.app3roodk.UI.CategoriesActivity;
+package com.app3roodk.UI.MainActivity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -14,7 +13,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.app3roodk.Constants;
 import com.app3roodk.R;
@@ -35,19 +33,19 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class CategoriesOfflineHypersFragment extends Fragment {
+public class AllHypersFragment extends Fragment {
 
+    public static String SelectedCity;
     SpinKitView progress;
     ExpandableHeightGridView gridView;
     ValueEventListener OfferListener;
+    Thread trdCurrentLocationSpinner;
     private SampleAdapter adapter;
-    String CityChoose;
     private ArrayList<OfferMgallat> lstOffers;
     private Query qrHyperOffers;
-    Thread trdCurrentLocationSpinner;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_categories_offline_hypers, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_all_hypers, container, false);
         init(rootView);
         return rootView;
     }
@@ -70,7 +68,7 @@ public class CategoriesOfflineHypersFragment extends Fragment {
     }
 
     private void showMessage(String msg) {
-        if(isAdded() && !isDetached() && isVisible())
+        if (isAdded() && !isDetached() && isVisible())
             Snackbar.make(getActivity().findViewById(android.R.id.content), msg, Snackbar.LENGTH_LONG).show();
     }
 
@@ -120,52 +118,48 @@ public class CategoriesOfflineHypersFragment extends Fragment {
 
     }
 
-    public void changeCities(int i, ArrayList<String> lstCities) {
-        try {
-            if (i == 0)
-                if (!((LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE)).isProviderEnabled(LocationManager.GPS_PROVIDER))
-                    Toast.makeText(getActivity().getBaseContext(), "افتح الـ Location او سيتم أخذ آخر مكان مسجل", Toast.LENGTH_SHORT).show();
-
-            if (trdCurrentLocationSpinner != null && trdCurrentLocationSpinner.isAlive())
-                trdCurrentLocationSpinner.interrupt();
-            if (i == 0) {
-                trdCurrentLocationSpinner = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        final String city = UtilityGeneral.getCurrentCityArabic(getActivity());
-                        getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (city == null) {
-                                    return;
-                                }
-                                CityChoose = city;
-                                getOffers();
-                            }
-                        });
-                    }
-                });
-                trdCurrentLocationSpinner.start();
-            } else {
-                CityChoose = lstCities.get(i);
-                getOffers();
-            }
-
-        } catch (Exception ex) {
-        }
-    }
+//    public void changeCities(int i, ArrayList<String> lstCities) {
+//        try {
+//            if (i == 0)
+//                if (!((LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE)).isProviderEnabled(LocationManager.GPS_PROVIDER))
+//                    Toast.makeText(getActivity().getBaseContext(), "افتح الـ Location او سيتم أخذ آخر مكان مسجل", Toast.LENGTH_SHORT).show();
+//
+//            if (trdCurrentLocationSpinner != null && trdCurrentLocationSpinner.isAlive())
+//                trdCurrentLocationSpinner.interrupt();
+//            if (i == 0) {
+//                trdCurrentLocationSpinner = new Thread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        final String city = UtilityGeneral.getCurrentCityArabic(getActivity());
+//                        getActivity().runOnUiThread(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                if (city == null) {
+//                                    return;
+//                                }
+//                                SelectedCity = city;
+//                                getOffers();
+//                            }
+//                        });
+//                    }
+//                });
+//                trdCurrentLocationSpinner.start();
+//            } else {
+//                SelectedCity = lstCities.get(i);
+//                getOffers();
+//            }
+//
+//        } catch (Exception ex) {
+//        }
+//    }
 
     private void getOffers() {
-        if (CityChoose == null) {
-            CityChoose = UtilityGeneral.loadSpinnerCity(getActivity());
-            if (CityChoose.equals("No")) return;
-        }
         try {
             qrHyperOffers.removeEventListener(OfferListener);
         } catch (Exception ignored) {
         }
         progress.setVisibility(View.VISIBLE);
-        qrHyperOffers = UtilityFirebase.getHyperOffers(CityChoose);
+        qrHyperOffers = UtilityFirebase.getHyperOffers(SelectedCity);
         qrHyperOffers.addValueEventListener(OfferListener);
 
     }

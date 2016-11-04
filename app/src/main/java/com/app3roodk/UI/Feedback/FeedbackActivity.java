@@ -32,8 +32,8 @@ import com.app3roodk.R;
 import com.app3roodk.Schema.Shop;
 import com.app3roodk.Schema.User;
 import com.app3roodk.UI.About.AboutActivity;
-import com.app3roodk.UI.CategoriesActivity.CategoriesActivity;
 import com.app3roodk.UI.FavoritesCards.FavoritesActivity;
+import com.app3roodk.UI.MainActivity.MainActivity;
 import com.app3roodk.UI.Offer.AddNewOfferActivity;
 import com.app3roodk.UI.Shop.ListShopsActivity;
 import com.app3roodk.UI.Shop.ShopActivity;
@@ -60,6 +60,9 @@ public class FeedbackActivity extends AppCompatActivity {
     DrawerLayout mDrawerLayout;
     NavigationView mNavigationView;
     FeedbackFragment mFragment;
+    //region Signing
+    User signingUser;
+    ProgressDialog signingProgress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -154,7 +157,7 @@ public class FeedbackActivity extends AppCompatActivity {
 
                             case R.id.action_home:
                                 mDrawerLayout.closeDrawer(GravityCompat.END);
-                                startActivityForResult(new Intent(FeedbackActivity.this, CategoriesActivity.class), 222);
+                                startActivityForResult(new Intent(FeedbackActivity.this, MainActivity.class), 222);
                                 return true;
 
                             case R.id.action_view_my_shop:
@@ -250,6 +253,8 @@ public class FeedbackActivity extends AppCompatActivity {
         }
     }
 
+    //endregion
+
     private void showUserInfoNavigationDrawer() {
         //show info of the user
         try {
@@ -318,22 +323,16 @@ public class FeedbackActivity extends AppCompatActivity {
         }
     }
 
-    //endregion
-
-    //region Signing
-    User signingUser;
-    ProgressDialog signingProgress;
-
     private void signingClick() {
-        if (!getLatLng(Constants.PERMISSION_MAPS_SIGN_IN)) return;
+//        if (!getLatLng(Constants.PERMISSION_MAPS_SIGN_IN)) return;
         signingUser = new User();
-        try {
-            LatLng latLng = UtilityGeneral.getCurrentLonAndLat(getBaseContext());
-            signingUser.setLat(String.valueOf(latLng.latitude));
-            signingUser.setLon(String.valueOf(latLng.longitude));
-        } catch (Exception ex) {
-            Toast.makeText(getBaseContext(), "ممكن تفتح الخرائط على الأقل مرة", Toast.LENGTH_LONG).show();
-        }
+//        try {
+//            LatLng latLng = UtilityGeneral.getCurrentLonAndLat(getBaseContext());
+//            signingUser.setLat(String.valueOf(latLng.latitude));
+//            signingUser.setLon(String.valueOf(latLng.longitude));
+//        } catch (Exception ex) {
+//            Toast.makeText(getBaseContext(), "ممكن تفتح الخرائط على الأقل مرة", Toast.LENGTH_LONG).show();
+//        }
         startActivityForResult(
                 UtilityFirebase.getAuthIntent(),
                 Constants.RC_SIGN_IN);

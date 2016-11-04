@@ -34,13 +34,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.app3roodk.Constants;
-import com.app3roodk.Imgur.ImgurUploadTask;
 import com.app3roodk.R;
 import com.app3roodk.Schema.Item;
 import com.app3roodk.Schema.Offer;
@@ -384,9 +382,8 @@ public class AddNewOfferFragment extends Fragment {
                 if (UtilityGeneral.getNumberOfAvailableOffers(getActivity(), UtilityGeneral.getCurrentYearAndWeek()) <= 0) {
                     showMessage("عفواً لايمكنك عمل أكثر من " + String.valueOf(Constants.NUMBER_OF_OFFERS_PER_WEEK) + " عروض فى الإسبوع");
                     return;
-                }else
-                SubmitNewOffer();
-
+                } else
+                    SubmitNewOffer();
 
 
             }
@@ -464,8 +461,6 @@ public class AddNewOfferFragment extends Fragment {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
-
 
 
         button.morphToProgress(color, progressCornerRadius, width, height, duration, progressColor1, progressColor2,
@@ -845,9 +840,9 @@ public class AddNewOfferFragment extends Fragment {
                         .setGuidelines(CropImageView.Guidelines.ON)
                         .setActivityTitle("3roodk").setAutoZoomEnabled(true)
                         .setAspectRatio(540, 400).setFixAspectRatio(true)
-                       // .setOutputCompressQuality(50)
+                        // .setOutputCompressQuality(50)
                         //.setScaleType(CropImageView.ScaleType.FIT_CENTER)
-                       // .setMaxCropResultSize(810,600)
+                        // .setMaxCropResultSize(810,600)
                         .start(getContext(), this);
                 //.start(getActivity());
             } else {
@@ -1012,7 +1007,6 @@ public class AddNewOfferFragment extends Fragment {
     }
 
 
-
     private Bitmap ConvertToBitmap(LinearLayout theView) {
         theView.setDrawingCacheEnabled(true);
         theView.buildDrawingCache();
@@ -1080,8 +1074,6 @@ public class AddNewOfferFragment extends Fragment {
             }
         }).start();
     }
-
-
 
 
     public void postFacebok(String param, String value) {
@@ -1278,7 +1270,7 @@ public class AddNewOfferFragment extends Fragment {
         } else if (fbSwitch.isChecked()) {
             if (imageForFacebookPost == null)
                 Toast.makeText(getActivity(), "من فضلك قم بتحديد صوره للبوست!", Toast.LENGTH_SHORT).show();
-        }else
+        } else
             Publish();
 
 
@@ -1502,7 +1494,7 @@ public class AddNewOfferFragment extends Fragment {
                 transformation.width(540).height(400).crop("scale").quality("auto");
 
                 uploadResult = (HashMap) cloudinary.uploader().upload(getActivity().getContentResolver()
-                        .openInputStream(uri), ObjectUtils.asMap("transformation",transformation));
+                        .openInputStream(uri), ObjectUtils.asMap("transformation", transformation));
 
             } catch (IOException e) {
                 e.printStackTrace();

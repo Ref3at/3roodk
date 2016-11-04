@@ -17,7 +17,7 @@ import android.widget.Toast;
 import com.app3roodk.Constants;
 import com.app3roodk.R;
 import com.app3roodk.Schema.User;
-import com.app3roodk.UI.CategoriesActivity.CategoriesActivity;
+import com.app3roodk.UI.MainActivity.MainActivity;
 import com.app3roodk.UtilityGeneral;
 import com.dd.morphingbutton.MorphingButton;
 import com.dd.morphingbutton.impl.IndeterminateProgressButton;
@@ -41,8 +41,8 @@ public class IntroActivity extends AppCompatActivity {
         }
         WelcomeCoordinatorLayout coordinatorLayout
                 = (WelcomeCoordinatorLayout) findViewById(R.id.coordinator);
-        coordinatorLayout.addPage(R.layout.welcome_screen_1, R.layout.welcome_screen_2,
-                R.layout.welcome_screen_3, R.layout.welcome_screen_4, R.layout.welcome_screen_5);
+        coordinatorLayout.addPage(R.layout.intro_screen_1, R.layout.intro_screen_2,
+                R.layout.intro_screen_3, R.layout.intro_screen_4_finding_city, R.layout.welcome_screen_5);
 
         btn_cont = (IndeterminateProgressButton) coordinatorLayout.findViewById(R.id.btnContinue);
 
@@ -145,7 +145,7 @@ public class IntroActivity extends AppCompatActivity {
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    startActivity(new Intent(IntroActivity.this, CategoriesActivity.class));
+                    startActivity(new Intent(IntroActivity.this, MainActivity.class));
                     finish();
 
                 }
@@ -204,7 +204,7 @@ public class IntroActivity extends AppCompatActivity {
                     user.setLat(String.valueOf(latLng.latitude));
                     user.setLon(String.valueOf(latLng.longitude));
                     UtilityGeneral.saveUser(getBaseContext(), user);
-                    startActivity(new Intent(this, CategoriesActivity.class));
+                    startActivity(new Intent(this, MainActivity.class));
                     finish();
                 } catch (Exception ex) {
                     btn_cont.unblockTouch();
@@ -220,7 +220,7 @@ public class IntroActivity extends AppCompatActivity {
         mMorphCounter1 = 1;
 
         if (UtilityGeneral.isLocationExist(getBaseContext())) {
-            startActivity(new Intent(IntroActivity.this, CategoriesActivity.class));
+            startActivity(new Intent(IntroActivity.this, MainActivity.class));
             finish();
         }
     }

@@ -1,6 +1,7 @@
-package com.app3roodk.UI.CategoriesActivity;
+package com.app3roodk.UI.MainActivity;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -26,10 +27,12 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,6 +41,7 @@ import com.app3roodk.R;
 import com.app3roodk.Schema.Shop;
 import com.app3roodk.Schema.User;
 import com.app3roodk.UI.About.AboutActivity;
+import com.app3roodk.UI.CitySelect.CitySelectionActivity;
 import com.app3roodk.UI.FavoritesCards.FavoritesActivity;
 import com.app3roodk.UI.Feedback.FeedbackActivity;
 import com.app3roodk.UI.Offer.AddNewOfferActivity;
@@ -58,11 +62,13 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.like.LikeButton;
+import com.like.OnLikeListener;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class CategoriesActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity {
 
     DrawerLayout mDrawerLayout;
     NavigationView mNavigationView;
@@ -70,21 +76,73 @@ public class CategoriesActivity extends AppCompatActivity {
     User signingUser;
     ProgressDialog signingProgress;
 
+    LikeButton btnNotification;
+    RelativeLayout titleCityName;
+
+    TextView cityName;
+
+    String currentCity;
+
+    ViewPager mViewPager;
+
+    TabLayout tabs;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_categories);
+        setContentView(R.layout.activity_main);
         // Adding Toolbar to Main screen
         FirebaseInstanceId.getInstance().getToken();
+
+        cityName = (TextView) findViewById(R.id.textView_city);
+
+        titleCityName = (RelativeLayout) findViewById(R.id.title_city_name);
+        titleCityName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent i = new Intent(MainActivity.this, CitySelectionActivity.class);
+                startActivityForResult(i, 1);
+            }
+        });
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
         initNavigationDrawer();
-        ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
-        setupViewPager(viewPager);
+        mViewPager = (ViewPager) findViewById(R.id.viewpager);
+
         // Set Tabs inside Toolbar
-        TabLayout tabs = (TabLayout) findViewById(R.id.tabs);
-        tabs.setupWithViewPager(viewPager);
-        tabs.getTabAt(1).select();
+        tabs = (TabLayout) findViewById(R.id.tabs);
+        tabs.setupWithViewPager(mViewPager);
+
+        currentCity = UtilityGeneral.loadCity(this);
+        cityName.setText("عروض " + currentCity.toString());
+        setupViewPager(mViewPager, currentCity);
+
+
+        for (int i = 0; i < tabs.getTabCount(); i++) {
+            TabLayout.Tab tab = tabs.getTabAt(i);
+            RelativeLayout relativeLayout = (RelativeLayout)
+                    LayoutInflater.from(this).inflate(R.layout.tab_layout, tabs, false);
+            TextView tabTextView = (TextView) relativeLayout.findViewById(R.id.tab_title);
+            tabTextView.setText(tab.getText());
+            tab.setCustomView(relativeLayout);
+        }
+        tabs.getTabAt(4).select();
+
+        btnNotification = (LikeButton) findViewById(R.id.btn_notification);
+        btnNotification.setOnLikeListener(new OnLikeListener() {
+            @Override
+            public void liked(LikeButton likeButton) {
+                Toast.makeText(getApplicationContext(), "subscribed in topic", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void unLiked(LikeButton likeButton) {
+                Toast.makeText(getApplicationContext(), "subscribed in topic", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override
@@ -106,7 +164,21 @@ public class CategoriesActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == Constants.RC_SIGN_IN) signingResult(resultCode);
+
+        if (requestCode == 1) {
+            if (resultCode == Activity.RESULT_OK) {
+                String result = data.getStringExtra("result");
+                cityName.setText("عروض " + result.toString());
+                UtilityGeneral.saveCity(this, result);
+                setupViewPager(mViewPager, result);
+
+            }
+            if (resultCode == Activity.RESULT_CANCELED) {
+                Toast.makeText(getApplicationContext(), "لم يتم تغيير المدينه", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
+
 
     @Override
     protected void onResume() {
@@ -137,24 +209,69 @@ public class CategoriesActivity extends AppCompatActivity {
         }
     }
 
-    private void setupViewPager(ViewPager viewPager) {
+    private void setupViewPager(ViewPager viewPager, String city) {
+
         Adapter adapter = new Adapter(getSupportFragmentManager());
+
+        Bundle arguments5 = new Bundle();
+        MapFragment fragment5 = new MapFragment();
+        MapFragment.SelectedCity = city;
+
+        if (!fragment5.isAdded()) {
+            fragment5.setArguments(arguments5);
+        }
+        adapter.addFragment(fragment5, "الخريطه");
+
+
         Bundle arguments2 = new Bundle();
-        CategoriesOnlineFragment fragment2 = new CategoriesOnlineFragment();
+
+        AllHypersFragment fragment2 = new AllHypersFragment();
+        AllHypersFragment.SelectedCity = city;
         if (!fragment2.isAdded()) {
             fragment2.setArguments(arguments2);
-
         }
-        adapter.addFragment(fragment2, "اونلاين");
+        adapter.addFragment(fragment2, "هايبرات");
+
+        Bundle arguments4 = new Bundle();
+        AllShopsFragment fragment4 = new AllShopsFragment();
+        AllShopsFragment.SelectedCity = city;
+
+        if (!fragment4.isAdded()) {
+            fragment4.setArguments(arguments4);
+        }
+        adapter.addFragment(fragment4, "محلات");
+
         Bundle arguments1 = new Bundle();
-        CategoriesOfflineFragment fragment1 = new CategoriesOfflineFragment();
+        ShopsCategoriesFragment.SelectedCity = city;
+        ShopsCategoriesFragment fragment1 = new ShopsCategoriesFragment();
         if (!fragment1.isAdded()) {
             fragment1.setArguments(arguments1);
         }
-        adapter.addFragment(fragment1, "محلي");
+        adapter.addFragment(fragment1, "الأقسام");
+
+
+        Bundle arguments3 = new Bundle();
+        AllOffersFragment fragment3 = new AllOffersFragment();
+        AllOffersFragment.SelectedCity = city;
+        if (!fragment3.isAdded()) {
+            fragment3.setArguments(arguments3);
+        }
+        adapter.addFragment(fragment3, "كل العروض");
 
         viewPager.setAdapter(adapter);
+        for (int i = 0; i < tabs.getTabCount(); i++) {
+            TabLayout.Tab tab = tabs.getTabAt(i);
+            RelativeLayout relativeLayout = (RelativeLayout)
+                    LayoutInflater.from(this).inflate(R.layout.tab_layout, tabs, false);
+            TextView tabTextView = (TextView) relativeLayout.findViewById(R.id.tab_title);
+            tabTextView.setText(tab.getText());
+            tab.setCustomView(relativeLayout);
+        }
+        tabs.getTabAt(4).select();
+
+
     }
+
 
     //region Navigation Drawer
     public void initNavigationDrawer() {
@@ -181,7 +298,7 @@ public class CategoriesActivity extends AppCompatActivity {
                                     Snackbar.make(findViewById(android.R.id.content), "عفواً لايمكنك عمل أكثر من " + String.valueOf(Constants.NUMBER_OF_OFFERS_PER_WEEK) + " عروض فى الإسبوع", Snackbar.LENGTH_LONG).show();
                                     hideDrawerItems();
                                 } else
-                                    startActivityForResult(new Intent(CategoriesActivity.this, AddNewOfferActivity.class), 222);
+                                    startActivityForResult(new Intent(MainActivity.this, AddNewOfferActivity.class), 222);
                                 return true;
 
                             case R.id.action_signin:
@@ -191,7 +308,7 @@ public class CategoriesActivity extends AppCompatActivity {
 
                             case R.id.action_new_shop:
                                 mDrawerLayout.closeDrawer(GravityCompat.END);
-                                startActivityForResult(new Intent(CategoriesActivity.this, ShopActivity.class), 222);
+                                startActivityForResult(new Intent(MainActivity.this, ShopActivity.class), 222);
                                 return true;
 
                             case R.id.action_home:
@@ -200,12 +317,12 @@ public class CategoriesActivity extends AppCompatActivity {
 
                             case R.id.action_view_my_shop:
                                 mDrawerLayout.closeDrawer(GravityCompat.END);
-                                startActivityForResult(new Intent(CategoriesActivity.this, ListShopsActivity.class), 222);
+                                startActivityForResult(new Intent(MainActivity.this, ListShopsActivity.class), 222);
                                 return true;
 
                             case R.id.action_logout:
                                 AuthUI.getInstance()
-                                        .signOut(CategoriesActivity.this)
+                                        .signOut(MainActivity.this)
                                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override
                                             public void onComplete(@NonNull Task<Void> task) {
@@ -224,17 +341,17 @@ public class CategoriesActivity extends AppCompatActivity {
 
                             case R.id.action_favorites:
                                 mDrawerLayout.closeDrawer(GravityCompat.END);
-                                startActivityForResult(new Intent(CategoriesActivity.this, FavoritesActivity.class), 222);
+                                startActivityForResult(new Intent(MainActivity.this, FavoritesActivity.class), 222);
                                 return true;
 
                             case R.id.action_feedback:
                                 mDrawerLayout.closeDrawer(GravityCompat.END);
-                                startActivityForResult(new Intent(CategoriesActivity.this, FeedbackActivity.class), 222);
+                                startActivityForResult(new Intent(MainActivity.this, FeedbackActivity.class), 222);
                                 return true;
 
                             case R.id.action_aboutapp:
                                 mDrawerLayout.closeDrawer(GravityCompat.END);
-                                startActivityForResult(new Intent(CategoriesActivity.this, AboutActivity.class), 222);
+                                startActivityForResult(new Intent(MainActivity.this, AboutActivity.class), 222);
                                 return true;
 
                             default:
@@ -310,7 +427,7 @@ public class CategoriesActivity extends AppCompatActivity {
                                 @Override
                                 protected void setResource(Bitmap resource) {
                                     RoundedBitmapDrawable circularBitmapDrawable =
-                                            RoundedBitmapDrawableFactory.create(CategoriesActivity.this.getResources(), resource);
+                                            RoundedBitmapDrawableFactory.create(MainActivity.this.getResources(), resource);
                                     circularBitmapDrawable.setCircular(true);
                                     ((ImageView) mNavigationView.findViewById(R.id.imgNavProfile)).setImageDrawable(circularBitmapDrawable);
                                 }
@@ -323,7 +440,7 @@ public class CategoriesActivity extends AppCompatActivity {
                                 @Override
                                 protected void setResource(Bitmap resource) {
                                     RoundedBitmapDrawable circularBitmapDrawable =
-                                            RoundedBitmapDrawableFactory.create(CategoriesActivity.this.getResources(), resource);
+                                            RoundedBitmapDrawableFactory.create(MainActivity.this.getResources(), resource);
                                     circularBitmapDrawable.setCircular(true);
                                     ((ImageView) mNavigationView.findViewById(R.id.imgNavProfile)).setImageDrawable(circularBitmapDrawable);
                                 }
@@ -339,7 +456,7 @@ public class CategoriesActivity extends AppCompatActivity {
                             @Override
                             protected void setResource(Bitmap resource) {
                                 RoundedBitmapDrawable circularBitmapDrawable =
-                                        RoundedBitmapDrawableFactory.create(CategoriesActivity.this.getResources(), resource);
+                                        RoundedBitmapDrawableFactory.create(MainActivity.this.getResources(), resource);
                                 circularBitmapDrawable.setCircular(true);
                                 ((ImageView) mNavigationView.findViewById(R.id.imgNavProfile)).setImageDrawable(circularBitmapDrawable);
                             }
@@ -364,15 +481,17 @@ public class CategoriesActivity extends AppCompatActivity {
     //region Signing
 
     private void signingClick() {
-        if (!getLatLng(Constants.PERMISSION_MAPS_SIGN_IN)) return;
+
+//        if (!getLatLng(Constants.PERMISSION_MAPS_SIGN_IN)) return;
+
         signingUser = new User();
-        try {
-            LatLng latLng = UtilityGeneral.getCurrentLonAndLat(getBaseContext());
-            signingUser.setLat(String.valueOf(latLng.latitude));
-            signingUser.setLon(String.valueOf(latLng.longitude));
-        } catch (Exception ex) {
-            Toast.makeText(getBaseContext(), "ممكن تفتح الخرائط على الأقل مرة", Toast.LENGTH_LONG).show();
-        }
+//        try {
+//            LatLng latLng = UtilityGeneral.getCurrentLonAndLat(getBaseContext());
+//            signingUser.setLat(String.valueOf(latLng.latitude));
+//            signingUser.setLon(String.valueOf(latLng.longitude));
+//        } catch (Exception ex) {
+//            Toast.makeText(getBaseContext(), "ممكن تفتح الخرائط على الأقل مرة", Toast.LENGTH_LONG).show();
+//        }
         startActivityForResult(
                 UtilityFirebase.getAuthIntent(),
                 Constants.RC_SIGN_IN);
@@ -504,6 +623,7 @@ public class CategoriesActivity extends AppCompatActivity {
             }
         }
     }
+
 
     //endregion
 

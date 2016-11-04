@@ -8,7 +8,6 @@
         android:layout_height="wrap_content">
 
 
-
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -19,10 +18,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="#f9f513"
-                android:textColor="#386af3"
-                android:padding="5dp"
                 android:gravity="center_horizontal"
-                android:visibility="gone"/>
+                android:padding="5dp"
+                android:textColor="#386af3"
+                android:visibility="gone" />
 
             <LinearLayout
                 android:id="@+id/items_container"
@@ -35,15 +34,15 @@
                 android:id="@+id/add_new_item"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="8dp"
-                android:layout_marginRight="10dp"
                 android:layout_gravity="right"
+                android:layout_marginRight="10dp"
                 android:layout_marginTop="20dp"
+                android:background="@drawable/custom_background_buttons"
+                android:padding="8dp"
+                android:text="@string/add_new_item"
                 android:textColor="@color/white"
                 android:textSize="24sp"
-                android:textStyle="bold"
-                android:background="@drawable/custom_background_buttons"
-                android:text="@string/add_new_item" />
+                android:textStyle="bold" />
 
 
             <android.support.design.widget.TextInputLayout
@@ -175,57 +174,46 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="gone"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:visibility="gone">
 
                 <Switch
                     android:id="@+id/facebook_switch"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="نشر على الفيس بوك "
+                    android:layout_gravity="center_horizontal"
+                    android:gravity="center_horizontal|center_vertical"
                     android:padding="10dp"
                     android:switchPadding="10dp"
-                    android:gravity="center_horizontal|center_vertical"
-                    android:layout_gravity="center_horizontal"
-                    />
+                    android:text="نشر على الفيس بوك " />
 
 
                 <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:id="@+id/radio_group"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="10dp"
                     android:orientation="horizontal"
-android:visibility="gone"
-                    android:id="@+id/radio_group"
-                    >
+                    android:padding="10dp"
+                    android:visibility="gone">
 
-                    <RadioButton android:id="@+id/radio_gif"
+                    <RadioButton
+                        android:id="@+id/radio_gif"
                         android:layout_width="0dp"
+                        android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:drawablePadding="10dp"
-                        android:layout_height="wrap_content"
-                        android:text="Gif"
-                        />
+                        android:text="Gif" />
 
-                    <RadioButton android:id="@+id/radio_image"
+                    <RadioButton
+                        android:id="@+id/radio_image"
                         android:layout_width="0dp"
-                        android:drawablePadding="10dp"
-                        android:layout_weight="1"
                         android:layout_height="wrap_content"
-                        android:text="one image"
-                      />
+                        android:layout_weight="1"
+                        android:drawablePadding="10dp"
+                        android:text="one image" />
 
                 </RadioGroup>
-
-
-
-
-
-
-
-
             </LinearLayout>
-
 
 
             <LinearLayout
@@ -243,19 +231,17 @@ android:visibility="gone"
                     android:visibility="gone" />
 
 
-                    <com.dd.morphingbutton.impl.IndeterminateProgressButton
-                        android:id="@+id/btn_publishadd"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:textColor="@color/white"
-                        android:textSize="24sp"
-                        android:text="@string/add_offer"
-                        android:textStyle="bold"
-                        android:background="@drawable/custom_background_buttons"
-                        android:layout_gravity="center"/>
-
-
+                <com.dd.morphingbutton.impl.IndeterminateProgressButton
+                    android:id="@+id/btn_publishadd"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:background="@drawable/custom_background_buttons"
+                    android:text="@string/add_offer"
+                    android:textColor="@color/white"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
 
 
             </LinearLayout>

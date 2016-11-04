@@ -33,6 +33,7 @@ public class UtilityFirebase {
         replies.setObjectId(myRef.push().getKey());
         myRef.child(replies.getObjectId()).setValue(replies, listener);
     }
+
     static public DatabaseReference getReplies(Offer offer) {
         return FirebaseDatabase.getInstance().getReference("Replies").child(offer.getObjectId());
     }
@@ -139,7 +140,7 @@ public class UtilityFirebase {
     }
 
     static public void createNewOfferExists(Offer offer, DatabaseReference.CompletionListener listener) {
-        FirebaseDatabase.getInstance().getReference("OffersExist").child(offer.getCity()).child(offer.getObjectId()).setValue(new ExistOffers(offer.getEndTime(), offer.getCategoryName(),offer.getCreatedAt()), listener);
+        FirebaseDatabase.getInstance().getReference("OffersExist").child(offer.getCity()).child(offer.getObjectId()).setValue(new ExistOffers(offer.getEndTime(), offer.getCategoryName(), offer.getCreatedAt()), listener);
     }
 
     static public void increaseOfferViewsNum(Offer offer) {
@@ -193,7 +194,6 @@ public class UtilityFirebase {
 
     static public void createNewShop(Shop shop, String userId, DatabaseReference.CompletionListener listener) {
         DatabaseReference myRef = FirebaseDatabase.getInstance().getReference("Shops").child(userId);
-        shop.setObjectId(myRef.push().getKey());
         myRef.child(shop.getObjectId()).setValue(shop, listener);
     }
 
@@ -264,7 +264,7 @@ public class UtilityFirebase {
     }
 
     static public DatabaseReference getUserNoOfAvailableOffers(final Context context, final String yearWeek) {
-        if(!UtilityGeneral.isRegisteredUser(context)) return null;
+        if (!UtilityGeneral.isRegisteredUser(context)) return null;
         return FirebaseDatabase.getInstance().getReference("Users").child(UtilityGeneral.loadUser(context).getObjectId()).child("numOfOffersAvailable").child(yearWeek);
     }
 

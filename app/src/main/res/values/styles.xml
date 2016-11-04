@@ -2,21 +2,23 @@
     <!-- Base application theme. -->
     <style name="AppTheme.Base" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">#ffb300</item>
+        <item name="colorPrimary">#039BE5</item>
         <!-- Light Indigo -->
-        <item name="colorPrimaryDark">#ff8f00</item>
+        <item name="colorPrimaryDark">#0277BD</item>
         <!-- Dark Indigo -->
         <item name="colorAccent">#00B0FF</item>
         <!-- Blue -->
+        <item name="android:windowNoTitle">true</item>
+
     </style>
 
     <style name="AppTheme.Edit" parent="Theme.AppCompat.Light">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">#ffb300</item>
+        <item name="colorPrimary">#039BE5</item>
         <!-- Light Indigo -->
-        <item name="colorPrimaryDark">#ff8f00</item>
+        <item name="colorPrimaryDark">#0277BD</item>
         <!-- Dark Indigo -->
-        <item name="colorAccent">#00B0FF</item>
+        <item name="colorAccent">#1565C0</item>
         <!-- Blue -->
     </style>
 
@@ -79,7 +81,9 @@
     <style name="Widget.Plaid" parent="android:Widget" />
 
     <style name="MyTabLayoutTextAppearance" parent="TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse">
-        <item name="android:textSize">18sp</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/text_secondary_dark</item>
+
     </style>
 
     <style name="TextAppearance.Comment" parent="@android:style/TextAppearance.Material.Body1" tools:targetApi="lollipop">

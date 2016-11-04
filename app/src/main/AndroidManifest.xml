@@ -14,16 +14,16 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
+        android:name="android.support.multidex.MultiDexApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="false"
         android:theme="@style/AppTheme"
-        tools:replace="android:supportsRtl"
-        android:name="android.support.multidex.MultiDexApplication">
+        tools:replace="android:supportsRtl">
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="@string/key_map" />
@@ -34,23 +34,30 @@
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity android:name=".UI.PositioningActivity.PositioningActivity" />
-        <activity android:name=".UI.IntroActivity.IntroActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".UI.CategoriesActivity.CategoriesActivity" />
+        <activity
+            android:name=".UI.IntroActivity.IntroActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".UI.MainActivity.MainActivity"
+            android:theme="@style/AppTheme" />
         <activity android:name=".UI.DetailActivity.DetailActivity">
             <intent-filter>
                 <action android:name="OPEN_ACTIVITY_1" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".UI.Shop.ShopActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".UI.Offer.AddNewOfferActivity"
-            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".UI.Shop.ShopActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".UI.Offer.AddNewOfferActivity"
+            android:screenOrientation="portrait" />
         <activity android:name=".MapsPathsActivity" />
         <activity android:name=".MapsShopsActivity" />
         <activity android:name=".MapsShopLocationActivity" />
@@ -68,13 +75,10 @@
         <activity android:name=".UI.FavoritesCards.FavoritesActivity" />
         <activity android:name=".UI.Shop.ListShopsActivity" />
         <activity android:name=".UI.About.AboutActivity" />
-
-
-
         <activity
-            android:theme="@style/AppThemeForCrop"
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
-           />
+            android:theme="@style/AppThemeForCrop" />
+        <activity android:name=".UI.IntroActivity.NewIntroActivity" />
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
@@ -94,6 +98,8 @@
         <provider
             android:name=".TestProvider"
             android:authorities="com.app3roodk.authority" />
+
+        <activity android:name=".UI.CitySelect.CitySelectionActivity"></activity>
     </application>
 
 </manifest>

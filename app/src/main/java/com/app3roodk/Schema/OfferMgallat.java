@@ -2,7 +2,7 @@ package com.app3roodk.Schema;
 
 import java.util.ArrayList;
 
-public class OfferMgallat {
+public class OfferMgallat implements OffersInterface {
 
     private String objectId;
     private String title; //*

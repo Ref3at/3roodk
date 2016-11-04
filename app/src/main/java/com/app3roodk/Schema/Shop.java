@@ -22,6 +22,8 @@ public class Shop {
 
     private String pinCode;
 
+    private boolean isHyper; // default value false (shop)
+
     public Shop() {
     }
 
@@ -180,5 +182,13 @@ public class Shop {
 
     public void setPinCode(String pinCode) {
         this.pinCode = pinCode;
+    }
+
+    public boolean isHyper() {
+        return isHyper;
+    }
+
+    public void setHyper(boolean hyper) {
+        isHyper = hyper;
     }
 }

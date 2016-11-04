@@ -7,7 +7,7 @@ public class Constants {
      */
     public static final String KEY_USER = "keyuser";
     public static final String KEY_SHOP = "keyshop";
-    public static final String KEY_CITY = "keycity";
+    public static final String KEY_CITY = "keycitynew";
     public static final String KEY_CITY_SPINNER = "keycityspinner";
     public static final String KEY_CITIES = "keycities";
     public static final String YOUR_CITY = "إختار مدينة";

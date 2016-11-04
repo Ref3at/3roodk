@@ -34,23 +34,14 @@ public class DetailOfflineHyperFragment extends Fragment implements BaseSliderVi
     final static long minutesInMilli = 1000 * 60;
     final static long hoursInMilli = minutesInMilli * 60;
     final static long daysInMilli = hoursInMilli * 24;
-
-    Button btnShopWay;
-
-    TextView txtViews, txtDay, txtHour, txtMinute, txtDescription, txtDistance;
-
-    SliderLayout mSlider;
-
-    Calendar cal;
-
-    long timeInMilliseconds;
-
-    Thread timer;
-
-
     public OfferMgallat offer;
+    Button btnShopWay;
+    TextView txtViews, txtDay, txtHour, txtMinute, txtDescription, txtDistance;
+    SliderLayout mSlider;
+    Calendar cal;
+    long timeInMilliseconds;
+    Thread timer;
     //endregion
-
     Runnable updateTimerThread = new Runnable() {
         public void run() {
             while (true) {
@@ -95,11 +86,15 @@ public class DetailOfflineHyperFragment extends Fragment implements BaseSliderVi
         try {
             txtDescription.setText(offer.getDesc());
             txtViews.setText(String.valueOf(offer.getViewNum()));
-            txtDistance.setText(String.valueOf(UtilityGeneral.calculateDistanceInKM(
-                    Double.parseDouble(offer.getLat()),
-                    Double.parseDouble(offer.getLon()),
-                    UtilityGeneral.getCurrentLonAndLat(getActivity()).latitude,
-                    UtilityGeneral.getCurrentLonAndLat(getActivity()).longitude)) + "km");
+            if (UtilityGeneral.getCurrentLonAndLat(getActivity()) != null) {
+                txtDistance.setText(String.valueOf(UtilityGeneral.calculateDistanceInKM(
+                        Double.parseDouble(offer.getLat()),
+                        Double.parseDouble(offer.getLon()),
+                        UtilityGeneral.getCurrentLonAndLat(getActivity()).latitude,
+                        UtilityGeneral.getCurrentLonAndLat(getActivity()).longitude)) + "km");
+            } else {
+                txtDistance.setVisibility(View.INVISIBLE);
+            }
         } catch (Exception ex) {
         }
     }

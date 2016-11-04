@@ -27,6 +27,8 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,6 +37,7 @@ import com.app3roodk.Imgur.ImgurUploadTask;
 import com.app3roodk.MapsShopLocationActivity;
 import com.app3roodk.R;
 import com.app3roodk.Schema.Shop;
+import com.app3roodk.Schema.User;
 import com.app3roodk.UtilityFirebase;
 import com.app3roodk.UtilityGeneral;
 import com.bumptech.glide.Glide;
@@ -42,31 +45,44 @@ import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.dd.morphingbutton.MorphingButton;
 import com.dd.morphingbutton.impl.IndeterminateProgressButton;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.google.maps.model.GeocodingResult;
 
+import java.lang.reflect.Type;
 import java.util.Date;
+import java.util.TreeSet;
+
 
 public class CreateShopFragment extends Fragment {
 
-    private int mMorphCounter1 = 1;
-
     static public LatLng latLngShop;
+    TreeSet<String> treeSet;
+    DatabaseReference stateNode;
+    ValueEventListener eventListener;
     int SELECT_FILE = 1;
     String mlogoId = null;
     Shop shop;
     GeocodingResult[] addresses;
+    boolean isHyper;
+    User user;
+    IndeterminateProgressButton createShop;
+    LinearLayout.LayoutParams layoutParams;
+    IndeterminateProgressButton button;
+    private int mMorphCounter1 = 1;
     private TextView AddressFromMap;
     private EditText inputShopName, inputWorkingTime, inputAddressInfo, inputContacts;
     private TextInputLayout inputLayoutShopName, inputLayoutWorkingTime, inputLayoutAddressInfo, inputLayoutContacts;
-    private Button  btnChangeLocation;
-
-    IndeterminateProgressButton createShop;
-
+    private Button btnChangeLocation;
+    private RadioGroup radioGroup;
+    private RadioButton radioShop, radioHyper;
     private ImageButton addShopLogo;
     private Switch haveAlogo;
-
     private MyImgurUploadTask myImgurUploadTask;
 
     @Nullable
@@ -76,6 +92,17 @@ public class CreateShopFragment extends Fragment {
         initViews(rootView);
         clickConfig();
         morphToSquare(createShop, 0);
+        user = UtilityGeneral.loadUser(getActivity());
+        try {
+            if (user.getEmail().equals("muhamedmahmmod@gmail.com")
+                    || user.getEmail().equals("ahmed12361@yahoo.com")
+                    || user.getEmail().equals("hazem.madkor@gmail.com")) {
+                radioGroup.setVisibility(View.VISIBLE);
+            }
+        } catch (Exception e) {
+        }
+
+
         latLngShop = UtilityGeneral.getCurrentLonAndLat(getActivity());
         if (latLngShop == null) latLngShop = UtilityGeneral.loadLatLong(getActivity());
         return rootView;
@@ -108,6 +135,10 @@ public class CreateShopFragment extends Fragment {
         btnChangeLocation = (Button) rootView.findViewById(R.id.btnChangeAddress);
 
         haveAlogo = (Switch) rootView.findViewById(R.id.hava_alogo_switch);
+
+        radioGroup = (RadioGroup) rootView.findViewById(R.id.radio_group);
+        radioShop = (RadioButton) rootView.findViewById(R.id.radio_shop);
+        radioHyper = (RadioButton) rootView.findViewById(R.id.radio_hyper);
     }
 
     private void clickConfig() {
@@ -150,12 +181,21 @@ public class CreateShopFragment extends Fragment {
                 startActivity(new Intent(getContext(), MapsShopLocationActivity.class));
             }
         });
+
+        radioShop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                isHyper = false;
+            }
+        });
+
+        radioHyper.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                isHyper = true;
+            }
+        });
     }
-
-
-
-
-
 
     private void onMorphButton1Clicked(final IndeterminateProgressButton btnMorph) {
         if (mMorphCounter1 == 0) {
@@ -168,16 +208,14 @@ public class CreateShopFragment extends Fragment {
         }
     }
 
-    LinearLayout.LayoutParams layoutParams;
-
     private void morphToSquare(final IndeterminateProgressButton btnMorph, int duration) {
         MorphingButton.Params square = MorphingButton.Params.create()
                 .duration(duration)
                 .cornerRadius(10)
                 .width(layoutParams.MATCH_PARENT)
                 .height((int) getResources().getDimension(R.dimen.height_56))
-                .color( ContextCompat.getColor(getActivity(),R.color.colorPrimary))
-                .colorPressed(ContextCompat.getColor(getActivity(),R.color.colorPrimaryDark)).text("تسجيل");
+                .color(ContextCompat.getColor(getActivity(), R.color.colorPrimary))
+                .colorPressed(ContextCompat.getColor(getActivity(), R.color.colorPrimaryDark)).text("تسجيل");
         btnMorph.morph(square);
     }
 
@@ -187,8 +225,8 @@ public class CreateShopFragment extends Fragment {
                 .cornerRadius((int) getResources().getDimension(R.dimen.height_56))
                 .width(layoutParams.MATCH_PARENT)
                 .height((int) getResources().getDimension(R.dimen.height_56))
-                .color(ContextCompat.getColor(getActivity(),R.color.primary))
-                .colorPressed(ContextCompat.getColor(getActivity(),R.color.primary_dark))
+                .color(ContextCompat.getColor(getActivity(), R.color.primary))
+                .colorPressed(ContextCompat.getColor(getActivity(), R.color.primary_dark))
                 .text("تم تسجيل المحل شكرأ لك");
         btnMorph.morph(circle);
 
@@ -200,22 +238,20 @@ public class CreateShopFragment extends Fragment {
                 .cornerRadius((int) getResources().getDimension(R.dimen.height_56))
                 .width(layoutParams.MATCH_PARENT)
                 .height((int) getResources().getDimension(R.dimen.height_56))
-                .color(ContextCompat.getColor(getActivity(),R.color.accent))
-                .colorPressed(ContextCompat.getColor(getActivity(),R.color.accent))
+                .color(ContextCompat.getColor(getActivity(), R.color.accent))
+                .colorPressed(ContextCompat.getColor(getActivity(), R.color.accent))
                 .text("حدث مشكله فى الاتصال!");
         btnMorph.morph(circle);
     }
 
-
-    IndeterminateProgressButton button;
     private void simulateProgress1(@NonNull final IndeterminateProgressButton button) {
         this.button = button;
 
-        int progressColor1 = ContextCompat.getColor(getActivity(),R.color.holo_blue_bright);
-        int progressColor2 = ContextCompat.getColor(getActivity(),R.color.holo_green_light);
-        int progressColor3 = ContextCompat.getColor(getActivity(),R.color.holo_orange_light);
-        int progressColor4 = ContextCompat.getColor(getActivity(),R.color.holo_red_light);
-        int color = ContextCompat.getColor(getActivity(),R.color.mb_gray);
+        int progressColor1 = ContextCompat.getColor(getActivity(), R.color.holo_blue_bright);
+        int progressColor2 = ContextCompat.getColor(getActivity(), R.color.holo_green_light);
+        int progressColor3 = ContextCompat.getColor(getActivity(), R.color.holo_orange_light);
+        int progressColor4 = ContextCompat.getColor(getActivity(), R.color.holo_red_light);
+        int color = ContextCompat.getColor(getActivity(), R.color.mb_gray);
         int progressCornerRadius = (int) getResources().getDimension(R.dimen.mb_corner_radius_4);
         int width = (layoutParams.MATCH_PARENT);
         int height = (int) getResources().getDimension(R.dimen.height_8);
@@ -230,11 +266,6 @@ public class CreateShopFragment extends Fragment {
 
 
     }
-
-
-
-
-
 
 
     @Override
@@ -371,6 +402,7 @@ public class CreateShopFragment extends Fragment {
         shop.setLat(String.valueOf(latLngShop.latitude));
         shop.setCreatedAt(UtilityGeneral.getCurrentDate(new Date()));
         shop.setShopActive(false);
+        shop.setHyper(isHyper);
 
         // generate pin code
         StringBuffer code = new StringBuffer("");
@@ -380,45 +412,160 @@ public class CreateShopFragment extends Fragment {
         code.append(UtilityGeneral.getCurrentDate(new Date()).charAt(9));
 
 
-        shop.setPinCode(code.substring(0,4));
+        shop.setPinCode(code.substring(0, 4));
 
 
-        if (UtilityGeneral.isOnline(getActivity())){
-        UtilityFirebase.createNewShop(shop, UtilityGeneral.loadUser(getActivity()).getObjectId(), new DatabaseReference.CompletionListener() {
+        stateNode = FirebaseDatabase.getInstance().getReference("COUNTRIES")
+                .child("EGYPT").child("GovAndCitiesName").child(shop.getGovernate());
+
+        eventListener = new ValueEventListener() {
             @Override
-            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                if (databaseError != null) {
-                 //   showMessageToast("حصل مشكله شوف النت ");
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    Type type = new TypeToken<TreeSet<String>>() {
+                    }.getType();
+
+                    try {
+                        treeSet = new Gson().fromJson(dataSnapshot.getValue().toString(), type);
+                        treeSet.add(shop.getCity());
+
+                    } catch (Exception e) {
+                    }
+                } else {
+                    treeSet = new TreeSet<>();
+                    treeSet.add(shop.getCity());
+
+                }
+
+                try {
+                    stateNode.removeEventListener(eventListener);
+                } catch (Exception e) {
+                }
+
+                stateNode.setValue(new Gson().toJson(treeSet), new DatabaseReference.CompletionListener() {
+                    @Override
+                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                        if (databaseError != null) {
+                            showMessageToast("حصل مشكله شوف النت ");
+                        } else {
+
+                            // for new node,  there is no listener for this node
+                            if (!shop.isHyper()) { // if shop
+                                DatabaseReference shopsNode = FirebaseDatabase.getInstance().getReference("COUNTRIES")
+                                        .child("EGYPT").child("GovAndCitiesStores").child(shop.getGovernate()).child(shop.getCity()).child("LocalShops");
+                                shop.setObjectId(shopsNode.push().getKey());
+                                shopsNode.child(shop.getObjectId()).setValue(shop, new DatabaseReference.CompletionListener() {
+                                    @Override
+                                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                                        if (databaseError != null) {
+                                            showMessageToast("حصل مشكله شوف النت ");
+
+                                        } else {
 
 
-                    morphToFailure(button);
-                    button.unblockTouch();
+                                            UtilityFirebase.createNewShop(shop, user.getObjectId(), new DatabaseReference.CompletionListener() {
+                                                @Override
+                                                public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                                                    if (databaseError != null) {
+                                                        showMessageToast("حصل مشكله شوف النت ");
+
+
+                                                        morphToFailure(button);
+                                                        button.unblockTouch();
 
 //                    Log.e("CreateNewShop", databaseError.getMessage());
-                } else {
-                    showMessageToast("تم إضافه المحل، شكرا لك");
-                    UtilityGeneral.saveShop(getActivity(), shop);
+                                                    } else {
+                                                        showMessageToast("تم إضافه المحل، شكرا لك");
+                                                        UtilityGeneral.saveShop(getActivity(), shop);
 
-                    morphToSuccess(button);
+                                                        morphToSuccess(button);
 
-                    Handler handler = new Handler();
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            getActivity().onBackPressed();
+                                                        Handler handler = new Handler();
+                                                        handler.postDelayed(new Runnable() {
+                                                            @Override
+                                                            public void run() {
+                                                                getActivity().onBackPressed();
 
-                        }
-                    }, 3000);
+                                                            }
+                                                        }, 3000);
 
-                //    getActivity().onBackPressed();
+                                                        //    getActivity().onBackPressed();
                     /*Attempt to invoke virtual method 'void android.support.v4.app.FragmentActivity.onBackPressed()' on a null object reference
                                                                    at com.app3roodk.UI.Shop.CreateShopFragment$8.onComplete(CreateShopFragment.java:288)*/
-                }
+                                                    }
+                                                }
+                                            });
+                                        }
+                                    }
+                                });
+                            } else { // if hyper
+                                DatabaseReference hypersNode = FirebaseDatabase.getInstance().getReference("COUNTRIES")
+                                        .child("EGYPT").child("GovAndCitiesStores").child(shop.getGovernate()).child(shop.getCity()).child("LocalHypers");
+                                shop.setObjectId(hypersNode.push().getKey());
+                                hypersNode.child(shop.getObjectId()).setValue(shop, new DatabaseReference.CompletionListener() {
+                                    @Override
+                                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                                        if (databaseError != null) {
+                                            showMessageToast("حصل مشكله شوف النت ");
+                                        } else {
+
+
+                                            UtilityFirebase.createNewShop(shop, user.getObjectId(), new DatabaseReference.CompletionListener() {
+                                                @Override
+                                                public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                                                    if (databaseError != null) {
+                                                        showMessageToast("حصل مشكله شوف النت ");
+
+
+                                                        morphToFailure(button);
+                                                        button.unblockTouch();
+
+//                    Log.e("CreateNewShop", databaseError.getMessage());
+                                                    } else {
+                                                        showMessageToast("تم إضافه المحل، شكرا لك");
+                                                        UtilityGeneral.saveShop(getActivity(), shop);
+
+                                                        morphToSuccess(button);
+
+                                                        Handler handler = new Handler();
+                                                        handler.postDelayed(new Runnable() {
+                                                            @Override
+                                                            public void run() {
+                                                                getActivity().onBackPressed();
+
+                                                            }
+                                                        }, 3000);
+
+                                                        //    getActivity().onBackPressed();
+                    /*Attempt to invoke virtual method 'void android.support.v4.app.FragmentActivity.onBackPressed()' on a null object reference
+                                                                   at com.app3roodk.UI.Shop.CreateShopFragment$8.onComplete(CreateShopFragment.java:288)*/
+                                                    }
+                                                }
+                                            });
+                                        }
+
+                                    }
+                                });
+                            }
+
+                        }
+
+                    }
+                });
             }
-        });
-        }
-        else
-        {
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                showMessageToast("حصل مشكله شوف النت ");
+
+            }
+        };
+
+
+        if (UtilityGeneral.isOnline(getActivity())) {
+            stateNode.addValueEventListener(eventListener);
+        } else {
+            showMessageToast("حصل مشكله شوف النت ");
             Handler handler = new Handler();
             handler.postDelayed(new Runnable() {
                 @Override
@@ -486,6 +633,20 @@ public class CreateShopFragment extends Fragment {
         }
     }
 
+    private void showMessage(String msg) {
+        try {
+            Snackbar.make(getView(), msg, Snackbar.LENGTH_LONG).show();
+        } catch (Exception ex) {
+        }
+    }
+
+    private void showMessageToast(String msg) {
+        try {
+            Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG).show();
+        } catch (Exception ex) {
+        }
+    }
+
     private class MyTextWatcher implements TextWatcher {
 
         private View view;
@@ -520,24 +681,15 @@ public class CreateShopFragment extends Fragment {
         }
     }
 
-    private void showMessage(String msg) {
-        try {
-            Snackbar.make(getView(), msg, Snackbar.LENGTH_LONG).show();
-        } catch (Exception ex) {
-        }
-    }
-
-    private void showMessageToast(String msg) {
-        try {
-            Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG).show();
-        } catch (Exception ex) {
-        }
-    }
-
     private class MyImgurUploadTask extends ImgurUploadTask {
         boolean done, success;
         String mImgurUrl = null;
         ImageButton imageButton;
+
+        public MyImgurUploadTask(Uri imageUri, ImageButton addShopLogo) {
+            super(imageUri, getActivity());
+            this.imageButton = addShopLogo;
+        }
 
         public boolean isDone() {
             return done;
@@ -545,11 +697,6 @@ public class CreateShopFragment extends Fragment {
 
         public boolean isSuccess() {
             return success;
-        }
-
-        public MyImgurUploadTask(Uri imageUri, ImageButton addShopLogo) {
-            super(imageUri, getActivity());
-            this.imageButton = addShopLogo;
         }
 
         @Override

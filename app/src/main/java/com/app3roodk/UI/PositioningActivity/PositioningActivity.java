@@ -19,7 +19,7 @@ import com.app3roodk.Constants;
 import com.app3roodk.R;
 import com.app3roodk.Schema.Shop;
 import com.app3roodk.Schema.User;
-import com.app3roodk.UI.CategoriesActivity.CategoriesActivity;
+import com.app3roodk.UI.MainActivity.MainActivity;
 import com.app3roodk.UtilityFirebase;
 import com.app3roodk.UtilityGeneral;
 import com.firebase.ui.auth.AuthUI;
@@ -37,11 +37,11 @@ import java.util.Iterator;
 
 public class PositioningActivity extends AppCompatActivity {
 
+    static public boolean stay;
     Button btnSignIn, btnChooseLocation;
     TextView txtSigningIn;
     ProgressBar progressBar;
     User user;
-    static public boolean stay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,7 +77,7 @@ public class PositioningActivity extends AppCompatActivity {
                                         Toast.makeText(getBaseContext(), "حصل مشكله شوف النت ", Toast.LENGTH_SHORT).show();
                                     } else {
                                         UtilityGeneral.saveUser(getBaseContext(), user);
-                                        startActivity(new Intent(PositioningActivity.this, CategoriesActivity.class));
+                                        startActivity(new Intent(PositioningActivity.this, MainActivity.class));
                                         setLoadingVisibility(View.INVISIBLE);
                                         stay = false;
                                         finish();
@@ -99,7 +99,7 @@ public class PositioningActivity extends AppCompatActivity {
                                             } catch (Exception ex) {
                                             }
                                             UtilityGeneral.saveUser(getBaseContext(), user);
-                                            startActivity(new Intent(PositioningActivity.this, CategoriesActivity.class));
+                                            startActivity(new Intent(PositioningActivity.this, MainActivity.class));
                                             setLoadingVisibility(View.INVISIBLE);
                                             stay = false;
                                             finish();
@@ -165,7 +165,7 @@ public class PositioningActivity extends AppCompatActivity {
                     user.setLat(String.valueOf(latLng.latitude));
                     user.setLon(String.valueOf(latLng.longitude));
                     UtilityGeneral.saveUser(getBaseContext(), user);
-                    startActivity(new Intent(PositioningActivity.this, CategoriesActivity.class));
+                    startActivity(new Intent(PositioningActivity.this, MainActivity.class));
                     finish();
                 } catch (Exception ex) {
                     Toast.makeText(getBaseContext(), "ممكن تفتح الخرائط على الأقل مرة", Toast.LENGTH_LONG).show();
@@ -225,7 +225,7 @@ public class PositioningActivity extends AppCompatActivity {
                 user.setLat(String.valueOf(latLng.latitude));
                 user.setLon(String.valueOf(latLng.longitude));
                 UtilityGeneral.saveUser(getBaseContext(), user);
-                startActivity(new Intent(PositioningActivity.this, CategoriesActivity.class));
+                startActivity(new Intent(PositioningActivity.this, MainActivity.class));
                 finish();
                 return;
             }
@@ -235,7 +235,7 @@ public class PositioningActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         if (!stay && UtilityGeneral.isRegisteredUser(getBaseContext())) {
-            startActivity(new Intent(PositioningActivity.this, CategoriesActivity.class));
+            startActivity(new Intent(PositioningActivity.this, MainActivity.class));
             finish();
         }
     }

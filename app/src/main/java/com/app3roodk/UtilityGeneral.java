@@ -504,8 +504,10 @@ public class UtilityGeneral {
         try {
             SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
             SharedPreferences.Editor editor = sharedPref.edit();
+            editor.clear();
             editor.putString(Constants.KEY_CITY, city);
             editor.commit();
+            editor.apply();
         } catch (Exception e) {
         }
     }

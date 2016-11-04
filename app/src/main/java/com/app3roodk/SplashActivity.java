@@ -5,8 +5,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 
-import com.app3roodk.UI.Feedback.FeedbackActivity;
-import com.app3roodk.UI.IntroActivity.IntroActivity;
+import com.app3roodk.UI.IntroActivity.NewIntroActivity;
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -20,12 +19,12 @@ public class SplashActivity extends AppCompatActivity {
         handler1.postDelayed(new Runnable() {
             @Override
             public void run() {
-                startActivity(new Intent(SplashActivity.this, IntroActivity.class));
+                startActivity(new Intent(SplashActivity.this, NewIntroActivity.class));
                 // startActivity(new Intent(SplashActivity.this, FeedbackActivity.class));
                 overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                 finish();
             }
-        }, 500);
+        }, 400);
     }
 
 }

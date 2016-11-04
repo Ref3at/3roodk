@@ -6,9 +6,9 @@
     android:layout_height="wrap_content"
     android:background="@color/white"
     android:gravity="start"
-    android:textColor="#000"
-    android:textSize="18sp"
-    android:padding="10dp"
     android:lines="1"
+    android:padding="10dp"
     android:singleLine="true"
+    android:textColor="@color/colorPrimaryDark"
+    android:textSize="18sp"
     tools:text="asdas" />

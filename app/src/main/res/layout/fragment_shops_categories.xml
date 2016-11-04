@@ -22,16 +22,6 @@
                 android:background="@drawable/custom_background_category">
 
 
-                <ImageButton
-                    android:id="@+id/imageButton1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="5dp"
-                    android:background="@android:color/transparent"
-                    android:padding="10dp"
-                    android:scaleType="centerInside"
-                    android:src="@drawable/c1" />
-
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -39,7 +29,7 @@
                     android:layout_centerHorizontal="true"
                     android:layout_marginBottom="10dp"
                     android:text="@string/resturants"
-                    android:textColor="@color/dark_grey"
+                    android:textColor="@color/categories_name"
                     android:textSize="@dimen/abc_text_size_medium_material" />
 
                 <View
@@ -57,12 +47,28 @@
                     android:layout_height="30dp"
                     android:layout_margin="8dp"
                     android:gravity="center"
-                    android:visibility="gone"
                     android:text="0"
                     android:textColor="#fff"
                     android:textSize="18sp"
                     android:textStyle="bold"
-                     />
+                    android:visibility="gone" />
+
+                <ImageButton
+                    android:id="@+id/imageButton1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_margin="5dp"
+                    android:background="@android:color/transparent"
+                    android:paddingBottom="1dp"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:paddingTop="5dp"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/c1" />
 
             </RelativeLayout>
 
@@ -75,10 +81,13 @@
                 <ImageButton
                     android:id="@+id/imageButton2"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_margin="5dp"
                     android:background="@android:color/transparent"
-                    android:padding="10dp"
+                    android:paddingBottom="1dp"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:paddingTop="5dp"
                     android:scaleType="centerInside"
                     android:src="@drawable/c2" />
 
@@ -89,7 +98,7 @@
                     android:layout_centerHorizontal="true"
                     android:layout_marginBottom="10dp"
                     android:text="@string/home_tools"
-                    android:textColor="@color/dark_grey"
+                    android:textColor="@color/categories_name"
                     android:textSize="@dimen/abc_text_size_medium_material" />
 
                 <View
@@ -128,10 +137,13 @@
                 <ImageButton
                     android:id="@+id/imageButton3"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_margin="5dp"
                     android:background="@android:color/transparent"
-                    android:padding="10dp"
+                    android:paddingBottom="1dp"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:paddingTop="5dp"
                     android:scaleType="centerInside"
                     android:src="@drawable/c3" />
 
@@ -142,7 +154,7 @@
                     android:layout_centerHorizontal="true"
                     android:layout_marginBottom="10dp"
                     android:text="@string/accessories"
-                    android:textColor="@color/dark_grey"
+                    android:textColor="@color/categories_name"
                     android:textSize="@dimen/abc_text_size_medium_material" />
 
                 <View
@@ -185,10 +197,13 @@
                 <ImageButton
                     android:id="@+id/imageButton4"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_margin="5dp"
                     android:background="@android:color/transparent"
-                    android:padding="10dp"
+                    android:paddingBottom="1dp"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:paddingTop="5dp"
                     android:scaleType="centerInside"
                     android:src="@drawable/c4" />
 
@@ -199,7 +214,7 @@
                     android:layout_centerHorizontal="true"
                     android:layout_marginBottom="10dp"
                     android:text="@string/mobile_category"
-                    android:textColor="@color/dark_grey"
+                    android:textColor="@color/categories_name"
                     android:textSize="@dimen/abc_text_size_medium_material" />
 
                 <View
@@ -221,9 +236,8 @@
                     android:text="0"
                     android:textColor="#fff"
                     android:textSize="18sp"
-                    android:visibility="gone"
                     android:textStyle="bold"
-                    />
+                    android:visibility="gone" />
             </RelativeLayout>
 
             <RelativeLayout
@@ -235,10 +249,13 @@
                 <ImageButton
                     android:id="@+id/imageButton5"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_margin="5dp"
                     android:background="@android:color/transparent"
-                    android:padding="10dp"
+                    android:paddingBottom="1dp"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:paddingTop="5dp"
                     android:scaleType="centerInside"
                     android:src="@drawable/c5" />
 
@@ -249,7 +266,7 @@
                     android:layout_centerHorizontal="true"
                     android:layout_marginBottom="10dp"
                     android:text="@string/computer"
-                    android:textColor="@color/dark_grey"
+                    android:textColor="@color/categories_name"
                     android:textSize="@dimen/abc_text_size_medium_material" />
 
                 <View
@@ -284,10 +301,13 @@
                 <ImageButton
                     android:id="@+id/imageButton6"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_margin="5dp"
                     android:background="@android:color/transparent"
-                    android:padding="10dp"
+                    android:paddingBottom="1dp"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:paddingTop="5dp"
                     android:scaleType="centerInside"
                     android:src="@drawable/c6" />
 
@@ -298,7 +318,7 @@
                     android:layout_centerHorizontal="true"
                     android:layout_marginBottom="10dp"
                     android:text="@string/shoes"
-                    android:textColor="@color/dark_grey"
+                    android:textColor="@color/categories_name"
                     android:textSize="@dimen/abc_text_size_medium_material" />
 
                 <View
@@ -336,16 +356,6 @@
                 android:layout_weight="1"
                 android:background="@drawable/custom_background_category">
 
-                <ImageButton
-                    android:id="@+id/imageButton7"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_margin="5dp"
-                    android:background="@android:color/transparent"
-                    android:padding="10dp"
-                    android:scaleType="centerInside"
-                    android:src="@drawable/c7" />
-
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -353,7 +363,7 @@
                     android:layout_centerHorizontal="true"
                     android:layout_marginBottom="10dp"
                     android:text="@string/clothes"
-                    android:textColor="@color/dark_grey"
+                    android:textColor="@color/categories_name"
                     android:textSize="@dimen/abc_text_size_medium_material" />
 
                 <View
@@ -377,6 +387,22 @@
                     android:textSize="18sp"
                     android:textStyle="bold"
                     android:visibility="gone" />
+
+                <ImageButton
+                    android:id="@+id/imageButton7"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_margin="5dp"
+                    android:background="@android:color/transparent"
+                    android:paddingBottom="1dp"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:paddingTop="5dp"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/c7" />
             </RelativeLayout>
 
             <RelativeLayout
@@ -388,10 +414,13 @@
                 <ImageButton
                     android:id="@+id/imageButton8"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_margin="5dp"
                     android:background="@android:color/transparent"
-                    android:padding="10dp"
+                    android:paddingBottom="1dp"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:paddingTop="5dp"
                     android:scaleType="centerInside"
                     android:src="@drawable/c8" />
 
@@ -402,7 +431,7 @@
                     android:layout_centerHorizontal="true"
                     android:layout_marginBottom="10dp"
                     android:text="@string/super_market"
-                    android:textColor="@color/dark_grey"
+                    android:textColor="@color/categories_name"
                     android:textSize="@dimen/abc_text_size_medium_material" />
 
                 <View
@@ -438,10 +467,13 @@
                 <ImageButton
                     android:id="@+id/imageButton9"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_margin="5dp"
                     android:background="@android:color/transparent"
-                    android:padding="10dp"
+                    android:paddingBottom="1dp"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:paddingTop="5dp"
                     android:scaleType="centerInside"
                     android:src="@drawable/c9" />
 
@@ -452,7 +484,7 @@
                     android:layout_centerHorizontal="true"
                     android:layout_marginBottom="10dp"
                     android:text="@string/services"
-                    android:textColor="@color/dark_grey"
+                    android:textColor="@color/categories_name"
                     android:textSize="@dimen/abc_text_size_medium_material" />
 
                 <View
@@ -485,16 +517,15 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <com.github.ybq.android.spinkit.SpinKitView
-                xmlns:app="http://schemas.android.com/apk/res-auto"
+            <com.github.ybq.android.spinkit.SpinKitView xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/progress"
                 style="@style/SpinKitView.Circle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginLeft="20dp"
-                android:layout_width="0dp"
-                android:visibility="gone"
-                android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:visibility="gone"
                 app:SpinKit_Color="@color/colorPrimary" />
 
             <TextView
@@ -506,7 +537,7 @@
                 android:gravity="center"
                 android:text="@string/with_us_sale"
                 android:textColor="@color/colorPrimaryDark"
-                android:textSize="30sp"
+                android:textSize="23sp"
                 android:textStyle="bold" />
 
         </LinearLayout>

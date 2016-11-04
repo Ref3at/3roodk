@@ -32,9 +32,9 @@ import com.app3roodk.R;
 import com.app3roodk.Schema.Shop;
 import com.app3roodk.Schema.User;
 import com.app3roodk.UI.About.AboutActivity;
-import com.app3roodk.UI.CategoriesActivity.CategoriesActivity;
 import com.app3roodk.UI.FavoritesCards.FavoritesActivity;
 import com.app3roodk.UI.Feedback.FeedbackActivity;
+import com.app3roodk.UI.MainActivity.MainActivity;
 import com.app3roodk.UI.Offer.AddNewOfferActivity;
 import com.app3roodk.UtilityFirebase;
 import com.app3roodk.UtilityGeneral;
@@ -58,6 +58,9 @@ public class ListShopsActivity extends AppCompatActivity {
 
     DrawerLayout mDrawerLayout;
     NavigationView mNavigationView;
+    //region Signing
+    User signingUser;
+    ProgressDialog signingProgress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -152,7 +155,7 @@ public class ListShopsActivity extends AppCompatActivity {
 
                             case R.id.action_home:
                                 mDrawerLayout.closeDrawer(GravityCompat.END);
-                                startActivityForResult(new Intent(ListShopsActivity.this, CategoriesActivity.class), 222);
+                                startActivityForResult(new Intent(ListShopsActivity.this, MainActivity.class), 222);
                                 return true;
 
                             case R.id.action_view_my_shop:
@@ -247,6 +250,8 @@ public class ListShopsActivity extends AppCompatActivity {
         }
     }
 
+    //endregion
+
     private void showUserInfoNavigationDrawer() {
         //show info of the user
         try {
@@ -314,12 +319,6 @@ public class ListShopsActivity extends AppCompatActivity {
             startActivityForResult(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.facebook.com/3roodk")), 222);
         }
     }
-
-    //endregion
-
-    //region Signing
-    User signingUser;
-    ProgressDialog signingProgress;
 
     private void signingClick() {
         if (!getLatLng(Constants.PERMISSION_MAPS_SIGN_IN)) return;

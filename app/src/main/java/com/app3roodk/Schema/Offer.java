@@ -11,64 +11,11 @@ import ckm.simple.sql_provider.annotation.SimpleSQLColumn;
 import ckm.simple.sql_provider.annotation.SimpleSQLTable;
 
 @SimpleSQLTable(table = "test", provider = "TestProvider")
-public class Offer {
+public class Offer implements OffersInterface {
 
 
     @SimpleSQLColumn(value = "col_int", primary = true)
     public int anInt;
-
-    @SimpleSQLColumn("objectId")
-    private String objectId;
-
-    @SimpleSQLColumn("title")
-    private String title; //*
-
-    @SimpleSQLColumn("updatedAt")
-    private String updatedAt;
-
-    @SimpleSQLColumn("createdAt")
-    private String createdAt;
-
-    @SimpleSQLColumn("Desc")
-    private String Desc; //*
-
-    @SimpleSQLColumn("Period")
-    private String Period; //*
-
-    @SimpleSQLColumn("endTime")
-    private String endTime;
-
-    @SimpleSQLColumn("viewNum")
-    private int viewNum;
-
-    @SimpleSQLColumn("favoriteNum")
-    private int favoriteNum;
-
-    @SimpleSQLColumn("CategoryName")
-    private String CategoryName; //*
-
-    @SimpleSQLColumn("ShopId")
-    private String ShopId; //*
-
-    @SimpleSQLColumn("ShopName")
-    private String ShopName; //*
-
-    @SimpleSQLColumn("city")
-    private String city; //*
-
-    @SimpleSQLColumn("lat")
-    private String lat; //*
-
-    @SimpleSQLColumn("lon")
-    private String lon; //*
-
-    @SimpleSQLColumn("userId")
-    private String userId;
-
-    @SimpleSQLColumn("userNotificationToken")
-    private String userNotificationToken;
-
-
     /*
      * as simple content provider does not accept arraylist and hashmap
      * so we use another two String variables to represent them
@@ -77,7 +24,40 @@ public class Offer {
     */
     @SimpleSQLColumn("shopInfoForFavoeites")
     String shopInfoForFavoeites;
-
+    @SimpleSQLColumn("objectId")
+    private String objectId;
+    @SimpleSQLColumn("title")
+    private String title; //*
+    @SimpleSQLColumn("updatedAt")
+    private String updatedAt;
+    @SimpleSQLColumn("createdAt")
+    private String createdAt;
+    @SimpleSQLColumn("Desc")
+    private String Desc; //*
+    @SimpleSQLColumn("Period")
+    private String Period; //*
+    @SimpleSQLColumn("endTime")
+    private String endTime;
+    @SimpleSQLColumn("viewNum")
+    private int viewNum;
+    @SimpleSQLColumn("favoriteNum")
+    private int favoriteNum;
+    @SimpleSQLColumn("CategoryName")
+    private String CategoryName; //*
+    @SimpleSQLColumn("ShopId")
+    private String ShopId; //*
+    @SimpleSQLColumn("ShopName")
+    private String ShopName; //*
+    @SimpleSQLColumn("city")
+    private String city; //*
+    @SimpleSQLColumn("lat")
+    private String lat; //*
+    @SimpleSQLColumn("lon")
+    private String lon; //*
+    @SimpleSQLColumn("userId")
+    private String userId;
+    @SimpleSQLColumn("userNotificationToken")
+    private String userNotificationToken;
     @SimpleSQLColumn("hashmapUsersRates")
     private String hashmapUsersRates;
 

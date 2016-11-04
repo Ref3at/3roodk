@@ -1,8 +1,6 @@
-package com.app3roodk.UI.CategoriesActivity;
+package com.app3roodk.UI.MainActivity;
 
-import android.content.Context;
 import android.content.Intent;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -10,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.app3roodk.R;
 import com.app3roodk.Schema.ExistOffers;
@@ -26,26 +23,26 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.loopj.android.http.TextHttpResponseHandler;
 
-import java.util.ArrayList;
 import java.util.Date;
 
 import cz.msebera.android.httpclient.Header;
 
-public class CategoriesOfflineShopsFragment extends Fragment {
+public class ShopsCategoriesFragment extends Fragment {
 
+    public static String SelectedCity;
+    public ValueEventListener activeOffersListener;
     TextView t1, t2, t3, t4, t5, t6, t7, t8, t9; // for text offers no
     View v1, v2, v3, v4, v5, v6, v7, v8, v9; // for red circle
     Boolean bOfferExists = false;
     ValueEventListener availableOfferListener;
-    public ValueEventListener activeOffersListener;
-    String CityChoose;
     String previousCity;
     Thread trdCurrentLocationSpinner;
     SpinKitView progress;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_categories_offline_shops, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_shops_categories, container, false);
         init(rootView);
+        updateOffersNumber(SelectedCity);
         return rootView;
     }
 
@@ -259,10 +256,10 @@ public class CategoriesOfflineShopsFragment extends Fragment {
     }
 
     public void goToCards(View view) {
-        if (CityChoose == null) return;
+        if (SelectedCity == null) return;
         int x = view.getId();
         Intent i = new Intent(getActivity(), CardsActivity.class);
-        i.putExtra("city", CityChoose);
+        i.putExtra("city", SelectedCity);
         i.putExtra("online", false);
         switch (x) {
 
@@ -329,45 +326,53 @@ public class CategoriesOfflineShopsFragment extends Fragment {
         super.onDestroy();
     }
 
-    public void changeCities(int i, ArrayList<String> lstCities) {
-        try {
-            if (i == 0)
-                if (!((LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE)).isProviderEnabled(LocationManager.GPS_PROVIDER))
-                    Toast.makeText(getActivity().getBaseContext(), "افتح الـ Location او سيتم أخذ آخر مكان مسجل", Toast.LENGTH_SHORT).show();
-            hideViews();
-            progress.setVisibility(View.VISIBLE);
-            if (trdCurrentLocationSpinner != null && trdCurrentLocationSpinner.isAlive())
-                trdCurrentLocationSpinner.interrupt();
-            if (i == 0) {
-                trdCurrentLocationSpinner = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        final String city = UtilityGeneral.getCurrentCityArabic(getActivity());
-                        getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (city == null) {
-                                    hideViews();
-                                    bOfferExists = false;
-                                    showMessage("لا يوجد عروض فى منطقتك الحاليه");
-                                    return;
-                                }
-                                updateOffersNumber(city);
-                                CityChoose = city;
-                            }
-                        });
-                    }
-                });
-                trdCurrentLocationSpinner.start();
-            } else {
-                updateOffersNumber(lstCities.get(i));
-                CityChoose = lstCities.get(i);
-            }
+    public void changeCities(String city) {
+//            hideViews();
+//            progress.setVisibility(View.VISIBLE);
+        SelectedCity = city;
+        updateOffersNumber(city);
 
-        } catch (Exception ex) {
 
-        }
     }
+//    public void changeCities(int i, ArrayList<String> lstCities) {
+//        try {
+//            if (i == 0)
+//                if (!((LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE)).isProviderEnabled(LocationManager.GPS_PROVIDER))
+//                    Toast.makeText(getActivity().getBaseContext(), "افتح الـ Location او سيتم أخذ آخر مكان مسجل", Toast.LENGTH_SHORT).show();
+//            hideViews();
+//            progress.setVisibility(View.VISIBLE);
+//            if (trdCurrentLocationSpinner != null && trdCurrentLocationSpinner.isAlive())
+//                trdCurrentLocationSpinner.interrupt();
+//            if (i == 0) {
+//                trdCurrentLocationSpinner = new Thread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        final String city = UtilityGeneral.getCurrentCityArabic(getActivity());
+//                        getActivity().runOnUiThread(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                if (city == null) {
+//                                    hideViews();
+//                                    bOfferExists = false;
+//                                    showMessage("لا يوجد عروض فى منطقتك الحاليه");
+//                                    return;
+//                                }
+//                                updateOffersNumber(city);
+//                                SelectedCity = city;
+//                            }
+//                        });
+//                    }
+//                });
+//                trdCurrentLocationSpinner.start();
+//            } else {
+//                updateOffersNumber(lstCities.get(i));
+//                SelectedCity = lstCities.get(i);
+//            }
+//
+//        } catch (Exception ex) {
+//
+//        }
+//    }
 
     private void updateOffersNumber(String cityName) {
 
@@ -386,6 +391,7 @@ public class CategoriesOfflineShopsFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        updateOffersNumber(SelectedCity);
     }
 
     private void loadCity() {

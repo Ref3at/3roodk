@@ -73,6 +73,9 @@ public class CardsActivity extends AppCompatActivity implements CardsOfflineFrag
     DrawerLayout mDrawerLayout;
     NavigationView mNavigationView;
     FloatingActionButton fab;
+    //region Signing
+    User signingUser;
+    ProgressDialog signingProgress;
 
     public static Intent getOpenFacebookIntent(Context context) {
         try {
@@ -463,20 +466,16 @@ public class CardsActivity extends AppCompatActivity implements CardsOfflineFrag
         hideDrawerItems();
     }
 
-    //region Signing
-    User signingUser;
-    ProgressDialog signingProgress;
-
     private void signingClick() {
-        if (!getLatLng(Constants.PERMISSION_MAPS_SIGN_IN)) return;
+//        if (!getLatLng(Constants.PERMISSION_MAPS_SIGN_IN)) return;
         signingUser = new User();
-        try {
-            LatLng latLng = UtilityGeneral.getCurrentLonAndLat(getBaseContext());
-            signingUser.setLat(String.valueOf(latLng.latitude));
-            signingUser.setLon(String.valueOf(latLng.longitude));
-        } catch (Exception ex) {
-            Toast.makeText(getBaseContext(), "ممكن تفتح الخرائط على الأقل مرة", Toast.LENGTH_LONG).show();
-        }
+//        try {
+//            LatLng latLng = UtilityGeneral.getCurrentLonAndLat(getBaseContext());
+//            signingUser.setLat(String.valueOf(latLng.latitude));
+//            signingUser.setLon(String.valueOf(latLng.longitude));
+//        } catch (Exception ex) {
+//            Toast.makeText(getBaseContext(), "ممكن تفتح الخرائط على الأقل مرة", Toast.LENGTH_LONG).show();
+//        }
         startActivityForResult(
                 UtilityFirebase.getAuthIntent(),
                 Constants.RC_SIGN_IN);
