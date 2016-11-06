@@ -43,6 +43,8 @@ import java.util.Iterator;
 public class AllOffersFragment extends Fragment {
 
     public static String SelectedCity;
+    public static String SelectedGov;
+
 
     SpinKitView progress;
     ExpandableHeightGridView gridView;

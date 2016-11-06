@@ -125,6 +125,11 @@ public class UtilityFirebase {
         return FirebaseDatabase.getInstance().getReference("Offers").child(city).child(category).orderByChild("endTime").startAt(UtilityGeneral.getCurrentDate(new Date()));
     }
 
+    static public Query getAllCityShops(String gov, String city) {
+        return FirebaseDatabase.getInstance().getReference("COUNTRIES").child("EGYPT")
+                .child("GovAndCitiesStores").child(gov).child(city).child("LocalShops");
+    }
+
     static public DatabaseReference getActiveExistOffersOnline() {
         return FirebaseDatabase.getInstance().getReference("OffersExistOnline");
     }

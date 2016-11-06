@@ -120,7 +120,7 @@ public class CitySelectionActivity extends AppCompatActivity {
                 String city = childItem.title;
 
                 Intent returnIntent = new Intent();
-                returnIntent.putExtra("result", city);
+                returnIntent.putExtra("city", city);
                 returnIntent.putExtra("gov", gov);
                 setResult(Activity.RESULT_OK, returnIntent);
                 finish();

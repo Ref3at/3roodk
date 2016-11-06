@@ -504,8 +504,18 @@ public class UtilityGeneral {
         try {
             SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
             SharedPreferences.Editor editor = sharedPref.edit();
-            editor.clear();
             editor.putString(Constants.KEY_CITY, city);
+            editor.commit();
+            editor.apply();
+        } catch (Exception e) {
+        }
+    }
+
+    static public void saveGov(Context context, String gov) {
+        try {
+            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+            SharedPreferences.Editor editor = sharedPref.edit();
+            editor.putString(Constants.KEY_GOVERNATE, gov);
             editor.commit();
             editor.apply();
         } catch (Exception e) {
@@ -514,6 +524,10 @@ public class UtilityGeneral {
 
     static public String loadCity(Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context).getString(Constants.KEY_CITY, "No");
+    }
+
+    static public String loadGov(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context).getString(Constants.KEY_GOVERNATE, "No");
     }
 
     static public void saveSpinnerCity(Context context, String city) {

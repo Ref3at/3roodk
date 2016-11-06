@@ -30,6 +30,8 @@ import cz.msebera.android.httpclient.Header;
 public class ShopsCategoriesFragment extends Fragment {
 
     public static String SelectedCity;
+    public static String SelectedGov;
+
     public ValueEventListener activeOffersListener;
     TextView t1, t2, t3, t4, t5, t6, t7, t8, t9; // for text offers no
     View v1, v2, v3, v4, v5, v6, v7, v8, v9; // for red circle

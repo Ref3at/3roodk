@@ -22,11 +22,9 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.app3roodk.Constants;
 import com.app3roodk.R;
-import com.app3roodk.Schema.Offer;
 import com.app3roodk.Schema.Shop;
-import com.app3roodk.UI.DetailActivity.DetailActivity;
+import com.app3roodk.UI.Shop.ViewShopActivity;
 import com.app3roodk.UtilityFirebase;
 import com.app3roodk.UtilityGeneral;
 import com.bumptech.glide.Glide;
@@ -40,7 +38,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 
 /**
@@ -50,26 +47,22 @@ import java.util.Iterator;
 public class AllShopsFragment extends Fragment {
 
     public static String SelectedCity;
+    public static String SelectedGov;
+
 
     SpinKitView progress;
     ExpandableHeightGridView gridView;
-    ValueEventListener[] shopsOfferListeners;
-    String[] categoriesArray;
+    ValueEventListener shopsListeners;
     private SampleAdapter adapter;
-    private ArrayList<Offer> lstAllOffers;
-    private Query[] qrShopsOffers;
+    private ArrayList<Shop> lstAllShops;
+    private Query qrShopsOffers;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_all_shops, container, false);
-
-        categoriesArray = getResources().getStringArray(R.array.cat_array_eng);
-        qrShopsOffers = new Query[9];
-        shopsOfferListeners = new ValueEventListener[9];
         init(rootView);
-
         return rootView;
     }
 
@@ -82,67 +75,60 @@ public class AllShopsFragment extends Fragment {
         }
         progress = (SpinKitView) rootView.findViewById(R.id.progress);
         gridView = (ExpandableHeightGridView) rootView.findViewById(R.id.grid_view);
-        lstAllOffers = new ArrayList<>();
-        adapter = new SampleAdapter(getActivity(), R.layout.item_hyper, lstAllOffers);
+        lstAllShops = new ArrayList<>();
+        adapter = new SampleAdapter(getActivity(), R.layout.item_hyper, lstAllShops);
         gridView.setAdapter(adapter);
         gridView.setExpanded(true);
         clickConfig();
         initListener();
-        getAllOffers();
+        getAllShops();
     }
 
-    private void getAllOffers() {
+    private void getAllShops() {
 
         progress.setVisibility(View.VISIBLE);
-
-        for (int i = 0; i < 9; i++) {
-            try {
-                qrShopsOffers[i].removeEventListener(shopsOfferListeners[i]);
-            } catch (Exception ignored) {
-            }
-            qrShopsOffers[i] = UtilityFirebase.getActiveOffers(SelectedCity, categoriesArray[i]);
-            qrShopsOffers[i].addValueEventListener(shopsOfferListeners[i]);
-
+        try {
+            qrShopsOffers.removeEventListener(shopsListeners);
+        } catch (Exception ignored) {
         }
+        qrShopsOffers = UtilityFirebase.getAllCityShops(SelectedGov, SelectedCity);
+        qrShopsOffers.addValueEventListener(shopsListeners);
 
 
     }
 
 
     private void initListener() {
-        lstAllOffers.clear();
 
-        for (int i = 0; i < 9; i++) {
+        shopsListeners = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                lstAllShops.clear();
+                progress.setVisibility(View.GONE);
 
-
-            shopsOfferListeners[i] = new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    adapter.notifyDataSetChanged();
-                    progress.setVisibility(View.GONE);
-                    Iterator<DataSnapshot> iterator = dataSnapshot.getChildren().iterator();
-                    Offer of;
-                    DataSnapshot ds;
-                    while (iterator.hasNext()) {
-                        ds = iterator.next();
-                        of = ds.getValue(Offer.class);
-                        of.setObjectId(ds.getKey());
-                        lstAllOffers.add(of);
-                    }
-
-//                    if (lstAllOffers.size() == 0)
-//                        showMessage("لا يوجد عروض لهايبرات فى منطقتك الحاليه");
-                    adapter.notifyDataSetChanged();
+                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                    Shop shop = postSnapshot.getValue(Shop.class);
+                    lstAllShops.add(shop);
                 }
 
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                    progress.setVisibility(View.GONE);
-                    showMessage("بص على النت كده");
-                }
-            };
+                if (lstAllShops.size() == 0)
+                    showMessage("لا يوجد محلات فى مدينتك الحاليه");
+                adapter.notifyDataSetChanged();
 
-        }
+                try {
+                    qrShopsOffers.removeEventListener(shopsListeners);
+                } catch (Exception ignored) {
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                progress.setVisibility(View.GONE);
+                showMessage("بص على النت كده");
+            }
+        };
+
+
     }
 
     private void clickConfig() {
@@ -150,18 +136,12 @@ public class AllShopsFragment extends Fragment {
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
-
-                Offer offer = (Offer) lstAllOffers.get(i);
-
-                Intent intent = new Intent(view.getContext(), DetailActivity.class);
-                // FirebaseDatabase.getInstance().getReference("Offers").child(offer.getCity()).child(offer.getCategoryName()).child(offer.getObjectId()).child("viewNum").setValue(offer.getViewNum() + 1);
-                offer.setViewNum(offer.getViewNum() + 1);
-                intent.putExtra("offer", new Gson().toJson(offer));
-                intent.putExtra("details", Constants.DETAILS_OFFLINE_SHOPS);
-                view.getContext().startActivity(intent);
-
-
+                Shop shop = (Shop) lstAllShops.get(i);
+                if (shop != null) {
+                    Intent intent = new Intent(getActivity(), ViewShopActivity.class);
+                    intent.putExtra("shop", new Gson().toJson(shop));
+                    view.getContext().startActivity(intent);
+                }
             }
         });
 
@@ -176,14 +156,14 @@ public class AllShopsFragment extends Fragment {
     class SampleAdapter extends ArrayAdapter {
 
         private LayoutInflater mLayoutInflater;
-        private ArrayList<Offer> lstOffersAll;
+        private ArrayList<Shop> lstShopssAll;
 
 
         SampleAdapter(Context context, int textViewResourceId,
-                      ArrayList<Offer> objects) {
+                      ArrayList<Shop> objects) {
             super(context, textViewResourceId);
             this.mLayoutInflater = LayoutInflater.from(context);
-            this.lstOffersAll = objects;
+            this.lstShopssAll = objects;
         }
 
         @NonNull
@@ -201,48 +181,30 @@ public class AllShopsFragment extends Fragment {
                 holder = (ViewHolder) convertView.getTag();
             }
 
+            Shop shop = lstShopssAll.get(position);
+            holder.txtView.setText(shop.getName());
 
-            Offer offer = (Offer) lstOffersAll.get(position);
-
-            holder.txtView.setText(offer.getShopName());
-            UtilityFirebase.getShop(offer).addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    try {
-                        Shop shop = dataSnapshot.getValue(Shop.class);
-                        if (shop.getLogoId() == null) {
-                            Glide.with(getActivity()).load(R.drawable.defaultavatar).asBitmap().into(new BitmapImageViewTarget(holder.imgView) {
-                                @Override
-                                protected void setResource(Bitmap resource) {
-                                    RoundedBitmapDrawable circularBitmapDrawable =
-                                            RoundedBitmapDrawableFactory.create(getActivity().getResources(), resource);
-                                    circularBitmapDrawable.setCircular(true);
-                                    holder.imgView.setImageDrawable(circularBitmapDrawable);
-                                }
-                            });
-                        } else {
-                            Glide.with(getActivity()).load(shop.getLogoId()).asBitmap().into(new BitmapImageViewTarget(holder.imgView) {
-                                @Override
-                                protected void setResource(Bitmap resource) {
-                                    RoundedBitmapDrawable circularBitmapDrawable =
-                                            RoundedBitmapDrawableFactory.create(getActivity().getResources(), resource);
-                                    circularBitmapDrawable.setCircular(true);
-                                    holder.imgView.setImageDrawable(circularBitmapDrawable);
-                                }
-                            });
-                        }
-
-                    } catch (Exception ex) {
+            if (shop.getLogoId() == null) {
+                Glide.with(getActivity()).load(R.drawable.defaultavatar).asBitmap().into(new BitmapImageViewTarget(holder.imgView) {
+                    @Override
+                    protected void setResource(Bitmap resource) {
+                        RoundedBitmapDrawable circularBitmapDrawable =
+                                RoundedBitmapDrawableFactory.create(getActivity().getResources(), resource);
+                        circularBitmapDrawable.setCircular(true);
+                        holder.imgView.setImageDrawable(circularBitmapDrawable);
                     }
-                }
-
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
-
+                });
+            } else {
+                Glide.with(getActivity()).load(shop.getLogoId()).asBitmap().into(new BitmapImageViewTarget(holder.imgView) {
+                    @Override
+                    protected void setResource(Bitmap resource) {
+                        RoundedBitmapDrawable circularBitmapDrawable =
+                                RoundedBitmapDrawableFactory.create(getActivity().getResources(), resource);
+                        circularBitmapDrawable.setCircular(true);
+                        holder.imgView.setImageDrawable(circularBitmapDrawable);
+                    }
+                });
+            }
 
             return convertView;
         }
@@ -250,7 +212,7 @@ public class AllShopsFragment extends Fragment {
 
         @Override
         public int getCount() {
-            return lstOffersAll.size();
+            return lstShopssAll.size();
         }
 
 

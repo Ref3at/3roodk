@@ -136,8 +136,11 @@ public class NewIntroActivity extends AppIntro {
             case IntoScreen4FindingCity.REQUEST_CHOSE_CITY:
 
                 if (resultCode == Activity.RESULT_OK) {
-                    String result = data.getStringExtra("result");
+                    String result = data.getStringExtra("city");
                     UtilityGeneral.saveCity(mContext, result);
+                    UtilityGeneral.saveGov(this, data.getStringExtra("gov"));
+
+
                     introScreen5.updatingCity(result);
                     theCity = result;
                     new Handler().postDelayed(new Runnable() {

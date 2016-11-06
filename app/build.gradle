@@ -81,6 +81,8 @@ dependencies {
     compile 'com.github.hackware1993:MagicIndicator:1.4.0'
     compile 'com.etsy.android.grid:library:1.0.5'
     compile 'com.github.paolorotolo:appintro:4.1.0'
+    compile 'me.grantland:autofittextview:0.2.+'
+
 
 }
 

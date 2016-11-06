@@ -68,6 +68,8 @@ import com.like.OnLikeListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import me.grantland.widget.AutofitTextView;
+
 public class MainActivity extends AppCompatActivity {
 
     DrawerLayout mDrawerLayout;
@@ -79,9 +81,10 @@ public class MainActivity extends AppCompatActivity {
     LikeButton btnNotification;
     RelativeLayout titleCityName;
 
-    TextView cityName;
+    AutofitTextView cityName;
 
     String currentCity;
+    String currentGov;
 
     ViewPager mViewPager;
 
@@ -94,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
         // Adding Toolbar to Main screen
         FirebaseInstanceId.getInstance().getToken();
 
-        cityName = (TextView) findViewById(R.id.textView_city);
+        cityName = (AutofitTextView) findViewById(R.id.textView_city);
 
         titleCityName = (RelativeLayout) findViewById(R.id.title_city_name);
         titleCityName.setOnClickListener(new View.OnClickListener() {
@@ -118,7 +121,8 @@ public class MainActivity extends AppCompatActivity {
 
         currentCity = UtilityGeneral.loadCity(this);
         cityName.setText("عروض " + currentCity.toString());
-        setupViewPager(mViewPager, currentCity);
+        currentGov = UtilityGeneral.loadGov(this);
+        setupViewPager(mViewPager, currentGov, currentCity);
 
 
         for (int i = 0; i < tabs.getTabCount(); i++) {
@@ -167,10 +171,14 @@ public class MainActivity extends AppCompatActivity {
 
         if (requestCode == 1) {
             if (resultCode == Activity.RESULT_OK) {
-                String result = data.getStringExtra("result");
-                cityName.setText("عروض " + result.toString());
-                UtilityGeneral.saveCity(this, result);
-                setupViewPager(mViewPager, result);
+                String city = data.getStringExtra("city");
+                cityName.setText("عروض " + city.toString());
+                String gov = data.getStringExtra("gov");
+
+
+                UtilityGeneral.saveCity(this, city);
+                UtilityGeneral.saveGov(this, gov);
+                setupViewPager(mViewPager, gov, city);
 
             }
             if (resultCode == Activity.RESULT_CANCELED) {
@@ -209,13 +217,14 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void setupViewPager(ViewPager viewPager, String city) {
+    private void setupViewPager(ViewPager viewPager, String gov, String city) {
 
         Adapter adapter = new Adapter(getSupportFragmentManager());
 
         Bundle arguments5 = new Bundle();
         MapFragment fragment5 = new MapFragment();
         MapFragment.SelectedCity = city;
+        MapFragment.SelectedGov = gov;
 
         if (!fragment5.isAdded()) {
             fragment5.setArguments(arguments5);
@@ -227,6 +236,7 @@ public class MainActivity extends AppCompatActivity {
 
         AllHypersFragment fragment2 = new AllHypersFragment();
         AllHypersFragment.SelectedCity = city;
+        AllHypersFragment.SelectedGov = gov;
         if (!fragment2.isAdded()) {
             fragment2.setArguments(arguments2);
         }
@@ -235,6 +245,7 @@ public class MainActivity extends AppCompatActivity {
         Bundle arguments4 = new Bundle();
         AllShopsFragment fragment4 = new AllShopsFragment();
         AllShopsFragment.SelectedCity = city;
+        AllShopsFragment.SelectedGov = gov;
 
         if (!fragment4.isAdded()) {
             fragment4.setArguments(arguments4);
@@ -243,6 +254,7 @@ public class MainActivity extends AppCompatActivity {
 
         Bundle arguments1 = new Bundle();
         ShopsCategoriesFragment.SelectedCity = city;
+        ShopsCategoriesFragment.SelectedGov = gov;
         ShopsCategoriesFragment fragment1 = new ShopsCategoriesFragment();
         if (!fragment1.isAdded()) {
             fragment1.setArguments(arguments1);
@@ -253,6 +265,7 @@ public class MainActivity extends AppCompatActivity {
         Bundle arguments3 = new Bundle();
         AllOffersFragment fragment3 = new AllOffersFragment();
         AllOffersFragment.SelectedCity = city;
+        AllOffersFragment.SelectedGov = gov;
         if (!fragment3.isAdded()) {
             fragment3.setArguments(arguments3);
         }

@@ -36,6 +36,7 @@ import java.util.Iterator;
 public class AllHypersFragment extends Fragment {
 
     public static String SelectedCity;
+    public static String SelectedGov;
     SpinKitView progress;
     ExpandableHeightGridView gridView;
     ValueEventListener OfferListener;

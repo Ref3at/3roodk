@@ -3,6 +3,7 @@
 
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:autofit="http://schemas.android.com/apk/res-auto"
     android:id="@+id/drawer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -51,7 +52,7 @@
                     android:paddingStart="15dp">
 
 
-                    <TextView
+                    <me.grantland.widget.AutofitTextView
                         android:id="@+id/textView_city"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
@@ -60,13 +61,11 @@
                         android:drawableLeft="@drawable/drop_down_icon"
                         android:drawableStart="@drawable/drop_down_icon"
                         android:gravity="center_vertical"
-                        android:paddingEnd="15dp"
-                        android:paddingLeft="5dp"
-                        android:paddingRight="0dp"
-                        android:paddingStart="15dp"
-                        android:text="عروض طنطا"
+                        android:maxLines="1"
+                        android:text="عروض مركز "
                         android:textColor="@color/white"
-                        android:textSize="25sp" />
+                        android:textSize="25sp"
+                        autofit:minTextSize="16sp" />
 
 
                 </RelativeLayout>
