@@ -82,7 +82,12 @@ dependencies {
     compile 'com.etsy.android.grid:library:1.0.5'
     compile 'com.github.paolorotolo:appintro:4.1.0'
     compile 'me.grantland:autofittextview:0.2.+'
-
+// smart tab layout
+    compile 'com.ogaclejapan.smarttablayout:library:1.6.1@aar'
+    //Optional: see how to use the utility.
+    compile 'com.ogaclejapan.smarttablayout:utils-v4:1.6.1@aar'
+    //Optional: see how to use the utility.
+    compile 'com.ogaclejapan.smarttablayout:utils-v13:1.6.1@aar'
 
 }
 
