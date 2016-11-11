@@ -196,7 +196,6 @@ public class DetailOfflineHyperFragment extends Fragment implements BaseSliderVi
     @Override
     public void onPageSelected(int position) {
 
-//        Log.d("Slider", "Page Changed: " + position);
     }
 
     @Override

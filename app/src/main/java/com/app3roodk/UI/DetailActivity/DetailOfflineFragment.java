@@ -40,6 +40,8 @@ import com.app3roodk.Schema.TestTable;
 import com.app3roodk.UI.FullScreenImage.FullScreenImageSlider;
 import com.app3roodk.UI.ImagesSliders.CustomImagesSlider;
 import com.app3roodk.UI.Shop.ViewShopActivity;
+import com.app3roodk.Utilities.IValidateUser;
+import com.app3roodk.Utilities.UtilityViews;
 import com.app3roodk.UtilityFirebase;
 import com.app3roodk.UtilityGeneral;
 import com.bumptech.glide.Glide;
@@ -68,7 +70,7 @@ import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
 
-public class DetailOfflineFragment extends Fragment implements BaseSliderView.OnSliderClickListener, ViewPagerEx.OnPageChangeListener {
+public class DetailOfflineFragment extends Fragment implements BaseSliderView.OnSliderClickListener, ViewPagerEx.OnPageChangeListener,IValidateUser {
 
     //region Member Variables
     final static long minutesInMilli = 1000 * 60;
@@ -201,7 +203,7 @@ public class DetailOfflineFragment extends Fragment implements BaseSliderView.On
                         makeComment();
 
                 } else {
-                    ((DetailActivity) getActivity()).signingClick();
+                    UtilityViews.signingClick(getActivity());
                 }
             }
         });
