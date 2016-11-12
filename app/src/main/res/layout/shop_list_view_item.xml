@@ -1,56 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal" android:layout_width="match_parent"
-    android:layout_height="70dp">
-
-
+    android:layout_width="match_parent"
+    android:layout_height="70dp"
+    android:orientation="horizontal">
 
     <Button
         android:id="@+id/btn_delete_shop"
         android:layout_width="50dp"
-        android:focusable="false"
-        android:background="@android:drawable/ic_delete"
         android:layout_height="50dp"
-        android:visibility="gone"/>
+        android:background="@android:drawable/ic_delete"
+        android:focusable="false"
+        android:visibility="gone" />
 
     <Button
         android:id="@+id/btn_activate"
         android:layout_width="0dp"
-        android:focusable="false"
+        android:layout_height="match_parent"
         android:layout_weight="1"
+        android:focusable="false"
         android:text="فعله الان"
-        android:visibility="gone"
         android:textColor="@color/dark_green"
-        android:layout_height="match_parent" />
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/txt_inactive"
         android:layout_width="0dp"
-        android:layout_weight="1"
         android:layout_height="match_parent"
-        android:text="@string/inActive"
+        android:layout_weight="1"
         android:gravity="center_horizontal|center_vertical"
+        android:text="@string/inActive"
         android:textColor="@color/holo_red_light"
-        android:visibility="gone"
-        />
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/txt_shop_name"
         android:layout_width="0dp"
-        android:gravity="center_horizontal|center_vertical"
-        android:layout_weight="1"
         android:layout_height="match_parent"
-        android:text="shopname"
-        />
-
-    <ImageView
-        android:layout_width="40dp"
-android:src="@drawable/shop"
-        android:padding="10dp"
-        android:layout_gravity="center_horizontal|center_vertical"
-        android:scaleType="centerCrop"
-        android:layout_height="40dp" />
-
-
+        android:layout_weight="1"
+        android:drawableRight="@drawable/shop"
+        android:gravity="center_horizontal|center_vertical"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:text="shopname" />
 
 </LinearLayout>

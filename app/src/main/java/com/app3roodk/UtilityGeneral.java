@@ -734,17 +734,11 @@ public class UtilityGeneral {
     }
 
     public static boolean isCodeValid(String input, String pin) {
-
-        int inputNo = Integer.parseInt(String.valueOf(input));
-        int pinNo = Integer.parseInt(String.valueOf(pin));
-
-        if (inputNo == pinNo) {
-
-            return true;
-        } else {
+        try {
+            return input.equals(pin);
+        } catch (Exception ex) {
             return false;
         }
-
     }
     //endregion
 }

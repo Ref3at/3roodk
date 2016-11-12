@@ -63,8 +63,7 @@ public class UtilityViews {
             }
         });
         hideDrawerItems(activity, activityId);
-        DrawerLayout drawer = (DrawerLayout) activity.findViewById(R.id.drawer);
-        drawer.setDrawerListener(new DrawerLayout.DrawerListener() {
+        ((DrawerLayout) activity.findViewById(R.id.drawer)).setDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
             }
@@ -215,7 +214,7 @@ public class UtilityViews {
                             }
                         });
             }
-        } catch (Exception ex) {
+        } catch (Exception ignored) {
         }
     }
     //endregion
@@ -233,7 +232,7 @@ public class UtilityViews {
     static public void signingResult(int resultCode, final Activity activity, final IValidateUser iValidateUser) {
         try {
             if (resultCode == Activity.RESULT_OK) {
-                setLoadingVisibility(View.VISIBLE, activity,iValidateUser);
+                setLoadingVisibility(View.VISIBLE, activity, iValidateUser);
                 FirebaseUser acct = FirebaseAuth.getInstance().getCurrentUser();
                 signingUser.setObjectId(acct.getUid());
                 signingUser.setEmail(acct.getEmail());
@@ -252,7 +251,7 @@ public class UtilityViews {
                                     } else {
                                         UtilityGeneral.saveUser(activity, signingUser);
                                     }
-                                    setLoadingVisibility(View.GONE, activity,iValidateUser);
+                                    setLoadingVisibility(View.GONE, activity, iValidateUser);
                                 }
                             });
                         } else {
@@ -266,15 +265,15 @@ public class UtilityViews {
                                                 for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren())
                                                     shops.add(dataSnapshot1.getValue(Shop.class));
                                                 UtilityGeneral.saveShops(activity, shops);
-                                            } catch (Exception ex) {
+                                            } catch (Exception ignored) {
                                             }
                                             UtilityGeneral.saveUser(activity, signingUser);
-                                            setLoadingVisibility(View.GONE, activity,iValidateUser);
+                                            setLoadingVisibility(View.GONE, activity, iValidateUser);
                                         }
 
                                         @Override
                                         public void onCancelled(DatabaseError databaseError) {
-                                            setLoadingVisibility(View.GONE, activity,iValidateUser);
+                                            setLoadingVisibility(View.GONE, activity, iValidateUser);
                                         }
                                     });
                         }
@@ -287,9 +286,9 @@ public class UtilityViews {
                 });
             } else {
                 Toast.makeText(activity, "فشل فى تسجيل الدخول", Toast.LENGTH_LONG).show();
-                setLoadingVisibility(View.GONE, activity,iValidateUser);
+                setLoadingVisibility(View.GONE, activity, iValidateUser);
             }
-        } catch (Exception ex) {
+        } catch (Exception ignored) {
         }
     }
 

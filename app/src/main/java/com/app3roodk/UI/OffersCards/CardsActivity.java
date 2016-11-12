@@ -96,7 +96,7 @@ public class CardsActivity extends AppCompatActivity implements CardsOfflineFrag
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == Constants.RC_SIGN_IN)
-            UtilityViews.signingResult(resultCode, this);
+            UtilityViews.signingResult(resultCode, this,null);
 
     }
 
