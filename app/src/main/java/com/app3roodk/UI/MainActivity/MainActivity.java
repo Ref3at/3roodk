@@ -271,6 +271,7 @@ public class MainActivity extends AppCompatActivity {
 
         FragmentPagerItemAdapter adapter = new FragmentPagerItemAdapter(
                 getSupportFragmentManager(), FragmentPagerItems.with(this)
+                .add("الخريطه", AllHypersFragment.class)
                 .add("الهيبرات", AllHypersFragment.class)
                 .add("المحلات", AllShopsFragment.class)
                 .add("الاقسام", ShopsCategoriesFragment.class)
@@ -280,7 +281,7 @@ public class MainActivity extends AppCompatActivity {
 
         mViewPager.setAdapter(adapter);
         viewPagerTab.setViewPager(mViewPager);
-        viewPagerTab.getTabAt(1).setSelected(true);
+        viewPagerTab.getTabAt(3).performClick();
 
 
     }
