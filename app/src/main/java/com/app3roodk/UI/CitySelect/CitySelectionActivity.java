@@ -131,29 +131,6 @@ public class CitySelectionActivity extends AppCompatActivity {
     }
 
 
-    private void fetchList(List<String> list) {
-
-        for (int i = 0; i < 1; i++) {
-            GroupItem item = new GroupItem();
-            item.title = "المحافظه 5";
-
-            for (int j = 0; j < list.size(); j++) {
-                ChildItem child = new ChildItem();
-                child.title = list.get(j);
-//                child.hint = "Too awesome";
-
-                item.items.add(child);
-            }
-
-            items.add(item);
-        }
-
-        adapter.setData(items);
-        listView.setAdapter(adapter);
-
-    }
-
-
     private static class GroupItem {
         String title;
         List<ChildItem> items = new ArrayList<ChildItem>();

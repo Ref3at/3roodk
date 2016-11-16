@@ -16,7 +16,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.app3roodk.Constants;
@@ -25,8 +24,6 @@ import com.app3roodk.UI.CitySelect.CitySelectionActivity;
 import com.app3roodk.Utilities.UtilityViews;
 import com.app3roodk.UtilityGeneral;
 import com.google.firebase.iid.FirebaseInstanceId;
-import com.like.LikeButton;
-import com.like.OnLikeListener;
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
 import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItemAdapter;
 import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItems;
@@ -42,11 +39,9 @@ public class MainActivity extends AppCompatActivity {
     NavigationView mNavigationView;
     Boolean exit = false;
 
-    LikeButton btnNotification;
-    RelativeLayout titleCityName;
-
+    //LikeButton btnNotification;
     AutofitTextView cityName;
-
+    View layoutNotification;
     String currentCity;
     String currentGov;
 
@@ -66,8 +61,7 @@ public class MainActivity extends AppCompatActivity {
 
         cityName = (AutofitTextView) findViewById(R.id.textView_city);
 
-        titleCityName = (RelativeLayout) findViewById(R.id.title_city_name);
-        titleCityName.setOnClickListener(new View.OnClickListener() {
+        cityName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -94,6 +88,15 @@ public class MainActivity extends AppCompatActivity {
 
         setupViewPager(currentGov, currentCity);
 
+        layoutNotification = (View) findViewById(R.id.view_notification);
+
+        layoutNotification.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(MainActivity.this, "clicked", Toast.LENGTH_SHORT).show();
+            }
+        });
+
 
 //        for (int i = 0; i < tabs.getTabCount(); i++) {
 //            TabLayout.Tab tab = tabs.getTabAt(i);
@@ -105,18 +108,18 @@ public class MainActivity extends AppCompatActivity {
 //        }
 //        tabs.getTabAt(4).select();
 
-        btnNotification = (LikeButton) findViewById(R.id.btn_notification);
-        btnNotification.setOnLikeListener(new OnLikeListener() {
-            @Override
-            public void liked(LikeButton likeButton) {
-                Toast.makeText(getApplicationContext(), "subscribed in topic", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void unLiked(LikeButton likeButton) {
-                Toast.makeText(getApplicationContext(), "subscribed in topic", Toast.LENGTH_SHORT).show();
-            }
-        });
+//        btnNotification = (LikeButton) findViewById(R.id.btn_notification);
+//        btnNotification.setOnLikeListener(new OnLikeListener() {
+//            @Override
+//            public void liked(LikeButton likeButton) {
+//                Toast.makeText(getApplicationContext(), "subscribed in topic", Toast.LENGTH_SHORT).show();
+//            }
+//
+//            @Override
+//            public void unLiked(LikeButton likeButton) {
+//                Toast.makeText(getApplicationContext(), "subscribed in topic", Toast.LENGTH_SHORT).show();
+//            }
+//        });
     }
 
     @Override
@@ -271,7 +274,6 @@ public class MainActivity extends AppCompatActivity {
 
         FragmentPagerItemAdapter adapter = new FragmentPagerItemAdapter(
                 getSupportFragmentManager(), FragmentPagerItems.with(this)
-                .add("الخريطه", AllHypersFragment.class)
                 .add("الهيبرات", AllHypersFragment.class)
                 .add("المحلات", AllShopsFragment.class)
                 .add("الاقسام", ShopsCategoriesFragment.class)
