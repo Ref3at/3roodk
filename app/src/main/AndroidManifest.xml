@@ -99,7 +99,8 @@
             android:name=".TestProvider"
             android:authorities="com.app3roodk.authority" />
 
-        <activity android:name=".UI.CitySelect.CitySelectionActivity"></activity>
+        <activity android:name=".UI.CitySelect.CitySelectionActivity" />
+        <activity android:name=".UI.NotificationLog.NotificationLogActivity"></activity>
     </application>
 
 </manifest>

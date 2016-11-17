@@ -1,6 +1,7 @@
 package com.app3roodk.UI.MainActivity;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -21,6 +22,7 @@ import android.widget.Toast;
 import com.app3roodk.Constants;
 import com.app3roodk.R;
 import com.app3roodk.UI.CitySelect.CitySelectionActivity;
+import com.app3roodk.UI.NotificationLog.NotificationLogActivity;
 import com.app3roodk.Utilities.UtilityViews;
 import com.app3roodk.UtilityGeneral;
 import com.google.firebase.iid.FirebaseInstanceId;
@@ -56,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
         // Adding Toolbar to Main screen
         mNavigationView = (NavigationView) findViewById(R.id.nav_view);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer);
-        UtilityViews.initNavigationDrawer(this,R.id.action_home);
+        UtilityViews.initNavigationDrawer(this, R.id.action_home);
         FirebaseInstanceId.getInstance().getToken();
 
         cityName = (AutofitTextView) findViewById(R.id.textView_city);
@@ -93,7 +95,9 @@ public class MainActivity extends AppCompatActivity {
         layoutNotification.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(MainActivity.this, "clicked", Toast.LENGTH_SHORT).show();
+                Context context = v.getContext();
+                Intent intent = new Intent(context, NotificationLogActivity.class);
+                context.startActivity(intent);
             }
         });
 
