@@ -36,10 +36,14 @@ public class NotificationLogActivity extends AppCompatActivity {
 //        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences prefs = getApplicationContext().getSharedPreferences("REFAATPREFS2", MODE_PRIVATE);
         String notifJson = prefs.getString("REFAATPREFS2", "not found");
-        Type typee = new TypeToken<ArrayList<CustomNotification>>() {
-        }.getType();
-        ArrayList<CustomNotification> customNotifList = new Gson().fromJson(notifJson, typee);
-
+        ArrayList<CustomNotification> customNotifList;
+        if (!notifJson.equals("not found")) {
+            Type typee = new TypeToken<ArrayList<CustomNotification>>() {
+            }.getType();
+            customNotifList = new Gson().fromJson(notifJson, typee);
+        } else {
+            customNotifList = new ArrayList<>();
+        }
 
 //        TextView textView = (TextView ) findViewById(R.id.ttttxt);
 //        textView.setText(notifJson);

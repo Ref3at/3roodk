@@ -100,7 +100,8 @@
             android:authorities="com.app3roodk.authority" />
 
         <activity android:name=".UI.CitySelect.CitySelectionActivity" />
-        <activity android:name=".UI.NotificationLog.NotificationLogActivity"></activity>
+        <activity android:name=".UI.NotificationLog.NotificationLogActivity" />
+        <activity android:name=".UI.Hyper.HyperActivity"></activity>
     </application>
 
 </manifest>

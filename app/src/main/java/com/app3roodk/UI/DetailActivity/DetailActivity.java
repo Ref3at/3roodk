@@ -4,6 +4,7 @@ package com.app3roodk.UI.DetailActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 
 import com.app3roodk.Constants;
 import com.app3roodk.R;
@@ -18,6 +19,7 @@ public class DetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
         if (savedInstanceState == null) {
+            Log.e("1111", String.valueOf(getIntent().getExtras().getInt("details")));
             if (getIntent().getExtras().getInt("details") == Constants.DETAILS_ONLINE) {
                 DetailOnlineFragment fragment = new DetailOnlineFragment();
                 getSupportFragmentManager().beginTransaction()

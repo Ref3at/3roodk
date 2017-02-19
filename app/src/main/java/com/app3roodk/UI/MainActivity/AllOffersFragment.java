@@ -98,7 +98,7 @@ public class AllOffersFragment extends Fragment {
         } catch (Exception ignored) {
         }
         qrHyperOffers = UtilityFirebase.getHyperOffers(SelectedCity);
-        qrHyperOffers.addValueEventListener(hypersOfferListener);
+        qrHyperOffers.addListenerForSingleValueEvent(hypersOfferListener);
 
         for (int i = 0; i < 9; i++) {
             try {
@@ -106,7 +106,7 @@ public class AllOffersFragment extends Fragment {
             } catch (Exception ignored) {
             }
             qrShopsOffers[i] = UtilityFirebase.getActiveOffers(SelectedCity, categoriesArray[i]);
-            qrShopsOffers[i].addValueEventListener(shopsOfferListeners[i]);
+            qrShopsOffers[i].addListenerForSingleValueEvent(shopsOfferListeners[i]);
 
         }
     }
